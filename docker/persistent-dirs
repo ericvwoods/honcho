@@ -1,0 +1,9 @@
+# Folders the app writes uploads into (paths inside the web root).
+# Each one is mounted from the host (deploy/compose.yaml); files committed
+# in them are copied in from the image on every start.
+public/uploads
+modules/dms/dmslibrary/assets
+modules/cms/ccmpslibrary/assets
+modules/welcome/ccmps/assets
+modules/honcho/users/assets
+modules/trongate_pages/assets/images/uploads

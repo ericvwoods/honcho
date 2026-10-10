@@ -20,3 +20,14 @@ COPY docker/php.ini /usr/local/etc/php/conf.d/honcho.ini
 COPY --chown=www-data:www-data . /var/www/html/
 # base image leaves the web root world-writable; Apache's own user is enough
 RUN chmod 755 /var/www/html
+
+# Upload folders: keep a copy of their committed files for the entrypoint
+COPY docker/persistent-dirs /opt/honcho-seed/dirs
+RUN grep -v '^#' /opt/honcho-seed/dirs | while read -r d; do \
+        [ -n "$d" ] || continue; \
+        mkdir -p "/opt/honcho-seed/$d" "/var/www/html/$d"; \
+        cp -a "/var/www/html/$d/." "/opt/honcho-seed/$d/"; \
+    done
+COPY --chmod=755 docker/entrypoint.sh /usr/local/bin/honcho-entrypoint
+ENTRYPOINT ["honcho-entrypoint"]
+CMD ["apache2-foreground"]

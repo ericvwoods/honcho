@@ -1,0 +1,6 @@
+# ~/stack/Caddyfile on the server. Caddy gets the HTTPS certificate itself
+# once the address's DNS A record points at the droplet.
+uat.bpapilots.org {
+	encode gzip
+	reverse_proxy honcho-staging:80
+}

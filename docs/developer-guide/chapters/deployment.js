@@ -149,6 +149,10 @@ const sections = [
   { type: 'h2', text: 'Everyday Commands (in ~/stack)' },
   { type: 'code', text: "cd ~/honcho && git pull          # get new code\ncd ~/stack && docker compose up -d --build   # rebuild and restart what changed\ndocker compose ps                  # status\ndocker compose logs -f honcho-staging        # app and PHP errors\ndocker compose exec mariadb sh -c 'mariadb -uroot -p\"$MARIADB_ROOT_PASSWORD\"'" },
   { type: 'p', text: "PHP sessions live inside the container, so a rebuild logs everyone out." },
+  { type: 'h2', text: 'Loading Data into Staging' },
+  { type: 'p', text: "Staging was first loaded on 2026-10-10 from the Mac's `bpausa` database (test data, 154 tables) and upload folders. Real member data only arrives at go-live, into `bpa_prod`." },
+  { type: 'code', text: "# database (from the Mac). The XAMPP MariaDB can't dump routines/events (old mysql.proc), and there are none\n/Applications/XAMPP/xamppfiles/bin/mysqldump -uroot --single-transaction --triggers bpausa | gzip | \\\n  ssh bpa-honcho-01 'cd ~/stack && gunzip | docker compose exec -T mariadb sh -c \"mariadb -uroot -p\\$MARIADB_ROOT_PASSWORD bpa_staging\"'\n\n# one upload folder (repeat per folder; see the table above for the names under /srv)\nCOPYFILE_DISABLE=1 tar -C modules/welcome/ccmps/assets --exclude .DS_Store -czf - . | \\\n  ssh bpa-honcho-01 'sudo tar -xzf - -C /srv/honcho/staging/files/ccmps --no-same-owner && sudo chown -R 33:33 /srv/honcho/staging/files/ccmps'" },
+  { type: 'p', text: "Uploaded files must belong to user 33 (`www-data`, Apache's user in the container) or the app can't add to them." },
 ]},
 
 // ============================================================
@@ -159,8 +163,8 @@ const sections = [
     ['DO-02', 'Lock down the server: updates, Central timezone, sudo user, no root or password SSH, ufw (22/80/443), fail2ban, unattended upgrades, swap file', 'Done 2026-10-08 (see the Server Access tab)'],
     ['DO-03', 'Install Docker Engine and Compose from Docker\'s apt repository (not the snap)', 'Done 2026-10-10 (Docker 29.9, Compose v5.6)'],
     ['DO-04', 'Package Honcho: private GitHub repo, settings in `.env`, Docker image', 'Done 2026-10-10 (see the Code & Settings tab)'],
-    ['DO-05', 'Compose stack: Caddy, `honcho-staging` (later `honcho-prod`), MariaDB', 'Done 2026-10-10 (see the Compose Stack tab); database empty until DO-06'],
-    ['DO-06', 'Copy the database and uploads to staging', ''],
+    ['DO-05', 'Compose stack: Caddy, `honcho-staging` (later `honcho-prod`), MariaDB', 'Done 2026-10-10 (see the Compose Stack tab)'],
+    ['DO-06', 'Copy the database and uploads to staging', 'Done 2026-10-10 (Mac test data; see the Compose Stack tab)'],
     ['DO-07', 'DNS for `uat.bpapilots.org`, HTTPS, smoke test (behind basic auth)', ''],
     ['DO-08', 'Security fixes before anything is public', ''],
     ['DO-09', 'Send Honcho\'s email through Brevo', ''],

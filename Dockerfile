@@ -11,9 +11,12 @@ RUN apt-get update \
  && docker-php-ext-install -j"$(nproc)" mysqli pdo_mysql gd zip \
  && rm -rf /var/lib/apt/lists/*
 
-# Apache: the .htaccess files do the routing, so allow them; headers for the CSP line
-COPY docker/apache-honcho.conf /etc/apache2/conf-available/honcho.conf
-RUN a2enmod rewrite headers && a2enconf honcho
+# Apache: the .htaccess files do the routing, so allow them; headers for the CSP line.
+# zz- so it loads after Debian's security.conf and its ServerTokens wins.
+COPY docker/apache-honcho.conf /etc/apache2/conf-available/zz-honcho.conf
+RUN a2enmod rewrite headers && a2enconf zz-honcho
 
 COPY docker/php.ini /usr/local/etc/php/conf.d/honcho.ini
 COPY --chown=www-data:www-data . /var/www/html/
+# base image leaves the web root world-writable; Apache's own user is enough
+RUN chmod 755 /var/www/html

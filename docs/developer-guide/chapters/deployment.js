@@ -59,7 +59,24 @@ const sections = [
     ['PHP', '8.2.4', '`php:8.2-apache` image, with mysqli, pdo_mysql, mbstring, gd, intl, zip and mod_rewrite'],
     ['Database', 'MariaDB 10.4.28', '`mariadb:10.4` image at first; upgrade later as its own step'],
   ]},
-  { type: 'p', text: "The only hard-coded address in the code is `BASE_URL` in `config/config.php` (`http://localhost/bpausa/` locally); it moves to the per-environment `.env` file." },
+  { type: 'p', text: "The only hard-coded address in the code was `BASE_URL` (`http://localhost/bpausa/` locally); it now comes from each environment's `.env` file (see the Code & Settings tab)." },
+]},
+
+// ============================================================
+{ tab: "Code & Settings", blocks: [
+  { type: 'p', text: "The code lives in the private GitHub repository `github.com/ericvwoods/honcho` (branch `main`). The server gets the code from there, never by copying files from the Mac." },
+  { type: 'h2', text: 'What Is Not in Git' },
+  { type: 'p', text: "`.gitignore` keeps out: `.env`, database dumps (`ccmps.sql`, `ccmps_aux.sql`), user uploads (DMS and CMS library files, `public/uploads`, member photos in `modules/<module>/assets/<record id>/`), Inspinia's unused `Utils/` folder and zip, and backup copies (`* copy.php`, `*_old.php`, `*.last`, `legacy views/`, ...). Uploads and data reach the server separately (DO-06)." },
+  { type: 'h2', text: 'The .env File' },
+  { type: 'p', text: "Secrets and anything that differs between installs live in `.env` in the project root. It is **never committed**; `.env.example` (committed) lists every setting with no real values. `config/env.php` reads it and provides `env('NAME', default)`; `config/config.php` and `config/database.php` use that. A real environment variable (as Docker passes them) wins over the file." },
+  { type: 'table', headers: ['Setting', 'Used for'], rows: [
+    ['`BASE_URL`', 'The site address, with a trailing slash'],
+    ['`WHATENV`', '`dev`, `uat` or `prod`'],
+    ['`JWT_SECRET`', 'Signs mobile-app login tokens. Make one per install with `openssl rand -hex 32`'],
+    ['`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_DATABASE`', 'Database connection'],
+    ['`BREVO_SMTP_KEY`, `BREVO_API_KEY`, `SYNC_BREVO`', 'Email through Brevo; `SYNC_BREVO=1` syncs contacts'],
+  ]},
+  { type: 'alert', variant: 'warning', text: "**Never put a key or password back into a committed file.** Add a new setting to `.env`, `.env.example` and the `env()` call in the config file. The root `.htaccess` refuses any request for `.env`." },
 ]},
 
 // ============================================================
@@ -105,7 +122,7 @@ const sections = [
     ['DO-01', 'Create the droplet', 'Done 2026-10-08'],
     ['DO-02', 'Lock down the server: updates, Central timezone, sudo user, no root or password SSH, ufw (22/80/443), fail2ban, unattended upgrades, swap file', 'Done 2026-10-08 (see the Server Access tab)'],
     ['DO-03', 'Install Docker Engine and Compose from Docker\'s apt repository (not the snap)', 'Done 2026-10-10 (Docker 29.9, Compose v5.6)'],
-    ['DO-04', 'Package Honcho: private GitHub repo, settings in `.env`, Docker image', ''],
+    ['DO-04', 'Package Honcho: private GitHub repo, settings in `.env`, Docker image', 'Repo and `.env` done 2026-10-10; Docker image next'],
     ['DO-05', 'Compose stack: Caddy, `honcho-staging` (later `honcho-prod`), MariaDB', ''],
     ['DO-06', 'Copy the database and uploads to staging', ''],
     ['DO-07', 'DNS for `uat.bpapilots.org`, HTTPS, smoke test (behind basic auth)', ''],

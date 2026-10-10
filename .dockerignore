@@ -1,0 +1,11 @@
+# Kept out of the image: secrets, git, local-only files
+.env
+.git
+.gitignore
+.claude
+.DS_Store
+docs
+debugging
+*.sql
+Dockerfile
+.dockerignore

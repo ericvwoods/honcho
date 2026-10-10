@@ -1,6 +1,16 @@
 # ~/stack/Caddyfile on the server. Caddy gets the HTTPS certificate itself
 # once the address's DNS A record points at the droplet.
+#
+# Staging is locked with basic auth, except the mobile app API (/welcome-api/),
+# which has its own JWT login in the same Authorization header. Make the hash:
+#   docker compose exec caddy caddy hash-password --plaintext '<password>'
+# Edit this file in place (not sed -i): it is mounted as a single file.
+# Apply: docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile
 uat.bpapilots.org {
 	encode gzip
+	@protected not path /welcome-api/*
+	basic_auth @protected {
+		bpa <hash>
+	}
 	reverse_proxy honcho-staging:80
 }

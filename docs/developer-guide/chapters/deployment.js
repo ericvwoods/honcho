@@ -57,7 +57,7 @@ const sections = [
   { type: 'p', text: "Taken from the XAMPP install the code was developed on, so the server behaves the same:" },
   { type: 'table', headers: ['Component', 'Local (XAMPP)', 'Droplet'], rows: [
     ['PHP', '8.2.4', '`php:8.2-apache` image, with mysqli, pdo_mysql, mbstring, gd, intl, zip and mod_rewrite'],
-    ['Database', 'MariaDB 10.4.28', '`mariadb:10.4` image at first; upgrade later as its own step'],
+    ['Database', 'MariaDB 10.4.28', '`mariadb:10.11` (see the Compose Stack tab)'],
   ]},
   { type: 'p', text: "The only hard-coded address in the code was `BASE_URL` (`http://localhost/bpausa/` locally); it now comes from each environment's `.env` file (see the Code & Settings tab)." },
 ]},
@@ -125,6 +125,33 @@ const sections = [
 ]},
 
 // ============================================================
+{ tab: "Compose Stack", blocks: [
+  { type: 'p', text: "`deploy/compose.yaml` (in the repo) runs three services. Only Caddy publishes ports." },
+  { type: 'table', headers: ['Service', 'What it does', 'Ports'], rows: [
+    ['`caddy` (`caddy:2.10`)', 'HTTPS; gets certificates itself once DNS points at the droplet; sends each address to its app container', '80, 443 (the only open ports)'],
+    ['`honcho-staging`', 'The Honcho image, built from the repo root', 'None'],
+    ['`mariadb` (`mariadb:10.11`)', 'Database `bpa_staging` with its own user `bpa_staging`. Table names ignore case (`--lower-case-table-names=1`), as on the Mac; this only takes effect when the data folder is first created', 'None'],
+  ]},
+  { type: 'alert', variant: 'info', text: "**MariaDB 10.11, not 10.4.** 10.4 stopped getting security fixes in 2024; 10.11 is supported to 2028 and imports a 10.4 dump unchanged. Decided 2026-10-10." },
+  { type: 'h2', text: 'Files on the Server' },
+  { type: 'table', headers: ['Where', 'What'], rows: [
+    ['`~/honcho`', 'Git clone of the repo (read-only deploy key `~/.ssh/honcho_deploy`, added in GitHub under Settings → Deploy keys)'],
+    ['`~/stack/.env`', 'Compose settings: `COMPOSE_FILE` (points at the repo\'s compose file), `STACK_DIR`, `DATA_DIR`, `MARIADB_ROOT_PASSWORD`, `STAGING_DB_PASSWORD`. Template: `deploy/stack.env.example`'],
+    ['`~/stack/staging.env`', 'Honcho\'s settings for staging (`BASE_URL`, `WHATENV=dev` so email goes only to the test address, `JWT_SECRET`, Brevo). The `DB_*` settings come from the compose file'],
+    ['`~/stack/Caddyfile`', 'Web addresses. Template: `deploy/Caddyfile.example`'],
+    ['`/srv/honcho/mariadb`', 'Database files'],
+    ['`/srv/honcho/staging/files/`', 'Uploads, one folder per upload location'],
+  ]},
+  { type: 'p', text: "`~/stack` is mode 700 and its files 600; they hold the passwords and are never committed." },
+  { type: 'h2', text: 'Upload Folders' },
+  { type: 'p', text: "The app writes uploads into six folders inside the code (listed in `docker/persistent-dirs`): `public/uploads`, the DMS and CMS library `assets`, `modules/welcome/ccmps/assets` and `modules/honcho/users/assets` (photos in `<record id>/` folders), and `modules/trongate_pages/assets/images/uploads`. Each is mounted from `/srv/honcho/staging/files`, so uploads survive rebuilds. Some of these folders also hold committed files (dashboard images, the DMS user guide); the image keeps a copy, and `docker/entrypoint.sh` copies them back in on every start, never deleting an upload." },
+  { type: 'alert', variant: 'warning', text: "**Adding an upload folder:** add it to both `docker/persistent-dirs` and the `volumes:` list in `deploy/compose.yaml`." },
+  { type: 'h2', text: 'Everyday Commands (in ~/stack)' },
+  { type: 'code', text: "cd ~/honcho && git pull          # get new code\ncd ~/stack && docker compose up -d --build   # rebuild and restart what changed\ndocker compose ps                  # status\ndocker compose logs -f honcho-staging        # app and PHP errors\ndocker compose exec mariadb sh -c 'mariadb -uroot -p\"$MARIADB_ROOT_PASSWORD\"'" },
+  { type: 'p', text: "PHP sessions live inside the container, so a rebuild logs everyone out." },
+]},
+
+// ============================================================
 { tab: "Setup Steps", blocks: [
   { type: 'p', text: "The steps match the DO-xx cards on the Honcho Dev Board. Status as of 2026-10-10." },
   { type: 'table', headers: ['Step', 'What', 'Status'], rows: [
@@ -132,7 +159,7 @@ const sections = [
     ['DO-02', 'Lock down the server: updates, Central timezone, sudo user, no root or password SSH, ufw (22/80/443), fail2ban, unattended upgrades, swap file', 'Done 2026-10-08 (see the Server Access tab)'],
     ['DO-03', 'Install Docker Engine and Compose from Docker\'s apt repository (not the snap)', 'Done 2026-10-10 (Docker 29.9, Compose v5.6)'],
     ['DO-04', 'Package Honcho: private GitHub repo, settings in `.env`, Docker image', 'Done 2026-10-10 (see the Code & Settings tab)'],
-    ['DO-05', 'Compose stack: Caddy, `honcho-staging` (later `honcho-prod`), MariaDB', ''],
+    ['DO-05', 'Compose stack: Caddy, `honcho-staging` (later `honcho-prod`), MariaDB', 'Done 2026-10-10 (see the Compose Stack tab); database empty until DO-06'],
     ['DO-06', 'Copy the database and uploads to staging', ''],
     ['DO-07', 'DNS for `uat.bpapilots.org`, HTTPS, smoke test (behind basic auth)', ''],
     ['DO-08', 'Security fixes before anything is public', ''],

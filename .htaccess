@@ -2,6 +2,11 @@
     Header set Content-Security-Policy "frame-ancestors 'self'"
 </IfModule>
 
+# Never serve the settings file
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
   RewriteEngine on
   RewriteRule ^$ public/ [L]

@@ -1,0 +1,279 @@
+<?php
+/*
+Warning: Constant DMS_HM_TAB_TITLE_CLR already defined in /home/bpapilots/bpauat/config/config.php on line 234
+
+Warning: Constant DMS_HM_TAB_ICON_CLR already defined in /home/bpapilots/bpauat/config/config.php on line 235
+
+Warning: Constant DMS_CRUD_IBOX_HDR_CLR already defined in /home/bpapilots/bpauat/config/config.php on line 246
+
+Warning: Constant CURRENCY_SYMBOL already defined in /home/bpapilots/bpauat/config/config.php on line 252
+
+Warning: Constant APPPATH already defined in /home/bpapilots/bpauat/engine/ignition.php on line 103
+
+Warning: Constant REQUEST_TYPE already defined in /home/bpapilots/bpauat/engine/ignition.php on line 104
+*/
+
+// Environment Specific - values come from .env (see config/env.php and .env.example)
+require_once __DIR__.'/env.php';
+define('BASE_URL', env('BASE_URL', 'http://localhost/bpausa/'));
+
+// API
+define('JWT_SECRET', env('JWT_SECRET', ''));
+
+// Location
+define('APPPATH', dirname(dirname(__FILE__)).'/');
+define('ADMINTHEME','inspinia'); // Private Area & Honcho Theme
+
+// Routing
+define('DEFAULT_MODULE', 'welcome');
+define('DEFAULT_CONTROLLER', 'Welcome');
+define('DEFAULT_METHOD', 'index');
+
+// State
+define('CCMPS_AUX_MODULE', 1); // "true" or "false" Base product only or extended ccmp properties
+define('DEBUGGING', 0); // "true" or "false"
+define('ENV', 'prod'); //dev or anything else is not dev. controls navbar breadcrumbs
+define('WHATENV', env('WHATENV', 'dev')); // dev  Used in cart.php AND Welcome controller email parameters
+define('IS_MVP', false); // false is honcho core
+define('VERSION_RELEASE', '1.0');
+define('ADDRDB_STRUCTURE', 0); // 0 = multi in one table 1 = simple is only mail & phys in table
+
+// Organization Specific
+define('SITENAME','Black Pilots of America'); // honcho
+define('SITENAME2','Enterprise Management System'); // CORE, MVP
+define('SITENAME3','Enterprise Mgmt System'); // honcho/views/inspinia/login
+define('SITENAME4','Member Portal'); // welcome/views/security/login
+define('SHORTSITENAME','BPA'); //
+define('SHORTSITENAME2','EMS'); // second factor entry page
+
+// Sysadmin Contact Info
+define('SYS_ADMIN_PHONE', '202.207.5353');
+define('DEVEMAIL', 'ericvwoods@hotmail.com'); // if WHATDEV = dev the will use this email address for testing.
+// login header.php EXT_WEBSITE, SITENAME, FACEBOOK_URL, TWITTER_URL, YOUTUBE_URL
+define('WEBEMAIL', 'ericvwoods@hotmail.com'); // webmaster email for 404 page
+
+// honcho
+define('USERS_IDNUM_REQ', 0); // user accts must have employee number
+define('HONCHOUSER','Staffer'); // Employee, User, Staffer
+define('HONCHOUSERS','Staff'); // Employees, Users, Staff
+define('USERS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
+define('USERS_JUMBO_IMG','gaye318x326.jpg');
+
+// SECOND FACTOR SETTINGS
+// if user community has limitations on texting or email (perhaps a minor)can use a table field. Each user table has a "second factor" field that can be used like high school mascot
+define('CCMPS_RBAC', 1); // Use RBAC vs. CCMPrecord for super user priviledges
+define('CCMP_SECOND_FACTOR_NAME','Member Number'); // High School Mascot
+define('CCMP_SECOND_FACTOR_FIELD_NAME','id_number'); // second_factor
+define('SYSTEM_SECOND_FACTOR_NAME','Verification Code'); //
+define('SYSTEM_SECOND_FACTOR_FIELD_NAME','second_factor'); // second_factor
+
+define('WELCOME_BYPASS_2ND_FACTOR', false); //
+define('USERS_BYPASS_2ND_FACTOR', false); //
+define('TEMP_2ND_FACTOR','654321'); //
+
+// CCMPS Nomenclature
+define('CCMP','Member'); // Customer, Client, Member, Participant
+define('CCMPS','Members'); // Customers, Clients, Members, Participants
+define('CCMPS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
+define('SUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
+define('SUBENTITIES','Chapters'); // subentities
+define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
+define('CCMPSSUBENTITIES','Chapters'); // subentities
+
+// CCMPSHOME
+define('SHOW_MARQUEE', 1);
+define('HOTLINK', '#'); // '#' if no active link
+define('HOTLINKLABEL', 'Register'); // General Meeting Registration, Skyhook Registration
+
+// Color Branding
+define('SP_CLR','lightseagreen'); // site primary color
+define('SN_FNT_WT',''); // sitename font weight
+define('SN_FNT_SZ', '36px'); // sitename font size
+define('SN_CLR','lightseagreen'); // sitename color - coral, black default, coral, cornflowerblue, lightseagreen
+define('SN2_CLR','crimson'); // sitename color - lightseagreen, black default, coral, cornflowerblue
+define('NB_CLR','lightseagreen'); // Navbar color - coral
+
+// CCMP crud
+define('CCMPS_CRUD_IBOX_HDR_CLR','crimson'); // coral
+define('CCMPS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
+define('CCMPS_CRUD_VALUE_CLR','gray'); // coral
+
+// CCMPS Colors
+define('USERS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
+define('USERS_HM_CLPSE_TITLE_CLR','coral'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_ICON_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+
+// CCMPS Dashboard Colors
+define('USERS_TBL_HDR_CLR','black'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_TBL_DATA_CLR','gray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+
+// CCMPS Dashboard Collapse
+define('USERS_HM_CLPSE_OPEN', 0); // first collapse always open
+define('USERS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
+define('USERS_HM_SIDE_MENU_CLR','crimson'); //lightseagreen
+define('USERS_HM_SIDE_ICON_CLR','crimson'); // coral
+
+define('USERS_CCMP_NAME_CLR','lightseagreen');
+define('USERS_CCMP_FNT_SZ','28px');
+define('USERS_CRUD_TAB_TITLE_CLR','gray');
+
+define('USERS_TITLE_CLR','coral');
+define('USERS_TITLE_FNT_SZ','24px');
+define('USERS_SUB_NAME_CLR','lightseagreen');
+define('USERS_SUB_FNT_SZ','24px');
+
+// User Crud colors
+define('USERS_CRUD_IBOX_HDR_CLR','coral'); // crimson
+define('USERS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
+define('USERS_CRUD_VALUE_CLR','gray'); // coral
+
+// Logos
+define('MAIN_LOGO','welcome_module/images/bpalogo100x82.jpg'); // welcome_module/images/bpalogo100x82.jpg
+define('HDR_LOGO','welcome_module/images/bpalogo100x82.jpg'); // welcome_module/images/bpalogo100x82.jpg
+define('SMALL_LOGO','welcome_module/images/');
+define('PLAIN_LOGO',''); // welcome_module/images/xyz100x82.jpg
+
+// Social Media
+//define('EXT_WEBSITE','https://www');
+define('PUBLIC_WEBSITE','https://www.sgapleaders.org'); // https://www.bpapilots.org
+define('FACEBOOK_URL','');
+define('TWITTER_URL','');
+define('YOUTUBE_URL','');
+
+// CCMPSHOME COLORS
+define('CCMPS_JUMBO_IMG','gaye318x326.jpg');
+define('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
+define('CCMPS_HM_CLPSE_TITLE_CLR','coral'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_ICON_CLR','#676a6c'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+
+define('CCMPS_HM_CLPSE_OPEN', 0); // first collapse always open
+define('CCMPS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
+define('CCMPS_HM_SIDE_MENU_CLR','#1ab394');
+define('CCMPS_HM_SIDE_ICON_CLR','#1ab394'); // coral, crimson, Inspinia green #1ab394
+
+define('CCMPS_CCMP_NAME_CLR','lightseagreen');
+define('CCMPS_CCMP_FNT_SZ','28px');
+define('CCMPS_CRUD_TAB_TITLE_CLR','gray');
+
+define('CCMPS_TITLE_CLR','coral');
+define('CCMPS_TITLE_FNT_SZ','24px');
+define('CCMPS_SUB_NAME_CLR','lightseagreen');
+define('CCMPS_SUB_FNT_SZ','24px');
+
+// Trongate v2: required by engine/Core.php for 404 handling.
+// Points at modules/templates/Templates.php::error_404()
+define('ERROR_404', 'templates/error_404');
+
+
+
+// Interface Parameters
+// could set defaults for fonts  - currently ccmps line 4441
+
+define('REQUEST_TYPE', $_SERVER['REQUEST_METHOD']);
+define('MODULE_ASSETS_TRIGGER', '_module');
+//define('DEFAULT_ENGINE', 'old'); // code checks for 'old' or else executes
+
+// Security Settings
+define('AUDITLOGGER', 1); // Auditlogging Level 1 = log everything
+define('MINPWLGTH', 6); // password length used in layoutone.php - change password modal - used by ccmps view
+define('DEFAULT_CCMP_PASSWORD','$2y$11$0vmDNooSnMscr6MRK./fuewANo6F2GkHfpMuPr/XzsltWBuOe0e5K'); // 123456
+define('DEFAULT_USRNMEQEMAIL', 1); // 1 = TRUE 0 = FALSE CCMP
+define('HONCHO_DEFAULT_USRNMEQEMAIL', 0); // 1 = TRUE 0 = FALSE CCMP
+define('FORCE_PW_CHG_NEW_CCMP','1'); // 1 = TRUE 0 = FALSE
+define('SKIP_CHG_DEFAULT_USERNAME', 1); // Skip the page that allows changing the default username & Force PW Reset
+define('SKIP_NEW_ACCT_CONFIRMATION', 1); // Skip showing the acct added to the users record and return to manage page
+define('DEFAULT_CCMP_USER_LEVEL','7'); // 7 = CCMP
+define('DEFAULT_DONOR_USER_LEVEL','9'); // 9 = Donor
+define('DEFAULT_DONOR_PASSWORD','$2y$11$0vmDNooSnMscr6MRK./fuewANo6F2GkHfpMuPr/XzsltWBuOe0e5K'); // 123456
+
+define('CCMP_ACCT_NEEDS_APPROVAL', 0); // set to 1 if self-registration CCMP accounts need to be approved before made active (in other words a just a LEAD)
+define('STORE_ACCT_NEEDS_APPROVAL', 0); // set to 1 if store accounts need to be approved before made active
+
+// Application specific
+//define('CURRENT_YEAR', 2023); // not used ???
+//define('SYSTEM_CURRENT_YEAR', 2023); // currently table driven an coded for a session value in welcome ccmps currentroster.php
+define('SUBENTITY_ADMIN_CAN_CREATE','1'); // ex. chapter admin can create new members or only national
+
+//define('ATP_PC_PO','1'); // Ask the President -Presidents Corner - Presidents Posts Only
+
+// CCMPS Filelibrary
+define('CCMPS_FL_TAG1','Entity'); // Tag 1 - limit to 14 characters if possible
+define('CCMPS_FL_TAG2','Category'); // Tag 2
+define('CCMPS_FL_TAG3','Doc Type'); // Tag 3
+define('CCMPS_FL_SAVE_BAK', 1); // rename .bak vs. overwrite if same name
+define('CCMPS_FL_APPROVE_LEVEL', 12); // access level must be greater than to approve document
+define('CCMPS_FL_REJECT_LEVEL', 12); // access level must be greater than to reject document
+
+// DMS Filelibrary
+
+define('DMS_FL_TAG1','Organization'); // Tag 1 - limit to 14 characters if possible
+define('DMS_SUBENTITY','School'); // Subentity
+define('DMS_FL_TAG2','Category'); // Tag 2
+define('DMS_FL_TAG3','Type'); // Tag 3
+define('DMS_FL_SAVE_BAK', 1); // rename .bak vs. overwrite if same name
+define('DMS_FL_APPROVE_LEVEL', 12); // access level must be greater than to approve document
+define('DMS_FL_REJECT_LEVEL', 12); // access level must be greater than to reject document
+define('DMS_HM_CLPSE_OPEN', 0); // first collapse always open
+define('DMS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
+
+// Also in system_settings table and in Dmslibrary _constructor as session variable
+//define('DMS_KBB_SHOW_HDR0', 1); // show 1st column - true/false
+//define('DMS_KBB_SHOW_HDR5', 1); // show 6th column - true/false
+define('DMS_KBB_HDR0', 'Unrefined (not ready to work)'); // Kanban Board Column Header 6 status id
+define('DMS_KBB_HDR1', 'Backlog (ready to assign)'); // Kanban Board Column Header 5 status id
+define('DMS_KBB_HDR2', 'In Progress'); // Kanban Board Column Header 4 status id
+define('DMS_KBB_HDR3', 'In Review'); // Kanban Board Column Header 3 status id
+define('DMS_KBB_HDR4', 'Pending Approval'); // Kanban Board Column Header 2 status id
+define('DMS_KBB_HDR5', 'Approved'); // Kanban Board Column Header 1 status id
+
+// DMS Sizes & Colors
+define('DMS_CRUD_IBOX_HDR_CLR','crimson'); // Tag 3
+define('DMS_HM_TAB_TITLE_CLR','darkgreen');
+define('DMS_HM_TAB_ICON_CLR','darkgreen');
+define('DMS_HM_TAB_TITLE_RED_CLR','crimson');  // Comment tab close
+define('DMS_HM_TAB_TITLE_GRN_CLR','darkgreen');
+define('DMS_HM_TAB_ICON_RED_CLR','crimson');
+define('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
+define('DMS_HM_CLPSE_TITLE_CLR','crimson'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_ICON_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_SIDE_MENU_CLR','lightseagreen');
+define('DMS_HM_SIDE_ICON_CLR','crimson'); // coral
+define('DMS_CCMP_NAME_CLR','lightseagreen');
+define('DMS_CCMP_FNT_SZ','28px');
+define('DMS_CRUD_TAB_TITLE_CLR','darkgreen'); // gray
+define('DMS_TITLE_CLR','crimson');
+define('DMS_TITLE_FNT_SZ','24px');
+define('DMS_SUB_NAME_CLR','lightseagreen');
+define('DMS_SUB_FNT_SZ','24px');
+define('DMS_CRUD_IBOX_HDR_CLR','crimson'); // coral
+define('DMS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
+define('DMS_CRUD_VALUE_CLR','gray'); // coral
+
+// SHOPPING CART SETTINGS
+define('CURRENCY_CODE','USD');
+define('CURRENCY_SYMBOL','$');
+
+// Brevo Integration
+define('BREVO_SMTP_KEY', env('BREVO_SMTP_KEY', ''));
+define('BREVO_API_KEY', env('BREVO_API_KEY', ''));
+define('SYNC_BREVO', (int) env('SYNC_BREVO', 0)); // 1 = SYNC, 0 no sync
+
+// PayPal Integration
+define('PAYPAL_IPN','');  // "ON" or not. If ON paypal.php with save order, if not, thankyou.php will save order
+
+define('PAYPAL_EMAIL_ADDRESS','payments@mybusiness.com');

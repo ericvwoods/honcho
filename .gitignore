@@ -1,7 +1,5 @@
-# --- Secrets and per-install settings (move to .env; see DO-04) ---
+# --- Secrets and per-install settings: live in .env (see .env.example) ---
 .env
-config/config.php
-config/database.php
 config/*.org
 config/*.org.php
 

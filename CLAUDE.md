@@ -6,11 +6,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A member-management portal for Black Pilots of America (BPA), built on the **Trongate v2** PHP MVC framework (PHP 7.4 platform target in composer, runs under XAMPP locally). Internally the product is generic: "CCMPS" = Customers/Clients/Members/Participants, "Honcho" = the staff/back-office side, "DMS" = document management. Org-specific nomenclature (`CCMP` = "Member", `SUBENTITY` = "Chapter", etc.), branding colors, and feature flags all come from constants in `config/config.php`. Use those constants in UI text rather than hardcoding "Member"/"Chapter".
 
-There is no git repo, no build step, and no test suite. PHPUnit is in `require-dev` but no tests exist.
+Git repo: private `github.com/ericvwoods/honcho` (branch `main`, created 2026-10-10). `.gitignore` keeps out `.env`, DB dumps, user uploads (DMS docs, `assets/<id>/` photos), unused theme files and backup copies. There is no build step and no test suite. PHPUnit is in `require-dev` but no tests exist.
 
 ## Running / debugging
 
-- Local URL: `http://localhost/bpausa/`. `BASE_URL` in `config/config.php` must match the deployment (UAT is `bpauat.bpapilots.org`).
+- Local URL: `http://localhost/bpausa/`.
+- **Secrets and per-install settings live in `.env`** (root, never committed; `.env.example` lists them): `BASE_URL`, `WHATENV`, `JWT_SECRET`, `DB_*`, `BREVO_*`, `SYNC_BREVO`. `config/env.php` loads it (real environment variables win, for Docker) and provides `env('NAME', default)`; `config/config.php` and `config/database.php` read from it. Never put a key or password back into a committed file.
 - DB config is in `config/database.php` (local MySQL `bpausa`). `ccmps.sql` / `ccmps_aux.sql` at the root are schema+test-data dumps. Treat the data as disposable.
 - Composer deps (`vendor/`): phpspreadsheet, phpmailer, brevo. Run `composer install` from the root.
 - Blank or partly rendered page: uncomment the `ini_set('display_errors'...)` lines at the top of `public/index.php`.

@@ -16,17 +16,17 @@ services:
       - "443:443"
       - "443:443/udp"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${STACK_DIR:?set in ~/stack/.env}/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
       - honcho-staging
 
   honcho-staging:
-    build: ${HONCHO_SRC}
+    build: ..   # the repo root (paths here are relative to this file)
     image: honcho:staging
     restart: unless-stopped
-    env_file: ./staging.env
+    env_file: ${STACK_DIR}/staging.env
     environment:
       DB_HOST: mariadb
       DB_PORT: "3306"

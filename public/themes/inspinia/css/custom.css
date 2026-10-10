@@ -1,0 +1,23 @@
+/* ============================================================
+   custom.css — CCMPS module customizations
+   ============================================================
+   Loaded AFTER themes/inspinia/css/style.css (see inspinia.php),
+   specifically so a future theme update can safely overwrite
+   style.css without touching anything in here. Never add anything
+   to style.css itself going forward — put it here instead.
+
+   Loaded BEFORE any inline CSS embedded in a page.
+
+   Nothing currently lives here — the font-size preference system
+   that originally lived in this file was superseded by a per-user,
+   per-element-type system (tab/header/label/value/button, each
+   independently small/medium/large) that can't be expressed as
+   static CSS at all, since the actual pixel values are per-user
+   and only knowable at request time. That's now generated as an
+   inline <style> block directly in inspinia.php instead — see the
+   Styling section in the developer docs for the full mechanism.
+
+   This file (and the convention of using it instead of editing
+   style.css directly) stays in place for any future customization
+   that genuinely is static/site-wide rather than per-user.
+   ============================================================ */

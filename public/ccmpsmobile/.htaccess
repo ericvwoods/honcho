@@ -1,0 +1,16 @@
+# Forces sw.js to always be re-fetched fresh from the network on every
+# request, never served from the browser's regular HTTP cache. Without
+# this, a plain refresh can silently keep using an old, cached copy of
+# sw.js itself — meaning the browser never even notices CACHE_VERSION
+# changed, so none of the version bumps in sw.js take effect no matter
+# how many times it's actually updated on the server. This is a
+# genuinely different cache layer than the Service Worker's own Cache
+# Storage (which CACHE_VERSION does control) — this header controls
+# whether the browser fetches sw.js itself fresh in the first place.
+<IfModule mod_headers.c>
+  <FilesMatch "^sw\.js$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>

@@ -1,0 +1,78 @@
+Simple Maintenance Table Prompt
+
+begin prompt 
+" I need you to create four files to perform the CRUD for one or more maintenance tables in my trongate 2.x php framework application in the same coding style as the four example files attached:
+
+Example Files are php files renamed as text files for upload
+Controller: Ccmpsscopes.php
+View file: manage.php (lists all records in a datatable)
+View file: ccmpsscopscrud.php (performd CRUD on a single record)
+View file: navbar.php (same navigation bar for both views)
+MySQL Table: id (autoincrement), title (varchar 255), description (varchar 255) file ccmps_scopes.sql
+The manage.php view file should only be named manage.php
+The navbar.php view file should only be named navbar.php
+The CRUD view file can follow the naming convention but not capitalized.
+The only file that should be captialized is the Controller file.
+
+Substitute the parent module name make the change "welcome" to "dms"
+except all "welcome/logout" and "welcome-ccmps/ccmphome" strings are ok do not make the change.  This primarily occurs:
+
+Controller: Docblock header around line 4 "WELCOME-CCMPSSCOPES"
+Parent module around lines 44 & Redirect around line 310 make the change. Also view paths around 89,133,169 make the change.
+
+Manage.php: Around lines 80,82,101,139 make the change.
+
+And the filename ending in "crud" around lines 5,30,117 make the change.
+
+And debug view echo paths.
+
+Point out if there are any other places I missed where you made the change.
+
+Instead of id, title, and description in the example, substitute the actual table structure(s)
+pasted in this prompt, or from the SQL file(s) for the table(s) or extract from the SQL from
+the SQL entire database, whichever is attached.
+
+Here is the list of the table(s) or I need the four files for:
+
+dms_filelibrary_departments
+dms_filelibrary_functions
+
+Please create them for download. Thanks! "
+end prompt
+
+ Claude:70 seconds Gemini: 40 secs to run
+However Gemini uses generic download names which could be helpful doing multiple tables at once. Lets see what each does with multiple tables requested at once.
+
+Controller: Parent module around lines 44 & Redirect around 310 change welcome to "dms". Also view paths around 89,133,169 change "welcome" to "dms".
+
+Manage.php: Around lines 80,82,101,139 change "welcome" to "dms".
+
+And the filename ending in "crud" around lines 5,30,117 change "welcome" to "dms".
+
+Create the directory structure for each set of four.
+May be best to create blank files as well and copy contents from
+the downloaded files to avoid file and directory permissions issues.
+Can run this from the terminal in the application root for good measure:
+chmod 644 modules/welcome/ccmpsaddresstypes/views/*.php
+
+If copying the files, sometimes the created crud file is capitalized...change to lowercase.
+If after copying the files from download using finder use terminal and go to the applications root (htdocs/sgap etc.) and run these permissions commands or you might get a 500 error:
+
+ls -la modules/welcome/ccmpsaddresstypes/Ccmpsaddresstypes.php - check permissions
+chmod 644 modules/welcome/ccmpsaddresstypes/Ccmpsaddresstypes.php - reset permissions if -rw-------
+The line above got Ccmpsaddresstypes to fire!
+
+ls -la modules/welcome/ccmpsaddresstypes/views/ - check permissions
+chmod 644 modules/welcome/ccmpsaddresstypes/views/*.php - set permissions
+
+If fails to render, ucomment these lines in index.php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+Extracting Errors from the Error Log
+
+In terminal navigate to the application root get last 30 entries:
+tail -30 /Applications/XAMPP/xamppfiles/logs/php_error_log
+
+see debugging.txt - 500 errors

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1E33">
+  <title>BPA Member Portal</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- ============================================================
+         LOGIN
+         ============================================================ -->
+    <section id="screen-login" class="screen active">
+      <div class="login-card">
+        <div class="horizon" aria-hidden="true"></div>
+        <h1 class="login-title">BPA Member Portal</h1>
+        <p class="login-subtitle">Sign in with your member username and password.</p>
+
+        <form id="login-form">
+          <div class="field">
+            <label for="login-username">Username</label>
+            <input type="text" id="login-username" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" autocomplete="current-password" required>
+          </div>
+          <p class="form-error" id="login-error"></p>
+          <button type="submit" class="btn-primary" id="login-submit">Sign in</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         HOME — embeds the web app's own live ccmphome page via the
+         mobile_bridge() endpoint, rather than maintaining a separate,
+         manually-synced copy of it. The bridge sets device_type = 2
+         server-side, which ccmphome.php's own existing logic already
+         uses to hide the sidebar — no changes needed to that page at
+         all. src is set dynamically in app.js once the member's JWT
+         is known (empty here since it can't be known until login).
+         ============================================================ -->
+    <section id="screen-home" class="screen">
+      <div class="screen-header">
+        <h1>Home</h1>
+        <p>The same live home page as the full site — notices, counts, everything.</p>
+      </div>
+      <div class="screen-body home-iframe-body">
+        <p class="loading-text" id="home-loading">Loading…</p>
+        <iframe id="home-iframe" class="home-iframe" title="BPA Home" style="display:none;"></iframe>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MY PROFILE
+         ============================================================ -->
+    <section id="screen-profile" class="screen">
+      <div class="screen-header">
+        <h1>My Profile</h1>
+        <p>Name, contact info, addresses, certificates, and aircraft — membership status and admin-only fields are managed by your chapter admin.</p>
+      </div>
+      <div class="screen-body">
+        <p class="loading-text" id="profile-loading">Loading your profile…</p>
+
+        <form id="profile-form" style="display:none;">
+
+          <h2 class="section-label">Membership</h2>
+          <div class="field">
+            <label>Member Number</label>
+            <input type="text" id="f-ccmp_number" disabled>
+          </div>
+          <div class="field">
+            <label>Member Type</label>
+            <input type="text" id="f-ccmp_type" disabled>
+          </div>
+          <div class="field">
+            <label>Current For</label>
+            <input type="text" id="f-current_year" disabled>
+          </div>
+
+          <h2 class="section-label">Name</h2>
+          <div class="field">
+            <label for="f-salutation">Salutation</label>
+            <select id="f-salutation" name="salutation">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-first_name">First name</label>
+            <input type="text" id="f-first_name" name="first_name">
+          </div>
+          <div class="field">
+            <label for="f-middle_name">Middle name</label>
+            <input type="text" id="f-middle_name" name="middle_name">
+          </div>
+          <div class="field">
+            <label for="f-last_name">Last name</label>
+            <input type="text" id="f-last_name" name="last_name">
+          </div>
+          <div class="field">
+            <label for="f-suffix">Suffix</label>
+            <input type="text" id="f-suffix" name="suffix">
+          </div>
+
+          <label class="checkbox-field-inline checkbox-readonly">
+            <input type="checkbox" id="f-eligible_voter" disabled>
+            Eligible voter
+          </label>
+
+          <h2 class="section-label">Contact</h2>
+          <div class="field">
+            <label for="f-call_sign">Call sign</label>
+            <input type="text" id="f-call_sign" name="call_sign">
+          </div>
+          <div class="field">
+            <label for="f-email_address">Email</label>
+            <input type="email" id="f-email_address" name="email_address">
+          </div>
+          <div class="field">
+            <label for="f-phone">Phone</label>
+            <input type="tel" id="f-phone" name="phone">
+          </div>
+          <div class="field">
+            <label for="f-mobile">Mobile</label>
+            <input type="tel" id="f-mobile" name="mobile">
+          </div>
+          <div class="field">
+            <label for="f-fax">Fax</label>
+            <input type="tel" id="f-fax" name="fax">
+          </div>
+          <div class="field">
+            <label for="f-url_string">Profile URL</label>
+            <input type="text" id="f-url_string" name="url_string">
+          </div>
+          <div class="field">
+            <label for="f-website">Website</label>
+            <input type="url" id="f-website" name="website">
+          </div>
+
+          <h2 class="section-label">Alternate Contact</h2>
+          <div class="field">
+            <label for="f-alternate_contact">Name</label>
+            <input type="text" id="f-alternate_contact" name="alternate_contact">
+          </div>
+          <div class="field">
+            <label for="f-alternate_phone">Phone</label>
+            <input type="tel" id="f-alternate_phone" name="alternate_phone">
+          </div>
+          <div class="field">
+            <label for="f-alternate_email">Email</label>
+            <input type="email" id="f-alternate_email" name="alternate_email">
+          </div>
+
+          <h2 class="section-label">Emergency Contact</h2>
+          <div class="field">
+            <label for="f-emergency_contact">Name</label>
+            <input type="text" id="f-emergency_contact" name="emergency_contact">
+          </div>
+          <div class="field">
+            <label for="f-emergency_phone">Phone</label>
+            <input type="tel" id="f-emergency_phone" name="emergency_phone">
+          </div>
+          <div class="field">
+            <label for="f-emergency_email">Email</label>
+            <input type="email" id="f-emergency_email" name="emergency_email">
+          </div>
+
+          <h2 class="section-label">Preferences</h2>
+          <label class="checkbox-field-inline"><input type="checkbox" id="f-donotcall" name="donotcall"> Do not call</label>
+          <label class="checkbox-field-inline"><input type="checkbox" id="f-emailoptout" name="emailoptout"> Email opt-out</label>
+          <label class="checkbox-field-inline"><input type="checkbox" id="f-directoryoptout" name="directoryoptout"> Directory opt-out</label>
+          <label class="checkbox-field-inline"><input type="checkbox" id="f-mail_notices" name="mail_notices"> Mail notices</label>
+
+          <h2 class="section-label">Mailing Address</h2>
+          <div class="field">
+            <label for="f-mailaddress1">Address line 1</label>
+            <input type="text" id="f-mailaddress1" name="mailaddress1">
+          </div>
+          <div class="field">
+            <label for="f-mailaddress2">Address line 2</label>
+            <input type="text" id="f-mailaddress2" name="mailaddress2">
+          </div>
+          <div class="field">
+            <label for="f-mailcity">City</label>
+            <input type="text" id="f-mailcity" name="mailcity">
+          </div>
+          <div class="field">
+            <label for="f-mailstate">State</label>
+            <select id="f-mailstate" name="mailstate">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-mailzip">Zip</label>
+            <input type="text" id="f-mailzip" name="mailzip">
+          </div>
+
+          <h2 class="section-label">Physical Address</h2>
+          <div class="field">
+            <label for="f-physaddress1">Address line 1</label>
+            <input type="text" id="f-physaddress1" name="physaddress1">
+          </div>
+          <div class="field">
+            <label for="f-physaddress2">Address line 2</label>
+            <input type="text" id="f-physaddress2" name="physaddress2">
+          </div>
+          <div class="field">
+            <label for="f-physcity">City</label>
+            <input type="text" id="f-physcity" name="physcity">
+          </div>
+          <div class="field">
+            <label for="f-physstate">State</label>
+            <select id="f-physstate" name="physstate">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-physzip">Zip</label>
+            <input type="text" id="f-physzip" name="physzip">
+          </div>
+
+          <h2 class="section-label">Billing Address</h2>
+          <div class="field">
+            <label for="f-billname">Name</label>
+            <input type="text" id="f-billname" name="billname">
+          </div>
+          <div class="field">
+            <label for="f-billaddress1">Address line 1</label>
+            <input type="text" id="f-billaddress1" name="billaddress1">
+          </div>
+          <div class="field">
+            <label for="f-billaddress2">Address line 2</label>
+            <input type="text" id="f-billaddress2" name="billaddress2">
+          </div>
+          <div class="field">
+            <label for="f-billcity">City</label>
+            <input type="text" id="f-billcity" name="billcity">
+          </div>
+          <div class="field">
+            <label for="f-billstate">State</label>
+            <select id="f-billstate" name="billstate">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-billzip">Zip</label>
+            <input type="text" id="f-billzip" name="billzip">
+          </div>
+
+          <h2 class="section-label">Shipping Address</h2>
+          <div class="field">
+            <label for="f-shipname">Name</label>
+            <input type="text" id="f-shipname" name="shipname">
+          </div>
+          <div class="field">
+            <label for="f-shipaddress1">Address line 1</label>
+            <input type="text" id="f-shipaddress1" name="shipaddress1">
+          </div>
+          <div class="field">
+            <label for="f-shipaddress2">Address line 2</label>
+            <input type="text" id="f-shipaddress2" name="shipaddress2">
+          </div>
+          <div class="field">
+            <label for="f-shipcity">City</label>
+            <input type="text" id="f-shipcity" name="shipcity">
+          </div>
+          <div class="field">
+            <label for="f-shipstate">State</label>
+            <select id="f-shipstate" name="shipstate">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-shipzip">Zip</label>
+            <input type="text" id="f-shipzip" name="shipzip">
+          </div>
+
+          <h2 class="section-label">Pilot Certificates and Ratings</h2>
+          <div class="field">
+            <label for="f-highest_certificate">Highest certificate</label>
+            <select id="f-highest_certificate" name="highest_certificate">
+              <option value="">-- Select --</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-certificate_number">Certificate number</label>
+            <input type="text" id="f-certificate_number" name="certificate_number">
+          </div>
+          <div class="field">
+            <label for="f-total_time">Total time</label>
+            <input type="text" inputmode="decimal" id="f-total_time" name="total_time">
+          </div>
+
+          <div class="checkbox-grid">
+            <label class="checkbox-field"><input type="checkbox" id="f-private" name="private"> Private</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-commercial" name="commercial"> Commercial</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-atp" name="atp"> ATP</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-cfi" name="cfi"> CFI</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-cfii" name="cfii"> CFII</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-mei" name="mei"> MEI</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-dpe" name="dpe"> DPE</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-bgi" name="bgi"> BGI</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-agi" name="agi"> AGI</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-instrument" name="instrument"> Instrument</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-se_land" name="se_land"> Single-engine land</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-me_land" name="me_land"> Multi-engine land</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-se_sea" name="se_sea"> Single-engine sea</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-me_sea" name="me_sea"> Multi-engine sea</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-rotocraft" name="rotocraft"> Rotorcraft</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-glider" name="glider"> Glider</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-balloon" name="balloon"> Balloon</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-airship" name="airship"> Airship</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-drone" name="drone"> Drone</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-dispatcher" name="dispatcher"> Dispatcher</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-atc" name="atc"> ATC</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-ap" name="ap"> A&amp;P</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-ia" name="ia"> IA</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-military_pilot" name="military_pilot"> Military pilot</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-military_maint" name="military_maint"> Military maintenance</label>
+            <label class="checkbox-field"><input type="checkbox" id="f-former_military" name="former_military"> Former military</label>
+          </div>
+
+          <label class="checkbox-field-inline checkbox-readonly">
+            <input type="checkbox" id="f-hall_of_fame" disabled>
+            Hall of Fame
+          </label>
+
+          <div class="field">
+            <label for="f-ap_number">A&amp;P number</label>
+            <input type="text" id="f-ap_number" name="ap_number">
+          </div>
+          <div class="field">
+            <label for="f-maintenance">Maintenance notes</label>
+            <input type="text" id="f-maintenance" name="maintenance">
+          </div>
+          <div class="field">
+            <label for="f-other_crewmember">Other crewmember role</label>
+            <input type="text" id="f-other_crewmember" name="other_crewmember">
+          </div>
+          <div class="field">
+            <label for="f-ocm_certnum">Other crewmember cert #</label>
+            <input type="text" id="f-ocm_certnum" name="ocm_certnum">
+          </div>
+          <div class="field">
+            <label for="f-other_faa_cert">Other FAA certificate</label>
+            <input type="text" id="f-other_faa_cert" name="other_faa_cert">
+          </div>
+          <div class="field">
+            <label for="f-ofc_certnum">Other FAA cert #</label>
+            <input type="text" id="f-ofc_certnum" name="ofc_certnum">
+          </div>
+          <div class="field">
+            <label for="f-cred_notes">Credential notes</label>
+            <input type="text" id="f-cred_notes" name="cred_notes">
+          </div>
+
+          <h2 class="section-label">Aircraft</h2>
+          <p class="field-note">Add every aircraft you own or regularly fly. Tap "Remove" to delete one, or leave a blank row unfilled to ignore it.</p>
+          <div id="aircraft-list"></div>
+          <button type="button" class="btn-secondary" id="add-aircraft-btn">+ Add aircraft</button>
+
+          <p class="form-error" id="profile-error"></p>
+          <p class="form-success" id="profile-success"></p>
+          <button type="submit" class="btn-primary" id="profile-save">Save changes</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         MY CHAPTER
+         ============================================================ -->
+    <section id="screen-chapter" class="screen">
+      <div class="screen-header">
+        <h1>My Chapter</h1>
+        <p>Current members of your own chapter.</p>
+      </div>
+      <div class="screen-body">
+        <input type="search" class="search-input" id="chapter-search" placeholder="Search by name or call sign" style="display:none;">
+        <p class="loading-text" id="chapter-loading">Loading your chapter roster…</p>
+        <ul class="member-list" id="chapter-list"></ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         DIRECTORY
+         ============================================================ -->
+    <section id="screen-directory" class="screen">
+      <div class="screen-header">
+        <h1>Directory</h1>
+        <p>All current members, every chapter.</p>
+      </div>
+      <div class="screen-body">
+        <input type="search" class="search-input" id="directory-search" placeholder="Search by name or call sign" style="display:none;">
+        <p class="loading-text" id="directory-loading">Loading the member directory…</p>
+        <ul class="member-list" id="directory-list"></ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CHANGE PASSWORD
+         ============================================================ -->
+    <section id="screen-changepw" class="screen">
+      <div class="screen-header">
+        <h1>Change Password</h1>
+        <p>Choose a new password of at least 8 characters.</p>
+      </div>
+      <div class="screen-body">
+        <form id="changepw-form">
+          <div class="field">
+            <label for="f-current_password">Current password</label>
+            <input type="password" id="f-current_password" autocomplete="current-password" required>
+          </div>
+          <div class="field">
+            <label for="f-new_password">New password</label>
+            <input type="password" id="f-new_password" autocomplete="new-password" required>
+          </div>
+          <div class="field">
+            <label for="f-confirm_password">Confirm new password</label>
+            <input type="password" id="f-confirm_password" autocomplete="new-password" required>
+          </div>
+          <p class="form-error" id="changepw-error"></p>
+          <p class="form-success" id="changepw-success"></p>
+          <button type="submit" class="btn-primary" id="changepw-save">Change password</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         TAB BAR
+         ============================================================ -->
+    <nav class="tab-bar hidden" id="tab-bar">
+      <button class="tab-btn active" data-screen="home">Home</button>
+      <button class="tab-btn" data-screen="profile">Profile</button>
+      <button class="tab-btn" data-screen="chapter">Chapter</button>
+      <button class="tab-btn" data-screen="directory">Directory</button>
+      <button class="tab-btn" data-screen="changepw">Change PW</button>
+      <button class="tab-btn" id="logout-btn">Sign Out</button>
+    </nav>
+
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

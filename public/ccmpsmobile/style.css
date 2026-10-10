@@ -1,0 +1,565 @@
+/* ============================================================
+   style.css — BPA Member Portal
+   ============================================================
+   Design grounded in the actual subject matter (a pilots'
+   organization) rather than generic SaaS defaults: deep navy standing
+   in for high-altitude sky, amber for instrument-gauge needles/warning
+   lights, flat horizon-line dividers instead of shadowed card kits.
+   "Instrument panel, not brochure" — the amber accent is reserved for
+   things you can actually act on, never used decoratively.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --navy-base: #0B1E33;
+  --navy-surface: #13293D;
+  --navy-surface-raised: #1B3550;
+  --amber: #E8A33D;
+  --amber-dim: #B77F2C;
+  --green-current: #4A9D6F;
+  --red-alert: #C1554A;
+  --text-primary: #F5F3EE;
+  --text-muted: #8A9BAE;
+  --divider: rgba(232, 163, 61, 0.22);
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1.25rem;
+  --space-lg: 2rem;
+  --space-xl: 3rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--navy-base);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button, input, textarea, select {
+  font-family: inherit;
+}
+
+/* Visible keyboard focus everywhere — never suppressed */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------
+   App shell
+   ------------------------------------------------------------ */
+
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.screen {
+  display: none;
+  flex: 1;
+  flex-direction: column;
+}
+
+.screen.active {
+  display: flex;
+}
+
+/* ------------------------------------------------------------
+   Login screen
+   ------------------------------------------------------------ */
+
+#screen-login {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-lg);
+  text-align: left;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+}
+
+.horizon {
+  width: 100%;
+  height: 120px;
+  margin-bottom: var(--space-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.horizon::before {
+  content: '';
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  top: 62%;
+  height: 2px;
+  background: var(--amber);
+  transform: rotate(-3deg);
+}
+
+.horizon::after {
+  content: '✈';
+  position: absolute;
+  left: 50%;
+  top: 62%;
+  transform: translate(-50%, -50%) rotate(-3deg);
+  font-size: 1.6rem;
+  color: var(--amber);
+}
+
+.login-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.75rem;
+  margin: 0 0 var(--space-xs);
+  line-height: 1.2;
+}
+
+.login-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 var(--space-lg);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------
+   Forms (shared: login + profile)
+   ------------------------------------------------------------ */
+
+.field {
+  margin-bottom: var(--space-md);
+}
+
+.field label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.35rem;
+  font-weight: 500;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  background: var(--navy-surface);
+  border: 1px solid var(--divider);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.8rem 0.9rem;
+  font-size: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.field input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.field input:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.field-note {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  margin: -0.5rem 0 var(--space-md);
+}
+
+/* ------------------------------------------------------------
+   Checkbox grid (Pilot Certificates and Ratings)
+   ------------------------------------------------------------ */
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 0.8rem;
+  margin-bottom: var(--space-md);
+}
+
+.checkbox-field {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.checkbox-field input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--amber);
+}
+
+/* ------------------------------------------------------------
+   Aircraft cards
+   ------------------------------------------------------------ */
+
+.aircraft-card {
+  background: var(--navy-surface);
+  border: 1px solid var(--divider);
+  border-radius: 8px;
+  padding: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.aircraft-card .field {
+  margin-bottom: 0.6rem;
+}
+
+.aircraft-card-remove {
+  width: 100%;
+  background: none;
+  color: var(--red-alert);
+  border: 1px solid var(--red-alert);
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.3rem;
+}
+
+.checkbox-field-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-bottom: 0.6rem;
+}
+
+.checkbox-field-inline input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--amber);
+}
+
+/* ------------------------------------------------------------
+   Read-only checkboxes (Eligible Voter, Hall of Fame) — a custom,
+   hand-drawn checkbox instead of accent-color, since accent-color
+   can't guarantee a specific checkmark color (the browser picks its
+   own contrasting color automatically, usually white, which was hard
+   to see against the amber background). Safe to fully custom-style
+   since these are permanently disabled — no interactive states
+   (hover/focus/active) to worry about. Deliberately a separate class
+   from .checkbox-field-inline, which the (editable) aircraft
+   "own_rent" checkbox also uses and wasn't meant to change.
+   ------------------------------------------------------------ */
+
+.checkbox-readonly input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1px solid var(--amber-dim);
+  border-radius: 4px;
+  background: var(--navy-surface);
+  position: relative;
+  opacity: 1; /* override the browser's default dimming of disabled inputs */
+  cursor: default;
+}
+
+.checkbox-readonly input[type="checkbox"]:checked {
+  background: var(--amber);
+  border-color: var(--amber);
+}
+
+.checkbox-readonly input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--amber);
+  color: var(--navy-base);
+  border: none;
+  border-radius: 6px;
+  padding: 0.85rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:active {
+  background: var(--amber-dim);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.btn-secondary {
+  width: 100%;
+  background: none;
+  color: var(--amber);
+  border: 1px dashed var(--amber-dim);
+  border-radius: 6px;
+  padding: 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: var(--space-md);
+}
+
+.btn-secondary:active {
+  background: var(--navy-surface);
+}
+
+.form-error {
+  color: var(--red-alert);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 var(--space-md);
+  min-height: 1.2em;
+}
+
+.form-success {
+  color: var(--green-current);
+  font-size: 0.85rem;
+  margin: -0.5rem 0 var(--space-md);
+  min-height: 1.2em;
+}
+
+/* ------------------------------------------------------------
+   Tab screens (Profile / Chapter / Directory)
+   ------------------------------------------------------------ */
+
+.screen-header {
+  padding: var(--space-lg) var(--space-md) var(--space-md);
+  border-bottom: 1px solid var(--divider);
+}
+
+.screen-header h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.screen-header p {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin: 0.25rem 0 0;
+}
+
+.screen-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-md) + 72px); /* clears the tab bar */
+}
+
+/* ------------------------------------------------------------
+   Home screen — the embedded ccmphome iframe should fill all
+   available space flush to the edges (unlike every other screen's
+   .screen-body), since it's someone else's full page layout, not
+   this app's own padded content.
+   ------------------------------------------------------------ */
+
+.home-iframe-body {
+  padding: 0;
+  padding-bottom: 72px; /* still clears the tab bar */
+  display: flex;
+  flex-direction: column;
+}
+
+.home-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  flex: 1;
+}
+
+.section-label {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--amber);
+  margin: var(--space-lg) 0 var(--space-sm);
+}
+
+.section-label:first-child {
+  margin-top: 0;
+}
+
+/* ------------------------------------------------------------
+   Roster / directory lists
+   ------------------------------------------------------------ */
+
+.member-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.member-row {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.member-row:last-child {
+  border-bottom: none;
+}
+
+.member-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.member-meta {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 0.15rem;
+}
+
+.member-meta a {
+  color: var(--amber);
+  text-decoration: none;
+}
+
+.member-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: 0.5rem;
+}
+
+.member-actions a {
+  font-size: 0.8rem;
+  color: var(--navy-base);
+  background: var(--amber);
+  padding: 0.35rem 0.7rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  text-align: left;
+  padding: var(--space-lg) 0;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------
+   Search input (Chapter / Directory)
+   ------------------------------------------------------------ */
+
+.search-input {
+  width: 100%;
+  background: var(--navy-surface);
+  border: 1px solid var(--divider);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  margin-bottom: var(--space-md);
+  -webkit-appearance: none;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* ------------------------------------------------------------
+   Bottom tab bar
+   ------------------------------------------------------------ */
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  background: var(--navy-surface);
+  border-top: 1px solid var(--divider);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.tab-bar.hidden {
+  display: none;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.62rem;
+  font-weight: 500;
+  padding: 0.9rem 0.05rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: var(--amber);
+}
+
+/* ------------------------------------------------------------
+   Loading / status
+   ------------------------------------------------------------ */
+
+.loading-text {
+  color: var(--text-muted);
+  padding: var(--space-lg) 0;
+}
+
+.logout-link {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  background: none;
+  border: none;
+  padding: 0.3rem 0;
+  cursor: pointer;
+  font-family: inherit;
+}

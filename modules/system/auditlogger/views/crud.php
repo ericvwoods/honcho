@@ -1,0 +1,365 @@
+<?php 
+
+  include('navbar.php');
+
+?> 
+
+            <div class="wrapper wrapper-content animated fadeInRight">
+            <div class="row">
+               <div class="col-lg-12"> 
+        <div class="ibox-content">
+            <div class="row"> 
+
+                <?php if(strlen($picture) > 0): ?> 
+                        <div class="col-md-1">   
+                            <img alt="user picture" class="rounded-circle" src="<?= BASE_URL?>ccmps_photos_thumbnails/<?= $recid ?>/<?= $picture ?>"/> 
+                        <!--    <img alt="user picture" class="rounded-circle" src="<= BASE_URL?>honcho-system_accounts_module/assets/user_pictures/<?= $picture ?>"/>  original location--> 
+                        </div> <!-- end col -->
+
+                <?php else: ?> <!-- No pic  -->
+                        <div class="col-md-1">  
+                        <br> 
+                        <div class="row">
+                            <div class="col-md-1">  
+                            </div>
+                          <a href="#" title="">
+                                            <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+                                        </a>
+                       
+                      </div>
+                      <br>
+
+                      </div> <!-- end col -->
+                <?php endif; ?>
+
+                <div class="col-md-9">
+                    <br>
+                    <?php if($_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'mmyadsv' ): ?> 
+                    <br />                           
+                            <h1><p><?= $header ?></p></h1>
+                        <!--    <h2><p><?= $subheader ?></p></h2> -->
+                    <?php else: ?>
+                            <?php if($_SESSION['admode'] == 'cmmadsc'): ?> 
+                                <h1><p><?= $header ?></p></h1>
+                                <h2><p><?= $subheader ?></p></h2>                        
+                            <?php else: ?> <!-- momads chapter    -->
+                               
+                                <h1><p><?= $header ?></p></h1>
+                                <h2><p><?= $subheader ?></p></h2>                                               
+                            <?php endif; ?> 
+                    <?php endif; ?> 
+
+                </div> <!-- end column -->
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li>
+                         <!--   <php if(strlen($picture) > 0): ?> -->
+                                <div class="col-md-2">   
+                                    <h1 class="logo text-center">
+                                        <a href="#" title="">
+                                         <!--   <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"> -->
+                                        </a>
+                                    </h1>
+                                </div> <!-- end col -->
+                        <!--    <php endif; ?> -->
+
+                        </li>
+                    </ul>
+            </div> <!-- end row -->
+
+
+
+        </div>
+
+       <br>                
+
+                        <div class="faq-item">
+                            <div class="row">
+                                <div class="col-md-12">
+                                     <div class="row">
+                                    <div class="col-md-2"> 
+                                    <?php if($_SESSION['admode'] == 'sysadmin' ): ?> 
+                    <a data-toggle="collapse" href="#faq1" class="faq-question">Log Entry <?= $recid ?></a>
+                                    <?php else: ?>
+                    <a data-toggle="collapse" href="#faq1" class="faq-question">  ''</a>
+                                    <?php endif; ?>                  
+                                    </div> <!-- end col -->
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <?php if($_SESSION['tab'] == 1): ?>
+                                        <div id="faq1" class="panel-collapse">
+                                    <?php else: ?>
+                                        <div id="faq1" class="panel-collapse">
+                                    <?php endif; ?> 
+                                        <div class="faq-answer">
+                                    <div class="ibox-content"> 
+
+                                                                    <!-- Show flash message then reset it to blank  -->
+                            <?= flashdata('<div style="font-weight: bold; color: red;">', '</div>'); 
+                            $flash_msg = '';
+                            set_flashdata($flash_msg); ?> 
+
+<!-- <php if() { ?>  must use php and not shorthand = when using IF or wont work. = works everywhere else when just returning a value  -->
+<!-- Also question marks are still read during execution if followed by php even when commented out and will stop rendering of the page -->                              
+                                          
+                           <strong> <?= validation_errors() ?></strong>
+                           
+                           <!-- If updating or creating else viewing  -->
+                                    <?php if($_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'mmyadsu' || $_SESSION['admode'] == 'cmmadsc' || $_SESSION['admode'] == 'cmmadsu' || $_SESSION['admode'] == 'momadsu' || $_SESSION['admode'] == 'momadsc'): ?> <!-- Updating or creating  -->     
+
+<!--<php if($_SESSION['tab'] == 1): ?> -->
+
+                                 <form  method = "post" action="<?= BASE_URL ?>cms-notices/submit/<?= $recid ?>">
+                                   
+                                        <div class="row"> 
+                                            <div class="col-md-12">
+                                                <br>
+                                                    <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Active/Visible</h<?= $_SESSION['fontsize'] ?>>  </strong></label>
+                                                          <div class="col-sm-1"><select class="form-control m-b" name="active" Value="<?= $active ?>" >
+                                                            <?php if($active == 1) { ?>
+                                                                <option selected value=1>Yes</option>
+                                                                <option value=0>No</option>
+                                                            <?php }else{ ?>
+                                                                <option value=1>Yes</option>
+                                                                <option selected value=0>No</option>
+                                                            <?php } ?>
+                                                            </select>
+                                                           </div>                                              
+                                                        </div>                                   <!--       <h<?= $_SESSION['fontsize'] ?>>       </h<?= $_SESSION['fontsize'] ?>>        -->
+
+                                               <!--      <div class="form-group  row"><label class="col-sm-2 col-form-label" hidden><strong></strong></label> -->
+
+                                                         <div class="col-sm-2"><input name="ccmp_id" type="text" class="form-control" value="<?= $ccmp_id ?>" hidden></div>
+                                               <!--     </div> -->
+
+                                                    <?php if($_SESSION['admode'] == 'mmyadsu' || $_SESSION['admode'] == 'mmyadsc'): ?>
+                                                    <!-- How to handle not updatable but still pass current value to the save   -->
+                                                 <!--    <div class="form-group  row"><label class="col-sm-2 col-form-label" hidden><strong></strong></label> -->
+
+                                                         <div class="col-sm-2"><input name="approved" type="text" class="form-control" value="<?= $approved ?>" hidden></div>
+                                              <!--      </div> -->
+                                                    <!-- END --How to handle not updatable by still pass current value to the save   -->
+                                                    <?php else: ?>                                        
+                                                      <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Approved</h<?= $_SESSION['fontsize'] ?>>  </strong></label>
+                                                          <div class="col-sm-1"><select class="form-control m-b" name="approved" Value="<?= $approved ?>" >
+                                                            <?php if($active == 1) { ?>
+                                                                <option selected value=1>Yes</option>
+                                                                <option value=0>No</option>
+                                                            <?php }else{ ?>
+                                                                <option value=1>Yes</option>
+                                                                <option selected value=0>No</option>
+                                                            <?php } ?>
+                                                            </select>
+                                                           </div>                                              
+                                                        </div>
+                                                    <?php endif; ?>
+
+                                                        <?php if($_SESSION['admode'] == 'mmyadsu' || $_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'cmmadsu' || $_SESSION['admode'] == 'cmmadsc' || $_SESSION['admode'] == 'momadsu' || $_SESSION['admode'] == 'momadsc'): ?>
+                                              
+                                                    <!--     <div class="col-sm-2"><input name="scope" type="text" class="form-control" value="<?= $scope ?>" hidden></div> -->
+
+                                                         <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Scope</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                                <div class="col-sm-2"><select class="form-control m-b" name="scope" >
+                                                                <!-- Loop through the dropdown array passed in $data  -->
+                                                                <?php foreach($scopes as $row) { ?>
+                                                                <!-- If $row->id = currently selected scope id then pre-select that option -->
+                                                                    <?php if($row->id == $scope): ?> 
+                                                                        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php else: ?> <!-- otherwise just create the option -->
+                                                                        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php endif; ?>
+                                                                 <?php } ?>                                    
+                                                                 </select>
+                                                                </div>
+                                                                </div>
+
+                                                        <?php else: ?>  <!-- Not a member, must be chapter admin or member admin  -->
+                                                            <?php if($recid > 0):  ?>   <!-- Updating  - If new the chapter is assigned to the same one as the chapter admin -->
+
+                                                                <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Scope</h<?= $_SESSION['fontsize'] ?>></strong><a style="color:Red;">*</a></label>
+                                                                <div class="col-sm-8"><select class="form-control m-b" name="scope" >
+                                                                <!-- Loop through the dropdown array passed in $data  -->
+                                                                <?php foreach($scopes as $row) { ?>
+                                                                <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                                                                    <?php if($row->id == $scope): ?> 
+                                                                        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php else: ?> <!-- otherwise just create the option -->
+                                                                        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php endif; ?>
+                                                                 <?php } ?>                                    
+                                                                 </select>
+                                                                </div>
+                                                                </div>
+                                                 
+                                                            <?php else: ?> <!-- Adding/Creating  -->
+                                                 
+                                                                <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Scope</h<?= $_SESSION['fontsize'] ?>></strong><a style="color:Red;">*</a></label>
+                                                                <div class="col-sm-8"><select class="form-control m-b" name="scope" >
+                                                                <!-- Loop through the dropdown array passed in $data  -->
+                                                                <?php foreach($scopes as $row) { ?>
+                                                                <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                                                                    <?php if($row->id == $scope): ?> 
+                                                                        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php else: ?> <!-- otherwise just create the option -->
+                                                                        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                                                                    <?php endif; ?>
+                                                                 <?php } ?>                                    
+                                                                 </select>
+                                                                </div>
+                                                                </div>
+                                                     
+                                                         <?php endif; ?> 
+                                                        <?php endif; ?> 
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label style="color:RoyalBlue;""><strong><h<?= $_SESSION['fontsize'] ?>> Type</h<?= $_SESSION['fontsize'] ?>></strong></label>
+
+                                                        <div class="col-sm-2"><input name="title" type="text" class="form-control form-control-sm" value="<?= $type ?>" placeholder=""required></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>>Action</h<?= $_SESSION['fontsize'] ?>></strong></label>
+
+                                                        <div class="col-sm-4"><input name="action" type="text" class="form-control form-control-sm" value="<?= $action ?>" placeholder="" required></div>
+                                                    </div> 
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Function</h<?= $_SESSION['fontsize'] ?>></strong></label>
+
+                                                        <div class="col-sm-3"><input name="function" type="text" class="form-control form-control-sm" value="<?= $function ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 1</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str1" type="text" class="form-control form-control-sm" value="<?= $str1 ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 2</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str2" type="text" class="form-control form-control-sm" value="<?= $str2 ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 3</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str3" type="text" class="form-control form-control-sm" value="<?= $str3 ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 4</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str4" type="text" class="form-control form-control-sm" value="<?= $str4 ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 5</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str5" type="text" class="form-control form-control-sm" value="<?= $str5 ?>" ></div>
+                                                    </div>
+
+                                                    <div class="form-group row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Str 6</h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                        <div class="col-sm-1"><input name="str6" type="text" class="form-control form-control-sm" value="<?= $str6 ?>" ></div>
+                                                    </div>
+
+                                            </div> <!-- end col-12 -->
+
+
+                                        </div> <!-- end row -->
+
+
+                                    <?php if($_SESSION['admode'] == 'sysadmin'): ?>  <!-- If any of the roles cancel an update show the record  -->
+                                        <div>
+                                        <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save Changes</h<?= $_SESSION['fontsize'] ?>></button>
+                                        
+                                        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-notices/view/<?= $recid ?>/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> <!-- href="<?= BASE_URL ?>welcome-ccmps/mydata/ccmpu"   -->
+                                        </div>
+
+                                    <?php elseif($_SESSION['admode'] == 'mmyadsc' ): ?> <!-- Return to the manage page you came from -->
+                                            
+                                    <?php else: ?> 
+
+                                    <?php endif; ?> 
+
+
+<!-- Viewing Tab 1-->  <?php else: ?>  <!-- Viewing Tab 1-->
+                                                    
+                                        <div class="row"> 
+                                            <div class="col-md-12">
+
+                                                <br>
+
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Actor</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $actor ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Type</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $type ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Action</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $action ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Function</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-8"><h<?= $_SESSION['fontsize'] ?>><?= $function ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>
+
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 1</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str1 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>                                                
+                                                
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 2</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str2 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>                                                 
+                                                
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 3</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str3 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>   
+                                                
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 4</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str4 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>   
+                                                
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 5</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str5 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>   
+                                                
+                                                <div class="form-group row"><label class="col-lg-2 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Str 6</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $str6 ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>   
+
+
+                                            </div> <!-- end col-6 -->
+
+                                         <!--   <div class="col-md-6"> -->
+                                                                       
+                                          <!--  </div> --> <!-- end 2nd column -->
+
+                                        </div> <!-- end row -->
+
+                                <!--  <div class="btn-group"> -->
+
+                                <?php if($_SESSION['admode'] == 'sysadmin'): ?>
+                                <div>
+                                    <!--    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>cms-notices/update/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i>  Update</h<?= $_SESSION['fontsize'] ?>></a>  -->
+                                        <a class="btn btn-outline btn-warning"  type="button"  href="<?= BASE_URL ?>security-auditlogger/manage/sysadmin" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-list"></i> Back</h<?= $_SESSION['fontsize'] ?>></a>
+                                </div>
+
+                                <?php endif; ?> 
+
+                                </div> 
+
+
+
+                <?php endif; ?> <!--  End Viewing Tab 1  -->
+
+                                    </div> <!-- end ibox -->
+
+                              
+                                </div> <!-- End Panel Body -->                              
+                            
+
+                            </div> <!-- End Tab 1 Panel -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+<br>
+                    </div> <!-- ibox small border bottom -->
+
+
+                </div>
+        
+        </div> <!-- new ibox  -->   
+                
+

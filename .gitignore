@@ -1,0 +1,47 @@
+# --- Secrets and per-install settings (move to .env; see DO-04) ---
+.env
+config/config.php
+config/database.php
+config/*.org
+config/*.org.php
+
+# --- Database dumps (may hold member data) ---
+/ccmps.sql
+/ccmps_aux.sql
+
+# --- User uploads (live on the server, backed up separately) ---
+/public/uploads/*
+!/public/uploads/ccmp_upload_form.xlsx
+/modules/dms/dmslibrary/assets/*
+!/modules/dms/dmslibrary/assets/docs/
+/modules/dms/dmslibrary/assets/docs/*
+!/modules/dms/dmslibrary/assets/docs/dms-user-guide.docx
+/modules/cms/ccmpslibrary/assets/*
+/modules/trongate_pages/images/uploads/*
+# Member/user photos: modules/<module>/assets/<record id>/
+/modules/**/assets/[0-9]*/
+!/modules/trongate_pages/images/uploads/index.php
+
+# --- Theme files the app never loads ---
+/public/themes/inspinia.zip
+/public/themes/inspinia/Utils/
+
+# --- Backups and archives (the live file is the one without a suffix) ---
+* copy.*
+* copy
+*_old.php
+*.last
+*.zip
+*_pre_*.php
+*_pretrans.php
+/legacy views/
+/modules/welcome.org/
+/modules/welcome/ccmps/prodassetstemptransfer/
+preclaudearchive/
+
+# --- Local tooling ---
+.DS_Store
+.claude/settings.local.json
+/debugging
+node_modules/
+/docs/developer-guide/*.docx

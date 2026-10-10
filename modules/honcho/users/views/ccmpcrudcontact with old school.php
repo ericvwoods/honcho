@@ -1,0 +1,2656 @@
+
+<!-- *********************************************************************** -->
+<!-- ****** Begin Boiler Plate for 1st CRUD Item containing Form Open ****** -->
+<!-- *********************************************************************** -->
+ <!--
+    <?php if(DEBUGGING == true): ?> 
+ <?php
+    echo('$_SESSION');
+    echo('<br>');
+    echo('<h3>$_SESSION</h3>');
+    json($_SESSION);
+    echo('<h3>$data</h3>');
+    json($data);
+ ?>
+ <?php endif; ?> -->
+<style>
+        .special {
+  font-weight: bold !important;
+  color: #fff !important;
+  background: #bc0000 !important;
+  text-transform: uppercase;
+}
+ </style>
+
+ <!-- Language  -->
+
+<?php if($_SESSION['language'] == 1): ?>
+
+<?php elseif($_SESSION['language'] == 2): ?> 
+
+<?php endif; ?> 
+
+<div class="faq-item"> <!-- Ends at end of file -->
+
+        <div class="row"> <!-- Row One  -->
+            <div class="col-md-12">
+                 <div class="row">
+
+                    <div class="col-md-12">
+                        <!-- #faq? must be unique but not in any order  -->
+              <center><a data-toggle="collapse" href="#faq1" class="faq-question" style="color: <?= CCMPS_HM_TAB_TITLE_CLR ?>;"> <h2><span style="color: <?= CCMPS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-address-card-o fa-1x fa-1x"></i></span><strong> <?= CCMP ?> Profile </strong> <i class="fa fa-unsorted fa-1x" style="color: <?= CCMPS_HM_TAB_CARET_CLR ?>;"></i></h2>  </a> </center>
+
+                    </div> <!-- end col -->
+                </div> <!-- row -->
+            </div> 
+        </div><!-- End Row One  -->
+
+        <div class="row"> <!-- Begin Row Two - Ends near end of file -->
+            <div class="col-lg-12"> <!--   -->
+
+                <!-- $_SESSION['ccmp_active_window'] must be equal to #faq number  -->
+                <?php if($_SESSION['ccmp_active_window'] == 1): ?>
+                    <div id="faq1" class="panel-collapse">
+                <?php else: ?>
+                    <div id="faq1" class="panel-collapse collapse">
+                <?php endif; ?> 
+                    <div class="faq-answer">
+                <div class="ibox-content"> 
+
+        <!-- Show flash message then reset it to blank  -->
+        <?php if($_SESSION['ccmp_active_window'] == 1): ?> <!-- can only show the flashmsg once on a page - show in the open section -->
+   <?php if($_SESSION['flashmsgcolor'] == 1): ?> 
+     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: lightseagreen;">', '</div>'); 
+     $flash_msg = '';
+     set_flashdata($flash_msg); ?> 
+   <?php else: ?>
+     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>'); 
+     $flash_msg = '';
+     set_flashdata($flash_msg); ?> 
+   <?php endif; ?>
+        <?php endif; ?> 
+
+
+       <strong> <?= validation_errors() ?></strong>
+       <br>                        
+<!-- *********************************************************************** -->
+<!-- ************************* End Boiler Plate **************************** -->
+<!-- *********************************************************************** -->   
+
+<!-- *********************************************************************** -->
+<!-- *************************** Begin Content ***************************** -->
+<!-- *********************************************************************** -->                 
+
+<?php if($_SESSION['mobileformat'] == 1 ): ?>  <!-- fg = form group -->
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-4' ?>  <!-- was 5  -->
+    <?php   $yesnodiv       = 'col-sm-2' ?>      
+    <?php   $labelclass     = 'col-sm-3 col-form-label' ?>
+    <?php   $inputdivclass  = 'col-sm-4' ?>
+    <?php   $inputstyle     = 'height: 35px; font-size: 15px;' ?> 
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?> 
+    <?php   $valueclass     = 'col-sm-3' ?>
+    <?php   $selectstyle    = 'height: 35px; font-size: 15px;' ?> 
+
+<?php else: ?>    
+    <?php if($_SESSION['fontsize'] == 1 ): ?> <!-- Largest Font h1  -->
+    <?php   $fgdivclass     = 'form-group  row' ?>                 <!-- form group tag for fields -->
+    <?php   $fgseldiv       = 'col-sm-7' ?>                        <!-- col width of regular dropdown boxes  -->
+    <?php   $yesnodiv       = 'col-sm-5' ?>                        <!-- col width of yes/no dropdown boxes  -->     
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>         <!-- col width of field labels  -->
+    <?php   $inputdivclass  = 'col-sm-7' ?>                        <!-- col width of input boxes  -->
+    <?php   $inputstyle     = 'height: 50px; font-size: 25px;' ?>  <!-- height of input boxes & fontsize -->
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?>           <!-- label color -->
+    <?php   $valueclass     = 'col-sm-6' ?>                        <!-- Value widths (may be different from view section) -->
+    <?php   $selectstyle    = 'height: 50px; font-size: 28px;' ?>  <!-- height of regular dropdown boxes & fontsize  -->
+
+    <?php elseif($_SESSION['fontsize'] == 2): ?> <!-- Medium Font h2  -->
+
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-5' ?>
+    <?php   $yesnodiv       = 'col-sm-5' ?>      
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>
+    <?php   $inputdivclass  = 'col-sm-6' ?>
+    <?php   $inputstyle     = 'height: 40px; font-size: 20px;' ?> 
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?> 
+    <?php   $valueclass     = 'col-sm-6' ?>
+    <?php   $selectstyle    = 'height: 40px; font-size: 20px;' ?>
+    
+    <?php elseif($_SESSION['fontsize'] == 3): ?> <!-- Smallest Font h3  -->
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-7' ?>                        <!-- col width of regular dropdown boxes  -->
+    <?php   $yesnodiv       = 'col-sm-4' ?>                        <!-- col width of yes/no dropdown boxes  -->     
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>         <!-- col width of field labels  -->
+    <?php   $inputdivclass  = 'col-sm-7' ?>                        <!-- col width of input boxes  -->
+    <?php   $inputstyle     = 'height: 35px; font-size: 15px;' ?> 
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?> 
+    <?php   $valueclass     = 'col-sm-6' ?>   
+    <?php   $selectstyle    = 'height: 35px; font-size: 15px;' ?>
+    <?php endif; ?>
+<?php endif; ?>
+
+<?php if($_SESSION['mobileformat'] == 1 ): ?>  <!-- fg = form group -->
+<!--  default --> <?php $vfgdivclass  = 'form-group row' ?>   <!-- Class of the label/value combo  -->
+<!--  default --> <?php $vlabelclass  = 'col-lg-4' ?>         <!-- Width of the label column  -->
+<!--  default --> <?php $vlabelstyle  = 'color:cornflowerblue;' ?> <!-- Style of the view labels  -->
+<!--  default --> <?php $vvalueclass1 = 'col-sm-5' ?>         <!-- Width of value column  -->           
+<!--  default --> <?php $vvalueclass2 = 'col-sm-7' ?>         <!-- Width of value column  --> 
+
+<?php else: ?>
+
+    <?php if($_SESSION['fontsize'] == 1 ): ?> <!-- Largest Font h1  -->
+    <?php   $vfgdivclass     = 'form-group  row' ?>                 <!-- form group tag for fields -->   
+    <?php   $vlabelclass     = 'col-sm-4 col-form-label' ?>         <!-- col width of field labels  -->
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?>           <!-- label color -->
+    <?php   $vvalueclass1    = 'col-sm-6' ?>                        <!-- Value widths -->
+    <?php   $vvalueclass2    = 'col-sm-6' ?> <!-- not used  -->
+
+    <?php elseif($_SESSION['fontsize'] == 2): ?> <!-- Medium Font h2  -->
+
+    <?php   $vfgdivclass     = 'form-group  row' ?>
+    <?php   $vlabelclass     = 'col-sm-4 col-form-label' ?>
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?>
+    <?php   $inputdivclass  = 'col-sm-7' ?>                        <!-- col width of input boxes  -->
+    <?php   $vvalueclass1    = 'col' ?>
+    <?php   $vvalueclass2    = 'col-sm-5' ?>     <!-- not used  -->
+    
+    <?php elseif($_SESSION['fontsize'] == 3): ?> <!-- Smallest Font h3  -->
+    <?php   $vfgdivclass     = 'form-group  row' ?>     
+    <?php   $vlabelclass     = 'col-sm-3 col-form-label' ?>
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?> 
+    <?php   $vvalueclass1    = 'col-sm-5' ?>
+    <?php   $vvalueclass2    = 'col-sm-5' ?> <!-- not used  -->
+
+    <?php endif; ?>
+<?php endif; ?> 
+<!-- *********************************************************************** -->
+<!-- ********************* Begin Create/Update Section ********************* -->
+<!-- *********************************************************************** -->
+
+<!-- Member (mmd-manage.my.data)c/u, CA (mom-manage.our.members) c/u, SA (mos-manage.our.students)c/u, MCM (mcm-manage.current.members)c/u ??? , MAM (mam-manage.all.members) c/u   -->
+<?php if($_SESSION['ccmpmode'] == 'mmdc' || $_SESSION['ccmpmode'] == 'updatemydata' || $_SESSION['ccmpmode'] == 'momc' || $_SESSION['ccmpmode'] == 'momu'  || $_SESSION['ccmpmode'] == 'mosc' || $_SESSION['ccmpmode'] == 'mosu' || $_SESSION['ccmpmode'] == 'mcmc' || $_SESSION['ccmpmode'] == 'mcmu' || $_SESSION['ccmpmode'] == 'mamc' || $_SESSION['ccmpmode'] == 'mamu'): ?> <!-- Updating or creating  -->     
+
+<!-- **************************** Begin Form ******************************* -->
+<!-- Form to post the create/update form values - the view is also contained in the form -->
+<!-- The first faq item must contain the form open and the last item the form close -->
+<!-- *********************************************************************** -->
+
+    <form  method = "post" action="<?= BASE_URL ?>welcome-ccmps/ccmpsubmit/<?= $recid ?>">
+        
+<!-- *********************************************************************** -->
+<!-- ******************* Save/Cancel Button Boiler Plate ******************* -->
+<!-- *********************************************************************** -->
+
+<!-- Save button is same for all  -->
+
+    <div>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save Changes</h<?= $_SESSION['fontsize'] ?>></button>
+           
+<!-- now isolate which one for the correct Cancel button -->
+
+       <?php if($_SESSION['ccmpmode'] == 'updatemydata' ): ?> <!-- there is no mmdc - users cant create their own records   -->
+
+           <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/mydata/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'momc'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/momm"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'momu'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mosc'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mosu'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mcsc'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mcmm"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mcmu'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+           </div>                                        
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mamc'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+           </div>
+
+       <?php elseif($_SESSION['ccmpmode'] == 'mamu'): ?>
+
+           <a class="btn btn-outline  btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+           </div>
+
+       <?php else: ?> 
+
+       <?php endif; ?>
+             
+<!-- ************************* End Save/Cancel buttons ********************* -->
+
+<!-- *********************************************************************** -->
+<!-- ********************** Begin Create/Update Fields ********************* -->
+<!-- *********************************************************************** -->
+        <div class="row"> 
+            
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+
+        <div class="col-md-6"> <!-- Done -->
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <div class="col-md-6"> <!-- Done -->
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+
+        <div class="col-md-5"> <!-- Done -->
+            
+     <?php endif; ?>             
+            
+           
+<!-- *********************************************************************** -->
+<!-- ****************** Left Column Create/Update Fields ******************* -->
+<!-- *********************************************************************** -->                 
+
+
+ <!--  <p> Left column create/update fields go here </p> -->
+ <br> 
+ <br>
+     <div class="ibox-content text-box">
+         
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong><?= CCMP  ?> Info</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    </div> 
+         <br>
+<!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _ccmps_fetch_data_from_post() line)-->
+<?php $items1 = ["Prefix" => "$prefix"]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _ccmps_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items1 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+ 
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>  
+
+<?php $items1b = [
+                
+                "First <a style='color:Red;'>*</a>" => "$first_name"]; ?>
+
+
+<?php foreach($items1b as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+ 
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>"required>
+        </div>
+    </div>
+<?php } ?> 
+
+<?php $items2 = [
+                
+                "Middle" => "$middle_name"]; ?>
+
+
+<?php foreach($items2 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+ 
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>">
+        </div>
+    </div>
+<?php } ?> 
+
+<?php $items3 = [
+                "Last <a style='color:Red;'>*</a>"   => "$last_name"]; ?>
+
+
+<?php foreach($items3 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+ 
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" required>
+        </div>
+    </div>
+<?php } ?>
+
+<?php $items4 = [
+                
+                "Suffix" => "$suffix"];
+                ?>
+
+
+<?php foreach($items4 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+ 
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>">
+        </div>
+    </div>
+<?php } ?>
+
+
+<!--  These are hidden fields to pass values back to the $_POST array that this type of user is not allowed to edit but needed for a create since they were initialization defaults passed to the form-->
+
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>  <!-- The ccmp is not allowed to change these values but needed for a create since they were initialization defaults passed to the form -->
+
+        <!-- How to handle not updatable but still pass current value to the save   -->
+        
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="activatecode" type="text" class="form-control" value="<?= $activate_code ?>" hidden></div>
+        </div>
+
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="approved" type="text" class="form-control" value="<?= $approved ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="code" type="text" class="form-control" value="<?= $code ?>" hidden></div>
+        </div>
+        
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="ccmpadmin" type="text" class="form-control" value="<?= $ccmp_admin ?>" hidden></div>
+        </div>
+
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="cmsadmin" type="text" class="form-control" value="<?= $cms_admin ?>" hidden></div>
+        </div>
+        
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="ccmpnumber" type="text" class="form-control" value="<?= $ccmp_number ?>" hidden></div>
+        </div>
+        
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="currentyear" type="text" class="form-control" value="<?= $current_year ?>" hidden></div>
+        </div>
+
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="ccmptype" type="text" class="form-control" value="<?= $ccmp_type ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="createdat" type="text" class="form-control" value="<?= $created_at ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="createdby" type="text" class="form-control" value="<?= $created_by ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="datecreated" type="text" class="form-control" value="<?= $date_created ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="deceased" type="text" class="form-control" value="<?= $deceased ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="dob" type="text" class="form-control" value="<?= $dob ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="emailverified" type="text" class="form-control" value="<?= $email_verified ?>" hidden></div>
+        </div>
+        
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong>Eligible Voter</strong></label>
+
+             <div class="col-sm-8"><input name="eligiblevoter" type="text" class="form-control" value="<?= $eligible_voter ?>" hidden></div>
+        </div>
+          
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="fontsize" type="text" class="form-control" value="<?= $fontsize ?>" hidden></div>
+        </div>
+                   
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="forcepwchg" type="text" class="form-control" value="<?= $force_pw_chg ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="id" type="text" class="form-control" value="<?= $id ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="inactive" type="text" class="form-control" value="<?= $inactive ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="ipaddress" type="text" class="form-control" value="<?= $ip_address ?>" hidden></div>
+        </div>
+
+                
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="lastlogin" type="text" class="form-control" value="<?= $last_login ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="lastlogindevice" type="text" class="form-control" value="<?= $last_login_device ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="lastlogout" type="text" class="form-control" value="<?= $last_logout ?>" hidden></div>
+        </div>
+      
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="leadsource" type="text" class="form-control" value="<?= $leadsource ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="locked" type="text" class="form-control" value="<?= $locked ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="numlogins" type="text" class="form-control" value="<?= $num_logins ?>" hidden></div>
+        </div>        
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="picture" type="text" class="form-control" value="<?= $picture ?>" hidden></div>
+        </div>  
+ 
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="region" type="text" class="form-control" value="<?= $region ?>" hidden></div>
+        </div>  
+ 
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="resetinterval" type="text" class="form-control" value="<?= $reset_interval ?>" hidden></div>
+        </div>   
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="resetcode" type="text" class="form-control" value="<?= $reset_code ?>" hidden></div>
+        </div>  
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="secondfactor" type="text" class="form-control" value="<?= $second_factor ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="deleted" type="text" class="form-control" value="<?= $soft_deleted ?>" hidden></div>
+        </div>
+       
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="student" type="text" class="form-control" value="<?= $student ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="studentadmin" type="text" class="form-control" value="<?= $student_admin ?>" hidden></div>
+        </div>
+
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="subentity" type="text" class="form-control" value="<?= $subentity ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="subentityadmin" type="text" class="form-control" value="<?= $subentity_admin ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="subentityrole" type="text" class="form-control" value="<?= $subentity_role ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="sysytemadmin" type="text" class="form-control" value="<?= $system_admin ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="status" type="text" class="form-control" value="<?= $status ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="tfontsize" type="text" class="form-control" value="<?= $tfontsize ?>" hidden></div>
+        </div>        
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="timedreset" type="text" class="form-control" value="<?= $timed_reset ?>" hidden></div>
+        </div>           
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="trongateuserid" type="text" class="form-control" value="<?= $trongate_user_id ?>" hidden></div>
+        </div>     
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="updatedat" type="text" class="form-control" value="<?= $updated_at ?>" hidden></div>
+        </div>   
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="updatedby" type="text" class="form-control" value="<?= $updated_by ?>" hidden></div>
+        </div>   
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="usertoken" type="text" class="form-control" value="<?= $user_token ?>" hidden></div>
+        </div>   
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="username" type="text" class="form-control" value="<?= $user_name ?>" hidden></div>
+        </div>   
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="vip" type="text" class="form-control" value="<?= $vip ?>" hidden></div>
+        </div>
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="mailcounty" type="text" class="form-control" value="<?= $mailcounty ?>" hidden></div>
+        </div>         
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="mailcountry" type="text" class="form-control" value="<?= $mailcountry ?>" hidden></div>
+        </div>        
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="physicalcounty" type="text" class="form-control" value="<?= $mailcounty ?>" hidden></div>
+        </div>         
+        
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="physicalcountry" type="text" class="form-control" value="<?= $mailcountry ?>" hidden></div>
+        </div> 
+        
+<!-- END -- How to handle not updatable by still pass current value to the save -->
+
+        <?php else: ?> <!-- Everyone else except the ccmp himself (admins).  Which admins is controlled by whether or not they have access to the menu item  -->
+
+
+                <?php if($_SESSION['chapter_role'] == 1 || $_SESSION['chapter_role'] == 4): ?> 
+
+                <?php $items5 = [CCMP." Number"    => "$ccmp_number"
+                                ]; ?>
+
+                <?php foreach($items5 as $label=> $value) { ?> 
+                    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+                    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+                    <?php $inputname = strtolower($inputname); ?>
+                    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+                        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+                        </div>
+                    </div>
+                <?php } ?>  
+
+                <?php $items5b = ["Current Year"   => "$current_year"
+                                ]; ?>
+
+                <?php foreach($items5b as $label=> $value) { ?> 
+                    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+                    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+                    <?php $inputname = strtolower($inputname); ?>
+                    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+                        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+                        </div>
+                    </div>
+                <?php } ?>  
+
+
+
+                <?php else: ?> <!-- If the fields are not shown their current values will not be passed back to the controller cusing an error  -->
+                       <!-- Capture their current values ato be passsed back unchanged  -->
+
+                <!-- How to handle not updatable but still pass current value to the save   -->
+                 <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                     <div class="col-sm-8"><input name="ccmpnumber" type="text" class="form-control" value="<?= $ccmp_number ?>" hidden></div>
+                </div>
+                <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+                <!-- How to handle not updatable but still pass current value to the save   -->
+                 <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                     <div class="col-sm-8"><input name="currentyear" type="text" class="form-control" value="<?= $current_year ?>" hidden></div>
+                </div>
+                <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+                <!-- How to handle not updatable but still pass current value to the save   -->
+             <!--    <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                     <div class="col-sm-8"><input name="ccmp_type" type="text" class="form-control" value="<?= $ccmp_type ?>" hidden></div>
+                </div> -->
+                <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+                <?php endif; ?>
+
+                <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= CCMP ?> Type <a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+                <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="ccmp_type" style="<?= $selectstyle ?>" >
+                <!-- Loop through the dropdown array passed in $data  -->
+                <?php foreach($ccmptypes as $row) { ?>
+                <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                    <?php if($row->id == $ccmp_type): ?> 
+                        <option selected value="<?= $row->id ?>"><?= $row->ccmp_type ?> [<?= $row->description ?>]</option>
+                    <?php else: ?> <!-- otherwise just create the option -->
+                        <option value="<?= $row->id ?>"><?= $row->ccmp_type ?> [<?= $row->description ?>]</option>
+                    <?php endif; ?>
+                 <?php } ?>                                    
+                 </select>
+                </div>
+                </div> 
+
+                                                                                                                       
+        <?php endif; ?>            
+
+<?php $items6 = ["Email <a style='color:Red;'>*</a>" => "$email_address",  
+                "Phone"            => "$phone",
+                "Work Phone"       => "$work_phone",
+                "Mobile"           => "$mobile",
+                "WhatsApp"         => "$whatsapp",
+                "Fax"              => "$fax",
+                "TTY"              => "$tty",
+                "Website"          => "$website",
+                "Use Alt Contact"  => "$use_alt_contact"
+                ]; ?>
+
+<?php foreach($items6 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Gender<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+<div class="<?= $fgseldiv ?>"><select class="form-control m" name="gender" style="<?= $selectstyle ?>">
+<!-- Loop through the dropdown array passed in $data  -->
+<?php foreach($genders as $row) { ?>
+<!-- If $row->id = currently selected user_level_id then pre-select that option -->
+    <?php if($row->id == $gender): ?> 
+        <option selected value="<?= $row->id ?>"><?= $row->description ?> [<?= $row->title ?>]</option>
+    <?php else: ?> <!-- otherwise just create the option -->
+        <option value="<?= $row->id ?>"><?= $row->description ?> [<?= $row->title ?>]</option>
+    <?php endif; ?>
+ <?php } ?>                                    
+ </select>
+</div>
+</div> 
+
+ <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Language<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+<div class="<?= $fgseldiv ?>"><select class="form-control m" name="language" style="<?= $selectstyle ?>">
+<!-- Loop through the dropdown array passed in $data  -->
+<?php foreach($languages as $row) { ?>
+<!-- If $row->id = currently selected user_level_id then pre-select that option -->
+    <?php if($row->id == $language): ?> 
+        <option selected value="<?= $row->id ?>"><?= $row->description ?> [<?= $row->title ?>]</option>
+    <?php else: ?> <!-- otherwise just create the option -->
+        <option value="<?= $row->id ?>"><?= $row->description ?> [<?= $row->title ?>]</option>
+    <?php endif; ?>
+ <?php } ?>                                    
+ </select>
+</div>
+</div> 
+ 
+<?php $items15 = [
+                 "Birthday" => "$birthday",
+                 "Department" => "$department",
+                 "Supervisor" => "$reports_to"
+                ]; ?>
+
+<?php foreach($items15 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+
+<!-- Yes/No Dropdowns -->
+<?php $items16 = ["Minor"           => "$minor",
+                  "Student"         => "$student",
+                  "Active Duty"     => "$active_duty",
+                  "Former Military" => "$former_military"
+                ]; ?>
+
+<?php foreach($items16 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?>
+     </div> <!-- End ibox content  -->
+
+
+<!-- Yes/No Dropdowns -->
+
+<?php $items7 = ["Limit Dir Info" => "$limitdirinfo",
+                 "Directory Opt Out" => "$directoryoptout",
+                 "Opt Out Emails" => "$emailoptout",
+                 "Do Not Call" => "$donotcall",
+                 "Mail Notices" => "$mail_notices",
+                 "Eligible Voter" => "$eligible_voter"                                                                     
+                ]; ?>
+
+<?php foreach($items7 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?> 
+
+
+
+
+<?php $items8 = ["Alternate Contact" => "$alternate_contact",
+                 "Alternate Phone"   => "$alternate_phone",
+                 "Alternate Email"   => "$alternate_email"
+                ]; ?>
+
+<?php foreach($items8 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+ 
+
+<!-- Spacing above the mailing address box -->
+
+
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+
+        <br> <!-- Done -->
+        <br>        
+        <br>
+        <br>
+        <br>
+         
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <br>  <!-- Done -->
+        <br>
+        <br>        
+  
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+        <br>  <!-- Done -->
+        <br>
+        <br>  
+
+     <?php endif; ?> 
+
+
+
+            <div class="ibox-content">
+                <center style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><strong><h<?= $_SESSION['fontsize'] ?>>Mailing Address</h<?= $_SESSION['fontsize'] ?>></strong></center>
+
+
+
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+
+        <br> <!-- Done -->
+        <br>
+        <br>        
+        <br>
+        <br>
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <br>  <!-- Done -->
+        <br>
+        <br>   
+        <br>
+        <br>
+      
+        
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+        <br>  <!-- Done -->
+        <br>
+        <br>   
+        <br>
+        <br>
+
+     <?php endif; ?> 
+
+                
+                
+
+
+<?php $items9 = ["Mail Addr1" => "$mailaddress1",
+                "Mail Addr2" => "$mailaddress2",  
+                "Mail City"  => "$mailcity"
+                ]; ?>
+
+<?php foreach($items9 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>                 
+                                      
+        <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Mail State</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="<?= $fgseldiv ?>"><select type="text" class="form-control m-b" name="mailstate" style="<?= $selectstyle ?>">
+        <!-- Loop through the dropdown array passed in $data  -->
+          <?php foreach($state_codes as $row) { ?> <!-- was $usrlvls  -->
+            <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+            <?php if($row->state_code == $mailstatecode): ?> <!-- was$ culid -->
+               <option selected value="<?= $row->state_code ?>"><?= $row->name ?> <?= $row->state_code ?></option> <!-- $row->level_title -->
+            <?php else: ?> <!-- otherwise just create the option -->
+                <option value="<?= $row->state_code ?>"><?= $row->name ?> <?= $row->state_code ?></option>
+            <?php endif; ?>
+          <?php } ?>                                    
+          </select>
+        </div>
+        </div> <!-- end state code -->
+
+<?php $items10 = ["Mail Zip" => "$mailzip"
+                ]; ?>
+
+<?php foreach($items10 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+
+<!--  if you want the zipcode box to be short use this one instead
+        <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Mail Zip</h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="col-sm-2"><input name="mailzip" type="text" class="form-control" value="<?= $mailzip ?>" style="<?= $inputstyle ?>" ></div>
+        </div> -->
+
+
+
+    </div>
+       
+<!-- *********************************************************************** -->
+  <?php if($_SESSION['fontsize'] == 0):  ?> <!--  just for testing -->
+<!-- <php if($_SESSION['mobileformat'] == 1 ): ?> -->
+<!-- if mobile make all one column  -->
+<?php else: ?> 
+<!-- ******************* End Left Column of Create/Update Fields ******************** -->
+        </div> <!-- end col-6 -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ********************* Right Column of Create/Update Fields ********************* -->
+        <div class="col-md-6">
+<!-- *********************************************************************** --> 
+  <?php endif; ?>
+
+
+ <!--   <p> Right column create/update fields go here </p>  --> 
+
+<br>
+
+          
+
+            <?php if($_SESSION['ccmpmode'] == 'momc' || $_SESSION['ccmpmode'] == 'momu' || $_SESSION['ccmpmode'] == 'updatemydata'):  ?>
+
+            <div class="col-sm-2"><input name="chapter" type="text" class="form-control" value="<?= $chapter ?>" hidden></div>
+
+            <?php else: ?>  
+                <?php if($recid > 0):  ?>   <!-- Updating  - If new the chapter is assigned to the same one as the chapter admin -->
+
+<!-- Ex. Treasurer/sysadmin can assign chapter to a new member including Chapter at Large  -->
+                    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Chapter<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+                    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="chapter" style="<?= $selectstyle ?>">
+                    <!-- Loop through the dropdown array passed in $data  -->
+                    <?php foreach($chapters as $row) { ?>
+                    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                        <?php if($row->id == $chapter): ?> 
+                            <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                        <?php else: ?> <!-- otherwise just create the option -->
+                            <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                        <?php endif; ?>
+                     <?php } ?>                                    
+                     </select>
+                    </div>
+                    </div>
+
+                <?php else: ?> <!-- Adding/Creating  -->
+
+                    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Chapter<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+                    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="chapter" style="<?= $selectstyle ?>">
+                    <!-- Loop through the dropdown array passed in $data  -->
+                    <?php foreach($chapters as $row) { ?>
+                    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                        <?php if($row->id == $chapter): ?> 
+                            <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                        <?php else: ?> <!-- otherwise just create the option -->
+                            <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                        <?php endif; ?>
+                     <?php } ?>                                    
+                     </select>
+                    </div>
+                    </div>
+
+             <?php endif; ?> 
+            <?php endif; ?> 
+
+            <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+
+    <!-- How to handle not updatable but still pass current value to the save   -->
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="<?= $fgseldiv ?>"><input name="chapter_role" type="text" class="form-control" value="<?= $chapter_role ?>" hidden></div>
+        </div>
+    <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+            <?php else: ?>  
+                <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= SUBENTITY ?> Role<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+                <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="chapter_role" style="<?= $selectstyle ?>">
+                <!-- Loop through the dropdown array passed in $data  -->
+                <?php foreach($chapterroles as $row) { ?>
+                <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                    <?php if($row->id == $chapter_role): ?> 
+                        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                    <?php else: ?> <!-- otherwise just create the option -->
+                        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                    <?php endif; ?>
+                 <?php } ?>                                    
+                 </select>
+                </div>
+                </div>
+           <?php endif; ?> 
+
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+
+    <!-- How to handle not updatable but still pass current value to the save   -->
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" ><strong></strong></label>
+
+             <div class="col-lg-7"><input name="nationalofficer" type="text" class="form-control" value="<?= $national_officer ?>" hidden></div>
+        </div>
+    <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+            <?php else: ?>  
+                <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>National Officer<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></label>
+                <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="national_officer" style="<?= $selectstyle ?>">
+                <!-- Loop through the dropdown array passed in $data  -->
+                <?php foreach($nationalroles as $row) { ?>
+                <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+                    <?php if($row->id == $national_officer): ?> 
+                        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+                    <?php else: ?> <!-- otherwise just create the option -->
+                        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+                    <?php endif; ?>
+                 <?php } ?>                                    
+                 </select>
+                </div>
+                </div>
+         <?php endif; ?>
+
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label> 
+
+             <div class="col-sm-2"><input name="studentadmin" type="text" class="form-control" value="<?= $student_admin ?>" hidden></div>
+        </div>
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+            <?php else: ?>
+
+<!-- Yes/No Dropdowns - You need a separate one for each because of the hidden values-->
+
+<?php $items11 = ["Student Admin" => "$student_admin"
+                ]; ?>
+
+<?php foreach($items11 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> ; color:<?= CCMPS_CRUD_LABEL_CLR ?>;
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?> 
+
+         <?php endif; ?> 
+
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="chapteradmin" type="text" class="form-control" value="<?= $chapter_admin ?>" hidden></div>
+        </div>
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+            <?php else: ?>
+
+<!-- Yes/No Dropdowns -->
+<?php $items12 = ["Ccmp Admin" => "$ccmp_admin"
+                ]; ?>
+
+<?php foreach($items12 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?>
+
+         <?php endif; ?> 
+
+
+            <?php if($_SESSION['ccmpmode'] == 'updatemydata' || $_SESSION['ccmpmode'] == 'momu' ): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+    <!--     <div class="<?= $fgdivclass ?>"> -->
+      <!--      <label class="col-sm-2 col-form-label" hidden><strong></strong></label> -->
+
+            <div class="col-sm-8"><input name="contentadmin" type="text" class="form-control" value="<?= $content_admin ?>" hidden></div>
+    <!--    </div> -->
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+            <?php else: ?>
+
+<!-- Yes/No Dropdowns -->
+<?php $items13 = ["Content Admin" => "$content_admin"
+                ]; ?>
+
+<?php foreach($items13 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?>
+
+         <?php endif; ?> 
+
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata' || $_SESSION['ccmpmode'] == 'momu'): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+     <!--    <div class="<?= $fgdivclass ?>"> -->
+       <!--     <label class="col-sm-2 col-form-label" hidden><strong></strong></label> -->
+
+             <div class="col-sm-8"><input name="ccmpadmin" type="text" class="form-control" value="<?= $ccmp_admin ?>" hidden></div>
+     <!--   </div> -->
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+            <?php else: ?>
+
+<!-- Yes/No Dropdowns -->
+<?php $items14 = ["Ccmp Admin" => "$ccmp_admin"
+                ]; ?>
+
+<?php foreach($items14 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?>
+
+         <?php endif; ?> 
+
+        <!-- Only a system admin can create another system admin -->
+        
+        <?php if($_SESSION['system_admin'] == 1) : ?>
+                <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>System Admin</h<?= $_SESSION['fontsize'] ?>></label>
+                  <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="systemadmin" Value="<?= $system_admin ?>" style="<?= $selectstyle ?>" >
+                    <?php if($system_admin == 1) { ?>
+                        <option selected value=1>Yes</option>
+                        <option value=0>No</option>
+                    <?php }else{ ?>
+                        <option value=1>Yes</option>
+                        <option selected value=0>No</option>
+                    <?php } ?>
+                    </select>
+                   </div>                                              
+                </div>
+        <?php else: ?>  
+
+        
+                <!-- How to handle not updatable but still pass current value to the save   -->
+  
+                <div class="col-sm-8"><input name="systemadmin" type="text" class="form-control" value="<?= $system_admin ?>" hidden></div>
+     
+                <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+         <?php endif; ?> 
+
+
+
+
+
+<?php $items17 = [ 
+                 "Miscellaneous 1"   => "$misc1",
+                 "Miscellaneous 2"   => "$misc2",
+                 "Miscellaneous 3"   => "$misc3",
+                 "Emergency Contact" => "$emergency_contact",
+                 "Emergency Phone"   => "$emergency_phone",
+                 "Emergency Email"   => "$emergency_email",
+                 "Employer"          => "$employer",
+                 "Title"             => "$title"
+                ]; ?>
+
+<?php foreach($items17 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+
+
+            <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+         <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+             <div class="col-sm-8"><input name="deceased" type="text" class="form-control" value="<?= $deceased ?>" hidden></div>
+        </div>
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+            <?php else: ?>
+    <!-- Yes/No Dropdowns -->
+
+<?php $items18 = ["Deceased" => "$deceased"                                                                     
+                ]; ?>
+
+<?php foreach($items18 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?> 
+
+           
+      <?php endif; ?>
+    
+        <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+        <!-- How to handle not updatable but still pass current value to the save   -->
+            <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                 <div class="col-sm-8"><input name="miscellaneous1" type="text" class="form-control" value="<?= $misc1 ?>" hidden></div>
+            </div>
+            <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                 <div class="col-sm-8"><input name="miscellaneous2" type="text" class="form-control" value="<?= $misc2 ?>" hidden></div>
+            </div>
+
+             <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                 <div class="col-sm-8"><input name="miscellaneous3" type="text" class="form-control" value="<?= $misc3 ?>" hidden></div>
+            </div>
+
+             <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                <div class="col-sm-8"><input name="national_officer" type="text" class="form-control" value="<?= $national_officer ?>" hidden></div>
+            </div>
+
+            <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                <div class="col-sm-8"><input name="national_officer" type="text" class="form-control" value="<?= $national_officer ?>" hidden></div>
+            </div>
+
+             <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                 <div class="col-sm-8"><input name="miscellaneous3" type="text" class="form-control" value="<?= $misc3 ?>" hidden></div>
+            </div>
+
+             <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+                <div class="col-sm-8"><input name="national_officer" type="text" class="form-control" value="<?= $national_officer ?>" hidden></div>
+            </div>
+
+        <!-- END --How to handle not updatable by still pass current value to the save   -->
+
+    <?php endif; ?>
+
+<!-- Spacing above the physical address box -->
+
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+
+    <br> <!-- Done -->
+
+
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+
+
+     <?php endif; ?> 
+
+
+
+
+    <div class="ibox-content">
+    <center style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Physical Address</h<?= $_SESSION['fontsize'] ?>></center>
+    <br>
+    <br>
+
+<!-- Yes/No Dropdowns -->
+<?php $items19 = ["Same as Mailing" => "$mail_eq_phys",
+                  "Same as Billing" => "$bill_eq_ship"
+                ]; ?>
+
+<?php foreach($items19 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label> 
+              <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0><h<?= $_SESSION['fontsize'] ?>>No</h<?= $_SESSION['fontsize'] ?>></option>
+                <?php } ?>
+                </select>
+               </div>                                              
+            </div> 
+<?php } ?>
+
+<?php $items20 = ["Physical Addr1" => "$physaddress1",
+                "Physical Addr2"  => "$physaddress2",  
+                "Physical City"   => "$physcity"
+                ]; ?>
+
+<?php foreach($items20 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>                 
+                                      
+        <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Physical State</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="<?= $fgseldiv ?>"><select type="text" class="form-control m-b" name="physstate" style="<?= $selectstyle ?>">
+        <!-- Loop through the dropdown array passed in $data  -->
+          <?php foreach($state_codes as $row) { ?> <!-- was $usrlvls  -->
+            <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+            <?php if($row->state_code == $physstatecode): ?> <!-- was$ culid -->
+               <option selected value="<?= $row->state_code ?>"><?= $row->name ?> <?= $row->state_code ?></option> <!-- $row->level_title -->
+            <?php else: ?> <!-- otherwise just create the option -->
+                <option value="<?= $row->state_code ?>"><?= $row->name ?> <?= $row->state_code ?></option>
+            <?php endif; ?>
+          <?php } ?>                                    
+          </select>
+        </div>
+        </div> <!-- end state code -->
+
+<?php $items21 = ["Physical Zip" => "$physzip"
+                ]; ?>
+
+<?php foreach($items21 as $label=> $value) { ?> 
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?> 
+    <?php $inputname = strtolower($inputname); ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?> 
+
+<!-- *********************************************************************** -->
+<!-- ****************** End Right Column Create/Update Fields Fields ******************** -->       
+       </div> <!-- end ibox content -->        
+    </div> <!-- column 6 --> 
+</div><!-- End row containing the left and right Create/Update columns  -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- For formatting the notes field is outside of the row but inside the form -->
+<!-- *********************************************************************** -->
+
+ <!--   <p>Create/update fields outside row go here</p> -->
+   <br>
+    <?php if($_SESSION['ccmpmode'] == 'updatemydata'): ?>
+    <!-- How to handle not updatable but still pass current value to the save   -->
+     <div class="form-group  row"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+         <div class="col-sm-8"><input name="notes" type="text" class="form-control" value="<?= $notes ?>" hidden></div>
+    </div>
+    <!-- END --How to handle not updateble by still pass current value to the save   -->
+    <?php else: ?>                                 
+
+        <div ><label class="col-sm-12 col-form-label" style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>>Contact Notes</h<?= $_SESSION['fontsize'] ?>></label>        </div>
+            <div class="col-sm-12"><input style="<?= $inputstyle ?>"  name="notes" type="text" class="form-control" value="<?= $notes ?>"> <span class="form-text m-b-none"></span>
+            </div>
+
+    <?php endif; ?> 
+
+
+
+<!-- *********************************************************************** -->
+<!-- ********************** End Create/Update Fields *********************** -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ********************** End Create/Update Section ********************** -->
+<!-- *********************************************************************** -->
+            <?php else: ?> <!-- Only thing left is all view modes  -->
+<!-- *********************************************************************** -->
+<!-- ************************** Begin View Section ************************* -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ************************ Begin Viewing Fields ************************* -->
+<!-- *********************************************************************** -->
+
+ <?php if(CCMPS_VIEW_IN_TABS == 1): ?> 
+
+
+<div class="row">
+                <div class="col-lg-12">
+                    <div class="tabs-container">
+ <?php if($_SESSION['CCMPS_VIEW_TABS_HORZ'] == 1): ?> 
+                        
+               <?php else: ?>
+                                  <div class="tabs-left">
+                                     
+                <?php endif; ?> 
+<ul class="nav nav-tabs">
+    <li><a class="nav-link active" data-toggle="tab" href="#tab-1"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= CCMP  ?> Info</h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <li><a class="nav-link" data-toggle="tab" href="#tab-2"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Contacts</h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <li><a class="nav-link" data-toggle="tab" href="#tab-3"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Addresses</h<?= $_SESSION['fontsize'] ?>></span></a></li>                                
+    <li><a class="nav-link" data-toggle="tab" href="#tab-4"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Miscellaneous</h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <li><a class="nav-link" data-toggle="tab" href="#tab-5"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Preferences</h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <li><a class="nav-link" data-toggle="tab" href="#tab-6"><span  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>User Account</h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <li><a href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" style="color: gray"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>> </a>
+    <li><a data-toggle="modal" data-target="#fontModal" href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" style="color: gray"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-wrench"></i> Font [<span style="color: lightgray"><?= $_SESSION['dfontsize'] ?></span>]</h<?= $_SESSION['fontsize'] ?>></a></li>
+                           </ul>
+
+                            <div class="tab-content ">
+                                <div id="tab-1" class="tab-pane active">
+                                    <div class="panel-body"> 
+                                   <!--     <center>xxx</center> -->
+
+
+<!-- <div class="ibox-content text-box"> -->
+<!-- <div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong><?= CCMP  ?> Info</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    </div>
+    </div>     -->  
+<div class="row"> 
+    
+    <div class="col-sm-5">          
+         
+<?php $itemsv100 = ["Name"        => "",  
+                    ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. -->
+<!-- The input's name="xyz" field passes back the changed values from the form to _ccmps_fetch_data_from_post() in the $_POST array -->
+<!-- and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run.-->
+<!-- Therefore the name fields here do not have to match the name in the database because the functions does that mapping. -->
+<!-- This is important because we are only passing two values (label name and the elements value) but a third, -->
+<!-- the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+           
+<?php foreach($itemsv100 as $label=> $value) { ?> 
+        
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $prefix ?> <?= $first_name ?> <?= $middle_name ?> <?= $last_name ?> <?= $suffix ?></h<?= $_SESSION['fontsize'] ?>>  </div> 
+    </div> 
+ 
+<?php } ?> 
+    
+    
+<?php $itemsv100A = [
+                    SUBENTITY       => "$subentity",
+                    "Region"        => "$region",
+                    "Officer"       => "$subentity_role",
+                    "HQ Officer"    => "$national_officer",
+                    "Employer"      => "$employer",
+                    "Title"         => "$title" 
+                    ]; ?>
+       
+<?php foreach($itemsv100A as $label=> $value) { ?> 
+ 
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+       
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div>
+ 
+<?php } ?>            
+    </div> <!-- end col -->
+    <div class="col-sm-4"> 
+
+<?php $itemsv100B = [ 
+                   
+                    "Gender"     => "$gender",
+                    "DoB"        => "$dob",
+                    "Minor"      => "$minor",
+                    "Student"    => "$student",
+                    "Birthday"   => "$birthday",
+                    "Department" => "$department",
+                    "Supervisor" => "$reports_to"
+                    ]; ?>
+       
+<?php foreach($itemsv100B as $label=> $value) { ?> 
+ 
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+   
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div> 
+ 
+<?php } ?>        
+       
+   </div> <!-- end col --> 
+   <div class="col-sm-3">
+<?php $itemsv100B = [CCMP." Number"    => "$ccmp_number",
+                    CCMP." Type"       => "$ccmp_type",  
+                    CCMP." Status"            => "$status", 
+                    "Current Year"      => "$current_year",
+                    "Eligible Voter"    => "$eligible_voter"
+                     
+                    ]; ?>
+
+
+            
+<?php foreach($itemsv100B as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>       
+   </div> <!-- end col --> 
+           
+</div>  <!-- end row -->          
+              
+<!-- </div> --><!-- end ibox content  --> 
+                </div> <!-- End Panel Body  -->
+            </div> <!-- id tab 1  -->
+            <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+                                        
+                                        
+                                         
+<div class="row">
+    
+    <div class="col-sm-5">          
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Primary Contact</h<?= $_SESSION['fontsize'] ?>></center>         
+    </div>
+</div> 
+<?php $itemsv100C = [
+                    "Home"     => "$phone",
+                    "Work"     => "$work_phone",
+                    "Mobile"   => "$mobile",
+                    "WhatsApp" => "$whatsapp",
+                    "Email"    => "$email_address",
+                    "Fax"      => "$fax",
+                    "TTY"      => "$tty",
+                    "Use Alt Contact"  => "$use_alt_contact"
+                    ]; ?>         
+            
+<?php foreach($itemsv100C as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>
+    </div> <!-- end col -->
+
+    
+    <div class="col-sm-7"> 
+<?php $itemsv100G = [
+                    "Alternate"  => "$alternate_contact",
+                    "Phone"      => "$alternate_phone",
+                    "Email"      => "$alternate_email"
+
+                    ]; ?>
+
+
+<div class="row">
+    <div class="col">  
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Secondary Contacts</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>         
+<div class="row">
+    <div class="col-lg-6">  
+        
+        
+<?php foreach($itemsv100G as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>
+    </div> <!-- end col -->
+    <div class="col-lg-6">
+        
+ <?php $itemsv100H = [
+                    "Emergency" => "$emergency_contact",
+                    "Phone"   => "$emergency_phone",
+                    "Email"   => "$emergency_email"
+
+                    ]; ?>       
+        
+<?php foreach($itemsv100H as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>        
+    </div> <!-- end col --> 
+</div>  <!-- end row --> 
+                                                                       
+        </div> <!-- end col 8 -->
+    </div> <!-- end row -->
+</div> <!-- end panel body  -->
+
+ </div> <!-- end tab-2  tab-pane  -->
+ 
+    <div id="tab-3" class="tab-pane">
+       <div class="panel-body">
+           
+            <!-- Start A First Row  -->
+            <div class="row">
+                     
+               <div class="col-lg-6"> <!-- First Row Left Column -->
+                   
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Mailing Address</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>                    
+    <?php $itemsv101 = ["Address" => "$mailaddress1",
+                        "" => "$mailaddress2",
+                        "City"      => "$mailcity",
+                        "State"     => "$mailstate",
+                        "Zip"       => "$mailzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv101 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>
+               </div> <!-- end col 6 -->
+                   <div class="col-lg-6"> <!-- First Row Right Column -->
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Physical Address</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>
+    <?php $itemsv102 = ["Address" => "$physaddress1",
+                        "" => "$physaddress2",
+                        "City"      => "$physcity",
+                        "State"     => "$physstate",
+                        "Zip"       => "$physzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv102 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>                       
+                       </div> <!-- end col 6 -->
+                       
+                       
+                       
+            </div> <!-- end first row parent -->
+                       
+            <br>
+            <!-- Start A Second Row  -->
+            <div class="row"> <!-- 2nd row Parent -->
+           
+                    
+                    
+ <?php if(strlen($billaddress1) > 0 ): ?>                   
+                         <div class="col-lg-6"> <!-- Second Row Left Column -->
+                             
+  
+       
+                                         
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Billing Address</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>
+    <?php $itemsv111 = ["Address" => "$billaddress1",
+                        "" => "$billaddress2",
+                        "City"      => "$billcity",
+                        "State"     => "$billstate",
+                        "Zip"       => "$billzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv111 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>                             
+                       </div> <!-- end Second Row Left Column col 6 -->
+        <?php endif; ?>
+                       
+        <?php if(strlen($shipaddress1) > 0 ): ?>                        
+                         <div class="col-lg-6"> <!-- Second Row Right Column -->
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Shipping Address</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>
+    <?php $itemsv112 = ["Address" => "$shipaddress1",
+                        "" => "$shipaddress2",
+                        "City"      => "$shipcity",
+                        "State"     => "$shipstate",
+                        "Zip"       => "$shipzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv112 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>                              
+                       </div> <!-- end Second Row Right Column col 6 -->
+        <?php endif; ?>
+           
+                       
+                       
+                      
+            </div> <!-- end <!-- 2nd row Parent -->
+       
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-3 tab-pane -->
+   
+    <div id="tab-4" class="tab-pane">
+       <div class="panel-body">
+           
+           <div class="row"> <!-- First row Parent -->
+           
+               <div class="col-lg-6"> <!-- First Row Left Column -->           
+<div class="row">
+    <div class="col">  
+<!--  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Miscellaneous</h<?= $_SESSION['fontsize'] ?>></center> -->           
+    </div>
+</div>           
+
+    <?php $itemsv102B = [ "Miscellaneous 1"   => "$misc1",
+                        "Miscellaneous 2"   => "$misc2",
+                        "Miscellaneous 3"   => "$misc3",
+                        "Active Duty"       => "$active_duty",
+                        "Former Military"   => "$former_military"
+                        ]; ?>           
+
+       
+    <?php foreach($itemsv102B as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?> 
+               </div> <!-- end First Row Left Column -->
+               
+                <div class="col-lg-6"> <!-- First Row Right Column -->
+    <?php $itemsv102C = ["Last Updated"       => "$updated_at",
+                        "Updated By"        => "$updated_by"
+                        ]; ?>           
+
+       
+    <?php foreach($itemsv102C as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>                     
+                </div> <!-- end First Row Right Column  -->
+                
+</div> <!-- end First Row Parent  -->
+           
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-4 tab-pane -->
+
+       <div id="tab-5" class="tab-pane">
+       <div class="panel-body">
+           
+           <div class="row"> <!-- First row Parent -->
+           
+               <div class="col-lg-6"> <!-- First Row Left Column -->           
+<div class="row">
+    <div class="col">  
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Pref left</h<?= $_SESSION['fontsize'] ?>></center>            
+    </div>
+</div>           
+
+ 
+               </div> <!-- end First Row Left Column -->
+               
+                <div class="col-lg-6"> <!-- First Row Right Column -->
+<div class="row">
+    <div class="col">  
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Pref Right</h<?= $_SESSION['fontsize'] ?>></center>            
+    </div>
+</div>                      
+                </div> <!-- end First Row Right Column  -->
+                
+</div> <!-- end First Row Parent  -->
+           
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-4 tab-pane -->
+   <div id="tab-6" class="tab-pane">
+       <div class="panel-body">
+
+            <!-- Start A First Row  -->
+            <div class="row">
+                     
+               <div class="col-lg-6"> <!-- First Row Left Column -->
+                   
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Login Credentials</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>                    
+
+                                   <div class="form-group row"><label class="col-lg-3 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>User Id</h<?= $_SESSION['fontsize'] ?>></label> 
+                          <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $trongate_user_id ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                            </div>
+
+                                                <div class="form-group row"><label class="col-lg-3" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Username</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $username ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>                         
+                                                <div class="form-group row"><label class="col-lg-3" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Level</h<?= $_SESSION['fontsize'] ?>></label>
+                                                    <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $levelname ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                                </div>                    
+                   
+               </div> <!-- end col 6 -->
+                   <div class="col-lg-6"> <!-- First Row Right Column -->
+<div class="row">
+ <div class="col-lg-3"> 
+    </div>
+ <div class="col-lg-6">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Super User Priviledges</h<?= $_SESSION['fontsize'] ?>></center>        
+ </div>
+    <div class="col-lg-3"> 
+    </div>
+
+</div>
+ <div class="row">
+ <!--   <div class="col-lg-3">
+        
+    </div> -->
+
+    <div class="col-lg-10"> 
+
+<div class="form-group row"><label class="col-lg-6" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= SUBENTITY ?> Admin</h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $subentity_admin ?></h<?= $_SESSION['fontsize'] ?>></div> </div>
+
+<div class="form-group row"><label class="col-lg-6" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Content Admin</h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $content_admin ?></h<?= $_SESSION['fontsize'] ?>></div> </div>
+
+<div class="form-group row"><label class="col-lg-6" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= CCMP ?> Admin</h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $ccmp_admin ?></h<?= $_SESSION['fontsize'] ?>></div> </div>
+
+<div class="form-group row"><label class="col-lg-6" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Student Admin</h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $student_admin ?></h<?= $_SESSION['fontsize'] ?>></div> </div>
+
+<div class="form-group row"><label class="col-lg-6" style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>System Admin</h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="col-sm-4"><h<?= $_SESSION['fontsize'] ?>><?= $system_admin ?></h<?= $_SESSION['fontsize'] ?>></div> </div>
+
+        
+<!--    <?php $itemsv102 = [ 
+
+                        SUBENTITY." Admin"  => "$subentity_admin",
+                        "Content Admin"     => "$content_admin",
+                         CCMP." Admin"      => "$ccmp_admin",
+                        "Student Admin"     => "$student_admin",
+                        "System Admin"      => "$system_admin"
+
+                        ]; ?>           
+
+
+     
+    <?php foreach($itemsv102 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="col-lg-5" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?> -->
+        
+        
+        
+    </div>
+
+    </div>
+                       
+                       </div> <!-- end col 6 -->
+                       
+                       
+                       
+            </div> <!-- end first row parent -->
+                       
+            <br>
+            <!-- Start A Second Row  -->
+            <div class="row"> <!-- 2nd row Parent -->                  
+                         <div class="col-lg-6"> <!-- Second Row Left Column -->
+                             
+  
+       
+                                         
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Account Status</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>
+
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Login Locked</h<?= $_SESSION['fontsize'] ?>></label>
+
+    <?php if( $locked  > 0) { ?>
+        <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">Yes</div></h<?= $_SESSION['fontsize'] ?>>
+    <?php }else{ ?>
+
+        <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">No</div></h<?= $_SESSION['fontsize'] ?>>
+    <?php } ?>                                 
+</div>  
+
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Login Inactive</h<?= $_SESSION['fontsize'] ?>></label>
+
+    <?php if( $inactive  > 0) { ?>
+        <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">Yes</div></h<?= $_SESSION['fontsize'] ?>>
+    <?php }else{ ?>
+
+        <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">No</div></h<?= $_SESSION['fontsize'] ?>>
+    <?php } ?>                                 
+</div>  
+
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Force PW Change</h<?= $_SESSION['fontsize'] ?>></label>                                      
+  <?php if( $force_pw_chg   > 0) { ?>
+    <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">Yes</div></h<?= $_SESSION['fontsize'] ?>>
+  <?php }else{ ?>
+
+    <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">No</div></h<?= $_SESSION['fontsize'] ?>>
+  <?php } ?>  
+</div>                        
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>IP Address</h<?= $_SESSION['fontsize'] ?>></label> 
+    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $ip_address ?></h<?= $_SESSION['fontsize'] ?>></div> 
+</div> 
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Login Token Expires</h<?= $_SESSION['fontsize'] ?>></label> 
+    <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $token_expires ?></h<?= $_SESSION['fontsize'] ?>></div> 
+</div>
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Reset Code</h<?= $_SESSION['fontsize'] ?>></label> 
+<div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $reset_code ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                          </div>                                       
+                                <!--        <div class="form-group row"><label class="col-lg-5 "><strong>Activate Code</strong></label> 
+                          <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $activate_code ?></h<?= $_SESSION['fontsize'] ?>></div> 
+                                          </div> -->
+
+
+
+
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Timed PW Reset</h<?= $_SESSION['fontsize'] ?>></label>                                       
+  <?php if( $timed_reset   > 0) { ?>
+    <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">Yes</div></h<?= $_SESSION['fontsize'] ?>>
+  <?php }else{ ?>
+
+    <h<?= $_SESSION['fontsize'] ?>><div class="col-sm-5">No</div></h<?= $_SESSION['fontsize'] ?>>
+  <?php } ?>  
+</div>
+
+<div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Reset Interval (days)</h<?= $_SESSION['fontsize'] ?>></label> 
+  <div class="col-sm-5"><?= $reset_interval ?></div> 
+</div> 
+
+                             
+                       </div> <!-- end Second Row Left Column col 6 -->
+                      
+                         <div class="col-lg-6"> <!-- Second Row Right Column -->
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Account Activity</h<?= $_SESSION['fontsize'] ?>></center>        
+    </div>
+</div>
+
+
+    <div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>No Logins</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $num_logins ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div>                                        
+    <div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Last Login Device</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $last_login_device ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div> 
+    <div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Last Login</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $last_login ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div>
+    <div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Last Logout</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $last_logout ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div>
+    <div class="form-group row"><label class="col-lg-5 " style="color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Photo</h<?= $_SESSION['fontsize'] ?>></label> 
+        <div class="col-sm-5" ><h<?= $_SESSION['fontsize'] ?>><?= $picture ?></h<?= $_SESSION['fontsize'] ?>> </div>
+    </div>
+               <form action="<?= BASE_URL ?>welcome-ccmps/uploadccmppic/<?= $recid ?>/v" method = "post" enctype="multipart/form-data">                  
+                       <input type="file" name="picture" value="">
+    <button type="submit" name="submit" value="Upload">Upload Photo</button>
+   
+                       </div> <!-- end Second Row Right Column col 6 -->
+    
+           
+                       
+                       
+                      
+            </div> <!-- end <!-- 2nd row Parent -->          
+        
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-6 tab-pane -->
+
+   <div id="tab-7" class="tab-pane">
+       <div class="panel-body">
+           <!-- Content Here -->           
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-7 tab-pane -->
+   
+   <div id="tab-8" class="tab-pane">
+       <div class="panel-body">
+           <!-- Content Here -->           
+       </div> <!-- end panel body  -->
+   </div> <!-- end tab-8 tab-pane --> 
+ </div> <!-- end tab content  -->
+
+
+ <?php if($_SESSION['CCMPS_VIEW_TABS_HORZ'] == 1): ?> 
+                       
+               <?php else: ?>
+                                  </div> <!-- Tabs left -->
+                                  
+                <?php endif; ?> 
+
+                    </div> <!-- Tabs container  -->                   
+
+                </div> <!-- col 12  -->
+</div> <!-- end tabs container for all tabs  -->
+
+<br>
+<br>
+
+<?php else: ?>  <!-- Not using tab controls just the 4 columns   -->
+<!-- ******************* Using the 4 columns instead of tabs ******************* -->
+
+
+<?php endif; ?> 
+
+    <div class="row"> <!-- Contains the left and right view columns  -->
+         <div class="col-md-6">
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ******************* Update/Exit Button Boiler Plate ******************* -->
+<!-- *********************************************************************** -->
+
+    <div class="btn-group">
+
+    <?php if($_SESSION['ccmpmode'] == 'viewmydata'): ?>
+    <div>
+<!-- <a href="<?= BASE_URL ?>welcome-ccmps/ccmphome" style="font-weight: bold; font-size: 46px; color: lightseagreen;"> &#8592; </a> -->
+    <!-- Passes a /1 to signify 1st tab to return to after edit/cancel/exit -->
+
+   <!-- <a class="btn btn-outline btn-warning"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/ccmphome" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-home"></i> Home</h<?= $_SESSION['fontsize'] ?>></a> -->
+
+    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>> </a>
+    <a data-toggle="modal" data-target="#fontModal" class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-wrench"></i> Font [<span style="color: lightgray"><?= $_SESSION['dfontsize'] ?></span>]</h<?= $_SESSION['fontsize'] ?>> </a>       
+             
+
+        
+    </div>
+
+    <?php elseif($_SESSION['ccmpmode'] == 'momv'): ?> 
+    <div>
+
+    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>></a>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/momm"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Exit</h<?= $_SESSION['fontsize'] ?>></a>
+    </div>
+
+    <?php elseif($_SESSION['ccmpmode'] == 'mosv'): ?> 
+    <div>
+
+    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>></a>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><h<?= $_SESSION['fontsize'] ?>><i class="fa-times-circle"></i> Exit</h<?= $_SESSION['fontsize'] ?>></a>
+    </div>
+
+    <?php elseif($_SESSION['ccmpmode'] == 'mcmv'): ?> 
+    <div>
+
+    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>></a>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mcmm/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa-times-circle"></i> Exit</h<?= $_SESSION['fontsize'] ?>></a>
+
+    </div>
+
+    <?php elseif($_SESSION['ccmpmode'] == 'mamv'): ?>
+    <div>
+
+    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i> Update</h<?= $_SESSION['fontsize'] ?>></a>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps/1"><h<?= $_SESSION['fontsize'] ?>><i class="fa-times-circle"></i> Exit</h<?= $_SESSION['fontsize'] ?>></a>
+    </div>
+
+    <?php else: ?> 
+
+    <?php endif; ?> 
+</div>
+
+<!-- *********************************************************************** -->
+
+<!-- ********************* Left Column of View Fields ********************** -->
+<!-- *********************************************************************** --> 
+ <!--  <p> Left column create/update fields go here </p> -->
+
+<!--
+<?php $itemsv1009 = ["Test"        => "$prefix"  
+
+                    ]; ?>
+<?php foreach($itemsv1009 as $label=> $value) { ?> 
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $vvalueclass1 ?>"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div> 
+       <div class="<?= $vvalueclass1 ?>"> <input  type="text" class="form-control" value="<?= $value ?>" disabled>  </div> 
+    </div>
+
+<?php } ?> -->
+
+
+
+     <br>
+     <br>
+     
+                
+
+     <div class="ibox-content text-box">
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong><?= CCMP  ?> Info</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    </div>
+    </div>         
+<div class="row">           
+    <div class="col-sm-6">          
+         
+<?php $itemsv100 = ["Name"        => "",  
+                    ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _ccmps_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+           
+<?php foreach($itemsv100 as $label=> $value) { ?> 
+        
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+           <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $salutation ?> <?= $first_name ?> <?= $middle_name ?> <?= $last_name ?> <?= $suffix ?></h<?= $_SESSION['fontsize'] ?>>  </div> 
+    </div> 
+ 
+<?php } ?> 
+    
+    
+<?php $itemsv100A = [ 
+                    SUBENTITY       => "$subentity",
+                    "Region"        => "$region",
+                    "Officer"       => "$subentity_role",
+                    "HQ Officer"    => "$national_officer",
+                    "Employer"      => "$employer",
+                    "Title"         => "$title" 
+                    ]; ?>
+       
+<?php foreach($itemsv100A as $label=> $value) { ?> 
+ 
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+         
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div> 
+ 
+<?php } ?>            
+    </div> <!-- end col -->
+    <div class="col-sm-6"> 
+
+<?php $itemsv100B = [ 
+                   
+                    "Gender"     => "$gender",
+                    "DoB"        => "$dob",
+                    "Minor"      => "$minor",
+                    "Student"    => "$student",
+                    "Birthday"   => "$birthday",
+                    "Department" => "$department",
+                    "Supervisor" => "$reports_to"
+                    ]; ?>
+       
+<?php foreach($itemsv100B as $label=> $value) { ?> 
+ 
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+         
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div> 
+    </div> 
+ 
+<?php } ?>        
+       
+   </div> <!-- end col -->   
+</div>  <!-- end row -->          
+              
+</div> <!-- end ibox content  --> 
+
+<br>
+
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _ccmps_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+     <div class="ibox-content text-box">
+<div class="row">
+    <div class="col">  
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Contact Info</strong></h<?= $_SESSION['fontsize'] ?>></center>   
+    </div>
+    </div>
+<div class="row">
+    <div class="col-sm-6">          
+
+<?php $itemsv100C = [
+                    "Home"     => "$phone",
+                    "Work"     => "$work_phone",
+                    "Mobile"   => "$mobile",
+                    "WhatsApp" => "$whatsapp"
+
+                    ]; ?>         
+            
+<?php foreach($itemsv100C as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>
+    </div> <!-- end col -->
+    <div class="col-sm-6"> 
+
+<?php $itemsv100D = [
+                    "Email"            => "$email_address",
+                    "Fax"              => "$fax",
+                    "TTY"              => "$tty",
+                    "Use Alt Contact"  => "$use_alt_contact"
+
+                    ]; ?>
+
+           
+<?php foreach($itemsv100D as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>             
+             
+             
+    </div> <!-- end col -->   
+</div>  <!-- end row --> 
+
+  </div> <!-- end ibox content  -->
+
+    <!-- Spacing above the mailing address box -->
+
+
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+
+        <br> <!--  Done  -->
+        <br>
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <!--  Done  -->
+<br>
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+        <!--  Done  -->
+ <br> 
+    <?php endif; ?>
+                 
+    <div class="ibox-content">
+        
+    <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Mailing Address</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    <br>
+
+    <?php $itemsv101 = ["Address 1" => "$mailaddress1",
+                        "Address 2" => "$mailaddress2",
+                        "City"      => "$mailcity",
+                        "State"     => "$mailstate",
+                        "Zip"       => "$mailzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv101 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>             
+
+    </div>
+ 
+<br>  
+
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _ccmps_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+     <div class="ibox-content text-box">
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Preferences</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    <br>
+
+<?php $itemsv100D = ["Physical = Mailing"   => "$mail_eq_phys",
+                     "Billing = Shipping"   => "$bill_eq_ship",
+                     "Limit Dir Info"       => "$limit_dir_info",
+                     "Opt Out Directory"    => "$directoryoptout",
+                     "Opt Out Emails"       => "$emailoptout",
+                     "Do Not Call"          => "$donotcall",
+                     "Mail Notices"         => "$mail_notices",
+                     "Language"             => "$language"
+
+                    ]; ?>
+
+<?php foreach($itemsv100D as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>              
+  </div> <!-- ibox content  -->    
+  
+  
+     
+  
+  
+
+<!-- *********************************************************************** -->
+<!-- ******************* End Left Column of View Fields ******************** -->
+        </div> <!-- end col-6 -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ********************* Right Column of View Fields ********************* -->
+        <div class="col-md-6">
+<!-- *********************************************************************** --> 
+
+
+ <!--   <p>right column view fields go here</p> -->
+<p></p>
+    <br>
+    <br>
+    <br>
+<?php $itemsv100B = [CCMP." Number"    => "$ccmp_number",
+                    CCMP." Type"       => "$ccmp_type",  
+                    CCMP." Status"            => "$status", 
+                    "Current Year"      => "$current_year",
+                    "Eligible Voter"    => "$eligible_voter"
+                     
+                    ]; ?>
+
+<div class="ibox-content text-box">
+<div class="row">
+    <div class="col">  
+  <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Credentials</strong></h<?= $_SESSION['fontsize'] ?>></center>         
+    </div>
+    </div>         
+<div class="row">
+    <div class="col-lg-6"> 
+            
+<?php foreach($itemsv100B as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?> 
+    </div> <!-- end col -->
+    <div class="col-lg-6">        
+        
+        
+        
+        
+        
+      </div> <!-- end col -->   
+</div>  <!-- end row -->         
+</div> <!-- end ibox content  --> 
+
+<br>  
+<?php $itemsv100G = [
+                    "Alternate"  => "$alternate_contact",
+                    "Phone"      => "$alternate_phone",
+                    "Email"      => "$alternate_email"
+
+                    ]; ?>
+
+<div class="ibox-content text-box">
+<div class="row">
+    <div class="col">  
+ <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Secondary Contacts</strong></h<?= $_SESSION['fontsize'] ?>></center>    
+    </div>
+    </div>         
+<div class="row">
+    <div class="col-lg-6">  
+        
+        
+<?php foreach($itemsv100G as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>
+    </div> <!-- end col -->
+    <div class="col-lg-6">
+        
+ <?php $itemsv100H = [
+                    "Emergency" => "$emergency_contact",
+                    "Phone"   => "$emergency_phone",
+                    "Email"   => "$emergency_email"
+
+                    ]; ?>       
+        
+<?php foreach($itemsv100H as $label=> $value) { ?> 
+ 
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>  
+    </div>
+ 
+<?php } ?>        
+      </div> <!-- end col -->   
+</div>  <!-- end row -->       
+  </div> <!-- ibox content  --> 
+ 
+
+    <!-- Vertical spacing above physical address box depending on font size  -->
+    <?php if($_SESSION['fontsize'] == 1): ?> 
+        <br> <!--  Done  -->
+        <br> 
+        <br> 
+        <br>  
+         <br>
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+      
+        <br> 
+        
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+        <br>
+    
+
+    <?php endif; ?>  
+
+    <div class="ibox-content">
+    <center style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><strong><h<?= $_SESSION['fontsize'] ?>>Physical Address</strong></h<?= $_SESSION['fontsize'] ?>></center>
+   
+            
+    <?php $itemsv102 = ["Address 1" => "$physaddress1",
+                        "Address 2" => "$physaddress2",
+                        "City"      => "$physcity",
+                        "State"     => "$physstate",
+                        "Zip"       => "$physzip"
+                        ]; ?>           
+            
+    <?php foreach($itemsv102 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>  
+    </div>    
+        
+        
+
+
+   <br>
+<?php if($_SESSION['ccmpmode'] == 'viewmydata'): ?>
+    <?php $itemsv102B = [ 
+                        
+                   
+                      
+                        "Miscellaneous 1"   => "$misc1",
+                        "Miscellaneous 2"   => "$misc2",
+                        "Miscellaneous 3"   => "$misc3",
+                        "Active Duty"       => "$active_duty",
+                        "Former Military"   => "$former_military",
+        
+                        "Last Updated"       => "$updated_at",
+                        "Updated By"        => "$updated_by"
+                        ]; ?>           
+<div class="ibox-content text-box">
+        <center  style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Miscellaneous</strong></h<?= $_SESSION['fontsize'] ?>></center>            
+    <?php foreach($itemsv102B as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= CCMPS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>" style="color:<?= CCMPS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?> 
+</div> <!-- end ibox content  --> 
+<?php else:  ?>
+    <?php $itemsv102B = [                     
+                        "Miscellaneous 1"   => "$misc1",
+                        "Miscellaneous 2"   => "$misc2",
+                        "Miscellaneous 3"   => "$misc3",
+                        "Active Duty"       => "$active_duty",
+                        "Former Military"   => "$former_military",
+        
+                        "CCMP Id"           => "$ccmp_id",       
+                        "Unverified"        => "$unverified",
+                        "Lead Source"       => "$leadsource",
+                        "Deceased"          => "$deceased",
+                        "Deleted"           => "$soft_deleted",
+                        "User Level Code"   => "$tguserlevel",
+                        "Last Updated"      => "$updated_at",
+                        "Updated By"        => "$updated_by",
+                        "Date Created"      => "$created_at", 
+                        "Created By"        => "$created_by"
+                        ]; ?>           
+<div class="ibox-content text-box">
+        <center  style="<?= $vlabelstyle ?>"><h<?= $_SESSION['fontsize'] ?>><strong>Miscellaneous</strong></h<?= $_SESSION['fontsize'] ?>></center>            
+    <?php foreach($itemsv102B as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?> 
+</div> <!-- end ibox content  --> 
+
+ <?php endif; ?>
+
+
+
+
+       
+
+<!-- *********************************************************************** -->
+<!-- ****************** End Right Column of View Fields ******************** -->       
+       </div> <!-- end 2nd column -->   
+
+    </div> <!-- End row containing the left and right view columns  -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- For formatting the notes field is outside of the row but inside the form -->
+<!-- *********************************************************************** -->
+
+
+ <!--   <p>view fields outside row go here</p> -->
+    <!-- For formatting the notes field is outside of the row but inside the form -->
+    <?php if($_SESSION['ccmpmode'] == 'viewmydata'): ?>
+        <br>
+    <?php else: ?>
+        <br>    
+    <?php $itemsv103 = ["Notes (not visible to ".CCMP.")" => "$notes"
+            
+                        ]; ?>           
+<div class="ibox-content text-box">
+        <center  style="<?= $vlabelstyle ?>"><h<?= $_SESSION['fontsize'] ?>><strong>Notes</strong></h<?= $_SESSION['fontsize'] ?>></center>             
+    <?php foreach($itemsv103 as $label=> $value) { ?> 
+
+        <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+            <div class="<?= $vvalueclass1 ?>"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+        </div>
+
+    <?php } ?>  
+ </'div>       
+        
+    <?php endif; ?>
+
+<!-- *********************************************************************** -->
+<!-- **************************** End Form ********************************* -->
+<!-- If this is the only faq crud item or the last faq crud item -->
+<!-- Must close the form therwise comment out so the other items will post their values-->
+
+    </form>
+<!-- *********************************************************************** --> 
+ 
+    <?php endif; ?> <!--  End Create/Update else View   -->
+   
+<!-- *********************************************************************** -->
+<!-- ***************** End Create/Update/View Section ********************** -->
+<!-- *********************************************************************** --> 
+                                                        
+        </div> <!-- End Column 12 --> 
+
+    </div><!-- End Row Two -->
+
+</div> <!-- End FAQ Item -->
+

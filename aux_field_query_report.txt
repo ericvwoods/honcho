@@ -1,0 +1,135 @@
+Active (non-commented) queries in Ccmps.php that reference fields now in ccmps_aux
+Total: 44 lines
+================================================================================
+
+Line 182  [member_no]
+    $mbrobj = $this->model->get_one_where('member_no', $member_number, 'ccmps');
+
+Line 225  [member_no]
+    $mbrobj = $this->model->get_one_where('member_no', $member_number, 'ccmps');
+
+Line 341  [member_no]
+    $mbrobj = $this->model->get_one_where('member_no', $member_number, 'ccmps');
+
+Line 1078  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deleted != 1 AND deceased != 1 ORDER BY last_name";
+
+Line 1182  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deleted != 1 AND deceased != 1 ORDER BY last_name";
+
+Line 1472  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deleted != 1 AND deceased != 1 ORDER BY last_name";
+
+Line 1754  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deleted != 1 AND deceased != 1 ORDER BY last_name";
+
+Line 2310  [member_no]
+    $ccmpobj  = $this->model->get_one_where('member_no', $mbrnum,'ccmps');
+
+Line 4218  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deceased != 1  AND deleted != 1 AND current_year > $currentyear AND directoryoptout != 1";
+
+Line 4225  [deleted]
+    $sql15 = "SELECT * FROM ccmps WHERE deceased != 1 AND directoryoptout != 1  AND deleted != 1 AND current_year > $currentyear OR deceased != 1 AND directoryoptout != 1  AND deleted != 1 And status = 2";
+
+Line 4246  [chapter, deleted]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter AND current_year > $currentyear AND deceased != 1  AND deleted != 1 OR chapter = $chapter AND deceased != 1  AND deleted != 1 And status = 2";
+
+Line 4255  [chapter]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter";
+
+Line 4268  [chapter, deleted, member_type]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter AND current_year > $currentyear AND deceased != 1  AND deleted != 1 And member_type = 3 OR chapter = $chapter AND current_year > $currentyear AND deceased != 1  AND deleted != 1 And member_type = 4";
+
+Line 4315  [chapter]
+    $sql3 = "SELECT * FROM ccmps WHERE chapter = $chapter AND current_year = $currentyear AND deceased != 1";
+
+Line 4346  [chapter, member_type]
+    $sql5 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 1 AND current_year > $currentyear AND deceased != 1";
+
+Line 4350  [member_type]
+    $sql6 = "SELECT * FROM ccmps WHERE member_type = 1 AND current_year > $currentyear AND deceased != 1";
+
+Line 4355  [chapter, member_type]
+    $sql7 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 5 AND current_year > $currentyear AND deceased != 1";
+
+Line 4359  [member_type]
+    $sql8 = "SELECT * FROM ccmps WHERE member_type = 5 AND current_year > $currentyear AND deceased != 1";
+
+Line 4365  [chapter, member_type]
+    $sql9 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 2 AND current_year > $currentyear AND deceased != 1";
+
+Line 4370  [member_type]
+    $sql10 = "SELECT * FROM ccmps WHERE member_type = 2 AND current_year > $currentyear AND deceased != 1";
+
+Line 4376  [chapter, member_type]
+    $sql9 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 4 AND current_year > $currentyear AND deceased != 1";
+
+Line 4381  [member_type]
+    $sql10 = "SELECT * FROM ccmps WHERE member_type = 4 AND current_year > $currentyear AND deceased != 1";
+
+Line 4386  [chapter, member_type]
+    $sql11 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 3 AND current_year > $currentyear AND deceased != 1";
+
+Line 4391  [member_type]
+    $sql12 = "SELECT * FROM ccmps WHERE member_type = 3 AND current_year > $currentyear AND deceased != 1";
+
+Line 4399  [chapter, member_type]
+    $sql13 = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 6 AND current_year > $currentyear AND deceased != 1";
+
+Line 4404  [member_type]
+    $sql14 = "SELECT * FROM ccmps WHERE member_type = 6 AND current_year > $currentyear AND deceased != 1";
+
+Line 4874  [chapter, deleted]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter AND deceased != 1  AND deleted != 1 AND current_year > $currentyear OR  chapter = $chapter AND deceased != 1  AND deleted != 1 AND status = 2 ORDER BY last_name";
+
+Line 5018  [deleted]
+    $sql = "SELECT * FROM ccmps WHERE deceased != 1 AND directoryoptout != 1  AND deleted != 1 AND current_year > $currentyear OR deceased != 1 AND directoryoptout != 1  AND deleted != 1 And status = 2";
+
+Line 6498  [chapter]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter AND deceased != 1  AND current_year > $currentyear"; // filter by current year if have five year look back
+
+Line 6536  [chapter, deleted, member_type]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter AND current_year > $currentyear AND deceased != 1 AND deleted != 1 AND member_type = 3 OR chapter = $chapter AND current_year > $currentyear AND deceased != 1 AND deleted != 1 AND member_type = 4"; // S or Q students - all for a chapter
+
+Line 6548  [deleted, member_type]
+    $sql = "SELECT * FROM ccmps WHERE current_year > $currentyear AND deceased != 1 AND deleted != 1 AND member_type = 3 OR current_year > $currentyear AND deceased != 1 AND deleted != 1 AND member_type = 4"; // manage all student members
+
+Line 6558  [deleted]
+    $sql = "SELECT id,salutation,first_name,middle_name,last_name,suffix,chapter,member_no,member_type,status,current_year FROM ccmps WHERE current_year > $currentyear AND deceased = 0 AND deleted = 0";
+
+Line 6666  [chapter, deleted]
+    $sqlpy = "SELECT * FROM ccmps WHERE chapter = $chapter AND deceased != 1 AND deleted != 1 AND current_year = $previousyear";
+
+Line 6673  [deleted]
+    $sqlpy = "SELECT * FROM ccmps WHERE deceased != 1 AND deleted != 1 AND current_year = $previousyear";
+
+Line 6774  [chapter, deleted]
+    $sql2y = "SELECT * FROM ccmps WHERE chapter = $chapter AND deceased != 1 AND deleted != 1 AND current_year = $twoyearsago";
+
+Line 6781  [deleted]
+    $sql2y = "SELECT * FROM ccmps WHERE deceased != 1 AND deleted != 1 AND current_year = $twoyearsago";
+
+Line 6878  [chapter, deleted]
+    $sql3y = "SELECT * FROM ccmps WHERE chapter = $chapter AND deceased != 1 AND deleted != 1 AND current_year < $twoyearsago";
+
+Line 6885  [deleted]
+    $sql3y = "SELECT * FROM ccmps WHERE deceased != 1 AND deleted != 1 AND current_year < $twoyearsago";
+
+Line 6983  [chapter]
+    $sqlall = "SELECT * FROM ccmps WHERE chapter = $chapter";
+
+Line 6991  [chapter, member_type]
+    $sqlall = "SELECT * FROM ccmps WHERE chapter = $chapter AND member_type = 3 OR  chapter = $chapter AND member_type = 4";
+
+Line 7006  [member_type]
+    $sqlall = "SELECT * FROM ccmps WHERE member_type = 3 OR  member_type = 4";
+
+Line 8714  [member_no]
+    $usr_obj = $this->model->get_one_where('member_no', $mbrno, 'ccmps');
+
+Line 10278  [chapter]
+    $sql = "SELECT * FROM ccmps WHERE chapter = $chapter";
+
+Line 11954  [chapter]
+    $data = $this->model->get_many_where('chapter',$_SESSION['chapter'],'ccmps'); // works manage

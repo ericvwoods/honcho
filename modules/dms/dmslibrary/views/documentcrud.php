@@ -1,0 +1,1943 @@
+<?php
+
+  include('navbar.php');
+
+?>
+
+<div class="row"> <!-- Page Row One  -->
+    <div class="col-lg-12"> <!-- Col 12 Page Row One -->
+        <div class="ibox-content">
+            <div class="row">
+                        <div class="col-md-1">
+                         <br>
+
+                            <div class="row">
+                                <div class="col-md-6"> <!-- for spacing -->
+                                </div>
+
+                               <a href="#" title="">
+
+<?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate'): ?>
+<br>
+<?php endif; ?>
+                <br>
+<img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
+                               </a>
+                            </div>
+
+                        </div> <!-- end col -->
+
+
+                <?php if($managemode == 'dmslibadminupdate'): ?>
+                    <div class="col-md-6">
+                <?php else: ?>
+                    <div class="col-md5">
+                <?php endif; ?>
+
+
+                <br>
+                <?php if($managemode == 'dmslibadmin'): ?>
+                  <br>
+                    <span  style="color:<?= SN_CLR ?>; font-size: 30px;">Document Management System</span>
+                     <a style="color:<?= SN2_CLR ?>;" href="#"><h2>Document Library</h2></a>
+
+                     <?php elseif($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate'): ?>
+                       <br>
+                     <span  style="color:<?= SN_CLR ?>; font-size: 30px;">DMS Document Library</span>
+                     <a style="color:<?= SN2_CLR ?>;" href="#"><h2>Updating a Document Record</h2></a>
+                     <?php elseif($managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?>
+                       <br>
+                     <span  style="color:<?= SN_CLR ?>; font-size: 30px;">DMS Document Library</span>
+                     <a style="color:<?= SN2_CLR ?>;" href="#"><h2>Creating Document Record</h2></a>
+                 <?php else: ?>
+
+                    <span  style="color:<?= SN_CLR ?>; font-size: 30px;">DMS Document Library</span>
+                      <h3> Viewing Document Record </h3>
+                 <?php endif; ?>
+
+                    </div> <!-- end column -->
+
+    <?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate'): ?> <!-- Updating -->
+<!--     <p>Not allowing non admins to update documents at this time <?= $managemode ?></p>  -->
+          <div class="col-md-12">
+              <br><br>
+         <ul>
+       <li>
+       <form method = "post" action="<?= BASE_URL ?>dms-dmslibrary/submit/<?= $recid ?>">
+           <br><br>
+        <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><span  style="font-size: 20px"><i class="fa fa-save"></i> Save Changes</span></button>  <button class="btn btn-outline btn-warning"><span> <a href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Cancel</a></span></button>
+
+            </li>
+            </ul> <!-- End Navbar right  -->
+    <?php elseif($managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?> <!-- Creating -->
+      <div class="col-md-4">
+      </div> <!-- end column -->
+    <div class="col-md-4">
+               <ul class="nav navbar-top-links navbar-right">
+                   <li>
+                <br><br>
+                <form  method = "post" action="<?= BASE_URL ?>dms-dmslibrary/submit"> <h2><button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><span style="font-size: 20px"><i class="fa fa-save"></i> Save New</span></button>  <button class="btn btn-outline btn-warning"><span> <a href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Cancel</a></span></button>
+                    <li>
+               </ul> <!-- End Navbar right  -->
+  </div> <!-- end column -->
+    <?php else: ?> <!-- Viewing -->
+     <div class="col-md-4">
+              <br><br>
+                              <?php if($managemode == 'dmslibadmin') : ?>
+
+
+
+                       <br>
+                    <ul class="nav navbar-top-links navbar-right">
+
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/kanban/m"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list-alt"></i> Kanban Board</span></a>
+
+                    </ul> <!-- End Navbar right  -->
+
+
+
+                        <?php endif; ?>
+                           <br>
+  <?php if($managemode == 'dmslibuser'): ?>
+
+  <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibuser"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-gears"></i> Manage</span></a>
+
+  <?php else: ?>
+                        </div> <!-- end column -->
+                          <div class="col-md-4">
+                               <?php if($_SESSION['filelibrary_rolename'] == 'dmslibadmin'): ?>
+                               <br><br>
+                    <ul class="nav navbar-top-links navbar-right">
+
+
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/kanban/m"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list-alt"></i> Kanban Board</span></a>
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-gears"></i> Manage</span></a>
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>honcho"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list"></i> Dashboard</span></a>
+
+                    </ul> <!-- End Navbar right  -->
+                       <?php endif; ?>
+                      </div> <!-- end column -->
+   <?php endif; ?>
+
+     <?php endif; ?>
+</div> <!-- end column -->
+                </div> <!-- end row -->
+
+        <!--    </div>--> <!-- end ibox-title- ln 17 -->
+
+
+
+<!-- Gap between header and 1st Collapse Contact Information  -->
+<!--   <br>   -->
+
+<!-- *********************************************************************** -->
+<!--   <php include('crud.php'); ?> -->
+
+<!-- *********************************************************************** -->
+<!-- ****** Begin Boiler Plate for 1st CRUD Item containing Form Open ****** -->
+<!-- *********************************************************************** -->
+<!--
+<php if(DEBUGGING == true): ?>
+ <!--   <php
+           echo('$_SESSION');
+           echo('<br>');
+           echo('<h3>$_SESSION</h3>');
+           json($_SESSION);
+           echo('<h3>$data</h3>');
+           json($data);
+        ?>
+ <php endif; ?>
+-->
+<style>
+        .special {
+  font-weight: bold !important;
+  color: #fff !important;
+  background: #bc0000 !important;
+  text-transform: uppercase;
+}
+ </style>
+
+ <!-- Language  -->
+
+<?php if($_SESSION['language'] == 1): ?>
+
+<?php elseif($_SESSION['language'] == 2): ?>
+
+<?php endif; ?>
+
+<div class="faq-item"> <!-- Ends at end of file -->
+
+        <div class="row"> <!-- Row One  -->
+            <div class="col-md-12">
+                 <div class="row">
+
+ <!--
+        <php  if($filename == 'File Missing' || strlen($filename) < 1): ?>
+               <php   $warning = "File Missing";
+                       $filename = "File Missing"?> <!-- in the case where it satisfied the second condition set it for display under File Name: --
+        <php else: ?>
+               <php   $warning = ""; ?>
+        <php endif; ?>
+-->
+
+                    <div class="col-md-12">
+
+<?php if($managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'  || $managemode == 'dmslibadmin'): ?>
+<!--   <p>Not allowing non admins to create documents at this time <?= $managemode ?></p> -->
+
+
+
+<?php endif; ?> <!-- $_SESSION['filelibrary_rolename']  -->
+
+                          <?php if($done == 'Yes' ): ?> <!-- Inserted XXX to break collapse so stays open - remove to toggle closed. Also there is no $warning used below  -->
+<center><a data-toggle="collapse" href="XXX#faq1" class="faq-question" style="color: <?= SN_CLR ?>;"> <h2><span style="color: <?= SN_CLR ?>;"><i class="<?= $fileicon ?>"></i></span><strong> <?= $title ?></strong>  <span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><?= $warning ?></span><!-- <i class="fa fa-unsorted fa-1x" style="color: <?= DMS_HM_TAB_CARET_CLR ?>;"></i> --> </h2>  </a> </center>
+
+                          <?php else: ?>
+                                   <?php if(strlen($filetype) > 0 AND $filetype != 1 ): ?>
+<center><a data-toggle="collapse" href="XXX#faq1" class="faq-question" style="color: <?= SN_CLR ?>;"> <h2><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="<?= $fileicon ?>"></i></span><strong> <?= $title ?> </strong><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"> DRAFT <?= $warning ?></span> </h2>  </a> </center>
+                                    <?php else: ?>
+<center><a data-toggle="collapse" href="XXX#faq1" class="faq-question" style="color: <?= SN_CLR ?>;"> <h2><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="<?= $fileicon ?>"></i></span><strong> <?= $title ?> </strong> </h2>  </a> </center>
+
+                                    <?php endif; ?>
+                          <?php endif; ?>
+
+
+    <center>     <?php if($_SESSION['flashmsgcolor'] == 1): ?>
+      <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: lightseagreen;">', '</div>');
+      $flash_msg = '';
+      set_flashdata($flash_msg); ?>
+    <?php else: ?>
+      <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>');
+      $flash_msg = '';
+      set_flashdata($flash_msg); ?>
+    <?php endif; ?></center>
+
+
+    <br>
+                    </div> <!-- end col -->
+                </div> <!-- row -->
+            </div>
+        </div><!-- End Row One  -->
+
+        <div class="row"> <!-- Begin Row Two - Ends near end of file -->
+            <div class="col-lg-12"> <!--   -->
+<!-- <?= $_SESSION['ccmp_active_window'] ?> -->
+
+<div id="faq1" class="panel-collapse">
+
+<div class="faq-answer">
+<div class="ibox-content">
+
+        <!-- Show flash message then reset it to blank  -->
+        <?php if($_SESSION['ccmp_active_window'] == 1): ?> <!-- can only show the flashmsg once on a page - show in the open section -->
+
+   <?php if($_SESSION['flashmsgcolor'] == 1): ?>
+     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: lightseagreen;">', '</div>');
+     $flash_msg = '';
+     set_flashdata($flash_msg); ?>
+   <?php else: ?>
+     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>');
+     $flash_msg = '';
+     set_flashdata($flash_msg); ?>
+   <?php endif; ?>
+
+        <?php endif; ?>
+
+
+       <strong> <?= validation_errors() ?></strong>
+       <br>
+<!-- *********************************************************************** -->
+<!-- ************************* End Boiler Plate **************************** -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- *************************** Begin Content ***************************** -->
+<!-- *********************************************************************** -->
+
+<!-- ************************ Edit/Create Fields *************************** -->
+
+<?php if($_SESSION['mobileformat'] == 1 ): ?>  <!-- fg = form group -->
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-4' ?>  <!-- was 5  -->
+    <?php   $yesnodiv       = 'col-sm-2' ?>
+    <?php   $labelclass     = 'col-sm-3 col-form-label' ?>
+    <?php   $inputdivclass  = 'col-sm-4' ?>
+    <?php   $inputstyle     = 'height: 35px; font-size: 15px;' ?>
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?>
+    <?php   $valueclass     = 'col-sm-3' ?>
+    <?php   $selectstyle    = 'height: 35px; font-size: 15px;' ?>
+
+<?php else: ?>
+    <?php if($_SESSION['fontsize'] == 1 ): ?> <!-- Largest Font h1  -->
+    <?php   $fgdivclass     = 'form-group  row' ?>                 <!-- form group tag for fields -->
+    <?php   $fgseldiv       = 'col-sm-7' ?>                        <!-- col width of regular dropdown boxes  -->
+    <?php   $yesnodiv       = 'col-sm-5' ?>                        <!-- col width of yes/no dropdown boxes  -->
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>         <!-- col width of field labels  -->
+    <?php   $inputdivclass  = 'col-sm-7' ?>                        <!-- col width of input boxes  -->
+    <?php   $inputstyle     = 'height: 50px; font-size: 25px;' ?>  <!-- height of input boxes & fontsize -->
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?>           <!-- label color -->
+    <?php   $valueclass     = 'col-sm-6' ?>                        <!-- Value widths (may be different from view section) -->
+    <?php   $selectstyle    = 'height: 50px; font-size: 28px;' ?>  <!-- height of regular dropdown boxes & fontsize  -->
+
+    <?php elseif($_SESSION['fontsize'] == 2): ?> <!-- Medium Font h2  -->
+
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-6' ?>                         <!-- col width of regular dropdown boxes  -->
+    <?php   $yesnodiv       = 'col-sm-6' ?>                         <!-- col width of yes/no dropdown boxes  -->
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>          <!-- Width between labels & input boxes in update/create mode  -->
+    <?php   $inputdivclass  = 'col-sm-6' ?>                         <!-- col width of input boxes  -->
+    <?php   $inputstyle     = 'height: 40px; font-size: 20px;' ?>
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?>
+    <?php   $valueclass     = 'col-sm-6' ?>
+    <?php   $selectstyle    = 'height: 40px; font-size: 20px;' ?>   <!-- height of regular dropdown boxes & fontsize  -->
+
+    <?php elseif($_SESSION['fontsize'] == 3): ?> <!-- Smallest Font h3  -->
+    <?php   $fgdivclass     = 'form-group  row' ?>
+    <?php   $fgseldiv       = 'col-sm-7' ?>                        <!-- col width of regular dropdown boxes  -->
+    <?php   $yesnodiv       = 'col-sm-4' ?>                        <!-- col width of yes/no dropdown boxes  -->
+    <?php   $labelclass     = 'col-sm-4 col-form-label' ?>         <!-- col width of field labels  -->
+    <?php   $inputdivclass  = 'col-sm-7' ?>                        <!-- col width of input boxes  -->
+    <?php   $inputstyle     = 'height: 35px; font-size: 15px;' ?>
+    <?php   $labelstyle     = 'color:cornflowerblue;' ?>
+    <?php   $valueclass     = 'col-sm-6' ?>
+    <?php   $selectstyle    = 'height: 35px; font-size: 15px;' ?>
+    <?php endif; ?>
+<?php endif; ?>
+
+<!-- **************************** View Fields ****************************** -->
+
+<?php if($_SESSION['mobileformat'] == 1 ): ?>  <!-- fg = form group -->
+<!--  default --> <?php $vfgdivclass  = 'form-group row' ?>   <!-- Class of the label/value combo  -->
+<!--  default --> <?php $vlabelclass  = 'col-lg-4' ?>         <!-- Width of the label column  -->
+<!--  default --> <?php $vlabelstyle  = 'color:cornflowerblue;' ?> <!-- Style of the view labels  -->
+<!--  default --> <?php $vvalueclass1 = 'col-sm-5' ?>         <!-- Width of value column  -->
+<!--  default --> <?php $vvalueclass2 = 'col-sm-7' ?>         <!-- Width of value column  -->
+
+<?php else: ?>
+
+    <?php if($_SESSION['fontsize'] == 1 ): ?> <!-- Largest Font h1  -->
+
+    <?php   $vfgdivclass     = 'form-group  row' ?>          <!-- form group tag for fields -->
+    <?php   $vlabelclass     = 'col-sm-4 col-form-label' ?>  <!-- col width of field labels  -->
+    <?php   $vvalueclass1    = 'col-sm-6' ?>                 <!-- col width of view fields  -->
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?>    <!-- label color -->
+
+    <?php elseif($_SESSION['fontsize'] == 2): ?> <!-- Medium Font h2  -->
+
+    <?php   $vfgdivclass     = 'form-group  row' ?>          <!-- form group tag for fields -->
+    <?php   $vlabelclass     = 'col-sm-3 col-form-label' ?>  <!-- col width of field labels  -->
+    <?php   $vvalueclass1    = 'col-sm-9' ?>                 <!-- col width of view fields  -->
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?>    <!-- label color -->
+ <!--   <php   $vinputdivclass  = 'col-sm-7' ?>   -->              <!-- col width of input boxes  -->
+ <!--   <php   $vvalueclass2    = 'col-sm-5' ?>  -->   <!-- not used  -->
+
+    <?php elseif($_SESSION['fontsize'] == 3): ?> <!-- Smallest Font h3  -->
+
+    <?php   $vfgdivclass     = 'form-group  row' ?>          <!-- form group tag for fields -->
+    <?php   $vlabelclass     = 'col-sm-3 col-form-label' ?>  <!-- col width of field labels  -->
+    <?php   $vvalueclass1    = 'col-sm-6' ?>                 <!-- col width of view fields  -->
+    <?php   $vlabelstyle     = 'color:cornflowerblue;' ?>    <!-- label color -->
+
+    <?php endif; ?>
+<?php endif; ?>
+<!-- *********************************************************************** -->
+<!-- ********************* Begin Create/Update Section ********************* -->
+<!-- *********************************************************************** -->
+
+<!-- Member (mmd-manage.my.data)c/u, CA (mom-manage.our.members) c/u, SA (mos-manage.our.students)c/u, MCM (mcm-manage.current.members)c/u ??? , MAM (mam-manage.all.members) c/u   -->
+<?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate' || $managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?> <!-- Updating or creating  -->
+
+<!-- **************************** Begin Form ******************************* -->
+<!-- Form to post the create/update form values - the view is also contained in the form -->
+<!-- The first faq item must contain the form open and the last item the form close -->
+<!-- *********************************************************************** -->
+
+    <form  method = "post" action="<?= BASE_URL ?>dms-dmslibrary/submit/<?= $recid ?>">
+
+<!-- *********************************************************************** -->
+<!-- ******************* Save/Cancel Button Boiler Plate ******************* -->
+<!-- *********************************************************************** -->
+
+<!-- Save button is same for all  - However ccmps don't edit doc records unless dmslibadmin rights-->
+
+<div>
+
+<!--   <?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate' || $managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save Changes</h<?= $_SESSION['fontsize'] ?>></button>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+
+       <?php endif; ?> -->
+</div>
+
+<!-- ************************* End Save/Cancel buttons ********************* -->
+
+<!-- *********************************************************************** -->
+<!-- ********************** Begin Create/Update Fields ********************* -->
+<!-- *********************************************************************** -->
+<?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmslibsubadminupdate'): ?>
+
+     <div class="col">
+<!-- <center  style="<?= $vlabelstyle ?>; color:<?= SN_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Update Document Record</strong></h<?= $_SESSION['fontsize'] ?>></center> -->
+    </div>
+<?php endif; ?>
+<?php if($managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?>
+
+     <div class="col">
+ <center  style="<?= $vlabelstyle ?>; color:<?= SN_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Create A Document Record</strong></h<?= $_SESSION['fontsize'] ?>></center>
+    </div>
+<?php endif; ?>
+<br>
+
+<div class="row">
+
+    <?php if($_SESSION['fontsize'] == 1): ?>
+
+        <div class="col-md-6"> <!-- Done -->
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <div class="col-md-6"> <!-- Done -->
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+
+        <div class="col-md-5"> <!-- Done -->
+
+     <?php endif; ?>
+
+
+<!-- *********************************************************************** -->
+<!-- ****************** Left Column Create/Update Fields ******************* -->
+<!-- *********************************************************************** -->
+
+<!--
+    All needed values to edit, create, or validate a record were passed to
+    this form to either visible or hidden controls.
+
+    Hidden controls are ones the user cannot, because of role or should not
+    because they are system controlled, edit - but may be needed to validate.
+
+    The posted values were named with the unique update/create field labels
+    concatenated and with spaces, asterisks, or underscores removed by the form.
+
+    Cannot simply use the db field names as control names because the form may
+    have fields from several tables with the same name combined with the fact
+    that fields are named on the fly using a loop as the controls are dynamically
+    created.
+-->
+
+ <!--  <p> Left column create/update fields go here </p> -->
+
+         <center><label class="" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Information</h<?= $_SESSION['fontsize'] ?>></label></center>
+
+     <div class="ibox-content text-box">
+            <div class="row">
+         <div class="col-md-2">
+         </div>
+
+            </div>
+
+    <!-- How to handle not updatable but still pass current value to the save   -->
+    <div class="<?= $fgdivclass ?>"><label class="col-sm-2 col-form-label" hidden><strong></strong></label>
+
+        <div class="col-sm-8"><input name="managemode" type="text" class="form-control" value="<?= $managemode ?>" hidden></div>
+   </div>
+
+<!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+<?php $items1ss = ["Title <a style='color:Red;'>*</a>"       => "$title"
+        ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items1ss as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" required>
+        </div>
+    </div>
+<?php } ?>
+
+    <!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+<?php $items1 = [
+                 "Subject" => "$subject",
+                 "Author"      => "$author"
+        ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items1 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>
+
+<?php if($recid > 0):  ?>   <!-- Updating  - If new the chapter is assigned to the same one as the chapter admin -->
+
+
+    <?php if(DEBUGGING == true): ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG1 ?> <?= $doctag1 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php else: ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG1 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php endif; ?>
+<div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag1" style="<?= $selectstyle ?>">
+<!-- Loop through the dropdown array passed in $data  -->
+  <option selected value='0'>NA</option>
+<?php foreach($doctags1 as $row) { ?>
+<!-- If $row->id = currently selected user_level_id then pre-select that option -->
+    <?php if($row->id == $doctag1): ?>
+        <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+    <?php else: ?> <!-- otherwise just create the option -->
+        <option value="<?= $row->id ?>"><?= $row->description ?></option>
+    <?php endif; ?>
+ <?php } ?>
+ </select>
+</div>
+</div>
+
+
+    <?php if(DEBUGGING == true): ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= SUBENTITY ?> <?= $subentity ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php else: ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= SUBENTITY ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php endif; ?>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="subentity" style="<?= $selectstyle ?>">
+
+ <option selected value='0'>NA</option>
+<?php foreach($subentities as $row) { ?>
+
+    <?php if($row->id == $subentity): ?>
+        <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php else: ?>
+        <option value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php endif; ?>
+ <?php } ?>
+ </select>
+</div>
+</div>
+
+<!-- Department -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Department <?= $region ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Department</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="department" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($departments as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $department): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+
+    <?php if(DEBUGGING == true): ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG2 ?> <?= $doctag2 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php else: ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG2 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php endif; ?>
+<div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag2" style="<?= $selectstyle ?>">
+<!-- Loop through the dropdown array passed in $data  -->
+  <option selected value='0'>NA</option>
+<?php foreach($doctags2 as $row) { ?>
+<!-- If $row->id = currently selected user_level_id then pre-select that option -->
+    <?php if($row->id == $doctag2): ?>
+        <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php else: ?> <!-- otherwise just create the option -->
+        <option value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php endif; ?>
+ <?php } ?>
+ </select>
+</div>
+</div>
+
+    <?php if(DEBUGGING == true): ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG3 ?> <?= $doctag3 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php else: ?>
+<div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG3 ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php endif; ?>
+<div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag3" style="<?= $selectstyle ?>">
+<!-- Loop through the dropdown array passed in $data  -->
+  <option selected value='0'>NA</option>
+<?php foreach($doctags3 as $row) { ?>
+<!-- If $row->id = currently selected user_level_id then pre-select that option -->
+    <?php if($row->id == $doctag3): ?>
+        <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php else: ?> <!-- otherwise just create the option -->
+        <option value="<?= $row->id ?>"><?= $row->title ?></option>
+    <?php endif; ?>
+ <?php } ?>
+ </select>
+</div>
+</div>
+
+
+<!-- Region -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Region <?= $region ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Region</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="region" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($regions as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $region): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+
+<?php else: ?> <!-- Creating  -->
+
+
+        <?php if(DEBUGGING == true): ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG1 ?> <?= $doctag1 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG1 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag1" style="<?= $selectstyle ?>">
+    <!-- Loop through the dropdown array passed in $data  -->
+      <option selected value=0>NA</option>
+    <?php foreach($doctags1 as $row) { ?>
+    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+        <?php if($row->id == $doctag1): ?>
+            <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php else: ?> <!-- otherwise just create the option -->
+            <option value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php endif; ?>
+     <?php } ?>
+     </select>
+    </div>
+    </div>
+
+
+    <!-- Subentity -->
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= SUBENTITY ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="subentity" style="<?= $selectstyle ?>">
+    <!-- Loop through the dropdown array passed in $data  -->
+     <option selected value='0'>NA</option>
+    <?php foreach($subentities as $row) { ?>
+    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+        <?php if($row->id == $subentity): ?>
+            <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php else: ?> <!-- otherwise just create the option -->
+            <option value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php endif; ?>
+     <?php } ?>
+     </select>
+    </div>
+    </div>
+
+<!-- Department -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Department <?= $region ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Department</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="department" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($departments as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $department): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+
+        <?php if(DEBUGGING == true): ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG2 ?> <?= $doctag2 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG2 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag2" style="<?= $selectstyle ?>">
+    <!-- Loop through the dropdown array passed in $data  -->
+      <option selected value=0>NA</option>
+    <?php foreach($doctags2 as $row) { ?>
+    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+        <?php if($row->id == $doctag2): ?>
+            <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+        <?php else: ?> <!-- otherwise just create the option -->
+            <option value="<?= $row->id ?>"><?= $row->title ?></option>
+        <?php endif; ?>
+     <?php } ?>
+     </select>
+    </div>
+    </div>
+
+        <?php if(DEBUGGING == true): ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG3 ?> <?= $doctag3 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= DMS_FL_TAG3 ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="doctag3" style="<?= $selectstyle ?>">
+    <!-- Loop through the dropdown array passed in $data  -->
+      <option selected value=0>NA</option>
+    <?php foreach($doctags3 as $row) { ?>
+    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+        <?php if($row->id == $doctag3): ?>
+            <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+        <?php else: ?> <!-- otherwise just create the option -->
+            <option value="<?= $row->id ?>"><?= $row->title ?></option>
+        <?php endif; ?>
+     <?php } ?>
+     </select>
+    </div>
+    </div>
+
+
+
+    <!-- Region -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Region <?= $region ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Region</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="region" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($regions as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $region): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+
+             <?php endif; ?>
+
+
+    </div> <!-- End ibox content  -->
+
+
+<!-- Spacing above the mailing address box -->
+
+
+    <?php if($_SESSION['fontsize'] == 1): ?>
+
+        <br> <!-- Done -->
+        <br>
+        <br>
+        <br>
+        <br>
+
+    <?php elseif($_SESSION['fontsize'] == 2):  ?>
+        <br>  <!-- Done -->
+
+
+
+    <?php elseif($_SESSION['fontsize'] == 3):  ?>
+        <br>  <!-- Done -->
+        <br>
+        <br>
+
+     <?php endif; ?>
+
+<!-- *********************************************************************** -->
+  <?php if($_SESSION['fontsize'] == 0):  ?> <!--  just for testing -->
+<!-- <php if($_SESSION['mobileformat'] == 1 ): ?> -->
+<!-- if mobile make all one column  -->
+<?php else: ?>
+<!-- ******************* End Left Column of Create/Update Fields ******************** -->
+        </div> <!-- end col-6 -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ********************* Right Column of Create/Update Fields ********************* -->
+        <div class="col-md-6">
+<!-- *********************************************************************** -->
+  <?php endif; ?>
+        <center><label class="" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Data</h<?= $_SESSION['fontsize'] ?>></label></center>
+
+  <div class="ibox-content text-box">
+
+ <!--   <p> Right column create/update fields go here </p>  -->
+<!-- Yes/No Dropdowns -->
+<?php $items01xyz = [
+                  "Attaching a File" => "$rectype"
+                ]; ?>
+
+<?php foreach($items01xyz as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> ? <?= $value ?> </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?>? </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 2 || $value == 0) { ?>
+                    <option selected value=2>Yes</option>
+                    <option value=1>No</option>
+                <?php }else{ ?>
+                    <option value=2>Yes</option>
+                    <option selected value=1>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+<?php } ?>
+
+    <?php if(DEBUGGING == true): ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Access <a style='color:Red;'>*</a><?= $access ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Access <a style='color:Red;'>*</a></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+    <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="access" style="<?= $selectstyle ?>">
+    <!-- Loop through the dropdown array passed in $data  -->
+      <option selected value='0'>Select</option>
+    <?php foreach($honcho_doclib_access as $row) { ?>
+    <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+        <?php if($row->id == $access): ?>
+            <option selected value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php else: ?> <!-- otherwise just create the option -->
+            <option value="<?= $row->id ?>"><?= $row->description ?></option>
+        <?php endif; ?>
+     <?php } ?>
+     </select>
+    </div>
+    </div>
+
+<!-- Priority -->
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Priority</h<?= $_SESSION['fontsize'] ?>></label>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="priority" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>None</option>
+   <?php foreach($priorities as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $priorities): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+<!-- Status -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Status  <?= $status ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Status </h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+
+
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="status" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>None</option>
+   <?php foreach($statuses as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $status): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->title ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+<!-- Yes/No Dropdowns -->
+<?php $items01s = [
+                  "Completed" => "$done",
+
+                ]; ?>
+<!-- "Eligible Voter"  => "$eligible_voter"  not for ccmp to edit -->
+<?php foreach($items01s as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> <?= $value ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+<?php } ?>
+
+<!-- Yes/No Dropdowns -->
+<?php $items01 = [
+                  "Active" => "$active",
+
+                ]; ?>
+<!-- "Eligible Voter"  => "$eligible_voter"  not for ccmp to edit -->
+<?php foreach($items01 as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> <?= $value ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+<?php } ?>
+
+
+    <!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+<?php $items1f = [
+                 "Points"      => "$points"
+        ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items1f as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>
+                  <!-- Ccmp -->
+       <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= CCMP ?> <?= $ccmp ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= CCMP ?> </h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="ccmp" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($ccmps as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->id == $ccmp_id): ?>
+           <option selected value="<?= $row->id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+  <!-- Staff -->
+  <!--     <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Staff<?= $staff ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Staff</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="staff" style="<?= $selectstyle ?>">
+
+    <option selected value='0'>NA</option>
+   <?php foreach($staffs as $row) { ?>
+
+           <option value="<?= $row->trongate_user_id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+
+    <?php } ?>
+    </select>
+   </div>
+   </div> -->
+
+ <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Staff<?= $staff ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Staff</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="staff" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($staffs as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->trongate_user_id == $staff): ?>
+           <option selected value="<?= $row->trongate_user_id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->trongate_user_id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+<?php if($_SESSION['tg_user_level'] == 1): ?>
+
+            <?php if(DEBUGGING == true): ?>
+         <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Filetype <?= $filetype ?></h<?= $_SESSION['fontsize'] ?>></label>
+             <?php else: ?>
+        <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Filetype</h<?= $_SESSION['fontsize'] ?>></label>
+             <?php endif; ?>
+         <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="filetype" style="<?= $selectstyle ?>">
+         <!-- Loop through the dropdown array passed in $data  -->
+           <option selected value='0'>NA</option>
+         <?php foreach($filetypes as $row) { ?>
+         <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+             <?php if($row->id == $filetype): ?>
+                 <option selected value="<?= $row->id ?>"><?= $row->title ?></option>
+             <?php else: ?> <!-- otherwise just create the option -->
+                 <option value="<?= $row->id ?>"><?= $row->title ?></option>
+             <?php endif; ?>
+          <?php } ?>
+          </select>
+         </div>
+         </div>
+
+        <!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+        <?php $items2 = ["Downloads" => "$downloads",
+                         "Filename"  => "$filename",
+                         "Location"  => "$location"
+                ]; ?>
+        <!-- "" => "", -->
+        <!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+        <?php foreach($items2 as $label=> $value) { ?>
+            <!-- create a unique field name that is used in the $_POST -->
+            <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+            <?php $inputname = str_replace(' ', '', $inputname); ?>
+            <?php $inputname = strtolower($inputname); ?>
+
+            <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+                <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+                </div>
+            </div>
+        <?php } ?>
+<?php endif; ?>
+    </div> <!-- column 6 -->
+ </div>
+ <!-- *********************************************************************** -->
+<!-- ****************** End Right Column Create/Update Fields Fields ******************** -->
+</div><!-- End row containing the left and right Create/Update columns  -->
+<!-- *********************************************************************** -->
+<br>
+<div class="row"> <!-- Begin Tracker row -->
+
+    <div class="col-md-6">
+        <center><label class="" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Tracker</h<?= $_SESSION['fontsize'] ?>></label></center>
+
+      <div class="ibox-content">
+          <div class="row">
+              <div class="col-md-6">
+
+     <div class="row">
+
+       <div class="col-md-7">
+
+
+<!--    <label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Assignee</h<?= $_SESSION['fontsize'] ?>></label> -->
+      </div>
+
+      <div class="col-sm-12">
+
+<!-- <select class="form-control m-b" name="poc" style="<?= $selectstyle ?>">
+        <option value="0">NA</option>
+
+        <php foreach($staffs as $row):
+            // 1. Correct the PHP tags to <?php
+            // 2. Use 'trongate_user_id' since 'id' is not in your array
+            // 3. Compare it against the ID you want to be pre-selected (e.g., $target_id)
+            $selected = ($row->trongate_user_id == $target_id) ? ' selected' : '';
+        ?>
+            <option value="<?= $row->trongate_user_id ?>"<?= $selected ?>>
+                <?= $row->first_name ?> <?= $row->last_name ?>
+            </option>
+        <php endforeach; ?>
+
+    </select> -->
+
+ <?php if(DEBUGGING == true): ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Assignee<?= $poc ?></h<?= $_SESSION['fontsize'] ?>></label>
+       <?php else: ?>
+   <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Assignee</h<?= $_SESSION['fontsize'] ?>></label>
+       <?php endif; ?>
+       <div class="<?= $fgseldiv ?>"><select class="form-control m-b" name="poc" style="<?= $selectstyle ?>">
+   <!-- Loop through the dropdown array passed in $data  -->
+    <option selected value='0'>NA</option>
+   <?php foreach($staffs as $row) { ?>
+   <!-- If $row->id = currently selected user_level_id then pre-select that option -->
+       <?php if($row->trongate_user_id == $poc): ?>
+           <option selected value="<?= $row->trongate_user_id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php else: ?> <!-- otherwise just create the option -->
+           <option value="<?= $row->trongate_user_id ?>"><?= $row->first_name ?> <?= $row->last_name ?></option>
+       <?php endif; ?>
+    <?php } ?>
+    </select>
+   </div>
+   </div>
+
+
+
+
+
+        </div>
+
+       </div>
+
+
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Assigned</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="assigndate" value="<?= $assigndate ?>" ><br>
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Est Start</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="eststartdate" value="<?= $eststartdate ?>"><br>
+                    <label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Est End</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="estenddate" value="<?= $estenddate ?>">
+               </div> <!-- column 6 -->
+
+
+               <div class="col-md-6">
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Act Start</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="startdate" value="<?= $startdate ?>"><br>
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Act End</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="enddate" value="<?= $enddate ?>"><br>
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Due</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="duedate" value="<?= $duedate ?>"><br>
+<label class="col-md-6 col-form-label" style="color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Submitted</h<?= $_SESSION['fontsize'] ?>></label>
+                    <input type="date" name="submitted" value="<?= $submitted ?>">
+
+               </div> <!-- column 6 -->
+          </div>
+        </div> <!-- Ibox -->
+    </div> <!-- column 6 -->
+    <div class="col-md-6">
+        <center><label class="" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Issues</h<?= $_SESSION['fontsize'] ?>></label> </center>
+
+            <div class="ibox-content text-box">
+<!-- Yes/No Dropdowns -->
+<?php $items01za = [
+                  "Blocked" => "$blocked"
+                ]; ?>
+<!-- "Eligible Voter"  => "$eligible_voter"  not for ccmp to edit -->
+<?php foreach($items01za as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> <?= $value ?> </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?>? </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+<?php } ?>
+
+<!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+<?php $items2 = ["Blocker" => "$blocker"
+        ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items2 as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>
+
+
+<!-- Yes/No Dropdowns -->
+<?php $items01zb = [
+                  "On Hold" => "$onhold"
+                ]; ?>
+<?php foreach($items01zb as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> <?= $value ?> </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?>? </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+<?php } ?>
+
+<!-- All labels must be unique because they double as names for input fields for $_POST (extracted in _DMS_fetch_data_from_post() line)-->
+<?php $items2g = ["Hold Reason" => "$holdreason"
+        ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run. Therefore the name fields here do not have to match the name in the database because the functions does that mapping. This is important because we are only passing two values (label name and the elements value) but a third, the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+<?php foreach($items2g as $label=> $value) { ?>
+    <!-- create a unique field name that is used in the $_POST -->
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+
+    <div class="<?= $fgdivclass ?>"><label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>; "><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+        <div class="<?= $inputdivclass ?>"><input style="<?= $inputstyle ?>" name="<?= $inputname ?>" type="text" class="form-control" value="<?= $value ?>" >
+        </div>
+    </div>
+<?php } ?>
+
+
+<!-- Yes/No Dropdowns -->
+<?php $items01zc = [
+                  "Rejected" => "$rejected"
+                ]; ?>
+<!-- "Eligible Voter"  => "$eligible_voter"  not for ccmp to edit -->
+<?php foreach($items01zc as $label=> $value) { ?>
+    <?php $inputname = str_replace("<a style='color:Red;'>*</a>", '', $label); ?>
+    <?php $inputname = str_replace(' ', '', $inputname); ?>
+    <?php $inputname = strtolower($inputname); ?>
+        <?php if(DEBUGGING == true): ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?> <?= $value ?> </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php else: ?>
+            <div class="<?= $fgdivclass ?>">  <label class="<?= $labelclass ?>" style="<?= $labelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?>? </h<?= $_SESSION['fontsize'] ?>></label>
+        <?php endif; ?>
+                <div class="<?= $yesnodiv ?>"><select class="form-control m-b" name="<?= $inputname ?>" Value="<?= $value ?>" style="<?= $selectstyle ?>">
+                <?php if($value == 1) { ?>
+                    <option selected value=1>Yes</option>
+                    <option value=0>No</option>
+                <?php }else{ ?>
+                    <option value=1>Yes</option>
+                    <option selected value=0>No</option>
+                <?php } ?>
+                </select>
+               </div>
+            </div>
+            <h3>Rejected reasons are entered on the Comments page.</h3></br>
+<?php } ?>
+
+
+
+          </div> <!-- Ibox -->
+    </div> <!-- column 6 -->
+
+</div> <!-- end tracker row -->
+<!-- *********************************************************************** -->
+<!-- For formatting the notes field is outside of the row but inside the form -->
+<!-- *********************************************************************** -->
+
+ <!--   <p>Create/update fields outside row go here</p> -->
+<br>
+  <div ><label class="col-sm-12 col-form-label" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Full Text</h<?= $_SESSION['fontsize'] ?>></label></div>
+    <textarea  class="form-control border-left m-t" style="height: 200px" name="fulldescription" id="doc_editor"> <!-- id is for CKEditor    -->
+              <?= $fulldescription ?>
+    </textarea>
+
+     <div ><label class="col-sm-12 col-form-label" style="color:<?= DMS_CRUD_IBOX_HDR_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>>Notes</h<?= $_SESSION['fontsize'] ?>></label></div>
+     <div class="col-sm-12"><input style="<?= $inputstyle ?>"  name="notes" type="text" class="form-control" value="<?= $notes ?>"> <span class="form-text m-b-none"></span></div>
+<!--
+    <textarea  class="form-control border-left m-t" style="height: 200px" name="notes" id="note_editor">
+              <= $notes ?>
+    </textarea>
+-->
+
+       <?php if($managemode == 'dmslibadminupdate'): ?>
+       <br>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><span  style="font-size: 20px"><i class="fa fa-save"></i> Save Changes</span></button>  <button class="btn btn-outline btn-warning"><span> <a href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Cancel</a></span></button>
+<!--
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save</h<?= $_SESSION['fontsize'] ?>></button>
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> 1267Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+-->
+       <?php endif; ?>
+       <?php if($managemode == 'dmslibsubadminupdate'): ?>
+       <br>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i>1292 </h<?= $_SESSION['fontsize'] ?>></button>
+    <!-- now isolate which one for the correct Cancel button - same if subentity admin-->
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+
+       <?php endif; ?>
+      <?php if($managemode == 'dmslibadmincreate' || $managemode == 'dmslibsubadmincreate'): ?>
+       <br>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save New </h<?= $_SESSION['fontsize'] ?>></button>
+    <!-- now isolate which one for the correct Cancel button - same if subentity admin-->
+    <button class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></button>
+
+       <?php endif; ?>
+    </form>
+
+       <?php if($managemode == 'dmslibsubadmincreate'): ?>
+       <br>
+    <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> 1211</h<?= $_SESSION['fontsize'] ?>></button>
+    <!-- now isolate which one for the correct Cancel button - same if subentity admin-->
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a>
+
+       <?php endif; ?>
+<!-- *********************************************************************** -->
+<!-- ********************** End Create/Update Fields *********************** -->
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- ********************** End Create/Update Section ********************** -->
+<!-- *********************************************************************** -->
+            <?php else: ?> <!-- Only thing left is all view modes  -->
+<!-- *********************************************************************** -->
+<!-- ************************** Begin View Section ************************* -->
+<!-- *********************************************************************** -->
+
+<div class="row">
+                <div class="col-lg-12">
+                    <div class="tabs-container">
+
+   <div class="tabs-left">
+
+
+
+<ul class="nav nav-tabs">
+    <li><a class="nav-link active" data-toggle="tab" href="#tab-1"><span  style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Information</strong></h<?= $_SESSION['fontsize'] ?>></span></a></li>
+
+    <?php if($rectype == 1 || $filetype == 1 ): ?>
+        <li><a class="nav-link" data-toggle="tab" href="#tab-2"><span  style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Content</strong></h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <?php else: ?>
+        <li><a class="nav-link" data-toggle="tab" href="#tab-2"><span  style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Full Description</strong></h<?= $_SESSION['fontsize'] ?>></span></a></li>
+    <?php endif; ?>
+
+<li><a class="nav-link" data-toggle="tab" href="#tab-3"><span  style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Tracker</strong></h<?= $_SESSION['fontsize'] ?>></span></a></li>
+
+ <li><a class="nav-link" data-toggle="tab" href="#tab-4"><span  style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_TAB_TITLE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><strong>Notes</strong></h<?= $_SESSION['fontsize'] ?>></span></a></li>
+
+  <?php if($managemode == 'dmslibccmp' AND $poc == $_SESSION['tg_user_id']): ?>
+        <?php if(DEBUGGING == true): ?>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/update/<?= $recid ?>/dmslibuserupdate" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-pencil fa-1x"></i></span><strong> Update #<?= $recid ?></strong></h<?= $_SESSION['fontsize'] ?>> </a>
+           <li><a href="<?= BASE_URL ?>dms-dmslibrary/managedoccomments/<?= $recid ?>/dmslibadminmc" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-comments fa-1x"></i></span><strong> Comments #<?= $recid ?></strong></h<?= $_SESSION['fontsize'] ?>> </a>
+
+        <?php else: ?>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/update/<?= $recid ?>/dmslibuserupdate" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-pencil fa-1x"></i></span><strong> Update</strong></h<?= $_SESSION['fontsize'] ?>> </a>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/managedoccomments/<?= $recid ?>/dmslibadminmc" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-comments fa-1x"></i></span><strong> Comments</strong></h<?= $_SESSION['fontsize'] ?>> </a>
+
+        <?php endif; ?>
+  <?php else: ?>
+        <?php if(DEBUGGING == true): ?>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/update/<?= $recid ?>/dmslibadminupdate" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-pencil fa-1x"></i></span><strong> Update #<?= $recid ?></strong></h<?= $_SESSION['fontsize'] ?>> </a>
+           <li><a href="<?= BASE_URL ?>dms-dmslibrary/managedoccomments/<?= $recid ?>/dmslibadminmc" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-comments fa-1x"></i></span><strong> Comments #<?= $recid ?></strong></h<?= $_SESSION['fontsize'] ?>> </a>
+
+        <?php else: ?>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/update/<?= $recid ?>/dmslibadminupdate" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-pencil fa-1x"></i></span><strong> Update</strong></h<?= $_SESSION['fontsize'] ?>> </a>
+            <li><a href="<?= BASE_URL ?>dms-dmslibrary/managedoccomments/<?= $recid ?>/dmslibadminmc" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-comments fa-1x"></i></span><strong> Comments</strong></h<?= $_SESSION['fontsize'] ?>> </a>
+
+        <?php endif; ?>
+   <?php endif; ?>
+<!-- Next line calls a php modal (fontModal2) in navbar.php which call ajax function in template/views/inspinia.php (FontBtn2) which calls the fontsize function (<= BASE_URL ?>ms-ccmpslibrary/fontsize)in the library controller -->
+ <!--   <li><a data-toggle="modal" data-target="#fontModal2"  style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-wrench fa-1x"></i></span><strong>Change Font</strong> </h<?= $_SESSION['fontsize'] ?>></a></li>-->
+
+<!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?= $recid ?>/p" style="color: coral" target="_blank" ><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-eye fa-1x"></i></span><strong> Preview</strong></h<?= $_SESSION['fontsize'] ?>></a></li> -->
+
+    <?php if($rectype == "DB Record"): ?>
+    <li><a href="#" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>" ><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-print fa-1x"></i></span><strong> Print</strong></h<?= $_SESSION['fontsize'] ?>></a></li>
+    <?php elseif($rectype == "Document Awaiting Upload"): ?>
+
+
+        <!--      //  validation_errors();
+              //  echo form_open_upload($form_location); //is controller url/function/$recid i.e. $data['form_location'] = BASE_URL.'dms-dmslibrary/submit_upload/'.$recid.'/'.$managemode;
+              //  echo form_file_select('my_file');
+            //print_r($form_location); die(); -->
+<!--
+    <form action="<?= BASE_URL ?>dms-dmslibrary/submit_upload/<?= $recid ?>/v" method = "post" enctype="multipart/form-data">
+        <input type="file" name="picture" value="">
+        <button type="submit" name="submit" value="Upload">Upload File</button>
+    </form> -->
+<!-- <php print_r($form_location); die(); ?> -->
+<!--    <form action="$form_location" method = "post" enctype="multipart/form-data">
+        <input type="file" id="filepicker"  name="my_file" >
+        <input type="output" name="moddate" value="" hidden>
+
+    </form> -->
+<!--
+    <form action="upload.php" method="post" enctype="multipart/form-data">
+
+<input type="file" name="fileToUpload" id="fileToUpload">
+<input type="submit" value="Upload Image" name="submit">
+</form> -->
+
+<?php
+//echo(1378);
+        echo form_open_upload($form_location);
+        echo ('<input type="file" id="filepicker" name="my_file"/>');
+        echo ('<input id="output" name="moddate" value="" hidden></input>');
+        echo form_submit('submit', 'Upload');
+        echo form_close();
+        // or echo ('<input type="file" id="filepicker" name="fileList" multiple />');
+ ?>
+    <?php else: ?>
+    <li><a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?= $recid ?>" style="color: <?= DMS_HM_TAB_TITLE_CLR ?>" ><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-download fa-1x"></i></span><strong> Download</strong></h<?= $_SESSION['fontsize'] ?>></a></li>
+
+    <li>
+             <!--         //  validation_errors();
+              //  echo form_open_upload($form_location); //is controller url/function/$recid i.e. $data['form_location'] = BASE_URL.'dms-dmslibrary/submit_upload/'.$recid.'/'.$managemode;
+              //  echo form_file_select('my_file');
+            //print_r($form_location); die(); -->
+
+    <?php
+                echo form_open_upload($form_location);
+                echo ('<input type="file" id="filepicker" name="my_file"/>');
+                echo ('<input id="output" name="moddate" value="" hidden></input>');
+                echo form_submit('Upload Replacement');
+                echo form_close();
+            ?>
+            <!--                  // or echo ('<input type="file" id="filepicker" name="fileList" multiple />');  -->
+    </li>
+    <?php endif; ?>
+</ul>
+
+<div class="tab-content ">
+    <div id="tab-1" class="tab-pane active">
+        <div class="panel-body">
+         <!--   <div class=row">
+               <h<?= $_SESSION['fontsize'] ?>> <span style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><?= $shortdescription ?></span></h<?= $_SESSION['fontsize'] ?>>
+            </div> -->
+
+            <div class="row">
+                <div class="col-sm-6">
+
+<?php $itemsv100t = [
+                    "Subject"      => "$subject",
+                    "Author"       => "$author",
+                    DMS_FL_TAG1    => "$doctag1",
+                    SUBENTITY      => "$subentity",
+                    "Department"   => "$department",
+                    DMS_FL_TAG2    => "$doctag2",
+                    DMS_FL_TAG3    => "$doctag3",
+                    "Region"       => "$region",
+                    CCMP." Tag"    => "$ccmp",
+                    "Staff Tag"    => "$staff",
+                    "File Name"    => "$filename",
+                    "File Type"    => "$filetype"
+                    ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. -->
+<!-- The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array -->
+<!-- and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run-->
+<!-- Therefore the name fields here do not have to match the name in the database because the functions does that mapping. -->
+<!-- This is important because we are only passing two values (label name and the elements value) but a third, -->
+<!-- the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+
+<?php foreach($itemsv100t as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+
+
+
+<!--
+<?php $itemsv100xx = [
+
+                    ""      => "$filename"
+]; ?>
+
+<?php foreach($itemsv100xx as $label=> $value) { ?>
+
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+
+
+<?php } ?> -->
+    </div> <!-- end col -->
+    <div class="col-sm-6">
+
+<?php $itemsv100dk = [
+                    "Record Type"    => "$rectype"
+                    ]; ?>
+<!-- "" => "", -->
+<!-- The form field label names are $label and the values passed to the form from the DB are $value. -->
+<!-- The input's name="xyz" field passes back the changed values from the form to _DMS_fetch_data_from_post() in the $_POST array -->
+<!-- and the values are assigned to a $data array containing the field names of the DB table(s) and either update or create queries are run.-->
+<!-- Therefore the name fields here do not have to match the name in the database because the functions does that mapping. -->
+<!-- This is important because we are only passing two values (label name and the elements value) but a third, -->
+<!-- the name field is needed and must be unique or the second occurence will overwrite the first one. Therefore a unique name value ($inputname) can and will be created on the fly from the label names if they are unique.-->
+
+
+<?php foreach($itemsv100dk as $label=> $value) { ?>
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+<?php if($rectype == 'Document Awaiting Upload'): ?>
+    <div class="<?= $vvalueclass1 ?>" style="color: Red;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+<?php else: ?>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+<?php endif; ?>
+
+<?php } ?>
+<?php $itemsv100A = ["Priority"      => "$priority",
+                    "Status"         => "$status",
+                    "Access Level"   => "$access"
+]; ?>
+
+<?php foreach($itemsv100A as $label=> $value) { ?>
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+
+<?php if($_SESSION['managemode'] == "dmslibadmin") { ?>
+<?php $itemsv100B = [
+
+                    "Active" => "$active"
+]; ?>
+
+<?php foreach($itemsv100B as $label=> $value) { ?>
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php if($active == 'No' ): ?>
+    <div class="<?= $vvalueclass1 ?>" style="color:crimson;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+    <?php else: ?>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+    <?php endif; ?>
+<?php } ?>
+<?php } ?>
+
+<?php $itemsv100B2 = [
+
+                    "Completed" => "$done"
+]; ?>
+
+<?php foreach($itemsv100B2 as $label=> $value) { ?>
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+    <?php if($done == 'No' ): ?>
+    <div class="<?= $vvalueclass1 ?>" style="color:crimson;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+    <?php else: ?>
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+    <?php endif; ?>
+<?php } ?>
+
+<?php $itemsv100C = [
+                    "Uploader"       => "$uploaded_by",
+                    "Uploaded"       => "$uploaded_at",
+                    "Downloads"      => "$downloads"
+]; ?>
+
+<?php foreach($itemsv100C as $label=> $value) { ?>
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+
+<?php if(strlen($filetype) > 0 AND $filetype != 1 ): ?>
+
+<?php $itemsv100B2 = [
+
+                    "File Size (kb)" => "$filesize",
+                    "File Date"      => "$filedate"
+]; ?>
+
+<?php foreach($itemsv100B2 as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+
+<?php endif; ?>
+
+      </div> <!-- end col -->
+</div>  <!-- end row -->
+
+<!-- </div> --><!-- end ibox content  -->
+                    </div> <!-- End Panel Body  -->
+                </div> <!-- id tab 1  -->
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+    <?php if($filetype == 3 ): ?>
+        <div class="wrapper wrapper-content animated fadeIn">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox">
+                        <div class="ibox-content border-sbottom">
+                          <!--  <h4>PDF.js</h4>
+                            <p>
+                                PDF.js is a Portable Document Format (PDF) viewer that is built with HTML5.
+                                PDF.js is community-driven and supported by Mozilla Labs. The goal is to create a general-purpose, web standards-based platform for parsing and rendering PDFs.
+                                 Full documentation: <a href="https://github.com/mozilla/pdf.js" target="_blank">https://github.com/mozilla/pdf.js</a>
+                            </p> -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="text-center pdf-toolbar">
+
+                            <div class="btn-group">
+                                <button id="prev" class="btn btn-white">
+                                    <i class="fa fa-long-arrow-left"></i> <span class="d-none d-sm-inline">Previous</span>
+                                </button>
+                                <button id="next" class="btn btn-white">
+                                    <i class="fa fa-long-arrow-right"></i> <span class="d-none d-sm-inline">Next</span>
+                                </button>
+                                <button id="zoomin" class="btn btn-white">
+                                    <i class="fa fa-search-minus"></i> <span class="d-none d-sm-inline">Zoom In</span>
+                                </button>
+                                <button id="zoomout" class="btn btn-white">
+                                    <i class="fa fa-search-plus"></i> <span class="d-none d-sm-inline">Zoom Out</span>
+                                </button>
+                                <button id="zoomfit" class="btn btn-white"> 100%</button>
+                                <span class="btn btn-white hidden-xs">Page: </span>
+
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="page_num">
+
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-white" id="page_count">/ 22</button>
+                                </div>
+                            </div>
+
+                                </div>
+                        </div>
+
+
+            <div class="text-center m-t-md">
+                <canvas id="the-canvas" class="pdfcanvas border-left-right border-top-bottom b-r-md"></canvas>
+            </div>
+
+        </div>
+    <?php else: ?>
+
+<?php $itemsv100D = [
+                    ""      => "$fulldescription"
+                    ]; ?>
+
+<?php foreach($itemsv100D as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="col-lg-10" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div> <!-- col-sm-6 was $vvalueclass1  -->
+
+<?php } ?>
+    <?php endif; ?>
+
+                            </div> <!-- end col 12 -->
+                        </div> <!-- end row -->
+                    </div> <!-- end panel body  -->
+                </div> <!-- end tab-2  tab-pane  -->
+
+                <div id="tab-3" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+
+<?php $itemsv100mA = [
+                    "Lead"         => "$poc",
+                    "Story Pts"    => "$points",
+                    "On Hold?"     => "$onhold",
+                    "Hold Reason"  => "$holdreason",
+                    "Blocked?"     => "$blocked",
+                    "Blockers"     => "$blocker",
+                    "Rejected?"    => "$rejected"
+                    ]; ?>
+
+<?php foreach($itemsv100mA as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+<h3>View the rejected reasons on the comments page.</h3>
+                           </div> <!-- end col 6 -->
+                           <div class="col-sm-6">
+
+<?php $itemsv100mA2 = [
+                    "Assigned"     => "$assigndate",
+                    "Due Date"     => "$duedate",
+                    "Est Start"    => "$eststartdate",
+                    "Actual Start" => "$startdate",
+                    "Est End"      => "$estenddate",
+                    "Submitted"    => "$submitted",
+                    "Actual End"   => "$enddate"
+
+                    ]; ?>
+
+<?php foreach($itemsv100mA2 as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+                           </div> <!-- end col 6 -->
+                        </div> <!-- end row -->
+                    </div> <!-- end panel body  -->
+                </div> <!-- end tab-3  tab-pane  -->
+
+
+
+
+                <div id="tab-4" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+
+<?php $itemsv100E = [
+                    ""      => "$notes"
+                    ]; ?>
+
+<?php foreach($itemsv100E as $label=> $value) { ?>
+
+
+    <div class="<?= $vfgdivclass ?>"><label class="<?= $vlabelclass ?>" style="<?= $vlabelstyle ?>; color:<?= DMS_CRUD_LABEL_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $label ?></h<?= $_SESSION['fontsize'] ?>></label>
+
+    <div class="<?= $vvalueclass1 ?>" style="color:<?= DMS_CRUD_VALUE_CLR ?>;"><h<?= $_SESSION['fontsize'] ?>><?= $value ?></h<?= $_SESSION['fontsize'] ?>></div>
+    </div>
+
+<?php } ?>
+
+
+                            </div> <!-- end col 12 -->
+                        </div> <!-- end row -->
+                    </div> <!-- end panel body  -->
+                </div> <!-- end tab-4  tab-pane  -->
+
+            </div> <!-- end tab content  -->
+     </div> <!-- Tabs left -->
+        </div> <!-- end tabs container for all tabs  -->
+    </div> <!-- col 12  -->
+</div> <!-- end row -->
+
+
+
+
+
+
+
+<!-- *********************************************************************** -->
+
+<!-- *********************************************************************** -->
+<!-- For formatting the notes field is outside of the row but inside the form -->
+<!-- *********************************************************************** -->
+
+ <!--   <p>view fields outside row but inside the form go here</p> -->
+
+<!-- *********************************************************************** -->
+<!-- **************************** End Form ********************************* -->
+<!-- If this is the only faq crud item or the last faq crud item -->
+<!--    </form> -->
+<!-- *********************************************************************** -->
+
+    <?php endif; ?> <!--  End Create/Update else View   -->
+
+<!-- *********************************************************************** -->
+<!-- ***************** End Create/Update/View Section ********************** -->
+<!-- *********************************************************************** -->
+
+        </div> <!-- End Column 12 -->
+
+    </div><!-- End Row Two -->
+
+</div> <!-- End FAQ Item -->
+
+    <div class="modal" id="delete-modal" style="display: none;">
+    <div class="modal-heading danger"><i class="fa fa-trash"></i> Delete Record</div>
+    <div class="modal-body">
+        <?= form_open('members/submit_delete/'.$update_id) ?>
+        <p>Are you sure?</p>
+        <p>You are about to delete a Member record.  This cannot be undone.  Do you really want to do this?</p>
+        <?php
+        echo '<p>'.form_button('close', 'Cancel', $attr_close);
+        echo form_submit('submit', 'Yes - Delete Now', array("class" => 'danger')).'</p>';
+        echo form_close();
+        ?>
+    </div>
+</div>
+
+
+<!-- From here down was added to change font size modal window  -->
+<div class="modal inmodal" id="fontModal2" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content animated rotateInDownRight">  <!-- rotateInDownRight, slideInRight,  bounceInRight, rotateIn, flip -->
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+
+                <h3 class="modal-title"> <small><i class="fa fa-font fa-2x"></i></small> Fonts</h3>
+                <strong><h2>Choose your desired font sizes:</h2></strong>
+
+            </div>
+        <!-- Show flash message then reset it to blank  -->
+   <!--    <= flashdata('<center><div style="font-weight: bold; color: red;">', '</div></center>');
+        $flash_msg = '';
+        set_flashdata($flash_msg); ?> no way to refresh modal to see the message -->
+       <center><h3 id="result" ></h3></center>
+
+            <form action="" method = "post">
+            <div class="modal-body">
+
+                <div class="form-group"> <!-- Used to pass the recid to ajax function. It is the record of the session user since changing own record always  -->
+                    <input type="text" class="form-control" name="recid" id="recid" value="<?= $_SESSION['ccmp_rec_id'] ?>"  hidden>
+                </div>
+
+                <div class="form-group  row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-9">
+                        <h1>This is Large</h1>
+                    </div>
+                </div>
+                <div class="form-group  row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-9">
+                         <h2>This is Medium</h2>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group  row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-9">
+                         <h3>This is Small</h3>
+                    </div>
+                </div>
+
+                <br>
+
+
+                <div class="form-group  row">
+
+                    <div class="col-lg-2"></div>
+
+                    <div class="col-lg-4">
+                        <label  style="color:CornFlowerBlue;"><h2>Select size:</h2></label>
+                    </div>
+                <div class="col-lg-4">
+                <br>
+
+                <select class="form-control m-b" name="fontsize" id="FontSel" value="<?= $_SESSION['fontsize'] ?>" style=" color: CornFlowerBlue; font-size:11pt" >
+                     <?php if($_SESSION['fontsize'] == '1'): ?>
+                         <option selected value=1>Large</option>
+                         <option value='2'>Medium</option>
+                         <option value='3'>Small</option>
+
+                     <?php elseif($_SESSION['fontsize'] == '2'): ?>
+                         <option value='1'>Large</option>
+                         <option selected value='2'>Medium</option>
+                         <option value='3'>Small</option>
+
+                     <?php elseif($_SESSION['fontsize'] == '3'): ?>
+                         <option value='1'>Large</option>
+                         <option value='2'>Medium</option>
+                         <option selected value='3'>Small</option>
+
+                     <?php endif; ?>
+
+                </select>
+
+
+                     </div>
+                </div>
+
+            <br>
+            <center><h3>You may need to refresh the page after submitting</h3></center>
+
+            </div>
+            <div class="modal-footer">
+                <h2><input type="submit" value="Submit"class="btn btn-primary block full-width m-b" name="FontID2" id="FontBtn2" ></input></h2> <!-- Passes posted data to template inspinia.php js at bottom  -->
+                 <h2><button type="button" class="btn btn-warning full-width m-b" data-dismiss="modal">Cancel</button></h2>
+
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+
+ <?php if(DEBUGGING == true): ?>
+ <?php
+    echo('<h3>View: dms-dmslibrary/$managemode</h3>');
+    echo('<h3>New Session Id</h3>');
+    $session_id = session_id();
+    echo ('<h3>'.$session_id.'</h3>');
+    echo('<h3>$_COOKIE</h3>');
+    json($_COOKIE);
+    echo('<br>');
+    echo('<h3>$data</h3>');
+    json($data);
+    echo('<h3>$_SESSION</h3>');
+    json($_SESSION);
+
+ ?>
+ <?php endif; ?>
+
+<!-- *********************************************************************** -->
+   </div>

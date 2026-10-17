@@ -407,22 +407,22 @@ echo(219); die();
 
 /*----------- Change values to display descriptions instead of code ----------*/
 
-    $scopeobj   = $this->model->get_where($row->scope,'scopes');             
+    $scopeobj   = $this->model->get_where($row->scope, 'ccmps_scopes');             
     $row->scope = $scopeobj->title;
 
 /*    switch($row->scope) {
     case '1':  
-            $scopeobj   = $this->model->get_where($row->scope,'scopes');             
+            $scopeobj   = $this->model->get_where($row->scope, 'ccmps_scopes');             
             $row->scope = $scopeobj->title;
     break; 
 
     case '2':  
-            $scopeobj   = $this->model->get_where($row->scope,'scopes');             
+            $scopeobj   = $this->model->get_where($row->scope, 'ccmps_scopes');             
             $row->scope = $scopeobj->title;
     break;
 
     case '3':  
-            $scopeobj   = $this->model->get_where($row->scope,'scopes');             
+            $scopeobj   = $this->model->get_where($row->scope, 'ccmps_scopes');             
             $row->scope = $scopeobj->title;
     break;
 
@@ -646,7 +646,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   }
 
   $data['scope'] = $adobj->scope;
-    $scopeobj      = $this->model->get_where($data['scope'], 'scopes');             
+    $scopeobj      = $this->model->get_where($data['scope'], 'ccmps_scopes');             
     $data['scope'] = $scopeobj->title;
 
   $data['chapter'] = $adobj->chapter;
@@ -970,7 +970,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 /*------------------------- Populate Dropdowns  ------------------------------*/
 
     // scopes dropdown
-    $data['scopes'] = $this->model->get('id','scopes'); 
+    $data['scopes'] = $this->model->get('id', 'ccmps_scopes'); 
 
      if($_SESSION['admode'] == 'mmyadsu' || $_SESSION['admode'] == 'momadsu'){
     // remove the public option which is the first element for ccmp or CA
@@ -1083,7 +1083,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
 /*-------------------------- Populate Dropdowns  -----------------------------*/
         
     // scopes dropdown
-    $data['scopes'] = $this->model->get('id','scopes'); 
+    $data['scopes'] = $this->model->get('id', 'ccmps_scopes'); 
 
     // chapters dropdown for member admin only - ccmp & chapter admin default
     //  to home chapter

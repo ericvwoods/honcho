@@ -101,7 +101,7 @@
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
                             </div>
                             <div class="col-10 text-right">
                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Docs</h2> </a>
@@ -293,7 +293,7 @@
                         <p>   Manage Leaders </p>
                         <div class="row vertical-align">
                             <div class="col-3">
-                                <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin" style="font-weight: bold; color: white; ">     <i class="fa fa-users fa-3x"></i>
+                                <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="font-weight: bold; color: white; ">     <i class="fa fa-users fa-3x"></i>
                             </div>
                             <div class="col-9 text-right">
                                 <h2 class="font-bold">21</h2> </a>

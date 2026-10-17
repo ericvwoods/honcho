@@ -39,6 +39,13 @@ class Ccmpsfinancialtypes extends Trongate {
 /*------------------------------ CONSTRUCTORS --------------------------------*/
 /*----------------------------------------------------------------------------*/
 
+    // Legacy, never finished: the ccmps_financial_types table doesn't exist and
+    // isn't planned, so every page here would 500. Blocked until it's built.
+    function __construct(?string $module_name = null){
+      parent::__construct($module_name);
+      block_url_invocation('welcome-ccmpsfinancialtypes');
+    }
+
     function _construct(){
       $this->parent_module = 'welcome';
       $this->child_module  = 'ccmpsfinancialtypes';

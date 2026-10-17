@@ -78,10 +78,10 @@
  
                        <h<?= $fontsize ?>> <?= $fulldescription ?></h<?= $fontsize ?>>
                        
-                    <!--   <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?= BASE_URL ?>/cms-ccmpslibrary/50/hello.docx' ' width='1366px' height='623px' frameborder='0'></iframe> -->
-<!-- <iframe src="<?= BASE_URL ?>/cms-ccmpslibrary/50/hello.docx" ></iframe> -->
-  <iframe src="https://docs.google.com/gview?url=<?= BASE_URL ?>/cms-ccmpslibrary/50/hello.docx&embedded=true"></iframe>
-<iframe src="http://docs.google.com/gview?url=http://localhost/honchocore/modules/cms/ccmpslibrary/assets/50/hello.docx"></iframe>  
+                    <!--   <iframe src='https://view.officeapps.live.com/op/embed.aspx?src=<?= BASE_URL ?>/dms-dmslibrary/50/hello.docx' ' width='1366px' height='623px' frameborder='0'></iframe> -->
+<!-- <iframe src="<?= BASE_URL ?>/dms-dmslibrary/50/hello.docx" ></iframe> -->
+  <iframe src="https://docs.google.com/gview?url=<?= BASE_URL ?>/dms-dmslibrary/50/hello.docx&embedded=true"></iframe>
+<iframe src="http://docs.google.com/gview?url=http://localhost/honchocore/modules/dms/dmslibrary/assets/50/hello.docx"></iframe>  
             </div>
 
             <br>

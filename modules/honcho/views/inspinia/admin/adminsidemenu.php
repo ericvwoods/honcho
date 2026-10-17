@@ -51,9 +51,10 @@
                     <li>
                         <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsaddresstypes/manage"><i class="fa fa-table"></i> Address Types</a>
                     </li>
+               <!-- Financial Types hidden: ccmps_financial_types was never built (route blocked in Ccmpsfinancialtypes.php)
                     <li>
                         <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsfinancialtypes/manage"><i class="fa fa-table"></i> Financial Types</a>
-                    </li>
+                    </li> -->
 
                     <li>
                         <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsbulkactions/manage"><i class="fa fa-table"></i> Bulk Actions</a>
@@ -134,6 +135,16 @@
                     <!--  <li><a class="submenu" href="<?= BASE_URL ?>honcho/ccmps_admin_menu"><i class="fa fa-user"></i><span class="hidden-tablet"> <?= CCMPS ?></span></a></li> -->
                       <li><a class="submenu" href="<?= BASE_URL ?>welcome-ccmps/manage/honcho/honchomngallccmps"><i class="fa fa-user"></i><span class="hidden-tablet"> All <?= CCMPS ?></span></a></li>
 
+                    </ul>
+                </li>
+            <?php endif; ?>
+
+            <?php if(HONCHO_MODULE == 1 && !empty($_SESSION['honcho_sysadmin'])): ?> <!-- members reach these in Honcho Lite (system_admin_only()) -->
+                <li>
+                    <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">System Admin</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i><span class="hidden-tablet"> System Settings</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i><span class="hidden-tablet"> Auditlog</span></a></li>
                     </ul>
                 </li>
             <?php endif; ?>

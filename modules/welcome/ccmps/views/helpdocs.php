@@ -270,6 +270,16 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
                             <strong>A real bug we found and fixed here:</strong> <code>viewccmp.php</code> receives data <em>after</em> <code>_convert_to_user_friendly()</code> has already run, which overwrites <code>$data['subentity']</code> with the chapter's <em>text name</em> for display purposes. Comparing that text name against the viewer's raw numeric session id would never match — silently hiding the grant checkbox from every legitimate chapter president, with no error anywhere to indicate why. Fixed by preserving the raw id under a separate <code>$data['subentity_id']</code> key before the text translation happens. <strong>Lesson: when a value is going to get "friendly-formatted" for display, always ask whether anything downstream still needs the raw form — and if so, keep both.</strong>
                         </div>
 
+                        <h2>Member Permissions Screen</h2>
+                        <p><code>welcome-ccmpspermissions/manage</code> (System Admin menu &rarr; Member Permissions, added 2026-10-16) lists members with a checkbox for each super-user flag, so permissions can be seen and set in one place instead of record by record. It opens showing only members who hold a permission; <code>manage/all</code> shows every member (deceased and soft-deleted excluded).</p>
+                        <ul>
+                            <li><strong>Who:</strong> member system admins only, whether or not the Honcho staff module is deployed. The check in <code>__construct()</code> reads <code>system_admin</code> from the database, not the session, so removing someone's System Admin locks them out of the screen at once. Staff logins are sent back to the Honcho dashboard.</li>
+                            <li><strong>Columns:</strong> the flags login copies into the session, listed in <code>_permission_flags()</code>: <code>system_admin</code>, <code>ccmp_admin</code>, <code>subentity_admin</code>, <code>student_admin</code>. <code>content_admin</code>, <code>library_admin</code>, <code>financial_admin</code> and <code>event_admin</code> are on <code>ccmps</code> but nothing reads them yet; add them to <code>_permission_flags()</code> when something does.</li>
+                            <li><strong>Saving:</strong> each click posts to <code>togglepermission()</code> (AJAX, JSON reply), which saves one column and writes a <code>GrantPermission</code>/<code>RemovePermission</code> Auditlog entry. Only columns in <code>_permission_flags()</code> can be changed, and a per-session token stops other sites posting changes.</li>
+                            <li><strong>Safety:</strong> you can't remove your own System Admin, and the last System Admin can't be removed.</li>
+                            <li><strong>When it takes effect:</strong> at that member's next login, because login copies the flags into the session. Changing your own flags updates your session straight away.</li>
+                        </ul>
+
                         <h2>Visible-but-Disabled vs. Fully-Hidden</h2>
                         <p>Two distinct patterns are used throughout, and the choice between them is deliberate, not arbitrary:</p>
                         <ul>

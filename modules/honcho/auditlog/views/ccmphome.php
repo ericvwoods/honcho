@@ -183,7 +183,7 @@
                     <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/cmsadmin"><i class="fa fa-podcast"></i> Notices</a></li>
                     <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/cmsadmin"><i class="fa fa-plane"></i> Job Posts</a></li>
                     <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/cmsadmin"><i class="fa fa-calendar"></i> Activities</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i> Doc Library</a></li>     
+                    <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-file-text-o"></i> Doc Library</a></li>     
                     <li><a href="#"><i class="fa fa-list"></i> <?= SUBENTITIES ?> ($_SESSION['num_chapters'])</a></li>
                 <li>
                     <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>
@@ -220,7 +220,7 @@
                     <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i>Chapter Notices</a></li>
                     <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/momads"><i class="fa fa-plane"></i> Job Posts</a></li>
                     <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i>Chapter Activities</a></li>
-                <!--    <li><a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/momads"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
+                <!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
                 <!--    <li><a href="#"><i class="fa fa-list"></i> Chapter Info</a></li>  -->  
                                  <li>                          
                             <a id="toggleSpinner3" href="<?= BASE_URL ?>welcome-ccmps/export/chapter"><i class="fa fa-table"></i> Export for Les</a> 
@@ -458,7 +458,7 @@
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage" style="color:Gray;">     <i class="fa fa-file fa-2x" style="color: cornflowerblue;"></i> 
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:Gray;">     <i class="fa fa-file fa-2x" style="color: cornflowerblue;"></i> 
                             </div>
                             <div class="col-10 text-right">
                                   <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> Doc Library</h2> </a>  
@@ -469,10 +469,10 @@
                    <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                          <!--   <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/<?= $id ?>/<?= $filename ?>/<?= $filetype ?>" style="color:Red;">     <i class="fa fa-newspaper-o fa-2x"></i> 
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?= $id ?>/<?= $filename ?>/<?= $filetype ?>" style="color:Red;">     <i class="fa fa-newspaper-o fa-2x"></i> 
                             </div>  -->                            
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/1" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: cornflowerblue;"></i> 
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/1" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: cornflowerblue;"></i> 
                             </div>
                             <div class="col-10 text-right">
                                   <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> ATIS</h2> </a>  
@@ -762,7 +762,7 @@
                     <div class="widget style1 gray-bg"> 
                         <div class="row vertical-align">
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i> 
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i> 
                             </div>
                             <div class="col-10 text-right">
                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Docs</h2> </a> 
@@ -854,7 +854,7 @@ Content Administration
                     <div class="widget style1 gray-bg"> 
                         <div class="row vertical-align">
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i> 
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/manage"style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i> 
                             </div>
                             <div class="col-10 text-right">
                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Doc Library</h2> </a> 
@@ -1251,7 +1251,7 @@ System Administration xxx
         <marquee behavior="scroll" scrollamount="0" direction="up" onmouseover="this.stop();" onmouseout="this.start();"> 
             <?php foreach($jumbotrondata as $row) { ?>                           
 
-                <h2><strong><?= $row->title ?> </strong> <?= $row->location ?> <strong><?= $row->info1 ?></strong> <?= $row->info2 ?> <?= $row->info3 ?> <?= $row->info4 ?> <?= $row->info5 ?> <?= $row->info6 ?> <a href="<?=$row->extlink ?>" target="_blank"><u><?=$row->extlinklabel ?></u></a> <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/<?=$row->libid ?>?>" target="_blank"><u><?=$row->libdoclinklabel ?></u></a></h2>
+                <h2><strong><?= $row->title ?> </strong> <?= $row->location ?> <strong><?= $row->info1 ?></strong> <?= $row->info2 ?> <?= $row->info3 ?> <?= $row->info4 ?> <?= $row->info5 ?> <?= $row->info6 ?> <a href="<?=$row->extlink ?>" target="_blank"><u><?=$row->extlinklabel ?></u></a> <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?=$row->libid ?>?>" target="_blank"><u><?=$row->libdoclinklabel ?></u></a></h2>
             
             <?php } ?> 
         </marquee>

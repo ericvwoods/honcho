@@ -2,11 +2,19 @@
 /*
 
 
-Tables: auditlog, auditlogger_bulk_actions
+Tables: system_auditlog, system_auditlogger_bulk_actions
 Templates: inspinia.php
 */
 
 class Auditlogger extends Trongate {
+
+  // System Settings & Auditlog pages: staff sysadmins when Honcho is deployed,
+  // member system admins in Honcho Lite (HONCHO_MODULE). Internal calls such as
+  // logevent() from other modules are not checked.
+  function __construct(?string $module_name = null){
+    parent::__construct($module_name);
+    system_admin_only('system-auditlogger');
+  }
 
   function _construct(){
     $this->parent_module = 'system';
@@ -136,8 +144,8 @@ class Auditlogger extends Trongate {
                            
 //print_r($delid );  
                             // Need to grab title before delete for the log
-                            $adobj = $this->model->get_where($delid,'ccmps_notices');
-                            $title = $adobj->title;
+                            $adobj = $this->model->get_where(intval($delid),'system_auditlog');
+                            $title = $adobj ? $adobj->type.' / '.$adobj->action : ''; // auditlog has no title column
                            // print_r($title); die();
                               
                             // Hard delete
@@ -155,7 +163,7 @@ class Auditlogger extends Trongate {
                              $time   = $this->timedate->get_nice_date($timestamp, $format);
                             $time = $time.' UTC';
                             $str3 = 'Rec: '.$delid;
-                            $str4 = 'Tbl: auditlog';
+                            $str4 = 'Tbl: system_auditlog';
                             $str5 = 'Title: '.$title;
                             $str6 = 'CntMgr='.$_SESSION['content_mgr'].' StuAdmin='.$_SESSION['studentadmin'].' ChpAdmin='.$_SESSION['chapteradmin'] .' MemAdmin='.$_SESSION['member_admin'].' SysAdmin='.$_SESSION['sysadmin'];
                             
@@ -236,21 +244,23 @@ class Auditlogger extends Trongate {
         
     case 'sysadmin'; // logged in user is acting as himself
 // what chapter does the poster belong to
+  if(!empty($_SESSION['ccmp_logged_in']) && empty($_SESSION['honcho_logged_in'])){ // staff have no ccmps record
     $ccmp_id  = $_SESSION['ccmp_rec_id'];
     $ccmp_obj = $this->model->get_where($ccmp_id,'ccmps');
 
     $tg_user_id      = $ccmp_obj->trongate_user_id;
-    $chapteradmin    = $ccmp_obj->chapter_admin;
-    $chapter         = $ccmp_obj->chapter;
+    $chapteradmin    = $ccmp_obj->subentity_admin; // chapter_* fields renamed subentity_*
+    $chapter         = intval($ccmp_obj->subentity);
 //print_r($chapter); die();
-    $chapterobj      = $this->model->get_where($chapter,'system_subentities');
-    $chapter_name    = $chapterobj->description;        
+    $chapterobj      = $this->model->get_where($chapter,'ccmps_subentities'); // system_subentities never existed
+    $chapter_name    = $chapterobj ? $chapterobj->description : '';
 
-    $chapter_role    = $ccmp_obj->chapter_role;
-    $chapter_role_id = $ccmp_obj->chapter_role;
+    $chapter_role    = $ccmp_obj->subentity_role;
+    $chapter_role_id = $ccmp_obj->subentity_role;
+  }
 
     // get dropdown for all tabs 
-    $data['bulk_actions'] = $this->model->get('id','auditlogger_bulk_actions');
+    $data['bulk_actions'] = $this->model->get('id','system_auditlogger_bulk_actions');
     
  
     unset($data['bulk_actions'][1]); // Cannot approve
@@ -285,7 +295,7 @@ class Auditlogger extends Trongate {
  //  echo(300); die(); 
     /*----------- Add $data array elements for manage view -----------------*/
     
-    $data['logged_in']     = $_SESSION['logged_in'];
+    $data['logged_in']     = $_SESSION['logged_in'] ?? 0;
     $data['home_page']      = 0;
 
     $data['content_name']   = SITENAME;  
@@ -332,6 +342,11 @@ class Auditlogger extends Trongate {
   
 function viewntc($recid = NULL){ // recid which one to view
 
+  // v2 engine doesn't pass URL segments as arguments; submit() still passes one
+  if(empty($recid)){
+    $recid = segment(3, 'int');
+  }
+
 /*---------------------------- Security Check --------------------------------*/
   $ntcfunction = 'view';
   $authorized = $this->_check_function_permissions($ntcfunction, $recid); 
@@ -370,7 +385,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
  
   $data['type']      = $adobj->type;
   $data['action']    = $adobj->action;
-  $data['function']  = $adobj->function;
+  $data['function']  = $adobj->func; // column is func
   $data['str1']      = $adobj->str1;
   $data['str2']      = $adobj->str2;
   $data['str3']      = $adobj->str3;
@@ -385,12 +400,12 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   $tgusrid        = $adobj->created_by; 
   $poster_obj     = $this->model->get_one_where('trongate_user_id', $tgusrid,
           'ccmps');
-  $data['actor'] =  $poster_obj->first_name.' '.$poster_obj->last_name;
+  $data['actor'] = $poster_obj ? $poster_obj->first_name.' '.$poster_obj->last_name : '';
 
 /*--------------------- Convert to User Friendly Values ----------------------*/
   
   $data['created_at']        = $adobj->created_at;
-  $data['updated_at']        = $adobj->updated_at;
+  $data['updated_at']        = $adobj->updated_at ?? $adobj->created_at; // log rows are never updated
   $this->module('timedate');
   $format = 'datepicker_us';
   $data['created_at']  = $this->timedate->get_nice_date($data['created_at'],
@@ -412,7 +427,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $_SESSION['admode']   = 'sysadmin'; // manage all  viewing 
         $data['bc1']          = 'SA';
         $data['bc2']          = 'View an Entry';
-        $data['header']       = $adobj->title;
+        $data['header']       = $adobj->action; // auditlog has no title column
         $data['subheader']    = 'Auditlog';
 
         
@@ -423,7 +438,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $_SESSION['admode']   = 'cmmadsv'; // manage all  viewing 
         $data['bc1']          = 'MSP';
         $data['bc2']          = 'View A Notice';
-        $data['header']       = $adobj->title;
+        $data['header']       = $adobj->action; // auditlog has no title column
         $data['subheader']    = 'Content Manager';
 
         
@@ -434,7 +449,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $_SESSION['admode']   = 'cmmadsv'; // manage all  viewing 
         $data['bc1']          = 'MSP';
         $data['bc2']          = 'View A Notice';
-        $data['header']       = $adobj->title;
+        $data['header']       = $adobj->action; // auditlog has no title column
         $data['subheader']    = 'Content Manager'; 
         
   break;
@@ -471,9 +486,9 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 /*---------------------------- FUNCTION UPDATE -------------------------------*/
 /*----------------------------------------------------------------------------*/
   
-  function update($retrying){  
+  function update($retrying = ''){  // 'yes' only when submit() retries
 
-  $recid = segment(3);
+  $recid = segment(3, 'int');
   $ntcfunction = 'update';
   $authorized = $this->_check_function_permissions($ntcfunction, $recid); 
 
@@ -629,7 +644,7 @@ print_r($_SESSION['tab']); die();
 /*------------------------- Populate Dropdowns  ------------------------------*/
 
     // scopes dropdown
-    $data['scopes'] = $this->model->get('id','scopes'); 
+    $data['scopes'] = $this->model->get('id', 'ccmps_scopes'); 
 
      if($_SESSION['admode'] == 'mmyadsu' || $_SESSION['admode'] == 'momadsu'){
     // remove the public option which is the first element for ccmp or CA
@@ -662,7 +677,7 @@ print_r($_SESSION['tab']); die();
 /*---------------------------- FUNCTION CREATE -------------------------------*/
 /*----------------------------------------------------------------------------*/
 
-function create($retrying){ // only used by CA Adding - may be first time or
+function create($retrying = ''){ // only used by CA Adding - may be first time or
                             // with values after failed validation
   $ntcfunction = 'create';
   $authorized = $this->_check_function_permissions($ntcfunction); 
@@ -727,7 +742,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
 /*-------------------------- Populate Dropdowns  -----------------------------*/
         
     // scopes dropdown
-    $data['scopes'] = $this->model->get('id','scopes'); 
+    $data['scopes'] = $this->model->get('id', 'ccmps_scopes'); 
 
     // chapters dropdown for member admin only - ccmp & chapter admin default
     //  to home chapter
@@ -1607,12 +1622,18 @@ $_SESSION['tab'] = 3; // notice board section - open collapse when close notice
 
     function _get_font_sizes() {
     // protected - private function
-
+    // Get user's fontsize preferences: staff from honcho_user_accounts, members from ccmps
+    if(!empty($_SESSION['honcho_logged_in'])){
+        $user_obj               = $this->model->get_where(intval($_SESSION['honcho_acct_rec_id']),'honcho_user_accounts');
+        $_SESSION['fontsize']   = $user_obj ? $user_obj->fontsize : 2;  // view pages
+        $_SESSION['mfontsize']  = $user_obj ? $user_obj->tfontsize : 3; // manage page
+    }else{
     // Get ccmp's fontsize preferences for manage page and all other pages
     $ccmp_id                    = $_SESSION['ccmp_rec_id'];
     $ccmp_obj                   = $this->model->get_where($ccmp_id,'ccmps');
     $_SESSION['fontsize']       = $ccmp_obj->fontsize;  // view pages
     $_SESSION['mfontsize']      = $ccmp_obj->mfontsize; // manage page 
+    }
     
     
    //print_r($_SESSION['fontsize']); die();
@@ -1666,343 +1687,10 @@ $_SESSION['tab'] = 3; // notice board section - open collapse when close notice
 
 
     function _check_function_permissions($ntcfunction, $recid = NULL) {
-//echo(1515);
-//print_r($ntcfunction); die();
+        // Every page here is system-admin only, checked once in __construct()
+        // by system_admin_only(). The per-function checks that used to be here
+        // were copied from Notices and let any logged-in member in.
+        return true;
+    }
 
-// need one for - index,manage,view, update,approverecord,create,delrecord,fullnotice
-// hiderecord,submit,unapproverecord,unhiderecord
- 
-//echo(1844);
-//print_r($recid); die();
-
-        switch($ntcfunction) {
-
-          case 'index': //
-
-                redirect('welcome/logout'); 
-
-          break;
-
-          case 'bulkaction': // filters determine what bulk actions you have access to by role - only need to know logged in.
-
-              if($_SESSION['ccmp_logged_in'] == 1){// 
-
-
-              }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears session variables, flags and settings then redirects to login page
-
-              }
-          
-          break; 
-
-          case 'manage': //
-              if($_SESSION['ccmp_logged_in'] == 1){ // 
-                // continue
-              }else{ // not logged in at all - send to login form
-
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-
-              }
-
-          break;
-
-          case 'view': //
-   //get login screen if not logged in. However if logged can pass a recid in url and see someone elses
-
-//Only certain roles should be passing other record ids other than their own
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-          if($_SESSION['contentmgr'] > 0 || $_SESSION['studentadmin'] > 0 || $_SESSION['chapteradmin'] > 0 || $_SESSION['memberadmin'] > 0 || $_SESSION['systemadmin'] > 0){ // has chapter or member admin rights
-            // authorized...continue
-           // $data = "goodtogo"; not used
-          //  return $data;
-
-          }else{ // not an admin role
-//print_r($recid); die();  
-//print_r($mynotices); die(); 
-//print_r($_SESSION['ccmp_rec_id']); die();
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // here recid is of notice not person. Need to know it belongs to person
-
-            // Check to see if you are a ccmp executing the function - must be if you are not one of the 5 roles mentioned above. There are only 6 roles.
-          //  if($_SESSION['admode'] == 'mmyads' || $_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'mmyadsv'){
-
-                $recobj = $this->model->get_one_where(id, $recid, ccmps_notices);
-                $ownerid = $recobj->ccmp_id;
-           //     print_r($ownerid);
-           //     print_r($_SESSION['ccmp_rec_id']); die(); // since you are not an admin its ok to use $_SESSION['ccmp_rec_id'] because that must be you
-/*
-                $ccmpri = $_SESSION['ccmp_rec_id'];
-                $sql = "SELECT id FROM ccmps_notices WHERE ccmp_id = $ccmpri"; // 
-                $mynotices  = $this->model->query($sql,'array');
-*/
-           // }
-
-          //  Is the record id of the notice in the array of my notice's record ids
-          //    $inarray = array_search($recid, array_column($mynotices, 'id')) ? "found" : "not found"; // looking at the values but wouldnt see the first one
-          //  $inarray = isset($mynotices[$recid]) ? "found" : "not found"; // looking at the keys
-          //  if($inarray == 'found'){ 
-
-            if($ownerid == $_SESSION['ccmp_rec_id']){ 
-                // continue
-            }else{ // 
-                // send to ccmps homepage
-                $funcname = 'view';
-                $ccmp = CCMP;
-
-                $flash_msg = 'You are not authorized to view someone elses records'; 
-                set_flashdata($flash_msg);
-
-                redirect('welcome-ccmps/ccmphome');
-            }
-          }
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-
-          break;
-
-          case 'update': //
-
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // Here recid is of notice not person. Need to know it belongs to person
-
-        //get login screen if not logged in. However if logged can pass a recid in url and see someone elses
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-          //Only certain roles should be passing other record ids other than their own
-          if($_SESSION['contentmgr'] > 0 || $_SESSION['studentadmin'] > 0 || $_SESSION['chapteradmin'] > 0 || $_SESSION['memberadmin'] > 0 || $_SESSION['systemadmin'] > 0){ // has chapter or member admin rights
-            // authorized...continue
-
-          }else{ // not an admin role
-//echo(2148);
-//print_r($recid); die();  
-//print_r($mynotices); die(); 
-//print_r($_SESSION['ccmp_rec_id']); die();
-            // if it is a ccmp make sure the reord belongs to them
-            // Check to see if you are a ccmp executing the function - must be if you are not one of the 5 roles mentioned above. There are only 6 roles.
-           // if($_SESSION['admode'] == 'mmyads' || $_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'mmyadsv'){
-
-                $recobj = $this->model->get_one_where(id, $recid, ccmps_notices);
-                $ownerid = $recobj->ccmp_id;
-//                print_r($ownerid);
-//                print_r($_SESSION['ccmp_rec_id']); die(); // since you are not an admin its ok to use $_SESSION['ccmp_rec_id'] because that must be you
-
-          //  }
-
-            if($ownerid == $_SESSION['ccmp_rec_id']){ 
-                // continue
-            }else{ // 
-                // send to ccmps homepage
-                $funcname = 'update';
-                $ccmp = CCMP;
-
-                $flash_msg = 'You are not authorized to edit someone elses records'; 
-                set_flashdata($flash_msg);
-
-                redirect('welcome-ccmps/ccmphome');
-            }
-          }
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;          
-
-          case 'create': //
-
-        // Can only create for themselves anyway because a recid is not passed
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-          case 'submit': // 
-
-              if($_SESSION['ccmp_logged_in'] == 1){// 
-
-//echo(2001); die();
-              }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-
-              }
-          
-          break;
-
-          case 'fullnotice': //
-
-        // anyone can see
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-          case 'approverecord': //
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // here recid is of notice not person. Need to know it belongs to person
-            // get an array all all ids that belong to that user and see if it is in the list    // mark with ??? to do later - ???
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-          case 'unapproverecord': //
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // here recid is of notice not person. Need to know it belongs to person
-            // get an array all all ids that belong to that user and see if it is in the list    // mark with ??? to do later - ???
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-          case 'hiderecord': //
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // here recid is of notice not person. Need to know it belongs to person
-         
-
-        //get login screen if not logged in. However if logged can pass a recid in url and see someone elses
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-          //Only certain roles should be passing other record ids other than their own
-          if($_SESSION['contentmgr'] > 0 || $_SESSION['studentadmin'] > 0 || $_SESSION['chapteradmin'] > 0 || $_SESSION['memberadmin'] > 0 || $_SESSION['systemadmin'] > 0){ // has chapter or member admin rights
-            // authorized...continue
-
-          }else{ // not an admin role
-//echo(2148);
-//print_r($recid); die();  
-//print_r($mynotices); die(); 
-//print_r($_SESSION['ccmp_rec_id']); die();
-            // if it is a ccmp make sure the reord belongs to them
-            // Check to see if you are a ccmp executing the function - must be if you are not one of the 5 roles mentioned above. There are only 6 roles.
-           // if($_SESSION['admode'] == 'mmyads' || $_SESSION['admode'] == 'mmyadsc' || $_SESSION['admode'] == 'mmyadsv'){
-
-                $recobj = $this->model->get_one_where(id, $recid, ccmps_notices);
-                $ownerid = $recobj->ccmp_id;
-//                print_r($ownerid);
-//                print_r($_SESSION['ccmp_rec_id']); die(); // since you are not an admin its ok to use $_SESSION['ccmp_rec_id'] because that must be you
-
-          //  }
-
-            if($ownerid == $_SESSION['ccmp_rec_id']){ 
-                // continue
-            }else{ // 
-                // send to ccmps homepage
-                $funcname = 'hiderecord';
-                $ccmp = CCMP;
-
-                $flash_msg = 'You are not authorized to hide someone elses records'; 
-                set_flashdata($flash_msg);
-
-                redirect('welcome-ccmps/ccmphome');
-            }
-          }
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          break;
-
-          case 'unhiderecord': //
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // here recid is of notice not person. Need to know it belongs to person
-            // get an array all all ids that belong to that user and see if it is in the list    // mark with ??? to do later - ???
-
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-          case 'delrecord': //
-
-
-            // If not an admin role above need to check that the $recid you put in the URL is only yours
-            // Here recid is of notice not person. Need to know it belongs to person
-
-        //get login screen if not logged in. However if logged can pass a recid in url and see someone elses
-        if($_SESSION['ccmp_logged_in'] == 1){// check to see if logged in
-
-          //Only certain roles should be passing other record ids other than their own
-          if($_SESSION['contentmgr'] > 0 || $_SESSION['studentadmin'] > 0 || $_SESSION['chapteradmin'] > 0 || $_SESSION['memberadmin'] > 0 || $_SESSION['systemadmin'] > 0){ // has chapter or member admin rights
-            // authorized...continue
-
-          }else{ // not an admin role
-
-redirect('welcome/logout'); // clears everything then takes to login page
-          }
-
-        }else{ // not logged in at all - send to login form
-
-                redirect('welcome/logout'); // clears everything then takes to login page
-            
-        }
-          
-          break;
-
-
-                           
-        }
-
-  }
-    
 } // End controller

@@ -75,6 +75,7 @@ const sections = [
     ['`JWT_SECRET`', 'Signs mobile-app login tokens. Make one per install with `openssl rand -hex 32`'],
     ['`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_DATABASE`', 'Database connection'],
     ['`BREVO_SMTP_KEY`, `BREVO_API_KEY`, `SYNC_BREVO`', 'Email through Brevo; `SYNC_BREVO=1` syncs contacts'],
+    ['`HONCHO_MODULE`', '`1` (default) = the Honcho staff back office is deployed, so only staff sysadmins reach System Settings and the Auditlog. `0` = Honcho Lite: member system admins reach them from the member menu.'],
   ]},
   { type: 'h2', text: 'The Docker Image' },
   { type: 'p', text: "`Dockerfile` (project root) builds the web app image: `php:8.2-apache` plus the `mysqli`, `pdo_mysql`, `gd` and `zip` extensions (mbstring, fileinfo, xml and curl come with the base image), Apache `rewrite` and `headers`, and the code. `vendor/` is committed, so no Composer step. The image holds **code only**: settings come in as environment variables, and uploads and the database live in Compose volumes (DO-05)." },
@@ -149,7 +150,7 @@ const sections = [
   { type: 'alert', variant: 'warning', text: "**The Caddyfile is mounted as a single file.** Edit it in place (an editor, or `cat >`); `sed -i` replaces the file and the container keeps seeing the old one. Apply with `docker compose exec caddy caddy reload --config /etc/caddy/Caddyfile`." },
 
   { type: 'h2', text: 'Upload Folders' },
-  { type: 'p', text: "The app writes uploads into six folders inside the code (listed in `docker/persistent-dirs`): `public/uploads`, the DMS and CMS library `assets`, `modules/welcome/ccmps/assets` and `modules/honcho/users/assets` (photos in `<record id>/` folders), and `modules/trongate_pages/assets/images/uploads`. Each is mounted from `/srv/honcho/staging/files`, so uploads survive rebuilds. Some of these folders also hold committed files (dashboard images, the DMS user guide); the image keeps a copy, and `docker/entrypoint.sh` copies them back in on every start, never deleting an upload." },
+  { type: 'p', text: "The app writes uploads into five folders inside the code (listed in `docker/persistent-dirs`): `public/uploads`, the DMS library `assets`, `modules/welcome/ccmps/assets` and `modules/honcho/users/assets` (photos in `<record id>/` folders), and `modules/trongate_pages/assets/images/uploads`. Each is mounted from `/srv/honcho/staging/files`, so uploads survive rebuilds. Some of these folders also hold committed files (dashboard images, the DMS user guide); the image keeps a copy, and `docker/entrypoint.sh` copies them back in on every start, never deleting an upload." },
   { type: 'alert', variant: 'warning', text: "**Adding an upload folder:** add it to both `docker/persistent-dirs` and the `volumes:` list in `deploy/compose.yaml`." },
   { type: 'h2', text: 'Everyday Commands (in ~/stack)' },
   { type: 'code', text: "cd ~/honcho && git pull          # get new code\ncd ~/stack && docker compose up -d --build   # rebuild and restart what changed\ndocker compose ps                  # status\ndocker compose logs -f honcho-staging        # app and PHP errors\ndocker compose exec mariadb sh -c 'mariadb -uroot -p\"$MARIADB_ROOT_PASSWORD\"'" },

@@ -75,7 +75,6 @@ module.exports = [
 { tab: "Library, News and Events", blocks: [
   { type: 'table', headers: ['Tile', 'What to do there'], rows: [
     ['**Doc Library**', "Browse, preview and download documents shared with members. You'll only see documents you're allowed to see."],
-    ['**ATIS**', 'Click to download the current ATIS document.'],
     ['**Sunshine**', 'Read acknowledgements about members, or send one in with the form (your name, email, phone and message).'],
     ['**Register Me**', "Register for the current event when registration is open. If it isn't, the tile does nothing."],
     ['**Sponsors**', "See BPA's sponsors."],

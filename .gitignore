@@ -14,7 +14,6 @@ config/*.org.php
 !/modules/dms/dmslibrary/assets/docs/
 /modules/dms/dmslibrary/assets/docs/*
 !/modules/dms/dmslibrary/assets/docs/dms-user-guide.docx
-/modules/cms/ccmpslibrary/assets/*
 /modules/trongate_pages/images/uploads/*
 # Member/user photos: modules/<module>/assets/<record id>/
 /modules/**/assets/[0-9]*/

@@ -31,6 +31,7 @@ define('DEFAULT_METHOD', 'index');
 
 // State
 define('CCMPS_AUX_MODULE', 1); // "true" or "false" Base product only or extended ccmp properties
+define('HONCHO_MODULE', (int) env('HONCHO_MODULE', 1)); // 1 = Honcho staff back office deployed (staff run System pages), 0 = Honcho Lite (member system admins do)
 define('DEBUGGING', 0); // "true" or "false"
 define('ENV', 'prod'); //dev or anything else is not dev. controls navbar breadcrumbs
 define('WHATENV', env('WHATENV', 'dev')); // dev  Used in cart.php AND Welcome controller email parameters

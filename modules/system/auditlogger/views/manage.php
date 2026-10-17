@@ -80,7 +80,7 @@
                 $flash_msg = '';
                 set_flashdata($flash_msg); ?> 
 
-<form  method = "post" action="<?= BASE_URL ?>security-auditlogger/bulkaction/">  
+<!-- Bulk actions removed 2026-10-16 (not needed this version); bulkaction() is still in Auditlogger.php -->
                                    
                 <div class="table-responsive">
                 <table class="table table-striped table-bordered table-hover dataTables-example" > 
@@ -102,25 +102,6 @@
                     <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Six</h<?= $_SESSION['mfontsize'] ?>></th>  -->
                     
                     
-                    <th style="color:RoyalBlue;">
-                     
-                        <div class="row">
-                            <div class="col-lg-7 col-form-label"> 
-                                    <!-- Need a separate Submit button with this method -->
-                                    <select class="form-control m-b" name="selected" > 
-                                        <?php foreach($bulk_actions as $row) { ?>
-                                            <option value="<?= $row->id ?>"><h<?= $_SESSION['fontsize'] ?>><?= $row->title ?></h<?= $_SESSION['fontsize'] ?>></option>
-                                        <?php } ?>                                     
-                                    </select> 
-                            </div>
-                            <div class="col-lg-1 col-form-label"> <!-- this one col-lg-2 and the rest col-lg-3 by design to render properly   -->                    
-                                    <input style="color:Blue;" class="btn btn-default btn-outline" type="submit" value="Submit" >     
-                            </div>
-                               
-                        </div>
-                            <center> Toggle All <input type="checkbox" id="checkAll"> </center>
-                    </th>
-                  
                     <th style="color:RoyalBlue;">
                           
                         <div class="row">                              
@@ -144,7 +125,7 @@
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->id ?></h<?= $_SESSION['mfontsize'] ?>></td>  
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->type ?></h<?= $_SESSION['mfontsize'] ?>></td>                
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->action ?></h<?= $_SESSION['mfontsize'] ?>></td>
-                                    <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->function ?></h<?= $_SESSION['mfontsize'] ?>></td>
+                                    <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->func ?></h<?= $_SESSION['mfontsize'] ?>></td>
                                 <!--    <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->created_by ?></h<?= $_SESSION['mfontsize'] ?>></td> -->
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->str1 ?></h<?= $_SESSION['mfontsize'] ?>></td>  
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->str2 ?></h<?= $_SESSION['mfontsize'] ?>></td>  
@@ -154,21 +135,20 @@
                                     <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->str6 ?></h<?= $_SESSION['mfontsize'] ?>></td> -->
                                  
 
-                                    <td><center><input type="checkbox" class="checkItem" value="<?= $row->id ?>" name="id[]"></center></td>
 
 
 
                  <!--  <div class="btn-group">  makes buttons stick together -->
                                 <td> 
 
-                              <a class="btn btn-outline btn-primary" type="button" data-toggle="tooltip" data-placement="right" title="View Record" href="<?= BASE_URL ?>security-auditlogger/viewntc/<?= $row->id ?>/1" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-eye"></i></h<?= $_SESSION['mfontsize'] ?>></a> <!-- The 1 sets the $_SESSION tab default  -->         
-                          <!--    <a class="btn btn-outline btn-warning"  type="button"  data-toggle="tooltip" data-placement="right" title="Update Record"  href="<?= BASE_URL ?>security-auditlogger/update/<?= $row->id ?>/1" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-pencil"></i></h<?= $_SESSION['mfontsize'] ?>></a> -->
+                              <a class="btn btn-outline btn-primary" type="button" data-toggle="tooltip" data-placement="right" title="View Record" href="<?= BASE_URL ?>system-auditlogger/viewntc/<?= $row->id ?>/1" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-eye"></i></h<?= $_SESSION['mfontsize'] ?>></a> <!-- The 1 sets the $_SESSION tab default  -->         
+                          <!--    <a class="btn btn-outline btn-warning"  type="button"  data-toggle="tooltip" data-placement="right" title="Update Record"  href="<?= BASE_URL ?>system-auditlogger/update/<?= $row->id ?>/1" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-pencil"></i></h<?= $_SESSION['mfontsize'] ?>></a> -->
 
                           <?php if($row->deleted > 0): ?>                            
- <a class="btn btn-outline btn-primary" type="button"  data-toggle="tooltip" data-placement="right" title="Undelete Record"  href="<?= BASE_URL ?>security-auditlogger/undelrecord/<?= $row->id ?>/<?= $row->action ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-undo"></i></h<?= $_SESSION['mfontsize'] ?>></a>                               
+ <a class="btn btn-outline btn-primary" type="button"  data-toggle="tooltip" data-placement="right" title="Undelete Record"  href="<?= BASE_URL ?>system-auditlogger/undelrecord/<?= $row->id ?>/<?= $row->action ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-undo"></i></h<?= $_SESSION['mfontsize'] ?>></a>                               
                            
                           <?php else: ?>
-<a class="btn btn-outline btn-danger" type="button"  data-toggle="tooltip" data-placement="right" title="Delete Record"  href="<?= BASE_URL ?>security-auditlogger/delrecord/<?= $row->id ?>/<?= $row->type ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-trash"></i></h<?= $_SESSION['mfontsize'] ?>></a>
+<a class="btn btn-outline btn-danger" type="button"  data-toggle="tooltip" data-placement="right" title="Delete Record"  href="<?= BASE_URL ?>system-auditlogger/delrecord/<?= $row->id ?>/<?= $row->type ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-trash"></i></h<?= $_SESSION['mfontsize'] ?>></a>
 
  <div class="modal inmodal fade" id="delete-modal".<?= $row->id ?> tabindex="-1" role="dialog"  aria-hidden="true">
 
@@ -186,7 +166,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
-                 <a class="btn  btn-danger" type="button" href="<?= BASE_URL ?>security-auditlogger/delrecord/<?= $row->id ?>/<?= $row->title ?>">Delete</a>
+                 <a class="btn  btn-danger" type="button" href="<?= BASE_URL ?>system-auditlogger/delrecord/<?= $row->id ?>/<?= $row->title ?>">Delete</a>
             </div>
             </form>
   
@@ -210,9 +190,8 @@
                 </table>
                      
                 </div> <!-- end div table responsive-->
-</form>
 
-        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
+        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
 
             </div> <!-- ibox content table -->
  

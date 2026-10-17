@@ -329,7 +329,7 @@
                                 <?php if($_SESSION['admode'] == 'sysadmin'): ?>
                                 <div>
                                     <!--    <a class="btn btn-outline btn-primary"  type="button"  href="<?= BASE_URL ?>cms-notices/update/<?= $recid ?>/1" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-pencil"></i>  Update</h<?= $_SESSION['fontsize'] ?>></a>  -->
-                                        <a class="btn btn-outline btn-warning"  type="button"  href="<?= BASE_URL ?>security-auditlogger/manage/sysadmin" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-list"></i> Back</h<?= $_SESSION['fontsize'] ?>></a>
+                                        <a class="btn btn-outline btn-warning"  type="button"  href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin" ><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-list"></i> Back</h<?= $_SESSION['fontsize'] ?>></a>
                                 </div>
 
                                 <?php endif; ?> 

@@ -175,7 +175,7 @@
                 </div> <!-- end div table responsive-->
 
 
-        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
+        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
 
             </div> <!-- ibox content table -->
  

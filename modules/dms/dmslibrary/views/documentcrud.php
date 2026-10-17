@@ -1373,7 +1373,7 @@
 
         <?php endif; ?>
    <?php endif; ?>
-<!-- Next line calls a php modal (fontModal2) in navbar.php which call ajax function in template/views/inspinia.php (FontBtn2) which calls the fontsize function (<= BASE_URL ?>ms-ccmpslibrary/fontsize)in the library controller -->
+<!-- Next line calls a php modal (fontModal2) in navbar.php which call ajax function in template/views/inspinia.php (FontBtn2) which calls the fontsize function (<= BASE_URL ?>dms-dmslibrary/_fontsize)in the library controller -->
  <!--   <li><a data-toggle="modal" data-target="#fontModal2"  style="color: <?= DMS_HM_TAB_TITLE_CLR ?>"><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-wrench fa-1x"></i></span><strong>Change Font</strong> </h<?= $_SESSION['fontsize'] ?>></a></li>-->
 
 <!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?= $recid ?>/p" style="color: coral" target="_blank" ><h<?= $_SESSION['fontsize'] ?>><span style="color: <?= DMS_HM_TAB_ICON_CLR ?>;"><i class="fa fa-eye fa-1x"></i></span><strong> Preview</strong></h<?= $_SESSION['fontsize'] ?>></a></li> -->

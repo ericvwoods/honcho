@@ -42,7 +42,20 @@
 
          <!--   <php if($_SESSION['national_officer'] == 1 ): ?> --> <!-- president -->
 
-<?php if($_SESSION['ccmpssidemenu'] == 'admin' ): ?>  <!-- buttons on sidemenu -->
+<?php
+// Admin tile and admin menu only when at least one admin section below will show
+// (Member, Chapter, Content, System Admin, trainer, or a honcho staff module flag).
+// Chapter President alone (subentity_role 1) has no section, so it no longer opens an empty menu.
+$has_admin_menu = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_admin'])
+    || !empty($_SESSION['ccmps_subentity_admin']) || !empty($_SESSION['ccmps_cms_admin'])
+    || !empty($_SESSION['honcho_trainer']) || !empty($_SESSION['honcho_all_modules'])
+    || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_ccmps_module_ccmps'])
+    || !empty($_SESSION['honcho_ccmps_module_subentities']) || !empty($_SESSION['honcho_ccmps_module_cms']);
+if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
+    $_SESSION['ccmpssidemenu'] = ''; // roles removed since Admin was clicked - back to the member menu (ccmphome reads this too)
+}
+?>
+<?php if($_SESSION['ccmpssidemenu'] == 'admin' && $has_admin_menu): ?>  <!-- buttons on sidemenu -->
             <li><a class="navbar-minimalize " href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-right"></i><span class="nav-label"> Expand/Hide Menu</span></a></li>
 <!--  Only show Member Menu For honcho sysadmin or a ccmp user-->
              <?php if($_SESSION['honcho_all_modules'] == 1 || $_SESSION['ccmp_logged_in'] == 1): ?>  <!-- no member ccmphome for honcho admins -->
@@ -141,7 +154,7 @@
                         <!--     <a href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i>  Doc Library <span class="fa arrow"></span></a> -->
                             <ul class="nav nav-third-level">
                                 <li>
-                            <!-- --        <a href="<?= BASE_URL ?>cms-ccmpslibrary/kanban/s">Kanban Board</a> --> <!--s=invoked from sidemenu  -->
+                            <!-- --        <a href="<?= BASE_URL ?>dms-dmslibrary/kanban/s">Kanban Board</a> --> <!--s=invoked from sidemenu  -->
                                 </li>
                            <!--     <li>
                                     <a href="#">Third Level Item</a>
@@ -176,10 +189,18 @@
                 <ul class="nav nav-second-level collapse">
 
 
+<?php if(HONCHO_MODULE == 0): ?> <!-- staff run System Settings when Honcho is deployed -->
                     <li>
                             <a href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i> System Settings </a>
 
                     </li>
+<?php endif; ?>
+<?php if($_SESSION['ccmps_system_admin'] == 1): ?> <!-- member system admins only, Honcho or not -->
+                    <li>
+                            <a href="<?= BASE_URL ?>welcome-ccmpspermissions/manage"><i class="fa fa-key"></i> <?= CCMP ?> Permissions </a>
+
+                    </li>
+<?php endif; ?>
                     <li>
                             <a href="<?= BASE_URL ?>welcome-ccmps/managefontsizes"><i class="fa fa-gears"></i> Font/Color Settings </a>
 
@@ -192,6 +213,7 @@
                     <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>
                 </li> -->
 
+<?php if(HONCHO_MODULE == 0): ?> <!-- staff run the Auditlog when Honcho is deployed -->
                     <li>
 
                             <a id="toggleSpinner4" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i> Auditlog</a>
@@ -205,6 +227,7 @@
 
                             </div>
                     </li>
+<?php endif; ?>
                     <li>
 
                             <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmps/ccmpsscopes/manage"><i class="fa fa-table"></i> CCMPS Scopes</a>
@@ -280,6 +303,7 @@
 
 <?php endif; ?>
 
+<?php if($_SESSION['ccmps_admin'] == 1 || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_ccmps_module_ccmps'] == 1): ?> <!-- no empty Reports menu; member reports can be added later -->
             <li> <a href="#"><i class="fa fa-file-text-o"></i><span class="nav-label"> Reports </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
                 <ul class="nav nav-second-level collapse">
 
@@ -304,6 +328,7 @@
                     <?php endif; ?>
                 </ul>
             </li>
+<?php endif; ?> <!-- Reports -->
 
 
 
@@ -408,10 +433,10 @@
                <!--    <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                           <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/<?= $id ?>/<?= $filename ?>/<?= $filetype ?>" style="color:Red;">     <i class="fa fa-newspaper-o fa-2x"></i>
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/<?= $id ?>/<?= $filename ?>/<?= $filetype ?>" style="color:Red;">     <i class="fa fa-newspaper-o fa-2x"></i>
                             </div>
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/1" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
+                            <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/1" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
                             </div>
                            <div class="col-10 text-right">
                                   <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:14pt"> ATIS</h2> </a>
@@ -455,7 +480,7 @@
                     </div> -->
 
 
-<?php if($_SESSION['honcho_all_modules'] == 1 || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['ccmps_subentity_admin'] == 1 || $_SESSION['ccmps_content_admin'] == 1 || $_SESSION['ccmps_admin'] == 1 || $_SESSION['ccmps_student_admin'] == 1 || $_SESSION['ccmps_subentity_role'] == 1): ?>
+<?php if($has_admin_menu): ?> <!-- was also shown for Chapter President / Student / Content Admin, which have no admin-menu section -->
 
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">

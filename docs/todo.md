@@ -9,7 +9,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] **Remove the PayPal sandbox logins, passwords and card numbers** from the comments in `config/config.php`; rotate anything still live.
 - [ ] **Remove the `TEMP_2ND_FACTOR` bypass**: `'654321'` is accepted as a second factor by both logins when the session has no code (`Welcome.php` ~429, `Honcho.php` ~1387).
 - [ ] **Call `session_regenerate_id(true)` after a successful login** in both logins (prevents session fixation).
-- [ ] DMS `manage()` takes the user's role from the URL (covered by the RBAC plan, step 4).
+- [x] DMS `manage()` takes the user's role from the URL. Fixed 2026-10-11 (`_get_dms_role()`), tested 2026-10-16.
 
 ## Login & accounts
 
@@ -20,6 +20,10 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 ## Permissions (RBAC)
 
 - [ ] Answer the 12 decisions in the [Honcho RBAC Implementation Plan](https://claude.ai/code/artifact/d55caab2-e13a-4502-bdbe-e52b7f7f4561), then approve it.
+- [x] Member side menu showed the Admin tile (and an empty Reports menu) to members with no admin role, e.g. Chapter President only. Now one `$has_admin_menu` check in `sidemenu.php` (2026-10-16, verified).
+- [x] Member Permissions screen (`welcome-ccmpspermissions/manage`): see and set every member's admin roles in one list (2026-10-16).
+- [ ] Member Admin role doesn't open the Member Admin menu: login sets `ccmps_ccmp_admin` (from `ccmp_admin`) but menus check `ccmps_admin`, which only "refresh my session data" sets, from a nonexistent `admin` column.
+- [ ] Student Admin has no section in the member side menu (only the older `ccmphome.php` layout has one).
 
 ## DMS
 
@@ -28,6 +32,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Subentity Admin gets "Error 5103" after moving a card (case commented out).
 - [ ] `manage()` gives a 500 error when nobody is logged in.
 - [ ] Test the manage-page filters while logged in after the 2026-10-06 SQL-injection fix.
+- [ ] Drop the old CMS library tables (`cms_ccmps_filelibrary_*`, 11 tables incl. `..._docs_atis_seed`). The `cms-ccmpslibrary` module was removed 2026-10-16 and no code reads them. Do it on the Mac, staging and `ccmps.sql` together.
 
 ## PMS (add-on)
 
@@ -53,12 +58,17 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] CCMPS Testing tab describes `lib/CcmpsPermissions.php` and `run_integration_tests.sh`, which aren't in the project.
 - [ ] Delete the old `CCMPS_Developer_Documentation.docx` (superseded).
 - [ ] Install Node.js on this Mac so the guide can be rebuilt without a temporary copy.
+- [ ] Rebuild both guides (`docs/developer-guide`, `docs/users-guide`): chapters changed 2026-10-16 (DMS, deployment, CCMPS Member Permissions; Users' Guide System Admin, staff portal, ATIS).
 
 ## Home page content (CMS)
 
-- [ ] All 8 content modules (marquee, jumbotron, bulletins, notices, jobs, activities, sunshine, chapters) read a table named `scopes` on their add/edit/list pages; this database only has `ccmps_scopes`. Check production, then point them at the right table. (Found 2026-10-07 while writing the User's Guide.)
+- [x] All 8 content modules read a table named `scopes`; now `ccmps_scopes` (2026-10-16). Can't be tested until the item below is done.
+- [ ] Finish the 8 content modules. Each `manage()` starts with a deliberate `echo(NNN); die();` stop, and the code after it uses old table names (`ccmps_bulletins` vs `cms_ccmps_bulletins`, `bulletins_bulk_actions`), old member fields (`chapter`, `chapter_admin`, `chapter_role` → `subentity*`) and wrong redirects (`cms-bulletinboard` vs `cms-ccmpsbulletinboard`).
 
 ## Small fixes
+
+- [ ] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. The real table is `ccmps_subentities` (different columns, e.g. `chapter_title`). Decide whether it gets the staff-only / Lite rule like Settings and the Auditlog.
+- [ ] Member home ATIS tile hidden 2026-10-16 (it downloaded doc 1 from the removed CMS library). Upload ATIS to DMS and put its id in the link in `ccmphome.php`, then re-add it to the Users' Guide.
 
 - [ ] Debug line numbers show on buttons: "128 Update" (`viewccmp.php` line 128) and "69Cancel" / "80 Cancel" (`ccmpcrud.php` lines 70 and 81).
 - [ ] Member-list bulk actions Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing (`Ccmps.php` `bulkaction()`).

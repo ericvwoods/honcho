@@ -121,6 +121,11 @@ echo(33); die();
 /*-------------------------------------------------- -------------------------*/
   
 function viewrecord($recid = NULL){ // recid which one to view
+
+  // v2 engine doesn't pass URL segments as arguments; submit() still passes one
+  if(empty($recid)){
+    $recid = segment(3, 'int');
+  }
 //echo(127); die();
 /*---------------------------- Security Check --------------------------------*/
 //  $ntcfunction = 'view';  NOT WORKING!
@@ -165,7 +170,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   $tgusrid        = $adobj->created_by; 
   $poster_obj     = $this->model->get_one_where('trongate_user_id', $tgusrid,
           'ccmps');
-  $data['actor'] =  $poster_obj->first_name.' '.$poster_obj->last_name;
+  $data['actor'] = $poster_obj ? $poster_obj->first_name.' '.$poster_obj->last_name : '';
 
 /*--------------------- Convert to User Friendly Values ----------------------*/
 
@@ -228,9 +233,9 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 /*---------------------------- FUNCTION UPDATE -------------------------------*/
 /*----------------------------------------------------------------------------*/
   
-  function update($retrying){  
+  function update($retrying = ''){  // 'yes' only when submit() retries
 
-  $recid = segment(3);
+  $recid = segment(3, 'int');
 //  $ntcfunction = 'update';
 //  $authorized = $this->_check_function_permissions($ntcfunction, $recid); 
 
@@ -375,7 +380,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 /*---------------------------- FUNCTION CREATE -------------------------------*/
 /*----------------------------------------------------------------------------*/
 
-function create($retrying){ // only used by CA Adding - may be first time or
+function create($retrying = ''){ // only used by CA Adding - may be first time or
                             // with values after failed validation
   $ntcfunction = 'create';
   $authorized = $this->_check_function_permissions($ntcfunction); 
@@ -440,7 +445,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
 /*-------------------------- Populate Dropdowns  -----------------------------*/
         
     // scopes dropdown
-    $data['scopes'] = $this->model->get('id','scopes'); 
+    $data['scopes'] = $this->model->get('id', 'ccmps_scopes'); 
 
     // chapters dropdown for member admin only - ccmp & chapter admin default
     //  to home chapter

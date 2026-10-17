@@ -79,7 +79,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/cmsadmin"><i class="fa fa-podcast"></i> Notices</a></li>
         <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/cmsadmin"><i class="fa fa-plane"></i> Job Posts</a></li>
         <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/cmsadmin"><i class="fa fa-calendar"></i> Activities</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i> Doc Library</a></li>
+        <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-file-text-o"></i> Doc Library</a></li>
         <li><a href="#"><i class="fa fa-list"></i> <?= SUBENTITIES ?> ($_SESSION['num_chapters'])</a></li>
     <li>
         <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>
@@ -116,7 +116,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i>Chapter Notices</a></li>
         <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/momads"><i class="fa fa-plane"></i> Job Posts</a></li>
         <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i>Chapter Activities</a></li>
-    <!--    <li><a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/momads"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
+    <!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
     <!--    <li><a href="#"><i class="fa fa-list"></i> Chapter Info</a></li>  -->
                      <li>
                 <a id="toggleSpinner3" href="<?= BASE_URL ?>welcome-ccmps/export/chapter"><i class="fa fa-table"></i> Export for Les</a>
@@ -189,14 +189,20 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
     <ul class="nav nav-second-level collapse">
 
 
+<?php if(HONCHO_MODULE == 0): ?> <!-- staff run System Settings when Honcho is deployed -->
         <li>
                 <a href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i> System Settings </a>
 
+        </li>
+<?php endif; ?>
+        <li>
+                <a href="<?= BASE_URL ?>welcome-ccmpspermissions/manage"><i class="fa fa-key"></i> <?= CCMP ?> Permissions </a>
         </li>
     <li>
         <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>
     </li>
 
+<?php if(HONCHO_MODULE == 0): ?> <!-- staff run the Auditlog when Honcho is deployed -->
         <li>
 
                 <a id="toggleSpinner4" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i> Auditlog</a>
@@ -210,6 +216,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 
                 </div>
         </li>
+<?php endif; ?>
 
 
 
@@ -354,7 +361,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage" style="color:Gray;">     <i class="fa fa-file fa-2x" style="color: cornflowerblue;"></i>
+                <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:Gray;">     <i class="fa fa-file fa-2x" style="color: cornflowerblue;"></i>
                 </div>
                 <div class="col-10 text-right">
                       <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> Doc Library</h2> </a>
@@ -362,19 +369,19 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
             </div>
         </div>
 
+<?php /* ATIS tile hidden 2026-10-16: it downloaded doc 1 from the old cms-ccmpslibrary
+         (removed). Re-point it to the ATIS document's id in DMS before turning it back on.
        <div class="widget style1 gray-bg">
             <div class="row vertical-align">
-             <!--   <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/<?= $id ?>/<?= $filename ?>/<?= $filetype ?>" style="color:Red;">     <i class="fa fa-newspaper-o fa-2x"></i>
-                </div>  -->
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpslibrary/downloaddoc/1" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: cornflowerblue;"></i>
+                <a href="<?= BASE_URL ?>dms-dmslibrary/downloaddoc/ATIS_DOC_ID" style="color:Gray;" target="_blank">     <i class="fa fa-newspaper-o fa-2x" style="color: cornflowerblue;"></i>
                 </div>
                 <div class="col-10 text-right">
                       <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> ATIS</h2> </a>
                 </div>
             </div>
         </div>
+*/ ?>
 
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
@@ -608,7 +615,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
+                <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
                 </div>
                 <div class="col-10 text-right">
                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Docs</h2> </a>
@@ -700,7 +707,7 @@ Content Administration
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
+                <a href="<?= BASE_URL ?>dms-dmslibrary/manage"style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
                 </div>
                 <div class="col-10 text-right">
                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Doc Library</h2> </a>
@@ -904,6 +911,7 @@ Content Administration
 System Administration ccc
 <div class="row">
 
+<?php if(HONCHO_MODULE == 0): ?> <!-- staff run the Auditlog when Honcho is deployed -->
     <div class="col-lg-2">
 
       <!--   <div class="widget style1 yellow-bg"> -->
@@ -918,6 +926,7 @@ System Administration ccc
             </div>
         </div>
     </div>
+<?php endif; ?>
 
     <div class="col-lg-2">
 

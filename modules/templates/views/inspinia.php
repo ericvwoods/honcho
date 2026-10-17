@@ -981,6 +981,8 @@ filepicker.addEventListener("change", (event) => {
 
             });
 
+/* FontBtn2 disabled: it posted to cms-ccmpslibrary/fontsize (old library, removed
+   2026-10-16) and nothing opens #fontModal2 any more. DMS has _fontsize() if revived.
              $("#FontBtn2").click(function(){ // filelibrary
              //   var nfontsize  = $("#fontsize").val();
                 var nfontsize  = document.getElementById("FontSel").value;
@@ -1023,6 +1025,7 @@ filepicker.addEventListener("change", (event) => {
                     });
 
             });
+*/
 
             // Reset password modal - Reset Password button calls MyModal2 which calls this which posts values from form to honcho/modalresetpw
             $("#ResetBtn").click(function(){

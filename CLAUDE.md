@@ -11,7 +11,7 @@ Git repo: private `github.com/ericvwoods/honcho` (branch `main`, created 2026-10
 ## Running / debugging
 
 - Local URL: `http://localhost/bpausa/`.
-- **Secrets and per-install settings live in `.env`** (root, never committed; `.env.example` lists them): `BASE_URL`, `WHATENV`, `JWT_SECRET`, `DB_*`, `BREVO_*`, `SYNC_BREVO`. `config/env.php` loads it (real environment variables win, for Docker) and provides `env('NAME', default)`; `config/config.php` and `config/database.php` read from it. Never put a key or password back into a committed file.
+- **Secrets and per-install settings live in `.env`** (root, never committed; `.env.example` lists them): `BASE_URL`, `WHATENV`, `JWT_SECRET`, `DB_*`, `BREVO_*`, `SYNC_BREVO`, `HONCHO_MODULE`. `config/env.php` loads it (real environment variables win, for Docker) and provides `env('NAME', default)`; `config/config.php` and `config/database.php` read from it. Never put a key or password back into a committed file.
 - DB config is in `config/database.php` (local MySQL `bpausa`). `ccmps.sql` / `ccmps_aux.sql` at the root are schema+test-data dumps. Treat the data as disposable.
 - Composer deps (`vendor/`): phpspreadsheet, phpmailer, brevo. Run `composer install` from the root.
 - Blank or partly rendered page: uncomment the `ini_set('display_errors'...)` lines at the top of `public/index.php`.
@@ -42,7 +42,7 @@ Git repo: private `github.com/ericvwoods/honcho` (branch `main`, created 2026-10
   Stock-v2 code from elsewhere may need adapting to this.
 - Pages render via `$this->templates->inspinia($data)` (back-office Inspinia theme). Other layouts are `cool_mobi`, `public`, `store`, `boss`, `admin`. The template includes the content view named by `$data['view_module']` (e.g. `'welcome/ccmpsscopes'`) and `$data['view_file']`.
 - Model rows come back as **objects** (`$row->field`), but `$data` passed to views is an **array**. A common bug is `$data->recid = ...` when it should be `$data['recid'] = ...`.
-- Auth is session-based. Methods check `$_SESSION['trongatetoken']` and redirect to `welcome/logout` when it's missing. Per-controller `_check_function_permissions($fn)` switches on session flags (`ccmp_logged_in`, `ccmps_admin`, `ccmps_system_admin`, `honcho_sysadmin`, `honcho_ccmps_admin`, …). RBAC behavior is toggled by `CCMPS_RBAC`.
+- Auth is session-based. Methods check `$_SESSION['trongatetoken']` and redirect to `welcome/logout` when it's missing. Per-controller `_check_function_permissions($fn)` switches on session flags (`ccmp_logged_in`, `ccmps_admin`, `ccmps_system_admin`, `honcho_sysadmin`, `honcho_ccmps_admin`, …). RBAC behavior is toggled by `CCMPS_RBAC`. System Settings and the Auditlog (`modules/system/settings`, `auditlogger`) are gated in their constructors by `system_admin_only()` (`utilities_helper.php`): staff sysadmins only when `HONCHO_MODULE=1` (Honcho deployed), member system admins only when `0` (Honcho Lite). Internal calls such as `logevent()` are not gated.
 - Flash messages: `set_flashdata($msg)`, plus `$_SESSION['flashmsgcolor']`.
 - Controllers start with a docblock "call map" listing each method and the `_helpers` it calls. Keep it up to date when you add methods.
 

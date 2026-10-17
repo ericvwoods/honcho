@@ -11,14 +11,14 @@
             <br>
             <br>
              <?php if( ENV == 'dev'): ?>
-            <a href="<?= BASE_URL ?>welcome-ccmps/ccmphome">
+            <a href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>">
 
              <span class="m-r-sm text-muted welcome-message"><i class="fa fa-home"> </i><strong>Home / <?= $bc1 ?> / <?= $bc2 ?> / <?= $_SESSION['admode'] ?> / <?= $id ?></strong></span>
              <!--               <span class="m-r-sm text-muted welcome-message"><i class="fa fa-home"></i><strong>Home | <?= $bc1 ?> | <?= $bc2 ?> | <?= $_SESSION['admode'] ?> | <?= $_SESSION['tab'] ?></strong></span>  -->
             </a>
 
             <?php else: ?> 
-            <a href="<?= BASE_URL ?>welcome-ccmps/ccmphome">                
+            <a href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>">                
                 <span class="m-r-sm text-muted welcome-message"><i class="fa fa-home"></i><strong><?= $bc1 ?> / <?= $bc2 ?></strong></span>
             </a>
              <?php endif; ?> 
@@ -27,7 +27,7 @@
 
 
   <!--      <li>
-            <a href="<?= BASE_URL ?>welcome-ccmps/ccmphome">
+            <a href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>">
              <span class="m-r-sm text-muted welcome-message"> Member Services Portal</strong></span>
             </a>
         </li>  -->        

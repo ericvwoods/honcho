@@ -36,7 +36,7 @@ const sections = [
   { type: 'p', text: "When a replacement file has the same name and `DMS_FL_SAVE_BAK` is `1` (config.php), the old file is renamed to `<name>_<ext>.bak` and not overwritten." },
 
   { type: 'h2', text: 'Predecessor: cms-ccmpslibrary' },
-  { type: 'p', text: 'An older, member-facing library still exists at `modules/cms/ccmpslibrary/` with its own kanban view and the `CCMPS_FL_*` constants. DMS replaced it for staff document work. Check which one a menu link points to before changing either.' },
+  { type: 'p', text: 'An older, member-facing library lived at `modules/cms/ccmpslibrary/`. It was removed on 2026-10-16: DMS is the only document library. Its menu links now go to `dms-dmslibrary/manage` (the role is worked out on the server), and its upload folder is no longer mounted. Still left behind: the `CCMPS_FL_*` constants in config.php (some DMS views use them) and the old `cms_ccmps_filelibrary_*` database tables (no code reads them).' },
 ]},
 
 // ============================================================
@@ -139,12 +139,12 @@ const sections = [
   { type: 'h2', text: 'Fixed' },
   { type: 'table', headers: ['Bug', 'Where', 'Fix'], rows: [
     ['**SQL injection through request values.** The manage-page filters (`$_POST[\'sqlfilter...\']`) and the document id in `managedoccomments/<id>` were concatenated straight into SQL, so a logged-in user could change the query by editing a value in the browser.', '`manage()` (the eleven `$sqlfilter...` lines), `managedoccomments()`', "2026-10-06: each value is now read with `intval()`. Anything that is not a number becomes `0` (no filter). **Rule going forward:** any request value that goes into a hand-built SQL string must be `intval()`'d first (or use `query_bind()`)."],
+    ["**The manage page took the user's role from the URL.** `manage()` set `$_SESSION['filelibrary_rolename'] = segment(3);`, so any logged-in user (including a member) could open `dms-dmslibrary/manage/dmslibadmin` and list every document. Honcho's menu links have no role in the URL, which left the role empty and crashed the page with a 500 (`$sql` never set).", '`manage()` around line 491, new `_get_dms_role()`', "2026-10-11: `_get_dms_role()` works out the role on the server. **Members:** `ccmps_system_admin` → `dmslibadmin`, `ccmps_subentity_admin` (chapter admin) → `dmslibsubadmin` (own chapter's documents only), everyone else → `dmslibuser`. **Staff:** the same group → role lookup as the Honcho login, or `dmslibadmin` when `dms_lib_access` is 99; no group, or a role `manage()` has no view for (`dmslibastadmin`), → `dmslibuser`. The role in the URL can only **lower** the result (an admin choosing the user view), never raise it."],
   ]},
 
   { type: 'h2', text: 'Not Yet Fixed' },
   { type: 'p', text: 'Found while writing this chapter (2026-10-06).' },
   { type: 'table', headers: ['Issue', 'Where', 'Effect'], rows: [
-    ["**The manage page takes the user's role from the URL.** `manage()` has its permission check commented out and sets `$_SESSION['filelibrary_rolename'] = segment(3);`.", '`manage()`, around line 491', "**Security risk.** Any logged-in user (including a member) can open `dms-dmslibrary/manage/dmslibadmin` and see the list of **every** document, including restricted access levels and unapproved drafts. Actions (edit, move, approve) still check permissions properly."],
     ['`header5()` writes the label text into the status column: `$data[\'status\'] = DMS_KBB_HDR5;` (that constant is the string "Approved").', '`header5()`, around line 6556', 'The database runs in strict mode, so moving a card into the last column through `header5()` fails with a database error. It should be `1`. (`approvedoc()` sets `status = 1` correctly.)'],
     ['Security group → role mappings are incomplete. Group 1 maps to role 1 and to role **6, which does not exist**. Groups 2, 3 and 4 have no role at all. Roles 2 and 3 have no functions.', '`dms_filelibrary_security_group_roles`, `dms_filelibrary_roles_functions` (data)', 'Anyone placed in groups 2–4 hits a PHP error at login and on every DMS page. The permission check only ever uses the **first** role row for a group.'],
     ['The `dmslibsubadmin` case is commented out in the redirect `switch` after a column move.', '`backlog()` and the other move methods', 'A Subentity Admin who moves a card gets "Error 5103: No matching manage mode".'],

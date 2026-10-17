@@ -62,7 +62,7 @@ memberAdmins: [
     { type: 'h2', text: 'Statuses and the Current Year' },
     { type: 'p', text: "A member's status (Current, Past Due, Pending, Expired) depends on their dues and the current membership year. At the start of a new year, use the **Current Year** bulk action on members who have paid." },
     { type: 'h2', text: 'Giving Someone an Admin Role' },
-    { type: 'p', text: "Open the member with **Update Record**, go to **Roles & Permissions**, tick the roles they should have (for example Chapter Admin or Content Admin) and save. They see the new menus the next time they log in." },
+    { type: 'p', text: "Open the member with **Update Record**, go to **Roles & Permissions**, tick the roles they should have (for example Chapter Admin or Content Admin) and save. They see the new menus the next time they log in. System Admins can also set everyone's roles from one list: **System Admin > Member Permissions** (Chapter 8)." },
     { type: 'alert', variant: 'warning', text: 'Only give admin roles to people who need them. A Member Admin can see and change every member\'s details.' },
   ])},
 ],

@@ -254,7 +254,7 @@
 <!-- The first faq item must contain the form open and the last item the form close -->
 <!-- *********************************************************************** -->
 
-    <form  method = "post" action="<?= BASE_URL ?>cms-ccmpslibrary/submit/<?= $recid ?>">
+    <form  method = "post" action="<?= BASE_URL ?>dms-dmslibrary/submit/<?= $recid ?>">
         
 <!-- *********************************************************************** -->
 <!-- ******************* Save/Cancel Button Boiler Plate ******************* -->
@@ -266,7 +266,7 @@
           
 <!--   <?php if($managemode == 'dmslibadminupdate' || $managemode == 'dmssublibadminupdate' || $managemode == 'dmslibadmincreate' || $managemode == 'dmssublibadmincreate'): ?> 
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> Save Changes</h<?= $_SESSION['fontsize'] ?>></button>
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> Cancel</h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?> -->
 </div>
@@ -555,21 +555,21 @@
        <br>   
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> </h<?= $_SESSION['fontsize'] ?>></button>
     <!-- now isolate which one for the correct Cancel button - same if subentity admin--> 
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?>
        <?php if($managemode == 'dmssublibadminupdate'): ?> 
        <br>   
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> </h<?= $_SESSION['fontsize'] ?>></button>
     <!-- now isolate which one for the correct Cancel button - same if subentity admin--> 
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/viewdocrec/<?= $recid ?>/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/<?= $recid ?>/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?>    
       <?php if($managemode == 'dmslibadmincreate' || $managemode == 'dmssublibadmincreate'): ?> 
        <br>   
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> </h<?= $_SESSION['fontsize'] ?>></button>
     <!-- now isolate which one for the correct Cancel button - same if subentity admin--> 
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?>
     </form>
@@ -577,14 +577,14 @@
        <br>   
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> </h<?= $_SESSION['fontsize'] ?>></button>
     <!-- now isolate which one for the correct Cancel button - same if subentity admin--> 
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?>
        <?php if($managemode == 'dmssublibadmincreate'): ?> 
        <br>   
     <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-save"></i> </h<?= $_SESSION['fontsize'] ?>></button>
     <!-- now isolate which one for the correct Cancel button - same if subentity admin--> 
-    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>cms-ccmpslibrary/manage/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
+    <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmssublibadmin"><h<?= $_SESSION['fontsize'] ?>><i class="fa fa-times-circle"></i> </h<?= $_SESSION['fontsize'] ?>></a> 
 
        <?php endif; ?>
 <!-- *********************************************************************** -->
@@ -638,7 +638,7 @@
                                     Title: New Document <br>
                                     Simply dummy text of the printing and typesetting industry.
                                     <div class="agile-detail">
-                                        <a href="<?= BASE_URL ?>cms-ccmpslibrary/viewdocrec/83/dmslibadmin" class="float-right btn btn-xs btn-white"><i class="fa fa-eye"></i> View</a>
+                                        <a href="<?= BASE_URL ?>dms-dmslibrary/viewdocrec/83/dmslibadmin" class="float-right btn btn-xs btn-white"><i class="fa fa-eye"></i> View</a>
                                         <i class="fa fa-clock-o"></i> 3.13.2024
                                     </div>
                                 </li>
@@ -940,7 +940,7 @@
   
  <?php if(DEBUGGING == true): ?> 
  <?php
-    echo('<h3>View: cms-ccmpslibrary/$managemode</h3>');
+    echo('<h3>View: dms-dmslibrary/$managemode</h3>');
     echo('<h3>New Session Id</h3>');
     $session_id = session_id();
     echo ('<h3>'.$session_id.'</h3>');    

@@ -36,7 +36,6 @@ services:
     volumes:
       - ${DATA_DIR}/staging/files/public/uploads:/var/www/html/public/uploads
       - ${DATA_DIR}/staging/files/dmslibrary:/var/www/html/modules/dms/dmslibrary/assets
-      - ${DATA_DIR}/staging/files/ccmpslibrary:/var/www/html/modules/cms/ccmpslibrary/assets
       - ${DATA_DIR}/staging/files/ccmps:/var/www/html/modules/welcome/ccmps/assets
       - ${DATA_DIR}/staging/files/users:/var/www/html/modules/honcho/users/assets
       - ${DATA_DIR}/staging/files/trongate_pages:/var/www/html/modules/trongate_pages/assets/images/uploads

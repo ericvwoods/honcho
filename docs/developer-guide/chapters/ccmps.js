@@ -163,6 +163,16 @@ const sections = [
   { type: 'code', text: "$can_grant_chapter_admin = $is_system_admin\n    || !empty($_SESSION['ccmp_admin'])\n    || (($is_chapter_president || !empty($_SESSION['ccmps_subentity_admin'])) && $is_own_chapter);" },
   { type: 'alert', variant: 'warning', text: "**A real bug we found and fixed here:** `viewccmp.php` receives data _after_ `_convert_to_user_friendly()` has already run, which overwrites `$data['subentity']` with the chapter's _text name_ for display purposes. Comparing that text name against the viewer's raw numeric session id would never match — silently hiding the grant checkbox from every legitimate chapter president, with no error anywhere to indicate why. Fixed by preserving the raw id under a separate `$data['subentity_id']` key before the text translation happens. **Lesson: when a value is going to get \"friendly-formatted\" for display, always ask whether anything downstream still needs the raw form — and if so, keep both.**" },
 
+  { type: 'h2', text: 'Member Permissions Screen' },
+  { type: 'p', text: "`welcome-ccmpspermissions/manage` (System Admin menu → Member Permissions, added 2026-10-16) lists members with a checkbox for each super-user flag, so permissions can be seen and set in one place instead of record by record. It opens showing only members who hold a permission; `manage/all` shows every member (deceased and soft-deleted excluded)." },
+  { type: 'ul', items: [
+    '**Who:** member system admins only, whether or not the Honcho staff module is deployed. The check in `__construct()` reads `system_admin` from the database, not the session, so removing someone\'s System Admin locks them out of the screen at once. Staff logins are sent back to the Honcho dashboard.',
+    '**Columns:** the flags login copies into the session, listed in `_permission_flags()`: `system_admin`, `ccmp_admin`, `subentity_admin`, `student_admin`. `content_admin`, `library_admin`, `financial_admin` and `event_admin` are on `ccmps` but nothing reads them yet; add them to `_permission_flags()` when something does.',
+    '**Saving:** each click posts to `togglepermission()` (AJAX, JSON reply), which saves one column and writes a `GrantPermission`/`RemovePermission` Auditlog entry. Only columns in `_permission_flags()` can be changed, and a per-session token stops other sites posting changes.',
+    "**Safety:** you can't remove your own System Admin, and the last System Admin can't be removed.",
+    "**When it takes effect:** at that member's next login, because login copies the flags into the session. Changing your own flags updates your session straight away.",
+  ]},
+
   { type: 'h2', text: 'Visible-but-Disabled vs. Fully-Hidden' },
   { type: 'p', text: 'Two distinct patterns are used throughout, and the choice between them is deliberate, not arbitrary:' },
   { type: 'ul', items: [

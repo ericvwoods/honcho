@@ -51,6 +51,7 @@ _check_function_permissions
 _fontsize
 _saveAndPreviewDocx
 _docx_to_text
+_get_dms_role (called by manage)
 _get_mimetype
 _get_font_sizes
 _populate_dropdowns
@@ -488,7 +489,9 @@ class Dmslibrary extends Trongate {
 
 /*------------------- Get Passed Parameters -----------------*/
 
-$_SESSION['filelibrary_rolename'] = segment(3);
+// The role in the URL is only a request: _get_dms_role() works out what the
+// user is allowed and never gives more (typing /manage/dmslibadmin used to work)
+$_SESSION['filelibrary_rolename'] = $this->_get_dms_role(segment(3));
 // for testing
 //$_SESSION['filelibrary_rolename'] = 'dmslibccmp'; // dmslibuser, ccmp
 //echo(494); print_r($_SESSION['filelibrary_rolename']); die();
@@ -7961,7 +7964,7 @@ echo " ... Use Back button"; die();
     $data['filtregions'] = $this->model->query($sqlregions,'object');
 /*
     // uploaders filter
-    $sqlupld = 'SELECT trongate_user_id, first_name, last_name FROM ccmps WHERE trongate_user_id IN (SELECT DISTINCT uploaded_by FROM cms_ccmps_filelibrary_docs) ORDER BY last_name';
+    $sqlupld = 'SELECT trongate_user_id, first_name, last_name FROM ccmps WHERE trongate_user_id IN (SELECT DISTINCT uploaded_by FROM dms_filelibrary_docs) ORDER BY last_name';
     $data['filtuploaders'] = $this->model->query($sqlupld,'object');
     //   json( $data['filtuploaders'] ); die();
 */
@@ -8716,6 +8719,51 @@ function _get_mimetype($filepath) {
 }
 
 /*-------------------- End _docx_to_text ------------------------*/
+
+/*------------------- Function _get_dms_role ---------------------*/
+
+    function _get_dms_role($requested = '') {
+        // Returns dmslibuser, dmslibsubadmin or dmslibadmin (the roles manage() handles).
+        // $requested (from the URL) can lower the role but never raise it.
+
+        $rank = array('dmslibuser' => 1, 'dmslibsubadmin' => 2, 'dmslibadmin' => 3);
+
+        if($_SESSION['acct_table'] == 'ccmps'){ // member side
+            if($_SESSION['ccmps_system_admin'] == 1){
+                $allowed = 'dmslibadmin';
+            }elseif($_SESSION['ccmps_subentity_admin'] == 1){
+                $allowed = 'dmslibsubadmin'; // chapter admin sees own chapter's docs
+            }else{
+                $allowed = 'dmslibuser';
+            }
+        }else{ // honcho staff - same lookup as the honcho login (Honcho.php ~line 446)
+            $allowed = 'dmslibuser';
+            $tg_user_id = intval($_SESSION['tg_user_id']);
+            $sqluser = "SELECT * FROM dms_filelibrary_tguserid_security_group WHERE tguserid = $tg_user_id";
+            $usersg_obj = $this->model->query($sqluser, 'object');
+            if(!empty($usersg_obj)){
+                $flsgid = intval($usersg_obj[0]->security_group_id);
+                $sgrolesql  = "SELECT * FROM dms_filelibrary_security_group_roles WHERE security_group_id = $flsgid ORDER BY role_id";
+                $sgrole_obj = $this->model->query($sgrolesql, 'object');
+                if(!empty($sgrole_obj)){
+                    $role_obj = $this->model->get_one_where('id', $sgrole_obj[0]->role_id, 'dms_filelibrary_roles');
+                    if(!empty($role_obj) && isset($rank[$role_obj->session_name])){
+                        $allowed = $role_obj->session_name; // dmslibastadmin has no manage() view yet so stays dmslibuser
+                    }
+                }
+            }
+            if($_SESSION['dms_lib_access'] == 99){ // sysadmin
+                $allowed = 'dmslibadmin';
+            }
+        }
+
+        if(isset($rank[$requested]) && $rank[$requested] < $rank[$allowed]){
+            return $requested; // e.g. an admin choosing the plain user view
+        }
+        return $allowed;
+    }
+
+/*------------------ End function _get_dms_role ------------------*/
 
 /*------------ Function _check_function_permissions --------------*/
 

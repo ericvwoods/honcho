@@ -30,6 +30,48 @@ function block_url(string $block_path): void {
 }
 
 /**
+ * Limits a System page (Settings, Auditlog) to system admins.
+ * Honcho deployed (HONCHO_MODULE = 1): only staff sysadmins (honcho/login).
+ * Honcho Lite (HONCHO_MODULE = 0): only members with system_admin (welcome/login).
+ * Internal calls such as $this->auditlogger->logevent() are not affected.
+ *
+ * @param string $module_name The module as it appears in the URL, e.g. 'system-settings'
+ * @return void
+ */
+function system_admin_only(string $module_name): void {
+    if (strcasecmp(segment(1), $module_name) !== 0) {
+        return; // called by another module, not visited as a page
+    }
+
+    if (HONCHO_MODULE == 1) {
+        $logged_in = !empty($_SESSION['honcho_logged_in']);
+        $allowed   = $logged_in && !empty($_SESSION['honcho_sysadmin']);
+        $home      = 'honcho';
+    } else {
+        $logged_in = !empty($_SESSION['ccmp_logged_in']);
+        $allowed   = $logged_in && !empty($_SESSION['ccmps_system_admin']);
+        $home      = 'welcome-ccmps/ccmphome';
+    }
+
+    if ($allowed) {
+        return;
+    }
+    if ($logged_in) {
+        set_flashdata('You are not authorized to use that page.');
+        redirect($home);
+    }
+    if (!empty($_SESSION['honcho_logged_in'])) {
+        set_flashdata('That page is for member system admins.');
+        redirect('honcho');
+    }
+    if (!empty($_SESSION['ccmp_logged_in'])) {
+        set_flashdata('You are not authorized to use that page.');
+        redirect('welcome-ccmps/ccmphome');
+    }
+    redirect('welcome/logout'); // not logged in at all
+}
+
+/**
  * Outputs the given data as JSON in a prettified format, suitable for debugging and visualization.
  * This function is especially useful during development for inspecting data structures in a readable JSON format directly in the browser. 
  * It optionally allows terminating the script immediately after output, useful in API development for stopping further processing.

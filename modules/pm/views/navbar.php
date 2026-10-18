@@ -11,7 +11,7 @@
                 <ul class="nav navbar-top-links navbar-left">
                     <li>
                         <br>
-                        <a href="<?= BASE_URL ?>welcome-ccmps/ccmphome">
+                        <a href="<?= BASE_URL ?>honcho"> <!-- PMS is staff-only: Home is the Honcho dashboard -->
                             <span class="m-r-sm text-muted welcome-message"><i class="fa fa-home"></i>
                                 <strong>Home &gt; <?= out($bc1) ?> &gt;
                                     <span style="color: <?= NB_CLR ?>"><?= out($bc2) ?></span></strong></span>
@@ -34,7 +34,7 @@
             <br>
             <li>
                 <br>
-                <a href="<?= BASE_URL ?>welcome-ccmps/refreshmysessiondata"><i class="fa fa-user"></i>[<span style="color: <?= NB_CLR ?>"><?= out($_SESSION['whoisit'] ?? '') ?></span>]</a>
+                <a><i class="fa fa-user"></i>[<span style="color: <?= NB_CLR ?>"><?= out($_SESSION['whoisit'] ?? '') ?></span>]</a>
             </li>
             <li>
                 <br>

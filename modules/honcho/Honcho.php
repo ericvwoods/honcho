@@ -1726,7 +1726,9 @@ json($data); die();
         $this->module('system-auditlogger');
         $this->auditlogger->logevent($type, $action, $func,$str5, $str6, $un, $time, $str3, $str4);
 
-        $this->index();
+        // redirect instead of $this->index() so the dashboard's address is honcho, not the
+        // login form's POST target (honcho/authenticate) - the back button then works
+        redirect('honcho');
 }
 }
 /*

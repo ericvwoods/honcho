@@ -85,12 +85,14 @@
 
                     </ul>
                 </li>
-                <li> <!-- Project Management System - on/off and access per function are checked in modules/pm/Pm.php -->
+                <?php if(rbac_allowed('pm', 'view_projects')): ?> <!-- Project Management System: Security Groups decide (false when PMS is switched off) -->
+                <li>
                     <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">PMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
                         <li><a class="submenu" href="<?= BASE_URL ?>pm"><i class="fa fa-play"></i><span class="hidden-tablet"> Projects</span></a></li>
                     </ul>
                 </li>
+                <?php endif; ?>
                 <li>
                     <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">CMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">

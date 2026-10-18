@@ -69,6 +69,33 @@
         </div>
     </div>
 
+    <h3>Modules</h3>
+    <p class="text-muted">A switched-off module fails every permission check, so its pages and menu items disappear for everyone.
+       Core modules are always on; Honcho itself is switched by <code>HONCHO_MODULE</code>.</p>
+    <div class="table-responsive">
+        <table class="table table-bordered" style="width:auto;">
+            <tbody>
+            <?php foreach($modules as $m) { ?>
+                <tr>
+                    <td><strong><?= out($m->title) ?></strong> <span class="text-muted">(<?= out($m->code) ?>)</span></td>
+                    <td><?= $m->is_addon ? 'Add-on' : 'Core' ?></td>
+                    <td><?= $m->enabled ? '<span class="label label-primary">On</span>' : '<span class="label label-warning">Off</span>' ?></td>
+                    <td>
+                        <?php if($m->is_addon && $m->code != 'honcho'): ?>
+                        <form style="display:inline;" action="<?= BASE_URL ?>system-rbac/togglemodule" method="post"
+                              onsubmit="return confirm('Switch <?= out($m->title) ?> <?= $m->enabled ? 'off' : 'on' ?> for everyone?');">
+                            <input type="hidden" name="token" value="<?= $token ?>">
+                            <input type="hidden" name="module_id" value="<?= $m->id ?>">
+                            <button class="btn btn-xs <?= $m->enabled ? 'btn-warning' : 'btn-primary' ?>" type="submit"><?= $m->enabled ? 'Switch off' : 'Switch on' ?></button>
+                        </form>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             <a class="btn btn-outline btn-warning dim" href="<?= BASE_URL ?><?= $home ?>"><h3><strong><i class="fa fa-times-circle"></i> Close</strong></h3></a>

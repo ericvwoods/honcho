@@ -25,8 +25,8 @@ const sections = [
   { type: 'h2', text: 'Rollout' },
   { type: 'table', headers: ['Step', 'What', 'State'], rows: [
     ['1', 'Back up; build the tables, helper and screens. No module uses them.', 'Done 2026-10-18; on staging.'],
-    ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Built 2026-10-18 (Mac). See the Migration tab.'],
-    ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Not started'],
+    ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Done 2026-10-18; on staging. See the Migration tab.'],
+    ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Built 2026-10-18 (Mac). See the PMS chapter.'],
     ['4', 'Switch DMS; `manage()` uses the check instead of `_get_dms_role()`.', 'Not started'],
     ['5', 'Switch CCMPS: the `ccmps_*` session flags are set from groups at login; Member Permissions ticks become group memberships.', 'Not started'],
     ['6', 'Retire the old tables (rename with `zz_`, drop later).', 'Not started'],
@@ -103,7 +103,8 @@ const sections = [
     "`rbac_require()` sends a person who is not logged in to `welcome/logout`; anyone else gets a flash message and goes to their home page (`honcho` for staff, `welcome-ccmps/ccmphome` for members).",
     "`rbac_person()` follows `trongate_users.login_acct_info_table` / `login_acct_table_id` to the account row (only `ccmps` and `honcho_user_accounts` are read), and falls back to `trongate_users.title`, then the username, when the row has no name.",
   ]},
-  { type: 'alert', variant: 'info', text: "Nothing calls `rbac_require()` yet. Until a module is switched over (steps 3–5), its old permission code still decides." },
+  { type: 'p', text: "Three more: `rbac_allowed_for($tg_user_id, $module, $function)` asks about someone else (PMS uses it before putting a new team member in PM Users); `rbac_module_enabled($module)` reads the module switch; `rbac_people($kinds)` lists every staff and/or member login with a name (the Security screens' people list and PMS's pickers)." },
+  { type: 'alert', variant: 'info', text: "Switched so far: **PMS** (step 3). DMS and CCMPS still use their own permission code until steps 4 and 5." },
 ]},
 
 // ============================================================
@@ -115,6 +116,7 @@ const sections = [
     ['Group privileges', '`system-rbac/privileges/<id>`', 'Tick the functions the group may use, one panel per switched-on module, with "Select all" per module. Save adds and removes the difference.'],
     ['Group members', '`system-rbac/members/<id>`', 'Add people from a list of every login (name, staff or member, email); remove people'],
     ['Effective access', '`system-rbac/person/<tg user id>`', "A person's groups and every function they end up with, and which group gives each. For checking; changes nothing."],
+    ['Modules panel', 'on `system-rbac/manage`; POST `togglemodule`', "Switch an add-on on or off for everyone (`system_modules.enabled`). Core modules can't be switched off; Honcho is switched by `HONCHO_MODULE`. Audited as `EnableModule` / `DisableModule`."],
   ]},
 
   { type: 'h2', text: 'Who Can Open Them' },

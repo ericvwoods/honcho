@@ -5,10 +5,13 @@
   person (trongate_users.id) -> system_group_users -> system_groups (active)
          -> system_group_functions -> system_functions -> system_modules (enabled)
 
-  rbac_allowed($module, $function)   true/false - for showing or hiding a link
-  rbac_require($module, $function)   stops with a flash message if not allowed
-  rbac_person($tg_user_id)           name, email and kind (staff/member) of one login
-        _rbac_function_list()        everything the logged-in person may do, read once per page
+  rbac_allowed($module, $function)              true/false for the logged-in person - for showing or hiding a link
+  rbac_require($module, $function)              stops with a flash message if not allowed
+  rbac_allowed_for($tg_user_id, $module, $fn)   true/false for someone else (e.g. before adding them to a team)
+  rbac_module_enabled($module)                  is this module switched on (system_modules.enabled)?
+  rbac_person($tg_user_id)                      name, email and kind (staff/member) of one login
+  rbac_people($kinds)                           every login of those kinds, named, sorted by name
+        _rbac_function_list($tg_user_id)        everything one person may do, read once per page
 
   Who is always $_SESSION['tg_user_id'] (set by both logins), never the URL or a form.
   The database is read on every page (once, then remembered for that page), so a
@@ -18,7 +21,12 @@
 */
 
 function rbac_allowed(string $module, string $function): bool {
-    $allowed = _rbac_function_list();
+    $allowed = _rbac_function_list((int) ($_SESSION['tg_user_id'] ?? 0));
+    return isset($allowed[$module.'/'.$function]);
+}
+
+function rbac_allowed_for(int $tg_user_id, string $module, string $function): bool {
+    $allowed = _rbac_function_list($tg_user_id);
     return isset($allowed[$module.'/'.$function]);
 }
 
@@ -34,6 +42,18 @@ function rbac_require(string $module, string $function): void {
     set_flashdata('You are not authorized to use that function. Contact the System Administrator.');
     $_SESSION['flashmsgcolor'] = 0; // crimson
     redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho' : 'welcome-ccmps/ccmphome');
+}
+
+function rbac_module_enabled(string $module): bool {
+    static $enabled = null;
+    if ($enabled === null) {
+        $enabled = array();
+        $model = new Model();
+        foreach ((array) $model->query("SELECT code, enabled FROM system_modules", 'object') as $row) {
+            $enabled[$row->code] = ((int) $row->enabled === 1);
+        }
+    }
+    return $enabled[$module] ?? false;
 }
 
 function rbac_person(int $tg_user_id): object|false {
@@ -70,17 +90,40 @@ function rbac_person(int $tg_user_id): object|false {
     return $person;
 }
 
-function _rbac_function_list(): array {
-    // 'module/function' => true for the logged-in person; read once per page
-    static $cache = null;
-    if ($cache !== null) {
-        return $cache;
+function rbac_people(array $kinds = array('staff', 'member')): array {
+    // every login of the given kinds: objects with id (tg user id), kind, name, email - sorted by name
+    $tables = array();
+    if (in_array('staff', $kinds, true))  { $tables[] = "'honcho_user_accounts'"; }
+    if (in_array('member', $kinds, true)) { $tables[] = "'ccmps'"; }
+    if (empty($tables)) {
+        return array();
     }
 
-    $cache = array();
-    $tg_user_id = (int) ($_SESSION['tg_user_id'] ?? 0);
+    $model = new Model();
+    return $model->query("SELECT t.id,
+                                 CASE t.login_acct_info_table WHEN 'honcho_user_accounts' THEN 'staff'
+                                                              WHEN 'ccmps' THEN 'member' ELSE 'unknown' END AS kind,
+                                 COALESCE(NULLIF(TRIM(CONCAT_WS(' ', c.first_name, c.last_name)), ''),
+                                          NULLIF(TRIM(CONCAT_WS(' ', h.first_name, h.last_name)), ''),
+                                          NULLIF(t.title, ''), NULLIF(h.username, ''), NULLIF(c.username, '')) AS name,
+                                 COALESCE(c.email_address, h.email_address, '') AS email
+                            FROM trongate_users t
+                            LEFT JOIN ccmps c                ON t.login_acct_info_table = 'ccmps' AND c.id = t.login_acct_table_id
+                            LEFT JOIN honcho_user_accounts h ON t.login_acct_info_table = 'honcho_user_accounts' AND h.id = t.login_acct_table_id
+                           WHERE t.login_acct_info_table IN (".implode(',', $tables).")
+                           ORDER BY name, t.id", 'object');
+}
+
+function _rbac_function_list(int $tg_user_id): array {
+    // 'module/function' => true for one person; read once per page per person
+    static $cache = array();
+    if (isset($cache[$tg_user_id])) {
+        return $cache[$tg_user_id];
+    }
+
+    $cache[$tg_user_id] = array();
     if ($tg_user_id < 1) {
-        return $cache;
+        return $cache[$tg_user_id];
     }
 
     $sql = "SELECT DISTINCT m.code AS module_code, f.code AS function_code
@@ -94,7 +137,7 @@ function _rbac_function_list(): array {
     $model = new Model();
     $rows = $model->query_bind($sql, array('tg_user_id' => $tg_user_id), 'object');
     foreach ((array) $rows as $row) {
-        $cache[$row->module_code.'/'.$row->function_code] = true;
+        $cache[$tg_user_id][$row->module_code.'/'.$row->function_code] = true;
     }
-    return $cache;
+    return $cache[$tg_user_id];
 }

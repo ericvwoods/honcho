@@ -114,7 +114,7 @@ system: [
     { type: 'p', text: 'System Admins look after how Honcho is set up. These pages are under **System Admin** in the side menu.' },
     { type: 'table', headers: ['Menu item', 'What you do there'], rows: [
       ['**Member Permissions**', 'Every member\'s admin roles in one list (System, Member, Chapter and Student Admin). Click a box to give or remove a role'],
-      ['**System Settings**', "Values that change how the system behaves, such as the current membership year, whether the Document Library shows its first and last kanban columns, and whether Projects is turned on. Only on installs without the staff portal (see below)"],
+      ['**System Settings**', "Values that change how the system behaves, such as the current membership year, whether the Document Library shows its first and last kanban columns, and the colors and labels used across the site. Only on installs without the staff portal (see below)"],
       ['**Font/Color Settings**', 'The sizes and colors offered in everyone\'s Display Size choices'],
       ['**Chapters**', 'Add and edit chapters'],
       ['**Auditlog**', 'A record of who did what and when: logins, changes, approvals and deletions. Only on installs without the staff portal (see below)'],
@@ -131,7 +131,8 @@ system: [
     { type: 'h2', text: 'Security Groups' },
     { type: 'p', text: "A group is a named set of people, such as \"PM Admins\", together with the functions they may use. Click **New group** to create one, then use its **Privileges** button to tick its functions (one panel per module, with **Select all**) and its **Members** button to add people. Anyone with a login can be added; someone with both a member and a staff login appears twice. A person gets everything any of their groups allows, and a change works on their next click." },
     { type: 'p', text: "**Effective access** shows one person's groups and every function they end up with. **Deactivate** switches a group off without losing its settings. Every change is recorded in the Auditlog." },
-    { type: 'alert', variant: 'info', text: "Security Groups are new (October 2026). The modules move over to them one at a time, starting with Projects; until a module has moved, its own permission settings still decide who can do what." },
+    { type: 'p', text: "The **Modules** panel on the same page switches an add-on, such as Projects, on or off for everyone. When Projects is off, its pages and its menu item disappear." },
+    { type: 'alert', variant: 'info', text: "Security Groups are new (October 2026). The modules move over to them one at a time, starting with Projects, which already uses them: whoever is in **PM Admins** or **PM Users** can open Projects, and adding someone to a project team gives them PM User access. Until a module has moved, its own permission settings still decide who can do what." },
     { type: 'h2', text: 'Using the Audit Log' },
     { type: 'p', text: "Each entry shows the date and time (UTC), the person, the action and the record it touched. Use the search box to find all changes to one member or one document. The eye button opens one entry; the trash button deletes it (the deletion is itself logged)." },
   ]},

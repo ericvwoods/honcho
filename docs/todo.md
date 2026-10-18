@@ -20,12 +20,15 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] The Honcho login doesn't reset `acct_table`, so member and staff session flags mix when both logins are used in one browser.
 - [ ] Chapter-admin delete redirects to the Honcho login.
 - [ ] `/honcho` shows "Error 256" instead of the login page.
+- [x] After the staff login the dashboard was drawn at `honcho/authenticate`, so the back button went to the login form's address; PMS's Home breadcrumb went to the member home. Login now redirects to `honcho`; PMS Home goes to `honcho` (2026-10-18).
 
 ## Permissions (RBAC)
 
 - [x] Answer the 12 decisions in the [Honcho RBAC Implementation Plan](https://claude.ai/code/artifact/d55caab2-e13a-4502-bdbe-e52b7f7f4561), then approve it. All 12 recommendations accepted, plan approved (2026-10-18).
 - [x] RBAC step 1: back up and build (five `system_*` tables, `rbac_helper.php`, `system-rbac` screens). Built and tested on the Mac 2026-10-18; backup `~/honcho-backups/bpausa-2026-10-18-before-rbac.sql.gz`. Local test logins cleaned up the same day (decision 9): `database/migrations/2026-10-18-cleanup-test-logins.sql` removed staff test logins 2, 4, 5, 6, linked login 3 to Eric's member record 1538, and cleared 585 made-up member login numbers (backup `~/honcho-backups/bpausa-2026-10-18-before-login-cleanup.sql.gz`). Tested by Eric; deployed to staging 2026-10-18 (e4c2789) with both scripts run there.
-- [ ] RBAC step 2: migrate the data. Built and checked on the Mac 2026-10-18 (`2026-10-18-system-rbac-step2.sql` + report; backup `~/honcho-backups/bpausa-2026-10-18-before-rbac-step2.sql.gz`). Waiting on Eric's review, then staging.
+- [x] RBAC step 2: migrate the data (`2026-10-18-system-rbac-step2.sql` + report). Reviewed by Eric; on staging 2026-10-18 (fd9afa4).
+- [x] RBAC step 3: switch PMS to Security Groups (`rbac_allowed()` per page, team picker via `rbac_people()`, menu via `rbac_allowed()`, Modules panel / `system_modules.enabled` instead of `PM_SYS_SETTING_ID`). Built and tested on the Mac 2026-10-18.
+- [ ] RBAC step 6 (later): delete the unused `system_settings` row 16 (`PM_SYS_SETTING_ID`) along with the old `pm_*` security tables.
 - [ ] RBAC step 4: decide what DMS functions Chapter Admins need (the dmslibsubadmin role has none in the tables; it's handled in code today).
 - [ ] Creating a member inserts into `trongate_users` with columns this database doesn't have (`user_level_id`, `user_acct_info_table`, `code`; this table has `title`, `login_acct_table_id`, `login_acct_info_table`) - `Ccmps.php` ~3285 and ~3978. Check the real BPA `trongate_users` before go-live: RBAC and member creation must agree on one shape.
 - [ ] Staff DMS checks in `Dmslibrary.php` look for staff security groups 5-8, which don't exist (only 1-4). Goes away when DMS switches to RBAC (step 4).
@@ -46,9 +49,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 ## PMS (add-on)
 
 - [ ] Test the logged-in pages and forms on this engine.
-- [ ] Remove the `ini_set('display_errors'...)` / `error_reporting` debug lines at the top of `Pm.php`.
-- [ ] Team-member picker lists nobody (fixed by RBAC plan step 3: build the list from `trongate_users`).
-- [ ] `PM_SYS_SETTING_ID` is hard-coded in `Pm.php`.
+- [x] Remove the `ini_set('display_errors'...)` / `error_reporting` debug lines at the top of `Pm.php`. Done 2026-10-18 (RBAC step 3).
+- [x] Team-member picker lists nobody (fixed by RBAC plan step 3: build the list from `trongate_users`). Done 2026-10-18 (RBAC step 3).
+- [x] `PM_SYS_SETTING_ID` is hard-coded in `Pm.php`. Done 2026-10-18 (RBAC step 3).
 - [ ] Add PMS to the mobile menu in `ccmphome.php` (`device_type == 2`).
 - [x] Staff side menu had no PMS link. Added PMS → Projects to `adminsidemenu.php` (2026-10-18).
 - [ ] Member side menu shows PMS → Projects to member system admins, but `Pm.php` `check_permission()` only accepts the staff login (`authenticated`), so a member who clicks it lands on the staff login. Link hidden 2026-10-18 (`if(false && …)` in `sidemenu.php`). Decided 2026-10-18: running PMS needs the Honcho staff module, so the full member link doesn't come back; see the next item.

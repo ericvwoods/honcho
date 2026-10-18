@@ -14,9 +14,6 @@
  */
 class Pm_model extends Model {
 
-    // WHITELIST: the only account tables a person can live in.
-    private array $user_tables = ['honcho_user_accounts', 'ccmps'];
-
     // WHITELIST: the only pm_settings keys this module reads.
     private array $setting_keys = ['include_ccmps_users'];
 
@@ -26,17 +23,6 @@ class Pm_model extends Model {
 /* =========================================================================
    SETTINGS & PERMISSIONS
    ========================================================================= */
-
-    /**
-     * Is the PM add-on switched on in system_settings?
-     */
-    public function is_pm_enabled(int $setting_id): bool {
-        if ($setting_id < 1) {
-            return false;
-        }
-        $row = $this->get_where($setting_id, 'system_settings');
-        return ($row !== false && intval($row->settingvalue) === 1);
-    }
 
     /**
      * Read one pm_settings value by key. Unknown keys return ''.
@@ -50,40 +36,22 @@ class Pm_model extends Model {
     }
 
     /**
-     * user -> PM security group -> PM role.  Returns the pm_roles row or false.
+     * Someone just put on a team who can't open PMS yet goes into the
+     * "PM Users" security group (Security Groups screens can change it).
+     * Returns true when they were added.
      */
-    public function get_pm_role(int $tg_user_id): object|false {
-        if ($tg_user_id < 1) {
+    public function grant_pm_user_if_missing(int $tg_user_id, int $added_by): bool {
+        if (rbac_allowed_for($tg_user_id, 'pm', 'view_projects')) {
             return false;
         }
-        $sql = 'SELECT r.*
-                  FROM pm_tguserid_security_group ug
-                  JOIN pm_security_group_roles sgr ON sgr.security_group_id = ug.security_group_id
-                  JOIN pm_roles r ON r.id = sgr.role_id
-                 WHERE ug.tg_user_id = :tg_user_id
-                 LIMIT 1';
-        $rows = $this->query_bind($sql, ['tg_user_id' => $tg_user_id], 'object');
-        return !empty($rows) ? $rows[0] : false;
-    }
-
-    public function is_function_allowed(int $role_id, int $function_id): bool {
-        $sql = 'SELECT id FROM pm_roles_functions
-                 WHERE role_id = :role_id AND function_id = :function_id LIMIT 1';
-        $rows = $this->query_bind($sql, ['role_id' => $role_id, 'function_id' => $function_id], 'object');
-        return !empty($rows);
-    }
-
-    /**
-     * Give someone PM User access if they have no PM access at all yet.
-     */
-    public function grant_pm_user_if_missing(int $tg_user_id): void {
-        $row = $this->get_one_where('tg_user_id', $tg_user_id, 'pm_tguserid_security_group');
-        if ($row === false) {
-            $this->insert([
-                'tg_user_id'        => $tg_user_id,
-                'security_group_id' => 2,   // pm_security_groups: 2 = PM Users
-            ], 'pm_tguserid_security_group');
+        $group = $this->get_one_where('title', 'PM Users', 'system_groups');
+        if ($group === false) {
+            return false;
         }
+        $this->query_bind('INSERT IGNORE INTO system_group_users (group_id, tg_user_id, created_by, created_at)
+                           VALUES (:gid, :uid, :by, :at)',
+                          ['gid' => (int) $group->id, 'uid' => $tg_user_id, 'by' => $added_by, 'at' => time()]);
+        return true;
     }
 
 /* =========================================================================
@@ -93,31 +61,18 @@ class Pm_model extends Model {
     /**
      * Everyone who may be put on a team or made Product Owner.
      * Returns [tg_user_id => 'First Last'] sorted by name.
-     * Honcho users always; CCMP members only when include_ccmps_users = 1.
-     * Works when the ccmps table is empty or missing.
+     * Every staff login; member logins too when include_ccmps_users = 1.
+     * Built from the login list (trongate_users) by rbac_people().
      */
     public function get_eligible_users(): array {
-        $sources = ['honcho_user_accounts' => ''];
+        $kinds = ['staff'];
         if ($this->get_setting('include_ccmps_users') === '1') {
-            $sources['ccmps'] = ' (CCMP)';
+            $kinds[] = 'member';
         }
 
         $users = [];
-        foreach ($sources as $table => $suffix) {
-            if (!$this->user_table_ok($table)) {
-                continue;
-            }
-            // $table is from the whitelist above, never from user input.
-            $rows = $this->query(
-                "SELECT trongate_user_id, first_name, last_name FROM `$table` WHERE trongate_user_id > 0",
-                'object');
-
-            foreach ($rows as $r) {
-                $uid = (int) $r->trongate_user_id;
-                if (!isset($users[$uid])) {
-                    $users[$uid] = trim($r->first_name . ' ' . $r->last_name) . $suffix;
-                }
-            }
+        foreach (rbac_people($kinds) as $p) {
+            $users[(int) $p->id] = $p->name . ($p->kind === 'member' ? ' (' . CCMP . ')' : '');
         }
 
         asort($users, SORT_FLAG_CASE | SORT_STRING);
@@ -125,8 +80,7 @@ class Pm_model extends Model {
     }
 
     /**
-     * The ONE place PM turns a tg_user_id into a person.
-     * Follows trongate_users.login_acct_info_table to the right table.
+     * The ONE place PM turns a tg_user_id into a person (via rbac_person()).
      */
     public function get_user(int $tg_user_id): object {
         if (isset($this->user_cache[$tg_user_id])) {
@@ -141,28 +95,16 @@ class Pm_model extends Model {
         ];
 
         if ($tg_user_id > 0) {
-            $tg    = $this->get_where($tg_user_id, 'trongate_users');
-            $table = ($tg !== false) ? (string) $tg->login_acct_info_table : '';
-
-            if ($this->user_table_ok($table)) {
-                $acct = $this->get_one_where('trongate_user_id', $tg_user_id, $table);
-                if ($acct !== false) {
-                    $person->name   = trim($acct->first_name . ' ' . $acct->last_name);
-                    $person->email  = $acct->email_address ?? '';
-                    $person->source = $table;
-                }
+            $found = rbac_person($tg_user_id);   // engine/tg_helpers/rbac_helper.php
+            if ($found !== false) {
+                $person->name   = $found->name;
+                $person->email  = $found->email;
+                $person->source = $found->kind;   // 'staff' or 'member'
             }
         }
 
         $this->user_cache[$tg_user_id] = $person;
         return clone $person;
-    }
-
-    /**
-     * Whitelisted AND actually present in this database.
-     */
-    private function user_table_ok(string $table): bool {
-        return in_array($table, $this->user_tables, true) && $this->table_exists($table);
     }
 
 /* =========================================================================

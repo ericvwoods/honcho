@@ -28,7 +28,7 @@
                     <?php foreach ($members as $m): ?>
                         <tr>
                             <td><i class="fa fa-user"></i> <?= out($m->name) ?>
-                                <?php if ($m->source === 'ccmps'): ?><span class="label">CCMP</span><?php endif; ?>
+                                <?php if ($m->source === 'member'): ?><span class="label"><?= CCMP ?></span><?php endif; ?>
                             </td>
                             <td><?= out($m->email) ?></td>
                             <td class="text-right">

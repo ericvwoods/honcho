@@ -18,6 +18,9 @@
   groupsubmit()                  POST - insert or update a group
         _check_token()
         _audit()
+  togglemodule()                 POST - switch an add-on module on / off
+        _check_token()
+        _audit()
   togglegroup()                  POST - deactivate / reactivate a group
         _check_token()
         _get_group()
@@ -98,6 +101,7 @@ class Rbac extends Trongate {
 
     $data['grouprecs'] = $this->model->query($sql, 'object');
     $data['people']    = $this->_people();
+    $data['modules']   = $this->model->query("SELECT id, code, title, is_addon, enabled FROM system_modules ORDER BY sort_order", 'object');
 
     $data['header']    = 'Security Groups';
     $data['bc2']       = 'Groups';
@@ -173,6 +177,33 @@ class Rbac extends Trongate {
     }
 
     set_flashdata('Group '.out($title).' saved.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('system-rbac/manage');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------------- function TOGGLEMODULE -------------------------*/
+/*----------------------------------------------------------------------------*/
+  function togglemodule(){ // POST from manage - a switched-off module fails every check (its menu items go too)
+    $this->_check_token();
+    $module = $this->model->get_where(intval(post('module_id')), 'system_modules');
+
+    // only add-ons; Honcho itself is switched by HONCHO_MODULE in .env
+    if(!$module || intval($module->is_addon) != 1 || $module->code == 'honcho'){
+        set_flashdata('That module can not be switched off here.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect('system-rbac/manage');
+    }
+
+    $updata['enabled']    = $module->enabled ? 0 : 1;
+    $updata['updated_by'] = intval($_SESSION['tg_user_id'] ?? 0);
+    $updata['updated_at'] = time();
+    $this->model->update($module->id, $updata, 'system_modules');
+
+    $action = $updata['enabled'] ? 'EnableModule' : 'DisableModule';
+    $this->_audit('update', $action, 'rbac-togglemodule', $module->id, 'system_modules', 'Module: '.$module->title);
+
+    set_flashdata(out($module->title).($updata['enabled'] ? ' switched on.' : ' switched off.'));
     $_SESSION['flashmsgcolor'] = 1;
     redirect('system-rbac/manage');
   }
@@ -408,18 +439,8 @@ class Rbac extends Trongate {
   }
 
   function _people(){
-    // every login (trongate_users), named from its account row - "staff" or "member" beside it
-    return $this->model->query("SELECT t.id,
-                                       CASE t.login_acct_info_table WHEN 'honcho_user_accounts' THEN 'staff'
-                                                                    WHEN 'ccmps' THEN 'member' ELSE 'unknown' END AS kind,
-                                       COALESCE(NULLIF(TRIM(CONCAT_WS(' ', c.first_name, c.last_name)), ''),
-                                                NULLIF(TRIM(CONCAT_WS(' ', h.first_name, h.last_name)), ''),
-                                                NULLIF(t.title, ''), NULLIF(h.username, ''), NULLIF(c.username, '')) AS name,
-                                       COALESCE(c.email_address, h.email_address, '') AS email
-                                  FROM trongate_users t
-                                  LEFT JOIN ccmps c                ON t.login_acct_info_table = 'ccmps' AND c.id = t.login_acct_table_id
-                                  LEFT JOIN honcho_user_accounts h ON t.login_acct_info_table = 'honcho_user_accounts' AND h.id = t.login_acct_table_id
-                                 ORDER BY name, t.id", 'object');
+    // every login, named, "staff" or "member" beside it (shared with PMS's picker)
+    return rbac_people();
   }
 
   function _token(){

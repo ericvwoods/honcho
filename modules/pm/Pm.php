@@ -1,7 +1,4 @@
 <?php
-
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 /**
  * PM (Project Management) add-on module - Phase 1: Teams & Projects
  * Trongate v2
@@ -10,20 +7,26 @@ error_reporting(E_ALL);
  *         modules/pm/Pm_model.php   (all database work - $this->model->...)
  *         modules/pm/views/*.php
  *
- * URLs (pm_functions id in brackets):
- *   pm                          [1]  My projects (planning + active)
- *   pm/show_project/ID          [1]  One project
- *   pm/manage_projects          [7]  Every project (admin)
- *   pm/create_project[/ID]      [8]  New project form, or edit form when ID given
- *   pm/submit_project[/ID]      [8]  POST target for the project form
- *   pm/delete_project/ID        [9]  POST: soft delete
- *   pm/manage_teams             [4]  Teams list
- *   pm/show_team/ID             [4]  One team + members
- *   pm/create_team[/ID]         [5]  New / edit team form
- *   pm/submit_team[/ID]         [5]  POST target for the team form
- *   pm/add_member/TEAM_ID       [5]  POST: add a person
- *   pm/remove_member/MEMBER_ID  [5]  POST: remove a person
- *   pm/delete_team/ID           [6]  POST: deactivate (blocked if open projects)
+ * URLs (Security Groups function, pm/<code>, in brackets):
+ *   pm                          [view_projects]    My projects (planning + active)
+ *   pm/show_project/ID          [view_projects]    One project
+ *   pm/manage_projects          [manage_projects]  Every project (admin)
+ *   pm/create_project[/ID]      [edit_projects]    New project form, or edit form when ID given
+ *   pm/submit_project[/ID]      [edit_projects]    POST target for the project form
+ *   pm/delete_project/ID        [delete_projects]  POST: soft delete
+ *   pm/manage_teams             [view_teams]       Teams list
+ *   pm/show_team/ID             [view_teams]       One team + members
+ *   pm/create_team[/ID]         [edit_teams]       New / edit team form
+ *   pm/submit_team[/ID]         [edit_teams]       POST target for the team form
+ *   pm/add_member/TEAM_ID       [edit_teams]       POST: add a person
+ *   pm/remove_member/MEMBER_ID  [edit_teams]       POST: remove a person
+ *   pm/delete_team/ID           [delete_teams]     POST: deactivate (blocked if open projects)
+ *
+ * Permissions (RBAC step 3, 2026-10-18): the shared Security Groups system
+ * (engine/tg_helpers/rbac_helper.php) decides - rbac_require('pm', <code>).
+ * "Admin" in PMS = has pm/manage_projects. On/off = the Projects module's
+ * switch on the Security Groups page (system_modules.enabled).
+ * The old pm_roles / pm_security_* tables are no longer read.
  *
  * How the v2 pieces fit together:
  *   - Data work lives in Pm_model.php; this file calls $this->model->...
@@ -38,10 +41,6 @@ error_reporting(E_ALL);
  */
 class Pm extends Trongate {
 
-    // id of the system_settings row that switches the PM add-on on.
-    // Insert that row (settingvalue = 1), then put its id here.
-    private const PM_SYS_SETTING_ID = 16;
-
     public function __construct(?string $module_name = null) {
         parent::__construct($module_name);   // must be first in v2
         $this->check_pm_enabled();
@@ -55,7 +54,7 @@ class Pm extends Trongate {
      * My Projects - planning and active projects for my teams.
      */
     public function index(): void {
-        $this->check_permission(1);
+        $this->check_permission('view_projects');
 
         $data = $this->base_data('My Projects', 'My Projects', 'projectlist');
         $data['projects'] = $this->model->get_my_projects($this->me(), $this->is_admin());
@@ -68,7 +67,7 @@ class Pm extends Trongate {
      * Every project, any status (admin).
      */
     public function manage_projects(): void {
-        $this->check_permission(7);
+        $this->check_permission('manage_projects');
 
         $data = $this->base_data('All Projects', 'All Projects', 'projectlist');
         $data['projects'] = $this->model->get_all_projects();
@@ -78,7 +77,7 @@ class Pm extends Trongate {
     }
 
     public function show_project(): void {
-        $this->check_permission(1);
+        $this->check_permission('view_projects');
 
         $id      = segment(3, 'int');
         $project = $this->model->get_project($id);
@@ -104,7 +103,7 @@ class Pm extends Trongate {
      * Also redisplays the form, with what was typed, when submit fails.
      */
     public function create_project(): void {
-        $this->check_permission(8);
+        $this->check_permission('edit_projects');
 
         $update_id = segment(3, 'int');
         $submit    = post('submit');
@@ -143,7 +142,7 @@ class Pm extends Trongate {
     }
 
     public function submit_project(): void {
-        $this->check_permission(8);
+        $this->check_permission('edit_projects');
 
         $update_id = segment(3, 'int');
         if ($update_id > 0 && $this->model->get_project($update_id) === false) {
@@ -180,7 +179,7 @@ class Pm extends Trongate {
     }
 
     public function delete_project(): void {
-        $this->check_permission(9);
+        $this->check_permission('delete_projects');
         $this->require_post_with_token();
 
         $id      = segment(3, 'int');
@@ -202,7 +201,7 @@ class Pm extends Trongate {
    ========================================================================= */
 
     public function manage_teams(): void {
-        $this->check_permission(4);
+        $this->check_permission('view_teams');
 
         $data = $this->base_data('Teams', 'Teams', 'teamlist');
         $data['teams'] = $this->model->get_teams_with_counts();
@@ -211,7 +210,7 @@ class Pm extends Trongate {
     }
 
     public function show_team(): void {
-        $this->check_permission(4);
+        $this->check_permission('view_teams');
 
         $id   = segment(3, 'int');
         $team = $this->model->get_team($id);
@@ -240,7 +239,7 @@ class Pm extends Trongate {
     }
 
     public function create_team(): void {
-        $this->check_permission(5);
+        $this->check_permission('edit_teams');
 
         $update_id = segment(3, 'int');
         $submit    = post('submit');
@@ -266,7 +265,7 @@ class Pm extends Trongate {
     }
 
     public function submit_team(): void {
-        $this->check_permission(5);
+        $this->check_permission('edit_teams');
 
         $update_id = segment(3, 'int');
         if ($update_id > 0 && $this->model->get_team($update_id) === false) {
@@ -297,7 +296,7 @@ class Pm extends Trongate {
     }
 
     public function add_member(): void {
-        $this->check_permission(5);
+        $this->check_permission('edit_teams');
         $this->require_post_with_token();
 
         $team_id    = segment(3, 'int');
@@ -321,14 +320,18 @@ class Pm extends Trongate {
             redirect('pm/show_team/' . $team_id);
         }
 
-        $this->model->grant_pm_user_if_missing($tg_user_id);
+        $granted = $this->model->grant_pm_user_if_missing($tg_user_id, $this->me());
         $this->audit('insert', 'AddTeamMember', 'pm-add_member', $team_id, 'pm_team_members', $eligible[$tg_user_id]);
-        $this->flash($eligible[$tg_user_id] . ' was added to the team.');
+        if ($granted) {
+            $this->audit('insert', 'AddGroupMember', 'pm-add_member', $team_id, 'system_group_users', $eligible[$tg_user_id] . ' -> PM Users');
+        }
+        $this->flash($eligible[$tg_user_id] . ' was added to the team.'
+                   . ($granted ? ' They were also given PM User access (Security Groups > PM Users).' : ''));
         redirect('pm/show_team/' . $team_id);
     }
 
     public function remove_member(): void {
-        $this->check_permission(5);
+        $this->check_permission('edit_teams');
         $this->require_post_with_token();
 
         $member_id = segment(3, 'int');
@@ -348,7 +351,7 @@ class Pm extends Trongate {
     }
 
     public function delete_team(): void {
-        $this->check_permission(6);
+        $this->check_permission('delete_teams');
         $this->require_post_with_token();
 
         $id   = segment(3, 'int');
@@ -432,26 +435,21 @@ class Pm extends Trongate {
    ========================================================================= */
 
     /**
-     * Is the add-on switched on for this customer?
+     * Is the add-on switched on for this customer? (Security Groups > Modules)
      */
     private function check_pm_enabled(): void {
-        if (self::PM_SYS_SETTING_ID < 1) {
-            echo 'PM module setup: set PM_SYS_SETTING_ID at the top of '
-               . 'modules/pm/Pm.php to the id of its system_settings row.';
-            die();
-        }
-        if (!$this->model->is_pm_enabled(self::PM_SYS_SETTING_ID)) {
+        if (!rbac_module_enabled('pm')) {
             $this->flash('The Project Management module is not enabled for this site.', false);
-            redirect('welcome-ccmps/ccmphome');
+            redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho' : 'welcome-ccmps/ccmphome');
         }
     }
 
     /**
-     * Same idea as the DMS version:
-     * user -> PM security group -> PM role -> is this function allowed?
-     * Looked up on every request, so nothing is needed in the Core login.
+     * PMS needs the staff login (it is sold with Honcho), then Security Groups
+     * decides: person -> groups -> functions (pm/<code>). Read on every request,
+     * so a change on the Security screens works on the next click.
      */
-    private function check_permission(int $function_id): void {
+    private function check_permission(string $function): void {
         if (empty($_SESSION['trongatetoken'])) {
             $this->flash('Your Session has expired - please login again.', false);
             redirect('honcho/logout');
@@ -460,19 +458,10 @@ class Pm extends Trongate {
             redirect('honcho/logout');
         }
 
-        $role = $this->model->get_pm_role($this->me());
-        if ($role === false) {
-            $this->flash('Your account has not been given access to Project Management. '
+        if (!rbac_allowed('pm', $function)) {
+            $this->flash('You are not authorized to use that part of Project Management. '
                        . 'Contact the System Administrator ' . SYS_ADMIN_PHONE, false);
-            redirect('welcome-ccmps/ccmphome');
-        }
-
-        $_SESSION['pm_rolename'] = $role->session_name;
-
-        if (!$this->model->is_function_allowed((int) $role->id, $function_id)) {
-            $this->flash('You are not authorized to execute this function. '
-                       . 'Contact the System Administrator ' . SYS_ADMIN_PHONE, false);
-            redirect('welcome-ccmps/ccmphome');
+            redirect('honcho');
         }
     }
 
@@ -492,7 +481,7 @@ class Pm extends Trongate {
     }
 
     private function is_admin(): bool {
-        return (($_SESSION['pm_rolename'] ?? '') === 'pmadmin');
+        return rbac_allowed('pm', 'manage_projects');
     }
 
     /**
@@ -518,7 +507,7 @@ class Pm extends Trongate {
             'Rec: ' . $recid,
             'Tbl: ' . $table,
             'Title: ' . $title,
-            'Mode: ' . ($_SESSION['pm_rolename'] ?? '')
+            'Mode: ' . ($this->is_admin() ? 'pmadmin' : 'pmuser')
         );
     }
 

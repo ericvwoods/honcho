@@ -114,6 +114,7 @@ require_once 'tg_helpers/form_helper.php';
 require_once 'tg_helpers/string_helper.php';
 require_once 'tg_helpers/url_helper.php';
 require_once 'tg_helpers/utilities_helper.php';
+require_once 'tg_helpers/rbac_helper.php'; // rbac_allowed() / rbac_require() / rbac_person()
 
 /* --------------------------------------------------------------
  * Interceptor execution (early hooks)

@@ -151,6 +151,7 @@
                     <ul class="nav nav-second-level collapse">
                         <li><a class="submenu" href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i><span class="hidden-tablet"> System Settings</span></a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i><span class="hidden-tablet"> Auditlog</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i><span class="hidden-tablet"> Security Groups</span></a></li>
                     </ul>
                 </li>
             <?php endif; ?>

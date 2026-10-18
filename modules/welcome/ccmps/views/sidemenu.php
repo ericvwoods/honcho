@@ -198,6 +198,10 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             <a href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i> System Settings </a>
 
                     </li>
+                    <li>
+                            <a href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i> Security Groups </a>
+
+                    </li>
 <?php endif; ?>
 <?php if($_SESSION['ccmps_system_admin'] == 1): ?> <!-- member system admins only, Honcho or not -->
                     <li>

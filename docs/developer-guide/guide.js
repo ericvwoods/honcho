@@ -14,6 +14,7 @@ const guide = [
   { part: 'Part I: Core Product', chapters: [
     { title: 'CCMPS (Members)',              sections: require('./chapters/ccmps.js') },
     { title: 'DMS (Document Management)',    sections: require('./chapters/dms.js') },
+    { title: 'Security (RBAC)',              sections: require('./chapters/security.js') },
     // Planned: CMS & Welcome — the modules/cms/ content shown on
     // ccmphome (marquee, jumbotron, bulletins, notices, jobs, activities,
     // library) and the public-facing page in the welcome parent module.

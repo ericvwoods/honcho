@@ -194,6 +194,9 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
                 <a href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i> System Settings </a>
 
         </li>
+        <li>
+                <a href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i> Security Groups </a>
+        </li>
 <?php endif; ?>
         <li>
                 <a href="<?= BASE_URL ?>welcome-ccmpspermissions/manage"><i class="fa fa-key"></i> <?= CCMP ?> Permissions </a>

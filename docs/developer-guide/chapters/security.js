@@ -24,8 +24,8 @@ const sections = [
 
   { type: 'h2', text: 'Rollout' },
   { type: 'table', headers: ['Step', 'What', 'State'], rows: [
-    ['1', 'Back up; build the tables, helper and screens. No module uses them.', 'Built 2026-10-18 (Mac). Not yet on staging.'],
-    ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Not started'],
+    ['1', 'Back up; build the tables, helper and screens. No module uses them.', 'Done 2026-10-18; on staging.'],
+    ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Built 2026-10-18 (Mac). See the Migration tab.'],
     ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Not started'],
     ['4', 'Switch DMS; `manage()` uses the check instead of `_get_dms_role()`.', 'Not started'],
     ['5', 'Switch CCMPS: the `ccmps_*` session flags are set from groups at login; Member Permissions ticks become group memberships.', 'Not started'],
@@ -53,6 +53,44 @@ const sections = [
     "A **System Admins** group holding `manage_security`, with nobody in it.",
   ]},
   { type: 'p', text: "DMS, Honcho and CCMPS functions are added in step 2, when their old functions are merged into actions." },
+]},
+
+// ============================================================
+{ tab: "Migration", blocks: [
+  { type: 'p', text: "Step 2 copies today's permissions into the new tables. Scripts, in the order a deploy runs them (all in `database/migrations/`, all safe to re-run):" },
+  { type: 'table', headers: ['Script', 'What it does'], rows: [
+    ['`2026-10-18-system-rbac.sql`', 'Step 1: the five tables; System and PMS functions; the System Admins group.'],
+    ['`2026-10-18-cleanup-test-logins.sql`', '**Test data only.** Removes test staff logins 2, 4, 5, 6; links login 3 to member 1538.'],
+    ['`2026-10-18-restore-member-login-numbers.sql`', '**Test data only.** Puts back the member login numbers an earlier version of the cleanup cleared.'],
+    ['`2026-10-18-system-rbac-step2.sql`', 'Step 2: login rows for members that lack one; CCMPS, DMS and Honcho functions; the groups and their people.'],
+    ['`2026-10-18-system-rbac-step2-report.sql`', 'Read-only report: what did not map, and each group\'s functions and people.'],
+  ]},
+
+  { type: 'h2', text: 'Member Logins' },
+  { type: 'p', text: "Members sign in with the username and password on their `ccmps` row, but creating a member also creates a `trongate_users` row and stores its id in `ccmps.trongate_user_id` (`Ccmps.php` ~3285). The member pages use that number to identify the logged-in member (chapter-admin lookups, post authors), and RBAC uses it as the person. The test copy was missing the rows, so step 2 inserts one per member number (`INSERT IGNORE` by id: nothing happens where they exist)." },
+
+  { type: 'h2', text: 'How Old Permissions Map' },
+  { type: 'table', headers: ['Old', 'New group', 'Functions'], rows: [
+    ['Honcho `sysadmingrp` (skips every check)', 'System Admins', '`system/manage_security` + all 15 Honcho functions'],
+    ['Honcho `usergrp` (regular user role)', 'Staff Users', 'Own account: home, view, edit, pictures, change password'],
+    ['DMS `dmssysadmingrp` (dmslibadmin)', 'DMS Admins', 'All 12 DMS functions'],
+    ['DMS `dmsusergrp` (dmslibuser)', 'DMS Users', 'View the library, download. Every member login is put here, as members get dmslibuser today.'],
+    ['PMS PM Admins / PM Users', 'PM Admins / PM Users', 'Their role\'s functions, 1:1'],
+    ['`ccmps.system_admin`', 'Member System Admins', '`ccmps/system_admin` + all DMS functions (members with it are DMS admins today)'],
+    ['`ccmps.ccmp_admin`', 'Member Admins', '`ccmps/member_admin`'],
+    ['`ccmps.subentity_admin`', 'Chapter Admins', '`ccmps/chapter_admin` + DMS user functions'],
+    ['`ccmps.student_admin`', 'Student Admins', '`ccmps/student_admin`'],
+  ]},
+  { type: 'p', text: "DMS's 36 and Honcho's 41 method-level functions were merged into 12 and 15 actions; each function's description lists the old names it covers. Staff groups take staff logins only and member roles take member logins only, so a stale row can't cross sides. Deceased and deleted members are left out." },
+
+  { type: 'h2', text: 'Not Migrated (from the report)' },
+  { type: 'ul', items: [
+    "Honcho `admingrp` and `asstadmingrp`: their roles have no functions. DMS `dmsadmingrp`, `dmsasstadmingrp`, `dmssubadmingrp`: no role. They give nothing today.",
+    "DMS group 1 → role 6, which doesn't exist (its other row, role 1, carried across).",
+    "Chapter admins get the **dmslibsubadmin** DMS role from code today, but that role has no functions in the tables. They get DMS user functions here; step 4 decides what extra they need.",
+    "Staff DMS checks in `Dmslibrary.php` look for staff groups 5–8 in `honcho_users_tguserid_security_group`, which has only groups 1–4, so they never match.",
+    "Test data: one chapter admin with no login number (Margaret Fisher, 1536); one deceased member with roles (Leslie Morris, 1435).",
+  ]},
 ]},
 
 // ============================================================

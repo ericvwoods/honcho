@@ -178,21 +178,24 @@ class Dmslibrary extends Trongate {
     $docfunction = 3;
     $authorized = $this->_check_function_permissions($docfunction);
 
-    $hdr0sql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 6";
+    // chapter admins see only their own chapter's cards (RBAC step 4)
+    $chapteronly = ($_SESSION['filelibrary_rolename'] == 'dmslibsubadmin') ? ' AND subentity = '.intval($this->_my_subentity()) : '';
+
+    $hdr0sql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 6".$chapteronly;
     $data['header0'] = $this->model->query($hdr0sql,'object');
 
-    $bklgsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 5";
+    $bklgsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 5".$chapteronly;
     $data['backlog'] = $this->model->query($bklgsql,'object');
 
-    $inprsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 4";
+    $inprsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 4".$chapteronly;
     $data['inprogress'] = $this->model->query($inprsql,'object');
 
-    $inrvsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 3";
+    $inrvsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 3".$chapteronly;
     $data['inreview'] = $this->model->query($inrvsql,'object');
 //json($data['inreview']); die();
-    $pnapsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 2";
+    $pnapsql = "SELECT * FROM dms_filelibrary_docs WHERE active = 1 AND status = 2".$chapteronly;
 
-    $hdr5sql = "SELECT * FROM dms_filelibrary_docs WHERE status = 1 AND done = 0 AND soft_deleted != 1";
+    $hdr5sql = "SELECT * FROM dms_filelibrary_docs WHERE status = 1 AND done = 0 AND soft_deleted != 1".$chapteronly;
     $data['header5'] = $this->model->query($hdr5sql,'object');
 
     $data['docpending'] = $this->model->query($pnapsql,'object');
@@ -491,6 +494,7 @@ class Dmslibrary extends Trongate {
 
 // The role in the URL is only a request: _get_dms_role() works out what the
 // user is allowed and never gives more (typing /manage/dmslibadmin used to work)
+$this->_check_function_permissions(4); // logged in + dms/view_library (manage used to skip the check)
 $_SESSION['filelibrary_rolename'] = $this->_get_dms_role(segment(3));
 // for testing
 //$_SESSION['filelibrary_rolename'] = 'dmslibccmp'; // dmslibuser, ccmp
@@ -760,10 +764,13 @@ if($_SESSION['dms_lib_access'] == 99 ){ //sysadmin
 
         case 'dmslibuser'; // logged in user is acting as himself - filetype = 0 is all. 1 is database where there is no physical file, 2 text, 3 pdf, 4 word, 5 ppt, 6 excel, 7 zip
 
-            $usr_obj = $this->model->get_one_where('id', $_SESSION['honcho_acct_rec_id'], 'honcho_user_accounts' );
-            $usr_tguid =  $usr_obj->trongate_user_id;
-            $_SESSION['dms_lib_access'] = $usr_obj->dmslibacclevel;
-            $usrdocseclevel = $_SESSION['dms_lib_access'] + 1;
+            if(!empty($_SESSION['honcho_logged_in'])){ // staff have a document access level; members see level 0
+                $usr_obj = $this->model->get_one_where('id', $_SESSION['honcho_acct_rec_id'], 'honcho_user_accounts' );
+                $_SESSION['dms_lib_access'] = $usr_obj ? $usr_obj->dmslibacclevel : 0;
+            }else{
+                $_SESSION['dms_lib_access'] = 0;
+            }
+            $usrdocseclevel = intval($_SESSION['dms_lib_access']) + 1;
 //print_r($usrdocseclevel); die();
         // show a non-admin only things that are final and ready - will show admin everything so they can fix them
 
@@ -2222,7 +2229,7 @@ json($data); die();
 
 /*---------------------------- FUNCTION UPDATE --------------------------*/
 
-  function update($retrying){  // either yes or docid which it will ignore
+  function update($retrying = ''){  // either yes or docid which it will ignore (default: this engine passes no arguments)
 //print_r($retrying); die();
   $libfuncid = 6; // id in library functions table
   $authorized = $this->_check_function_permissions($libfuncid);
@@ -2469,7 +2476,7 @@ die();
 
 /*----------------------- FUNCTION CREATE -------------------*/
 
-function create($retrying){ // either Yes or dmslibadmincreate which it will ignore
+function create($retrying = ''){ // either Yes or dmslibadmincreate which it will ignore (default: this engine passes no arguments)
 
   $libfuncid = 7;
   $authorized = $this->_check_function_permissions($libfuncid);
@@ -3026,6 +3033,9 @@ $docdata['poc'] = $docdata['poc'];
     $docdata['doctag2']        = (int)$docdata['doctag2'];
     $docdata['doctag3']        = (int)$docdata['doctag3'];
     $docdata['subentity']      = (int)$docdata['subentity'];
+    if($_SESSION['filelibrary_rolename'] == 'dmslibsubadmin'){
+        $docdata['subentity']  = $this->_my_subentity(); // chapter admins save into their own chapter only
+    }
     $docdata['region']         = (int)$docdata['region'];
  //   $docdata['attachingafile'] = (int)$docdata['attachingafile'];
     $docdata['access']         = (int)$docdata['access'];
@@ -3547,6 +3557,9 @@ echo " ... Use Back button"; die();
     $docdata['doctag2']        = (int)$docdata['doctag2'];
     $docdata['doctag3']        = (int)$docdata['doctag3'];
     $docdata['subentity']      = (int)$docdata['subentity'];
+    if($_SESSION['filelibrary_rolename'] == 'dmslibsubadmin'){
+        $docdata['subentity']  = $this->_my_subentity(); // chapter admins save into their own chapter only
+    }
     $docdata['region']         = (int)$docdata['region'];
     $docdata['attachingafile'] = (int)$docdata['attachingafile'];
     $docdata['access']         = (int)$docdata['access'];
@@ -5489,7 +5502,7 @@ echo " ... Use Back button"; die();
         $config['make_rand_name'] = false;
 
         // Note: converts the filename to all lowercase before saving to the harddrive
-        $file_info = $this->file->upload($config); // inherited function
+        $file_info = $this->_upload_doc($config, $newfilename);
 
         //replaced with same file, do not need to update the document record (perhaps timestamps)
         set_flashdata('The file '.$newfilename.' successfully overwrote a file having the same name.');
@@ -5503,7 +5516,7 @@ echo " ... Use Back button"; die();
         $config['make_rand_name'] = false;
 
         // Note: converts the filename to all lowercase before saving to the harddrive
-        $file_info = $this->file->upload($config); // inherited function
+        $file_info = $this->_upload_doc($config, $newfilename);
 
         // now want to copy the old ATIS to its own new record to preserve access to it
         // no need for a file upload because the file is already there
@@ -5694,7 +5707,7 @@ print_r($filetype); die();
         set_flashdata("Error 6053: The document $filename already exists on document $rectitle.  Link: '.<p href='$dupid'> <? $rectitle ?> </p>.'");
         $_SESSION['flashmsgcolor'] = 0;
 
-                $this->dmslibrary->viewdocrec($docid,$managemode);
+                redirect('dms-dmslibrary/viewdocrec/'.$docid.'/'.$managemode); // was $this->dmslibrary->viewdocrec(): this engine can't load a module from itself
          //       redirect('dms-dmslibrary/viewdocrec/'.$docid.'/'.$managemode);
 
             }else{ // not found in library so continue
@@ -5709,7 +5722,7 @@ print_r($filetype); die();
 //print_r($config['destination']);die();
 
         // Note: upload_file() converts the filename to all lowercase before saving to the harddrive
-        $file_info = $this->file->upload($config); // upload_file inherited from Trongate.php at bottom
+        $file_info = $this->_upload_doc($config, $filename);
  //json($file_info);
  //json($docdata); die();
         // no old file to delete so just add file data to the document record
@@ -5875,7 +5888,7 @@ echo " ... Use Back button"; die();
         $config['make_rand_name'] = false;
 
         // Note: converts the filename to all lowercase before saving to the harddrive
-        $file_info = $this->file->upload($config); // inherited function
+        $file_info = $this->_upload_doc($config, $filename);
 
         //replaced with file of same name, no need to update record but could have different date
 
@@ -5945,7 +5958,7 @@ set_flashdata("The file $filename already associated with document $rectitle. Fi
 
         $_SESSION['flashmsgcolor'] = 0;
 
-                $this->dmslibrary->viewdocrec($docid,$managemode);
+                redirect('dms-dmslibrary/viewdocrec/'.$docid.'/'.$managemode); // was $this->dmslibrary->viewdocrec(): this engine can't load a module from itself
          //       redirect('dms-dmslibrary/viewdocrec/'.$docid.'/'.$managemode);
 
             }else{ // not found in library so continue
@@ -5978,7 +5991,7 @@ echo(4812); die();
 
             // Upload the new file with a framework function upload_file
             // Note: converts the filename to all lowercase before saving to the harddrive
-            $file_info = $this->file->upload($config); // inherited function
+            $file_info = $this->_upload_doc($config, $filename);
 //json($file_info); die();
 //json($_FILES); die();
 //print_r($file_info['file_path']); die();
@@ -6110,10 +6123,13 @@ echo(5303); die();
 
           break;
 
-      //    case 'dmslibsubadmin': // CA managing our subentity record
+          case 'dmslibsubadmin': // CA managing our subentity record (restored 2026-10-18: chapter admins can move cards)
+                if($frmpg == 'k'){ // came from kanban board
+                   redirect('dms-dmslibrary/kanban/k');
+                }
                 redirect('dms-dmslibrary/manage/dmslibsubadmin');
 
-        //  break;
+          break;
 
           case 'dmslibadmin': // CM managing all records
                 if($frmpg == 'k'){ // came from kanban board
@@ -6205,10 +6221,13 @@ echo " ... Use Back button"; die();
 
           break;
 
-      //    case 'dmslibsubadmin': // CA managing our subentity record
+          case 'dmslibsubadmin': // CA managing our subentity record (restored 2026-10-18: chapter admins can move cards)
+                if($frmpg == 'k'){ // came from kanban board
+                   redirect('dms-dmslibrary/kanban/k');
+                }
                 redirect('dms-dmslibrary/manage/dmslibsubadmin');
 
-        //  break;
+          break;
 
           case 'dmslibadmin': // CM managing all records
                 if($frmpg == 'k'){ // came from kanban board
@@ -6495,10 +6514,13 @@ echo " ... Use Back button"; die();
 
           break;
 
-  //        case 'dmslibsubadmin': // CA managing our subentity record
-  //              redirect('dms-dmslibrary/manage/dmslibsubadmin');
+          case 'dmslibsubadmin': // CA managing our subentity record (restored 2026-10-18: chapter admins can move cards)
+                if($frmpg == 'k'){ // came from kanban board
+                   redirect('dms-dmslibrary/kanban/k');
+                }
+                redirect('dms-dmslibrary/manage/dmslibsubadmin');
 
-    //      break;
+          break;
 
           case 'dmslibadmin': // CM managing all records
                 if($frmpg == 'k'){ // came from kanban board
@@ -6592,10 +6614,13 @@ echo " ... Use Back button"; die();
 
           break;
 
-      //    case 'dmslibsubadmin': // CA managing our subentity record
+          case 'dmslibsubadmin': // CA managing our subentity record (restored 2026-10-18: chapter admins can move cards)
+                if($frmpg == 'k'){ // came from kanban board
+                   redirect('dms-dmslibrary/kanban/k');
+                }
                 redirect('dms-dmslibrary/manage/dmslibsubadmin');
 
-        //  break;
+          break;
 
           case 'dmslibadmin': // CM managing all records
                 if($frmpg == 'k'){ // came from kanban board
@@ -7079,8 +7104,11 @@ json($data); die();
 /*------------- Get logged in user's info & preferences -----------*/
 
 //json($_SESSION); die();
-    $user_id  = $_SESSION['honcho_acct_rec_id'];
-    $user_obj = $this->model->get_where($user_id,'honcho_user_accounts');
+    if(!empty($_SESSION['honcho_logged_in'])){ // staff; members use DMS too (RBAC step 4)
+        $user_obj = $this->model->get_where(intval($_SESSION['honcho_acct_rec_id'] ?? 0),'honcho_user_accounts');
+    }else{
+        $user_obj = $this->model->get_where(intval($_SESSION['ccmp_rec_id'] ?? 0),'ccmps');
+    }
 //json($user_obj); die();
     $tg_user_id      = $user_obj->trongate_user_id; // already set in session variable
 /*
@@ -7627,7 +7655,7 @@ echo " ... Use Back button"; die();
 
 /*--------------- Function updatedoccomment -----------------*/
 
-  function updatedoccomment($retrying){  // either yes or docid which it will ignore
+  function updatedoccomment($retrying = ''){  // either yes or docid which it will ignore (default: this engine passes no arguments)
 //print_r($retrying); die();
   $libfuncid = 33; // id in library functions table
   $authorized = $this->_check_function_permissions($libfuncid);
@@ -8720,41 +8748,64 @@ function _get_mimetype($filepath) {
 
 /*-------------------- End _docx_to_text ------------------------*/
 
+/*-------------------- Function _upload_doc ---------------------*/
+
+    function _upload_doc($config, $name = '') {
+        // Saves the posted file (my_file) into $config['destination'] as $name - the filename the caller
+        // stores on the document record - or, without one, the uploaded name in lowercase. Replaces $this->file->upload(): stock v2's File module,
+        // which this engine doesn't have (every DMS upload gave a 500 until 2026-10-18).
+        $file = $_FILES['my_file'] ?? null;
+        if(!$file || ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || !is_uploaded_file($file['tmp_name'])){
+            set_flashdata('The file did not upload (error '.intval($file['error'] ?? UPLOAD_ERR_NO_FILE).'). It may be larger than the server allows.');
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect($_SERVER['HTTP_REFERER'] ?? 'dms-dmslibrary/manage');
+        }
+
+        $dir = rtrim($config['destination'], '/');
+        if(!is_dir($dir) && !mkdir($dir, 0775, true)){
+            set_flashdata('The file could not be saved: the folder '.basename($dir).' could not be created. Contact the System Administrator.');
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect($_SERVER['HTTP_REFERER'] ?? 'dms-dmslibrary/manage');
+        }
+
+        $name = strtolower(basename($name != '' ? $name : $file['name'])); // basename(): no folder names
+        $path = $dir.'/'.$name;
+        if(!move_uploaded_file($file['tmp_name'], $path)){
+            set_flashdata('The file could not be saved on the server. Contact the System Administrator.');
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect($_SERVER['HTTP_REFERER'] ?? 'dms-dmslibrary/manage');
+        }
+
+        return array('file_name' => $name, 'file_path' => $path, 'file_type' => $file['type'], 'file_size' => $file['size']);
+    }
+
+/*------------------ End function _upload_doc --------------------*/
+
 /*------------------- Function _get_dms_role ---------------------*/
 
     function _get_dms_role($requested = '') {
-        // Returns dmslibuser, dmslibsubadmin or dmslibadmin (the roles manage() handles).
-        // $requested (from the URL) can lower the role but never raise it.
+        // Which documents the list shows and which buttons it offers (RBAC step 4, 2026-10-18):
+        //   dmslibadmin    - every document              (DMS Admins, Member System Admins)
+        //   dmslibsubadmin - own chapter's documents     (Chapter Admins: members with ccmps/chapter_admin)
+        //   dmslibuser     - published documents only    (DMS Users)
+        //   ''             - no DMS access
+        // Security Groups decide WHAT (rbac_allowed); this decides WHICH documents.
+        // $requested (from the URL) can lower the view but never raise it.
 
         $rank = array('dmslibuser' => 1, 'dmslibsubadmin' => 2, 'dmslibadmin' => 3);
 
-        if($_SESSION['acct_table'] == 'ccmps'){ // member side
-            if($_SESSION['ccmps_system_admin'] == 1){
-                $allowed = 'dmslibadmin';
-            }elseif($_SESSION['ccmps_subentity_admin'] == 1){
-                $allowed = 'dmslibsubadmin'; // chapter admin sees own chapter's docs
-            }else{
-                $allowed = 'dmslibuser';
-            }
-        }else{ // honcho staff - same lookup as the honcho login (Honcho.php ~line 446)
+        if(!rbac_allowed('dms', 'view_library')){
+            return '';
+        }
+
+        $member = (!empty($_SESSION['ccmp_logged_in']) && empty($_SESSION['honcho_logged_in']));
+
+        if(!rbac_allowed('dms', 'approve_docs')){
             $allowed = 'dmslibuser';
-            $tg_user_id = intval($_SESSION['tg_user_id']);
-            $sqluser = "SELECT * FROM dms_filelibrary_tguserid_security_group WHERE tguserid = $tg_user_id";
-            $usersg_obj = $this->model->query($sqluser, 'object');
-            if(!empty($usersg_obj)){
-                $flsgid = intval($usersg_obj[0]->security_group_id);
-                $sgrolesql  = "SELECT * FROM dms_filelibrary_security_group_roles WHERE security_group_id = $flsgid ORDER BY role_id";
-                $sgrole_obj = $this->model->query($sgrolesql, 'object');
-                if(!empty($sgrole_obj)){
-                    $role_obj = $this->model->get_one_where('id', $sgrole_obj[0]->role_id, 'dms_filelibrary_roles');
-                    if(!empty($role_obj) && isset($rank[$role_obj->session_name])){
-                        $allowed = $role_obj->session_name; // dmslibastadmin has no manage() view yet so stays dmslibuser
-                    }
-                }
-            }
-            if($_SESSION['dms_lib_access'] == 99){ // sysadmin
-                $allowed = 'dmslibadmin';
-            }
+        }elseif($member && rbac_allowed('ccmps', 'chapter_admin') && !rbac_allowed('ccmps', 'system_admin')){
+            $allowed = 'dmslibsubadmin'; // manages own chapter's documents only
+        }else{
+            $allowed = 'dmslibadmin';
         }
 
         if(isset($rank[$requested]) && $rank[$requested] < $rank[$allowed]){
@@ -8765,250 +8816,115 @@ function _get_mimetype($filepath) {
 
 /*------------------ End function _get_dms_role ------------------*/
 
+/*------------------ Function _dms_function_code -----------------*/
+
+    function _dms_function_code($libraryfunction) {
+        // each method passes its old dms_filelibrary_functions id; this is the
+        // Security Groups function (dms/<code>) that id now needs - see
+        // database/migrations/2026-10-18-system-rbac-step2.sql
+        $map = array(
+             1 => 'view_library',  2 => 'view_library',  3 => 'view_kanban',   4 => 'view_library',  5 => 'view_library',
+             6 => 'edit_docs',     7 => 'edit_docs',     8 => 'edit_docs',     9 => 'view_library', 10 => 'view_library',
+            11 => 'bulk_actions', 12 => 'approve_docs', 13 => 'hide_docs',    14 => 'hide_docs',    15 => 'delete_docs',
+            16 => 'view_library', 17 => 'download_docs',18 => 'edit_docs',    19 => 'move_cards',   20 => 'move_cards',
+            21 => 'move_cards',   22 => 'move_cards',   23 => 'move_cards',   24 => 'move_cards',   25 => 'move_cards',
+            26 => 'add_comments', 27 => 'view_comments',28 => 'view_comments',29 => 'manage_comments',30 => 'manage_comments',
+            31 => 'manage_comments',32 => 'delete_docs',33 => 'add_comments', 34 => 'approve_docs', 35 => 'add_comments',
+            36 => 'add_comments',
+        );
+        return $map[intval($libraryfunction)] ?? '';
+    }
+
 /*------------ Function _check_function_permissions --------------*/
 
     function _check_function_permissions($libraryfunction, $recid = NULL) {  // protected - private function
-//echo(7914);
-//echo('<br>');
-//print_r($libraryfunction); die();
-        //first thing is to determine if session has expired
-    if(strlen($_SESSION['trongatetoken']) > 0){
-        // ok do nothing
-    }else{
-        $flash_msg = 'Your Session has expired - please login again.';
+        // Every DMS action calls this with its old function id. Either login works (members use DMS too).
+        // 1. logged in  2. Security Groups allow the function  3. the document is within reach (_check_doc_scope)
 
-        set_flashdata($flash_msg);
-        $_SESSION['flashmsgcolor'] = 0; //red
+        $home = !empty($_SESSION['honcho_logged_in']) ? 'honcho' : 'welcome-ccmps/ccmphome';
 
-        // you logged out or session timed out - login again
-        redirect('honcho/logout'); // clears everything then takes to login page
+        if(empty($_SESSION['trongatetoken']) || (empty($_SESSION['honcho_logged_in']) && empty($_SESSION['ccmp_logged_in']))){
+            set_flashdata('Your Session has expired - please login again.');
+            $_SESSION['flashmsgcolor'] = 0; //red
+            redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho/logout' : 'welcome/logout'); // clears everything then to login page
+        }
+
+        $code = $this->_dms_function_code($libraryfunction);
+        if($code == '' || !rbac_allowed('dms', $code)){
+            set_flashdata('You are not authorized to use that Document Library function. Contact the System Administrator '.SYS_ADMIN_PHONE);
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect(($code != 'view_library' && rbac_allowed('dms', 'view_library')) ? 'dms-dmslibrary/manage' : $home);
+        }
+
+        // keep a lower view chosen on the manage page; never higher than allowed
+        $_SESSION['filelibrary_rolename'] = $this->_get_dms_role($_SESSION['filelibrary_rolename'] ?? '');
+
+        $this->_check_doc_scope(intval($libraryfunction));
+        return true;
     }
-
-        //  or not logged in at all
-
-        if($_SESSION['authenticated'] == 1){
-
-         //   if($_SESSION['security_group_id'] == 1){ // honcho sysadmin group
-                // skip all rights checking and proceed
-
-         //   }else{
-//echo(7930);
-//echo('<br>');
-//print_r($_SESSION['filelibrary_security_group_id']); die();
-                $funcid  = $libraryfunction;
-                if($_SESSION['filelibrary_security_group_id'] > 0){
-                $sgid    = $_SESSION['filelibrary_security_group_id'];
-                }else{
-echo("Error 7935: Your account is not associated with a document library security group. Contact the system administrator.  Use the back button to continue."); die();
-
-               }
- // see Honcho.php line 373
-
-//echo(7948); die();
-                // Find role id for security) and role name (for interface) for security group
-                $sgrolesql     = "SELECT * FROM dms_filelibrary_security_group_roles WHERE security_group_id = $sgid";
-                $sgrole_obj = $this->model->query($sgrolesql,'object');
-                $roleid =  $sgrole_obj[0]->role_id;
-                $rolesql     = "SELECT * FROM dms_filelibrary_roles WHERE id = $roleid";
-                $role_obj = $this->model->query($rolesql,'object');
-                $role =  $role_obj[0]->session_name;
-                $_SESSION['filelibrary_rolename'] = $role;
-
-/*
-echo(7959);        // sysadmin
-echo('<br>');
-print_r($roleid); // 1
-echo('<br>');
-print_r($funcid); //
-echo('<br>');
-print_r($sgid); // 1
-echo('<br>');
-print_r($role); // dmslibadmin
-echo('<br>');
-json($role_obj); die();
-//  json($_SESSION); die();
-*/
-
-$sql     = "SELECT * FROM dms_filelibrary_roles_functions WHERE role_id = $roleid AND function_id = $funcid";
-$rf_obj = $this->model->query($sql,'object');
-
-/*
-echo('<br>');
-echo(7980);
-echo('<br>');
-json($rf_obj); die();
-*/
-
-                if($rf_obj[0]->id > 0){
-                   // authorized because that combination exists
-                    return true;
-// echo(139); die();
-
-                }else{
-// echo(141); die();
-                    $flash_msg = 'You are not authorized to execute this function. Contact the System Administrator '.SYS_ADMIN_PHONE; //
-                    set_flashdata($flash_msg);
-
-                    redirect('dms-dmslibrary/manage'); // take to manage page
-                }
-
-         //   }
-
-
-         }else{ // not logged in/authenticated
-         //   echo(158); die();
-             $flash_msg = 'Your Session has expired - please login again.'; // username was not valid
-                set_flashdata($flash_msg);
-            redirect('honcho/logout'); // clears everything then takes to login page
-
-      }
- //echo(159); die();
-    //} // end function
-
-/*  Saved
-
-
-
-// Find out if have admin rights by looking for a match in the honcho_users_tguserid_security_group table. dmslibuser = 4.
- $tguserid = $_SESSION['tg_user_id'];
-
-/*
-  1 - dmslibadmin
-  2 - dmslibasstadmin
-  3 - dmslibsubadmin
-  4 - dmslibuser
-*/
-//echo(8024);
-//echo('<br>');
-//print_r($tguserid); die();
-
-//need to add dms security tables and get from there not users tables
-
-
-// DMS User Type
-
-$sqluser = "SELECT * FROM dms_tguserid_security_group WHERE tguserid = $tguserid";
-$checkuser_obj = $this->model->query($sqluser, 'object');
-
-//json($checkuser_obj); die();
-
-if(!empty($checkuser_obj)){
-
-  $security_group_id = $checkuser_obj[0]->security_group_id;
-//print_r($security_group_id ); die();
-
-    // After getting security group id check to see what role is assigned
-    //$role_assgn_obj = $this->model->get_one_where('id', $security_group_id, 'dms_security_group_roles');
-    //$role_id = $role_assgn_obj->role_id;
-
-    // After getting security group id check to see what roles are assigned
-    $sqlroles = "SELECT * FROM dms_security_group_roles WHERE security_group_id = $security_group_id";
-    $checkroles_obj = $this->model->query($sqlroles, 'object');
-    //echo(1578);
-    //json( $checkroles_obj); die();
-    if(!empty($checkroles_obj)){
-       $role_id = $checkroles_obj[0]->role_id; // take the first occurence [0]. the next is [1].
-        echo(8018);
-        print_r($role_id); die();
-
-       // After getting role id(s) get the roles session name
-       $role_obj = $this->model->get_one_where('id', $role_id, 'dms_security_roles'); // no such table!
-       // json($role_obj); die();
-       $managemode =  $role_obj->session_name;
-       //echo(1586);
-       //print_r($managemode); die();
-
-       // not sure if need to set yet
-       //$_SESSION['managemode '] = $managemode;
-
-    }else{
-        echo(1594);
-        echo('No Roles Found'); die();
-    }
-
-}else{
-    echo(1582);
-    echo('No DMS Security Group Found'); die();
-}
-
-/* id - DMS Manage Mode - deprecated
-
- * filelibrary only
- 1  = dmsfilelibadmin
- 2  = dmsfilelibastadmin
- 3  = dmsfilelibsubadmin
- 4  = dmsfilelibuser
- */
-
-
-
-/*
-
-// DMS User?
-
-$sqluser = "SELECT * FROM dms_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 5";
-$checkuser_obj = $this->model->query($sqluser,'object');
-
-if(!empty($checkuser_obj)){
-
-    $sg_obj = $this->model->get_one_where('id', 5, 'dms_security_groups');
-
-    $sg_id = $sg_obj->id;
-
-   // After getting security group check to see what role is assigned - is it dmslibuser?
-
-    $managemode =  $sg_obj->session_name; // dmslibuser
-
-}
-
-// DMS Admin?
-
-$sqladmin = "SELECT * FROM dms_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 4";
-$checkadmin_obj = $this->model->query($sqladmin,'object');
-
-if(!empty($checkadmin_obj)){
-
-    $sg_obj = $this->model->get_one_where('id', 4, 'dms_security_groups');
-    $managemode =  $sg_obj->session_name; // dmsfilelibadmin
-
-}
-
-// DMS Subentity Admin?
-//$sqlsubadmin = "SELECT * FROM honcho_users_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 2";//was 6
-
-$sqlsubadmin = "SELECT * FROM dms_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 2";//was 6
-$checksubadmin_obj = $this->model->query($sqlsubadmin,'object');
-
-if(!empty($checksubadmin_obj)){
-
-    $sg_obj = $this->model->get_one_where('id', 6, 'honcho_users_security_groups');
-    $managemode =  $sg_obj->session_name; // dmslibsubadmin
-
-}
-
-// DMS Admin? if both a subadmin and admin, admin from overwrite subadmin
-//$sqladmin = "SELECT * FROM honcho_users_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 1"; // tguserid = $tguserid AND security_group_id = 7
-
-$sqladmin = "SELECT * FROM dms_tguserid_security_group WHERE tguserid = $tguserid AND security_group_id = 1"; // tguserid = $tguserid AND security_group_id = 7
-$checkadmin_obj = $this->model->query($sqladmin,'object');
-print_r($checkadmin_obj); die();
-
-if(!empty($checkadmin_obj)){
-echo(1589);
-    $sg_obj = $this->model->get_one_where('id', 1, 'honcho_users_security_roles');// was _security_groups
-echo(1591);
-print_r($sg_obj); die();
-    $managemode =  $sg_obj->session_name; // dmsfilelibadmin
-      echo(1572);
- print_r($managemode);die();
-}  else{
-
-}
-*/
-
-}
 
 /*--------------------- End _check_function_permissions -----------------*/
+
+/*------------------- Function _check_doc_scope ------------------*/
+
+    function _check_doc_scope($libraryfunction) {
+        // WHICH documents: admins reach all. Chapter admins change only their own chapter's
+        // documents (and read those plus published ones). Everyone else reads published
+        // documents at their access level - the same rule as the manage list.
+
+        $role = $_SESSION['filelibrary_rolename'];
+        if($role == 'dmslibadmin'){
+            return;
+        }
+
+        $read      = array(2, 5, 9, 10, 16, 17, 27, 28);                                          // read-only functions
+        $bydoc     = array(2, 5, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 28, 32); // segment(3) = document id
+        $bypost    = array(26, 34);                                                               // $_POST['recid'] = document id
+        $bycomment = array(27, 29, 30, 31, 33, 36);                                               // segment(3) = comment id
+
+        $docids = array();
+        if(in_array($libraryfunction, $bydoc)){
+            $docids[] = intval(segment(3));
+        }elseif(in_array($libraryfunction, $bypost)){
+            $docids[] = intval($_POST['recid'] ?? 0);
+        }elseif(in_array($libraryfunction, $bycomment)){
+            $comment = $this->model->get_where(intval(segment(3)), 'dms_filelibrary_docs_comments');
+            if($comment){ $docids[] = intval($comment->doc_id); }
+        }elseif($libraryfunction == 11){ // bulk action - every ticked document
+            foreach((array) ($_POST['selected'] ?? array()) as $selected){ $docids[] = intval($selected); }
+        }
+
+        $mysubentity = $this->_my_subentity();
+        $mylevel     = intval($_SESSION['dms_lib_access'] ?? 0) + 1; // manage() uses access < level
+
+        foreach($docids as $docid){
+            if($docid < 1){ continue; } // a new document or comment
+            $doc = $this->model->get_where($docid, 'dms_filelibrary_docs');
+            if(!$doc){ continue; }      // the action reports a missing record itself
+
+            $mine      = ($role == 'dmslibsubadmin' && intval($doc->subentity) == $mysubentity);
+            $published = (intval($doc->active) == 1 && intval($doc->status) == 1 && intval($doc->access) < $mylevel);
+            $ok        = in_array($libraryfunction, $read) ? ($mine || $published) : $mine;
+
+            if(!$ok){
+                set_flashdata('That document is not available to you'.($role == 'dmslibsubadmin' ? ' - it belongs to another '.strtolower(SUBENTITY).'.' : '.'));
+                $_SESSION['flashmsgcolor'] = 0;
+                redirect('dms-dmslibrary/manage');
+            }
+        }
+    }
+
+    function _my_subentity() {
+        // the logged-in person's chapter (members) or department (staff)
+        if(!empty($_SESSION['ccmp_logged_in']) && empty($_SESSION['honcho_logged_in'])){
+            $me = $this->model->get_where(intval($_SESSION['ccmp_rec_id'] ?? 0), 'ccmps');
+            return $me ? intval($me->subentity) : -1;
+        }
+        $me = $this->model->get_where(intval($_SESSION['honcho_acct_rec_id'] ?? 0), 'honcho_user_accounts');
+        return $me ? intval($me->honcho_subentity) : -1;
+    }
+
+/*------------------- End function _check_doc_scope ---------------*/
 
 /*------------ Function _dmslibrary_calculations --------------*/
 
@@ -9087,10 +9003,13 @@ print_r($sg_obj); die();
     function _get_font_sizes() {
     // protected - private function
     // Get user's fontsize preferences for manage page and all other pages
-    $user_id                    = $_SESSION['honcho_acct_rec_id'];
-    $user_obj                   = $this->model->get_where($user_id,'honcho_user_accounts');
-    $_SESSION['fontsize']       = $user_obj->fontsize;  // view pages
-    $_SESSION['tfontsize']      = $user_obj->tfontsize; // manage page
+    if(!empty($_SESSION['honcho_logged_in'])){ // staff
+        $user_obj               = $this->model->get_where(intval($_SESSION['honcho_acct_rec_id'] ?? 0),'honcho_user_accounts');
+    }else{                                      // members use DMS too (RBAC step 4)
+        $user_obj               = $this->model->get_where(intval($_SESSION['ccmp_rec_id'] ?? 0),'ccmps');
+    }
+    $_SESSION['fontsize']       = $user_obj ? ($user_obj->fontsize ?? 2) : 2;   // view pages
+    $_SESSION['tfontsize']      = $user_obj ? ($user_obj->tfontsize ?? 3) : 3;  // manage page (members have no tfontsize)
 
  //  print_r($_SESSION['fontsize']); die();
 

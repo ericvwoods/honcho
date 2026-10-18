@@ -61,13 +61,17 @@
                     </li>
                     </ul>
                 </li>
+                <?php if(rbac_allowed('dms', 'view_library')): ?> <!-- DMS: Security Groups decide (RBAC step 4) -->
                 <li>
                     <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">DMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
                         <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Document Library</span></a></li>
+                        <?php if(rbac_allowed('dms', 'view_kanban')): ?>
                         <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/kanban"><i class="fa fa-play"></i><span class="hidden-tablet"> Kanban Board</span></a></li>
+                        <?php endif; ?>
                         <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryaccess/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Library Access</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryfunctions/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Library Functions</span></a></li>
+                        <?php /* Library Functions edited dms_filelibrary_functions, which nothing reads since RBAC step 4 (Security Groups decide). Retire with the old tables in step 6.
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryfunctions/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Library Functions</span></a></li> */ ?>
                         <li>
 
                            <div id="ibox4" class="sk-spinner sk-spinner-wave" style="display: none;"> <!-- toggle none/show  -->
@@ -85,6 +89,7 @@
 
                     </ul>
                 </li>
+                <?php endif; ?> <!-- end DMS -->
                 <?php if(rbac_allowed('pm', 'view_projects')): ?> <!-- Project Management System: Security Groups decide (false when PMS is switched off) -->
                 <li>
                     <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">PMS</span><span class="fa arrow"></span></a>

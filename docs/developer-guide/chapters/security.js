@@ -26,8 +26,8 @@ const sections = [
   { type: 'table', headers: ['Step', 'What', 'State'], rows: [
     ['1', 'Back up; build the tables, helper and screens. No module uses them.', 'Done 2026-10-18; on staging.'],
     ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Done 2026-10-18; on staging. See the Migration tab.'],
-    ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Built 2026-10-18 (Mac). See the PMS chapter.'],
-    ['4', 'Switch DMS; `manage()` uses the check instead of `_get_dms_role()`.', 'Not started'],
+    ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Done 2026-10-18; on staging. See the PMS chapter.'],
+    ['4', 'Switch DMS: every action asks Security Groups, either login; chapter admins manage their own chapter\'s documents.', 'Built 2026-10-18 (Mac). See the DMS chapter, RBAC tab.'],
     ['5', 'Switch CCMPS: the `ccmps_*` session flags are set from groups at login; Member Permissions ticks become group memberships.', 'Not started'],
     ['6', 'Retire the old tables (rename with `zz_`, drop later).', 'Not started'],
   ]},
@@ -87,8 +87,8 @@ const sections = [
   { type: 'ul', items: [
     "Honcho `admingrp` and `asstadmingrp`: their roles have no functions. DMS `dmsadmingrp`, `dmsasstadmingrp`, `dmssubadmingrp`: no role. They give nothing today.",
     "DMS group 1 → role 6, which doesn't exist (its other row, role 1, carried across).",
-    "Chapter admins get the **dmslibsubadmin** DMS role from code today, but that role has no functions in the tables. They get DMS user functions here; step 4 decides what extra they need.",
-    "Staff DMS checks in `Dmslibrary.php` look for staff groups 5–8 in `honcho_users_tguserid_security_group`, which has only groups 1–4, so they never match.",
+    "Chapter admins got the **dmslibsubadmin** DMS role from code, but that role had no functions in the tables. Step 4 (2026-10-18) gave Chapter Admins every DMS function, limited to their own chapter's documents.",
+    "`Dmslibrary.php` has blocks that look for staff groups 5–8 in `honcho_users_tguserid_security_group` (which has only 1–4); they are all commented out.",
     "Test data: one chapter admin with no login number (Margaret Fisher, 1536); one deceased member with roles (Leslie Morris, 1435).",
   ]},
 ]},
@@ -104,7 +104,7 @@ const sections = [
     "`rbac_person()` follows `trongate_users.login_acct_info_table` / `login_acct_table_id` to the account row (only `ccmps` and `honcho_user_accounts` are read), and falls back to `trongate_users.title`, then the username, when the row has no name.",
   ]},
   { type: 'p', text: "Three more: `rbac_allowed_for($tg_user_id, $module, $function)` asks about someone else (PMS uses it before putting a new team member in PM Users); `rbac_module_enabled($module)` reads the module switch; `rbac_people($kinds)` lists every staff and/or member login with a name (the Security screens' people list and PMS's pickers)." },
-  { type: 'alert', variant: 'info', text: "Switched so far: **PMS** (step 3). DMS and CCMPS still use their own permission code until steps 4 and 5." },
+  { type: 'alert', variant: 'info', text: "Switched so far: **PMS** (step 3) and **DMS** (step 4). CCMPS still uses its own permission code until step 5." },
 ]},
 
 // ============================================================

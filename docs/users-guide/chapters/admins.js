@@ -33,7 +33,7 @@ chapterAdmins: [
       ['**Chapter Notices**', 'Post and manage notices for your chapter'],
       ['**Job Posts**', 'Post and manage job openings'],
       ['**Chapter Activities**', 'Post and manage events and activities'],
-      ['**Doc Library**', 'The Document Library (Chapter 6)'],
+      ['**Doc Library**', "Your chapter's documents in the Document Library (Chapter 6): add and edit them, move them on the kanban board, approve, hide or delete them, and manage comments. You can only change your own chapter's documents, and anything you add is saved to your chapter."],
       ['**Export Members**', "Download your chapter's members as a spreadsheet"],
     ]},
   ]},

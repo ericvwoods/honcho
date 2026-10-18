@@ -36,7 +36,7 @@ content: [
 library: [
   { tab: "Finding Documents", blocks: [
     { type: 'p', text: "The Document Library stores BPA's documents: policies, minutes, forms and more. Open it from the **Doc Library** tile or menu item." },
-    { type: 'p', text: "The list shows the documents you're allowed to see. Members see approved documents at or below their access level, from **Public** up through levels such as Leaders, Staff, Board and CEO." },
+    { type: 'p', text: "The list shows the documents you're allowed to see. Members see approved documents at or below their access level, from **Public** up through levels such as Leaders, Staff, Board and CEO, and can open and download them. Chapter Admins also see all of their own chapter's documents and can manage them; Member System Admins and staff document admins see and manage everything. Who can do what is set on the **Security Groups** page." },
     { type: 'h2', text: 'Filters' },
     { type: 'p', text: 'Narrow the list with the filters above it and click the filter button. Each document is labeled three ways, which makes it easy to find:' },
     { type: 'table', headers: ['Label', 'Example'], rows: [

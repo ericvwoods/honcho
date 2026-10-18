@@ -76,31 +76,29 @@ const sections = [
 
 // ============================================================
 { tab: "RBAC", blocks: [
-  { type: 'h2', text: 'The Chain: User → Security Group → Role → Functions' },
-  { type: 'p', text: 'Unlike CCMPS (where the table-driven check is disabled), DMS really does enforce its permission tables. Every public method starts with:' },
-  { type: 'code', text: "$docfunction = 20; // this method's id in dms_filelibrary_functions\n$authorized = $this->_check_function_permissions($docfunction);" },
+  { type: 'p', text: "Since RBAC step 4 (2026-10-18) DMS uses the shared **Security Groups** system (see the Security (RBAC) chapter). The old `dms_filelibrary_roles`, `_security_groups`, `_security_group_roles`, `_roles_functions` and `_tguserid_security_group` tables are no longer read; they stay until step 6. **Both logins** can use DMS." },
+  { type: 'p', text: "Every public method still starts the same way, so the 36 call sites didn't change:" },
+  { type: 'code', text: "$docfunction = 20; // the method's old dms_filelibrary_functions id\n$authorized = $this->_check_function_permissions($docfunction);" },
   { type: 'ol', items: [
-    "**At login**, `Honcho.php` (around line 443) looks up the user in `dms_filelibrary_tguserid_security_group` and sets `$_SESSION['filelibrary_security_group_id']`, then follows `dms_filelibrary_security_group_roles` to the role and sets `$_SESSION['filelibrary_rolename']` (the role's `session_name`).",
-    "**On every request**, `_check_function_permissions()` checks the session hasn't expired (`trongatetoken`) and the user is authenticated, then repeats that group → role lookup.",
-    "It then looks for a row in `dms_filelibrary_roles_functions` with that `role_id` and the method's `function_id`. If one exists, the method runs; if not, the user is sent to `dms-dmslibrary/manage` with a \"not authorized\" flash message.",
+    "**Logged in?** `trongatetoken` plus either `honcho_logged_in` or `ccmp_logged_in`; otherwise to the matching logout.",
+    "**Allowed?** `_dms_function_code()` turns the old id into a Security Groups function (`dms/view_library`, `dms/approve_docs`, … - 36 ids onto 12 functions) and asks `rbac_allowed('dms', …)`. If not, a flash message and back to `manage` (or home).",
+    "**Which view?** `_get_dms_role()` sets `$_SESSION['filelibrary_rolename']` (below). A lower view chosen on the manage page is kept.",
+    "**Which documents?** `_check_doc_scope()` finds the document the action is about (`segment(3)`, `$_POST['recid']`, a comment's `doc_id`, or every ticked id for a bulk action) and checks it is within reach.",
   ]},
-  { type: 'p', text: "A user with no security group gets a plain-text error (\"Error 7935\") and stops there." },
 
-  { type: 'h2', text: 'Roles' },
-  { type: 'table', headers: ['id', 'session_name', 'Meaning'], rows: [
-    ['1', '`dmslibadmin`', 'Admin, has all 36 functions'],
-    ['2', '`dmslibastadmin`', 'Assistant Admin'],
-    ['3', '`dmslibsubadmin`', 'Subentity Admin'],
-    ['4', '`dmslibuser`', 'Regular User, has 4 functions'],
+  { type: 'h2', text: 'Views and Which Documents' },
+  { type: 'table', headers: ['filelibrary_rolename', 'Who', 'List and kanban show', 'May change'], rows: [
+    ['`dmslibadmin`', 'Has `dms/approve_docs`: DMS Admins, Member System Admins, or a staff login in a group with it', 'Every document', 'Any document'],
+    ['`dmslibsubadmin`', 'A **member** with `ccmps/chapter_admin` (and not `ccmps/system_admin`) who has `dms/approve_docs`: Chapter Admins', "Own chapter's documents, any status", "Only own chapter's documents. New or edited documents are saved into their own chapter (`submit()`)."],
+    ['`dmslibuser`', 'Has `dms/view_library` but not `dms/approve_docs`: DMS Users (every member login)', 'Published documents (`status = 1`, `active = 1`) below their access level', 'Nothing (read and download published ones only)'],
   ]},
-  { type: 'p', text: "After an action, many methods redirect with a `switch` on `$_SESSION['filelibrary_rolename']`, so each role returns to its own version of the manage page." },
-
-  { type: 'h2', text: 'Function Ids' },
-  { type: 'p', text: "Function ids 1–36 in `dms_filelibrary_functions` map one-to-one to the public methods (1 `index`, 3 `kanban`, 4 `manage`, 12 `approvedoc`, 19–24 the six column moves, 25 `done`, …). When adding a method, add a row there, use its id in the method, and grant it to roles in `dms_filelibrary_roles_functions`." },
+  { type: 'p', text: "Security Groups decide **what** someone may do; the view decides **which documents**. A custom group with, say, `edit_docs` but not `approve_docs` gets the user view, so it can't change anything - give management functions as a set. Chapter admins were given every DMS function on 2026-10-18 (`database/migrations/2026-10-18-system-rbac-step4.sql`)." },
+  { type: 'p', text: "The role in the URL (`manage/dmslibuser`) can only **lower** the view, never raise it. After an action, methods still redirect with a `switch` on `filelibrary_rolename`." },
 
   { type: 'h2', text: 'Document Access Levels' },
-  { type: 'p', text: "Separate from roles. A user's level comes from their account (`honcho_user_accounts.dmslibacclevel`, loaded into `$_SESSION['dms_lib_access']`). On the manage page, a **Regular User** (`dmslibuser`) only sees **Approved** documents (`status = 1`) whose `access` is at or below their level. Admin roles see every document regardless of level." },
+  { type: 'p', text: "Separate from Security Groups. A staff login's level is `honcho_user_accounts.dmslibacclevel` (in `$_SESSION['dms_lib_access']`); members are level 0. In the user view only published documents whose `access` is below level + 1 appear, and `_check_doc_scope()` applies the same rule to viewing and downloading by URL. The levels themselves are maintained on **Library Access** (`dms-dmsfilelibraryaccess`)." },
 ]},
+
 
 // ============================================================
 { tab: "Kanban & Tagging", blocks: [
@@ -139,18 +137,22 @@ const sections = [
   { type: 'h2', text: 'Fixed' },
   { type: 'table', headers: ['Bug', 'Where', 'Fix'], rows: [
     ['**SQL injection through request values.** The manage-page filters (`$_POST[\'sqlfilter...\']`) and the document id in `managedoccomments/<id>` were concatenated straight into SQL, so a logged-in user could change the query by editing a value in the browser.', '`manage()` (the eleven `$sqlfilter...` lines), `managedoccomments()`', "2026-10-06: each value is now read with `intval()`. Anything that is not a number becomes `0` (no filter). **Rule going forward:** any request value that goes into a hand-built SQL string must be `intval()`'d first (or use `query_bind()`)."],
-    ["**The manage page took the user's role from the URL.** `manage()` set `$_SESSION['filelibrary_rolename'] = segment(3);`, so any logged-in user (including a member) could open `dms-dmslibrary/manage/dmslibadmin` and list every document. Honcho's menu links have no role in the URL, which left the role empty and crashed the page with a 500 (`$sql` never set).", '`manage()` around line 491, new `_get_dms_role()`', "2026-10-11: `_get_dms_role()` works out the role on the server. **Members:** `ccmps_system_admin` → `dmslibadmin`, `ccmps_subentity_admin` (chapter admin) → `dmslibsubadmin` (own chapter's documents only), everyone else → `dmslibuser`. **Staff:** the same group → role lookup as the Honcho login, or `dmslibadmin` when `dms_lib_access` is 99; no group, or a role `manage()` has no view for (`dmslibastadmin`), → `dmslibuser`. The role in the URL can only **lower** the result (an admin choosing the user view), never raise it."],
+    ["**The manage page took the user's role from the URL.** `manage()` set `$_SESSION['filelibrary_rolename'] = segment(3);`, so any logged-in user (including a member) could open `dms-dmslibrary/manage/dmslibadmin` and list every document. Honcho's menu links have no role in the URL, which left the role empty and crashed the page with a 500 (`$sql` never set).", '`manage()` around line 491, new `_get_dms_role()`', "2026-10-11: `_get_dms_role()` works out the role on the server. **Members:** `ccmps_system_admin` → `dmslibadmin`, `ccmps_subentity_admin` (chapter admin) → `dmslibsubadmin` (own chapter's documents only), everyone else → `dmslibuser`. **Staff:** the same group → role lookup as the Honcho login, or `dmslibadmin` when `dms_lib_access` is 99; no group, or a role `manage()` has no view for (`dmslibastadmin`), → `dmslibuser`. The role in the URL can only **lower** the result (an admin choosing the user view), never raise it. Since 2026-10-18 (RBAC step 4) it uses Security Groups; see the RBAC tab."],
+    ['**Members could not use DMS beyond the list, and the list crashed when logged out.** `_check_function_permissions()` required the staff login, so a member\'s first click failed; `manage()` read the session user before any check.', '`_check_function_permissions()`, `manage()`', '2026-10-18 (RBAC step 4): either login works; `manage()` runs the check first, so a logged-out visitor goes to the login page.'],
+    ['**Chapter admins got "Error 5103" after moving a card.** The `dmslibsubadmin` case was commented out in the redirect `switch` of `header0()`, `backlog()`, `pending()` and `header5()`.', 'Those four methods', '2026-10-18: case restored (back to the kanban when the move came from it).'],
+    ['**`update()`, `create()` and `updatedoccomment()` gave a 500 from a link.** They required an argument this engine never passes.', 'Those three methods', "2026-10-18: `$retrying = ''` default."],
+    ['**Every file upload gave a 500.** `submit_upload()` called `$this->file->upload()`, stock Trongate v2\'s File module, which this engine doesn\'t have (v1\'s built-in `upload_file()` is gone too). Two calls to `$this->dmslibrary->viewdocrec()` also crashed: a module can\'t load itself here.', '`submit_upload()`', "2026-10-18: new private `_upload_doc($config, $name)` saves `my_file` with `move_uploaded_file()` under the name the record stores (creating a chapter folder if needed); the self-calls redirect instead. The upload folders must be writable by the web server (on the Mac: `chmod 777` on `modules/dms/dmslibrary/assets`, `assets/docs`, `assets/archived`; staging's are owned by www-data)."],
+    ['**Saving a new document gave a 500.** `document_id` was required with no default; no code fills or reads it, and MySQL runs in strict mode.', '`dms_filelibrary_docs`', "2026-10-18: column default `''` (`2026-10-18-system-rbac-step4.sql`)."],
+    ['**Incomplete security group → role data** (group 1 → missing role 6; groups 2–4 no role; roles 2–3 no functions).', '`dms_filelibrary_*` tables', '2026-10-18: no longer read (RBAC step 4).'],
   ]},
 
   { type: 'h2', text: 'Not Yet Fixed' },
-  { type: 'p', text: 'Found while writing this chapter (2026-10-06).' },
+  { type: 'p', text: 'Found while writing this chapter (2026-10-06) and while switching DMS to Security Groups (2026-10-18).' },
   { type: 'table', headers: ['Issue', 'Where', 'Effect'], rows: [
+    ['**Replacing a file on a document that already has one is unfinished.** The code is there but sits behind deliberate stops (`echo(6233); die();`, `echo(4812); die();`), and the duplicate check uses `isset()` on a lookup that returns `false`, so it always reports a duplicate.', '`submit_upload()`, around lines 5945–6060', 'Uploading to a document with a file shows "The file … already associated with document . File not replaced." A first upload works.'],
     ['`header5()` writes the label text into the status column: `$data[\'status\'] = DMS_KBB_HDR5;` (that constant is the string "Approved").', '`header5()`, around line 6556', 'The database runs in strict mode, so moving a card into the last column through `header5()` fails with a database error. It should be `1`. (`approvedoc()` sets `status = 1` correctly.)'],
-    ['Security group → role mappings are incomplete. Group 1 maps to role 1 and to role **6, which does not exist**. Groups 2, 3 and 4 have no role at all. Roles 2 and 3 have no functions.', '`dms_filelibrary_security_group_roles`, `dms_filelibrary_roles_functions` (data)', 'Anyone placed in groups 2–4 hits a PHP error at login and on every DMS page. The permission check only ever uses the **first** role row for a group.'],
-    ['The `dmslibsubadmin` case is commented out in the redirect `switch` after a column move.', '`backlog()` and the other move methods', 'A Subentity Admin who moves a card gets "Error 5103: No matching manage mode".'],
     ['Audit-log entries use `$data[\'title\']`, which is never set in the move methods.', 'Column-move methods', 'The audit log records an empty title (plus a PHP warning).'],
     ['`index()` prints a "Contact System Admin" message and `die()`s before its real code.', '`index()`', '`dms-dmslibrary` with no method is a dead end; the real entry points are `manage` and `kanban`.'],
-    ['`manage()` crashes when nobody is logged in: it loads the user record from the session before any login check.', '`manage()`, around line 556', 'A logged-out visitor gets a 500 error page, not the login page.'],
   ]},
   { type: 'alert', variant: 'warning', text: 'The same **debug-die() landmine** described in the CCMPS chapter applies here: the file has many commented-out `echo(NNNN); die();` lines. If a DMS function seems to do nothing, check for one that is not commented out.' },
 ]},
@@ -164,13 +166,13 @@ const sections = [
 { tab: "Extending", blocks: [
   { type: 'h2', text: 'Adding a New Method' },
   { type: 'ol', items: [
-    'Add a row to `dms_filelibrary_functions` and note its id.',
-    'Start the method with `$docfunction = <id>;` and `$this->_check_function_permissions($docfunction);`.',
-    'Grant it to the right roles in `dms_filelibrary_roles_functions`.',
+    'Pick an unused id (37 and up) and start the method with `$docfunction = <id>;` and `$this->_check_function_permissions($docfunction);`.',
+    'Map the id to a Security Groups function in `_dms_function_code()`: an existing `dms/…` function, or a new one added to `system_functions` with a migration script (then tick it for the right groups).',
+    'If the method acts on one document, add the id to the right list in `_check_doc_scope()` so chapter admins and members are limited to documents within reach.',
     'Add it to the function list at the top of `Dmslibrary.php`.',
   ]},
   { type: 'h2', text: 'Adding or Renaming a Lookup Value' },
-  { type: 'p', text: 'Tag values, departments, access levels and file types are data, not code: add rows to the matching `dms_filelibrary_*` table. Access levels and functions have their own maintenance screens (`dms-dmsfilelibraryaccess`, `dms-dmsfilelibraryfunctions`).' },
+  { type: 'p', text: 'Tag values, departments, access levels and file types are data, not code: add rows to the matching `dms_filelibrary_*` table. Access levels have their own maintenance screen (`dms-dmsfilelibraryaccess`). The old functions screen (`dms-dmsfilelibraryfunctions`) is off the menu: nothing reads that table since RBAC step 4.' },
 ]},
 
 ];

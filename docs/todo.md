@@ -27,11 +27,15 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [x] Answer the 12 decisions in the [Honcho RBAC Implementation Plan](https://claude.ai/code/artifact/d55caab2-e13a-4502-bdbe-e52b7f7f4561), then approve it. All 12 recommendations accepted, plan approved (2026-10-18).
 - [x] RBAC step 1: back up and build (five `system_*` tables, `rbac_helper.php`, `system-rbac` screens). Built and tested on the Mac 2026-10-18; backup `~/honcho-backups/bpausa-2026-10-18-before-rbac.sql.gz`. Local test logins cleaned up the same day (decision 9): `database/migrations/2026-10-18-cleanup-test-logins.sql` removed staff test logins 2, 4, 5, 6, linked login 3 to Eric's member record 1538, and cleared 585 made-up member login numbers (backup `~/honcho-backups/bpausa-2026-10-18-before-login-cleanup.sql.gz`). Tested by Eric; deployed to staging 2026-10-18 (e4c2789) with both scripts run there.
 - [x] RBAC step 2: migrate the data (`2026-10-18-system-rbac-step2.sql` + report). Reviewed by Eric; on staging 2026-10-18 (fd9afa4).
-- [x] RBAC step 3: switch PMS to Security Groups (`rbac_allowed()` per page, team picker via `rbac_people()`, menu via `rbac_allowed()`, Modules panel / `system_modules.enabled` instead of `PM_SYS_SETTING_ID`). Built and tested on the Mac 2026-10-18.
+- [x] RBAC step 3: switch PMS to Security Groups (`rbac_allowed()` per page, team picker via `rbac_people()`, menu via `rbac_allowed()`, Modules panel / `system_modules.enabled` instead of `PM_SYS_SETTING_ID`). On staging 2026-10-18 (4a24c68).
+- [ ] RBAC step 4: switch DMS to Security Groups (either login; chapter admins limited to their own chapter; `2026-10-18-system-rbac-step4.sql`). Built and tested on the Mac 2026-10-18.
+- [x] Every DMS file upload gave a 500: `$this->file->upload()` (stock v2 File module) doesn't exist here, and two `$this->dmslibrary->viewdocrec()` self-calls crashed. New `_upload_doc()` in `Dmslibrary.php`; Mac upload folders made writable (2026-10-18).
+- [ ] DMS: replacing the file on a document that already has one is unfinished - deliberate `echo(6233); die();` / `echo(4812); die();` stops in `submit_upload()`, and its duplicate check (`isset()` on `false`) always says "already associated". First uploads work.
+- [x] Saving a new DMS document gave a 500: `document_id` required with no default (strict mode). Default `''` added in the step 4 script; the document form's copied delete pop-up crashed on an unset `$attr_close` (2026-10-18).
 - [ ] RBAC step 6 (later): delete the unused `system_settings` row 16 (`PM_SYS_SETTING_ID`) along with the old `pm_*` security tables.
-- [ ] RBAC step 4: decide what DMS functions Chapter Admins need (the dmslibsubadmin role has none in the tables; it's handled in code today).
+- [x] RBAC step 4: decide what DMS functions Chapter Admins need (the dmslibsubadmin role has none in the tables; it's handled in code today). Decided 2026-10-18: manage their own chapter's documents (all DMS functions, own chapter only).
 - [ ] Creating a member inserts into `trongate_users` with columns this database doesn't have (`user_level_id`, `user_acct_info_table`, `code`; this table has `title`, `login_acct_table_id`, `login_acct_info_table`) - `Ccmps.php` ~3285 and ~3978. Check the real BPA `trongate_users` before go-live: RBAC and member creation must agree on one shape.
-- [ ] Staff DMS checks in `Dmslibrary.php` look for staff security groups 5-8, which don't exist (only 1-4). Goes away when DMS switches to RBAC (step 4).
+- [x] Staff DMS checks in `Dmslibrary.php` look for staff security groups 5-8, which don't exist. Turned out to be commented out (dead code), 2026-10-18.
 - [x] Member side menu showed the Admin tile (and an empty Reports menu) to members with no admin role, e.g. Chapter President only. Now one `$has_admin_menu` check in `sidemenu.php` (2026-10-16, verified).
 - [x] Member Permissions screen (`welcome-ccmpspermissions/manage`): see and set every member's admin roles in one list (2026-10-16).
 - [ ] Member Admin role doesn't open the Member Admin menu: login sets `ccmps_ccmp_admin` (from `ccmp_admin`) but menus check `ccmps_admin`, which only "refresh my session data" sets, from a nonexistent `admin` column.
@@ -40,9 +44,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 ## DMS
 
 - [ ] `header5()` saves the text "Approved" into the numeric `status` column, so the save fails in strict mode (should be `1`).
-- [ ] Security group → role data is incomplete (group 1 → missing role 6; groups 2–4 no role).
-- [ ] Subentity Admin gets "Error 5103" after moving a card (case commented out).
-- [ ] `manage()` gives a 500 error when nobody is logged in.
+- [x] Security group → role data is incomplete (group 1 → missing role 6; groups 2–4 no role). No longer read: DMS uses Security Groups (RBAC step 4, 2026-10-18).
+- [x] Subentity Admin gets "Error 5103" after moving a card (case commented out). Fixed 2026-10-18 (case restored in header0, backlog, pending, header5).
+- [x] `manage()` gives a 500 error when nobody is logged in. Fixed 2026-10-18: goes to the login page.
 - [ ] Test the manage-page filters while logged in after the 2026-10-06 SQL-injection fix.
 - [ ] Drop the old CMS library tables (`cms_ccmps_filelibrary_*`, 11 tables incl. `..._docs_atis_seed`). The `cms-ccmpslibrary` module was removed 2026-10-16 and no code reads them. Do it on the Mac, staging and `ccmps.sql` together.
 

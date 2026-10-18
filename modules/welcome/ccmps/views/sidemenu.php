@@ -174,7 +174,11 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                 </ul>
 <?php endif; ?>
 
-<?php if($_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1): ?>
+<?php /* PMS hidden from members 2026-10-18: Pm.php check_permission() only accepts the staff login
+         (authenticated), so a member was sent to honcho/logout. Staff reach it from adminsidemenu.php.
+         Running PMS needs the Honcho staff module (decided 2026-10-18). A later member view of the
+         kanban + own tasks is on the backlog. */ ?>
+<?php if(false && ($_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1)): ?>
             <li> <a href="#"><i class="fa fa-tasks"></i><span class="nav-label"> PMS </span><span class="fa fa-chevron-down"></span></a> <!-- Project Management System - access per function is checked in modules/pm/Pm.php -->
                 <ul class="nav nav-second-level collapse">
                     <li><a href="<?= BASE_URL ?>pm"><i class="fa fa-folder-open"></i> Projects</a></li>

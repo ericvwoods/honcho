@@ -15,11 +15,16 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 - [ ] **Real second factor (2FA)**: a one-time code by **text (SMS)** or **email**, valid for a few minutes, single use. Required for anyone in an admin / super-user group; optional for other members. SMS provider: being set up. Replaces today's "member number" second factor.
 - [ ] **Forgot password** for both logins (rebuild; the member version in `Welcome.php` is unfinished): random one-time token stored hashed with an expiry (~30 min); emailed (or texted) to the account's **own** address; same message whether or not the account exists; link works once; limit how often it can be requested; logged in the audit log. Today's version emails one hard-coded address with a hard-coded link, never creates a token, and `newpassword()` stops at a debug `die()`.
-- [ ] Decide: full authentication redesign (one login per person, members and staff as profiles) or RBAC only.
+- [x] Decide: full authentication redesign or RBAC only. **RBAC only** for this version, keeping the two logins (2026-10-17).
+- [ ] Later (backlog): full login redesign, with one login per person and members and staff as profiles.
+- [ ] The Honcho login doesn't reset `acct_table`, so member and staff session flags mix when both logins are used in one browser.
+- [ ] Chapter-admin delete redirects to the Honcho login.
+- [ ] `/honcho` shows "Error 256" instead of the login page.
 
 ## Permissions (RBAC)
 
-- [ ] Answer the 12 decisions in the [Honcho RBAC Implementation Plan](https://claude.ai/code/artifact/d55caab2-e13a-4502-bdbe-e52b7f7f4561), then approve it.
+- [x] Answer the 12 decisions in the [Honcho RBAC Implementation Plan](https://claude.ai/code/artifact/d55caab2-e13a-4502-bdbe-e52b7f7f4561), then approve it. All 12 recommendations accepted, plan approved (2026-10-18).
+- [ ] RBAC step 1: back up and build (five `system_*` tables, `rbac_helper.php`, `system-rbac` screens). No module uses them yet.
 - [x] Member side menu showed the Admin tile (and an empty Reports menu) to members with no admin role, e.g. Chapter President only. Now one `$has_admin_menu` check in `sidemenu.php` (2026-10-16, verified).
 - [x] Member Permissions screen (`welcome-ccmpspermissions/manage`): see and set every member's admin roles in one list (2026-10-16).
 - [ ] Member Admin role doesn't open the Member Admin menu: login sets `ccmps_ccmp_admin` (from `ccmp_admin`) but menus check `ccmps_admin`, which only "refresh my session data" sets, from a nonexistent `admin` column.
@@ -41,6 +46,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Team-member picker lists nobody (fixed by RBAC plan step 3: build the list from `trongate_users`).
 - [ ] `PM_SYS_SETTING_ID` is hard-coded in `Pm.php`.
 - [ ] Add PMS to the mobile menu in `ccmphome.php` (`device_type == 2`).
+- [x] Staff side menu had no PMS link. Added PMS → Projects to `adminsidemenu.php` (2026-10-18).
+- [ ] Member side menu shows PMS → Projects to member system admins, but `Pm.php` `check_permission()` only accepts the staff login (`authenticated`), so a member who clicks it lands on the staff login. Link hidden 2026-10-18 (`if(false && …)` in `sidemenu.php`). Decided 2026-10-18: running PMS needs the Honcho staff module, so the full member link doesn't come back; see the next item.
+- [ ] Later (backlog): members can view a project's kanban board and work only the tasks assigned to them (`pm_story_tasks.assignee`). Needs the PMS kanban/task pages (not built yet) and RBAC step 3 first; then a "PM Participants" group with two functions plus an "assigned to me" filter.
 
 ## Participants module (add-on, branded "Student" for BPA)
 

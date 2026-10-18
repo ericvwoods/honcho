@@ -85,6 +85,12 @@
 
                     </ul>
                 </li>
+                <li> <!-- Project Management System - on/off and access per function are checked in modules/pm/Pm.php -->
+                    <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">PMS</span><span class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a class="submenu" href="<?= BASE_URL ?>pm"><i class="fa fa-play"></i><span class="hidden-tablet"> Projects</span></a></li>
+                    </ul>
+                </li>
                 <li>
                     <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">CMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">

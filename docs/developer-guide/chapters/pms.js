@@ -95,7 +95,7 @@ const sections = [
     'Run `modules/pm/pm_schema.sql`.',
     "Add the on/off switch: insert a `system_settings` row with `settingvalue = 1`, then set `PM_SYS_SETTING_ID` at the top of `Pm.php` to that row's id (it is `16` in this deployment). Setting the value to `0` switches PMS off for everyone.",
     "Give the first admin access: `INSERT INTO pm_tguserid_security_group (tg_user_id, security_group_id) VALUES (<their tg_user_id>, 1);`",
-    "The **PMS → Projects** menu item is in `modules/welcome/ccmps/views/sidemenu.php` (shown to system admins).",
+    "The **PMS → Projects** menu item is in the staff side menu, `modules/honcho/views/inspinia/admin/adminsidemenu.php`, shown to every staff login (`Pm.php` checks access). The member side menu (`sidemenu.php`) still has the block, switched off with `if(false && …)`: running PMS needs the Honcho staff module, so PMS is sold with Honcho, never to a members-only client (decided 2026-10-18).",
     "Optional: `UPDATE pm_settings SET settingvalue = '1' WHERE setting_key = 'include_ccmps_users';` to offer members in the pickers.",
   ]},
   { type: 'p', text: "PMS also uses the `timedate` and `system-auditlogger` modules and the constants `SYS_ADMIN_PHONE`, `NB_CLR`, `SN_*` and `PUBLIC_WEBSITE` from `config.php`." },
@@ -107,7 +107,7 @@ const sections = [
   { type: 'table', headers: ['Issue', 'Effect'], rows: [
     ["PMS was built and tested (42 checks, per the README) on **stock** Trongate v2, not on Honcho's modified engine.", 'On this engine the first request crashed with a 500 until the engine additions were made (2026-10-06). The logged-in pages and forms have **not yet been re-tested** on this engine.'],
     ["`PM_SYS_SETTING_ID` is hard-coded in `Pm.php`.", "Each client's `system_settings` row id may differ, so this line must be edited per installation."],
-    ["The PMS menu item is shown to system admins whether or not PMS is switched on.", 'If PMS is off, clicking it just shows the "not enabled" message.'],
+    ["The PMS menu item is shown to every staff login whether or not PMS is switched on.", 'If PMS is off, clicking it just shows the "not enabled" message.'],
     ["`Pm.php` starts with `ini_set('display_errors', 1);` and `error_reporting(E_ALL);` left over from debugging.", 'PHP errors would be shown to users. Remove before deploying.'],
   ]},
 ]},

@@ -8,11 +8,11 @@
 // artifact, localStorage is the correct, standard tool here).
 // ============================================================
 
-// Change this to match wherever the app is actually deployed —
-// currently set for local XAMPP testing. For a real deployment this
-// would point at the live domain instead (e.g. 'https://bpapilots.org').
-//const API_BASE = 'http://localhost/bpausa/welcome-api';
-const API_BASE = 'https://bpauat.bpapilots.org/welcome-api';
+// The app talks to the site it was loaded from, so the same files work
+// on the Mac (http://localhost/bpausa/ccmpsmobile/), staging and production.
+// SITE_BASE is everything in the page address before /ccmpsmobile/.
+const SITE_BASE = window.location.origin + window.location.pathname.split('/ccmpsmobile/')[0];
+const API_BASE = SITE_BASE + '/welcome-api';
 
 // Base URL of the full web app (not the API) — used only for the Home
 // screen's iframe, which loads Welcome::mobile_bridge() to convert this
@@ -20,7 +20,7 @@ const API_BASE = 'https://bpauat.bpapilots.org/welcome-api';
 // Same domain as API_BASE, just without the /welcome-api suffix — kept
 // as its own constant since the two could differ (e.g. a future setup
 // where the mobile API and the web app live on different hosts).
-const WEB_BASE_URL = 'https://bpauat.bpapilots.org';
+const WEB_BASE_URL = SITE_BASE;
 
 const TOKEN_KEY = 'bpa_token';
 

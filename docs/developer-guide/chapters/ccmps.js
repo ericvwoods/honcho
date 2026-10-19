@@ -178,7 +178,7 @@ const sections = [
   { type: 'ul', items: [
     "**Login and refresh** (`Welcome.php`, `refreshmysessiondata()`): the flags are set from the columns, then from the groups when the member has a login row. They also set `ccmps_admin` from `ccmps_ccmp_admin`; the menus check `ccmps_admin`, which nothing used to set, so the Member Admin menu now appears.",
     "**A member with no login row** gets one (`trongate_users`) when given a role; a member who never gets a role doesn't need one. Members with no login row keep column-based flags.",
-    "**Deceased and deleted members** were left out of the groups in step 2, so their columns may still show roles.",
+    "**Deceased members** keep no roles: saving a record with Deceased ticked calls `rbac_clear_member_access()`, which removes the login from every Security Group and clears the four columns (since 2026-10-19; older records were cleared by `2026-10-19-clear-deceased-member-roles.sql`). Soft-deleted members were left out of the groups in step 2, so their columns may still show roles.",
   ]},
 
   { type: 'h2', text: 'Visible-but-Disabled vs. Fully-Hidden' },

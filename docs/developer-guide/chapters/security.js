@@ -89,7 +89,7 @@ const sections = [
     "DMS group 1 → role 6, which doesn't exist (its other row, role 1, carried across).",
     "Chapter admins got the **dmslibsubadmin** DMS role from code, but that role had no functions in the tables. Step 4 (2026-10-18) gave Chapter Admins every DMS function, limited to their own chapter's documents.",
     "`Dmslibrary.php` has blocks that look for staff groups 5–8 in `honcho_users_tguserid_security_group` (which has only 1–4); they are all commented out.",
-    "Test data: one chapter admin with no login number (Margaret Fisher, 1536); one deceased member with roles (Leslie Morris, 1435).",
+    "Test data: one chapter admin with no login number (Margaret Fisher, 1536); one deceased member with roles (Leslie Morris, 1435), cleared 2026-10-19 along with the rule that a deceased member keeps no roles or groups.",
   ]},
 ]},
 

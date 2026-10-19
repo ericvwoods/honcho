@@ -260,6 +260,20 @@ function rbac_sync_member_columns(int $ccmp_id): void {
     $model->update($ccmp_id, $data, 'ccmps');
 }
 
+function rbac_clear_member_access(int $ccmp_id): void {
+    // deceased member: out of every Security Group, and the four role columns cleared
+    $tg    = rbac_member_login($ccmp_id, false);
+    $model = new Model();
+    if ($tg > 0) {
+        $model->query_bind('DELETE FROM system_group_users WHERE tg_user_id = :uid', array('uid' => $tg));
+    }
+    $data = array();
+    foreach (rbac_member_roles() as $role) {
+        $data[$role['col']] = 0;
+    }
+    $model->update($ccmp_id, $data, 'ccmps');
+}
+
 function rbac_sync_group_members(int $group_id): void {
     // after a group's people, functions or active flag change: re-sync every member login in it
     $model = new Model();

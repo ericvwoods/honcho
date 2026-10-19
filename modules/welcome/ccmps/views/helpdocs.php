@@ -285,7 +285,7 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
                         <ul>
                             <li><strong>Login and refresh</strong> (<code>Welcome.php</code>, <code>refreshmysessiondata()</code>): the flags are set from the columns, then from the groups when the member has a login row. They also set <code>ccmps_admin</code> from <code>ccmps_ccmp_admin</code>; the menus check <code>ccmps_admin</code>, which nothing used to set, so the Member Admin menu now appears.</li>
                             <li><strong>A member with no login row</strong> gets one (<code>trongate_users</code>) when given a role; a member who never gets a role doesn't need one. Members with no login row keep column-based flags.</li>
-                            <li><strong>Deceased and deleted members</strong> were left out of the groups in step 2, so their columns may still show roles.</li>
+                            <li><strong>Deceased members</strong> keep no roles: saving a record with Deceased ticked calls <code>rbac_clear_member_access()</code>, which removes the login from every Security Group and clears the four columns (since 2026-10-19; older records were cleared by <code>2026-10-19-clear-deceased-member-roles.sql</code>). Soft-deleted members were left out of the groups in step 2, so their columns may still show roles.</li>
                         </ul>
 
                         <h2>Visible-but-Disabled vs. Fully-Hidden</h2>

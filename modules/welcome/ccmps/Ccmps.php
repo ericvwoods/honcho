@@ -2118,6 +2118,9 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
             rbac_set_member_role((int) $ccmpid, $role_fn, (int) $ccmps_data[$role['col']] === 1, (int) ($_SESSION['tg_user_id'] ?? 0));
         }
     }
+    if ($is_deceased) { // a deceased member keeps no roles or group memberships
+        rbac_clear_member_access((int) $ccmpid);
+    }
 
     // -----------------------------------------------------------------------
     // 3a. DUES TRANSACTION — create a National dues transaction for the

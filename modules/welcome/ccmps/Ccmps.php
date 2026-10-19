@@ -841,6 +841,13 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
   break;
 
+  case 'mngallccmps': // All Members list - keep the mode so Update gets a Save button and Close returns to the list
+  case 'mngdeleted':
+
+      $_SESSION['actionmode'] = 'mamv'; // mam viewing
+
+  break;
+
 
 }
 //echo(837); die();
@@ -1116,6 +1123,11 @@ if($_SESSION['ccmpmode'] == 'subentity_admin'){ // chapter admin managing his ch
 }
 
 if($_SESSION['ccmpmode'] == 'mamv'){ // member admin managing all member
+    $_SESSION['actionmode'] = 'mamu'; // manage all members update
+}
+
+// All Members list (manage/mngallccmps and its siblings) - without this the form showed no Save button
+if(in_array($_SESSION['ccmpmode'], array('mngallccmps', 'ccmp_admin', 'honcho_admin', 'honchomngallccmps', 'mngdeleted'))){
     $_SESSION['actionmode'] = 'mamu'; // manage all members update
 }
 
@@ -2096,6 +2108,14 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         } else {
             $addr_data['ccmp_id'] = $ccmpid;
             $this->model->insert($addr_data, 'ccmps_addresses');
+        }
+    }
+
+    // RBAC step 5: the four admin roles live in Security Groups - each saved box joins or
+    // leaves its group (only boxes this person was allowed to change are in $ccmps_data)
+    foreach (rbac_member_roles() as $role_fn => $role) {
+        if (array_key_exists($role['col'], $ccmps_data)) {
+            rbac_set_member_role((int) $ccmpid, $role_fn, (int) $ccmps_data[$role['col']] === 1, (int) ($_SESSION['tg_user_id'] ?? 0));
         }
     }
 
@@ -8210,10 +8230,11 @@ $user_obj = $this->model->get_one_where('id', $ccmprecid , 'ccmps');
 
     // Security
     $_SESSION['ccmps_cms_admin']        = $user_obj->cms_admin;
-    $_SESSION['ccmps_admin']            = $user_obj->admin;
+    $_SESSION['ccmps_ccmp_admin']       = $user_obj->ccmp_admin; // was ccmps_admin from a nonexistent admin column
     $_SESSION['ccmps_student_admin']    = $user_obj->student_admin;
     $_SESSION['ccmps_subentity_admin']  = $user_obj->subentity_admin;
     $_SESSION['ccmps_system_admin']     = $user_obj->system_admin;
+    rbac_member_session_flags((int) $user_obj->id); // RBAC step 5: from Security Groups; also sets ccmps_admin
     $_SESSION['ccmps_lib_access']       = $user_obj->libacclevel;
 
     $_SESSION['honcho_national_officer'] = $user_obj->national_officer;

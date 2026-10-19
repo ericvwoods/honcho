@@ -13,6 +13,15 @@
   rbac_people($kinds)                           every login of those kinds, named, sorted by name
         _rbac_function_list($tg_user_id)        everything one person may do, read once per page
 
+  Member admin roles (RBAC step 5) - the four roles on the member record live in Security Groups;
+  the ccmps columns are kept as a copy, re-synced after every change:
+  rbac_member_roles()                           ccmps/<function> => column, group, session flag
+  rbac_member_login($ccmp_id, $create)          the member's login (trongate_users id); can create it
+  rbac_set_member_role($ccmp_id, $fn, $on, $by) tick / untick a role = join / leave its group
+  rbac_sync_member_columns($ccmp_id)            copy the member's roles from the groups to the columns
+  rbac_sync_group_members($group_id)            the same for every member login in a group
+  rbac_member_session_flags($ccmp_id)           set the ccmps_* session flags from the groups (login)
+
   Who is always $_SESSION['tg_user_id'] (set by both logins), never the URL or a form.
   The database is read on every page (once, then remembered for that page), so a
   change on the Security screens works on the person's next click.
@@ -25,8 +34,8 @@ function rbac_allowed(string $module, string $function): bool {
     return isset($allowed[$module.'/'.$function]);
 }
 
-function rbac_allowed_for(int $tg_user_id, string $module, string $function): bool {
-    $allowed = _rbac_function_list($tg_user_id);
+function rbac_allowed_for(int $tg_user_id, string $module, string $function, bool $refresh = false): bool {
+    $allowed = _rbac_function_list($tg_user_id, $refresh);
     return isset($allowed[$module.'/'.$function]);
 }
 
@@ -114,10 +123,10 @@ function rbac_people(array $kinds = array('staff', 'member')): array {
                            ORDER BY name, t.id", 'object');
 }
 
-function _rbac_function_list(int $tg_user_id): array {
-    // 'module/function' => true for one person; read once per page per person
+function _rbac_function_list(int $tg_user_id, bool $refresh = false): array {
+    // 'module/function' => true for one person; read once per page per person ($refresh after a change)
     static $cache = array();
-    if (isset($cache[$tg_user_id])) {
+    if (isset($cache[$tg_user_id]) && !$refresh) {
         return $cache[$tg_user_id];
     }
 
@@ -140,4 +149,136 @@ function _rbac_function_list(int $tg_user_id): array {
         $cache[$tg_user_id][$row->module_code.'/'.$row->function_code] = true;
     }
     return $cache[$tg_user_id];
+}
+
+/* --------------------------- member admin roles --------------------------- */
+
+function rbac_member_roles(): array {
+    // ccmps/<function> => the ccmps column (kept as a copy), the group a tick joins, the session flag login sets
+    return array(
+        'system_admin'  => array('col' => 'system_admin',    'group' => 'Member System Admins', 'session' => 'ccmps_system_admin'),
+        'member_admin'  => array('col' => 'ccmp_admin',      'group' => 'Member Admins',        'session' => 'ccmps_ccmp_admin'),
+        'chapter_admin' => array('col' => 'subentity_admin', 'group' => 'Chapter Admins',       'session' => 'ccmps_subentity_admin'),
+        'student_admin' => array('col' => 'student_admin',   'group' => 'Student Admins',       'session' => 'ccmps_student_admin'),
+    );
+}
+
+function rbac_member_login(int $ccmp_id, bool $create = false): int {
+    // the member's login (trongate_users id), or 0. With $create, a missing login row is made
+    // (members sign in with the username on their ccmps row; the row is what groups hang on)
+    $model  = new Model();
+    $member = $model->get_where($ccmp_id, 'ccmps');
+    if (!$member) {
+        return 0;
+    }
+
+    $tg = (int) $member->trongate_user_id;
+    if ($tg > 0) {
+        $row = $model->get_where($tg, 'trongate_users');
+        if ($row && $row->login_acct_info_table == 'ccmps' && (int) $row->login_acct_table_id == $ccmp_id) {
+            return $tg;
+        }
+        if (!$row && $create) { // the number is the member's; only the row is missing
+            $model->query_bind('INSERT INTO trongate_users (id, title, login_acct_table_id, login_acct_info_table) VALUES (:id, :title, :acct, :tbl)',
+                               array('id' => $tg, 'title' => _rbac_login_title($member), 'acct' => $ccmp_id, 'tbl' => 'ccmps'));
+            return $tg;
+        }
+        if (!$create) {
+            return 0;
+        }
+        // the number belongs to someone else's login - give this member a new one below
+    }
+    if (!$create) {
+        return 0;
+    }
+
+    $new = (int) $model->insert(array('title' => _rbac_login_title($member), 'login_acct_table_id' => $ccmp_id,
+                                      'login_acct_info_table' => 'ccmps'), 'trongate_users');
+    $model->update($ccmp_id, array('trongate_user_id' => $new), 'ccmps');
+    return $new;
+}
+
+function _rbac_login_title(object $member): string {
+    $title = trim((string) ($member->username ?? '')) ?: trim((string) ($member->email_address ?? '')) ?: 'member '.$member->id;
+    return substr($title, 0, 32);
+}
+
+function _rbac_role_group(string $function): int {
+    // the group a tick on the member record joins: the one named in rbac_member_roles(),
+    // or - if that was renamed - the first group holding ccmps/<function>
+    $roles = rbac_member_roles();
+    $model = new Model();
+    $group = $model->get_one_where('title', $roles[$function]['group'], 'system_groups');
+    if ($group) {
+        return (int) $group->id;
+    }
+    $rows = $model->query_bind("SELECT gf.group_id FROM system_group_functions gf
+                                  JOIN system_functions f ON f.id = gf.function_id AND f.code = :fn
+                                  JOIN system_modules m   ON m.id = f.module_id AND m.code = 'ccmps'
+                                 ORDER BY gf.group_id LIMIT 1", array('fn' => $function), 'object');
+    return !empty($rows) ? (int) $rows[0]->group_id : 0;
+}
+
+function rbac_set_member_role(int $ccmp_id, string $function, bool $on, int $by = 0): void {
+    // tick = join the role's group, untick = leave it; then the ccmps columns are re-synced
+    $roles = rbac_member_roles();
+    if (!isset($roles[$function])) {
+        return;
+    }
+
+    $tg       = rbac_member_login($ccmp_id, $on); // a login row is only made when giving a role
+    $group_id = $tg > 0 ? _rbac_role_group($function) : 0;
+    $model    = new Model();
+
+    if ($group_id > 0 && $on) {
+        $model->query_bind('INSERT IGNORE INTO system_group_users (group_id, tg_user_id, created_by, created_at) VALUES (:gid, :uid, :by, :at)',
+                           array('gid' => $group_id, 'uid' => $tg, 'by' => $by, 'at' => time()));
+    } elseif ($group_id > 0) {
+        $model->query_bind('DELETE FROM system_group_users WHERE group_id = :gid AND tg_user_id = :uid',
+                           array('gid' => $group_id, 'uid' => $tg));
+    }
+
+    if ($tg > 0) {
+        rbac_sync_member_columns($ccmp_id);
+    } else { // no login and taking a role away: just the column
+        $model->update($ccmp_id, array($roles[$function]['col'] => 0), 'ccmps');
+    }
+}
+
+function rbac_sync_member_columns(int $ccmp_id): void {
+    // ccmps.system_admin / ccmp_admin / subentity_admin / student_admin = what the groups give now.
+    // Members with no login row keep their columns (login falls back to them).
+    $tg = rbac_member_login($ccmp_id, false);
+    if ($tg < 1) {
+        return;
+    }
+    $data = array();
+    foreach (rbac_member_roles() as $function => $role) {
+        $data[$role['col']] = rbac_allowed_for($tg, 'ccmps', $function, true) ? 1 : 0;
+    }
+    $model = new Model();
+    $model->update($ccmp_id, $data, 'ccmps');
+}
+
+function rbac_sync_group_members(int $group_id): void {
+    // after a group's people, functions or active flag change: re-sync every member login in it
+    $model = new Model();
+    $rows  = $model->query_bind("SELECT t.login_acct_table_id AS ccmp_id FROM system_group_users gu
+                                   JOIN trongate_users t ON t.id = gu.tg_user_id AND t.login_acct_info_table = 'ccmps'
+                                  WHERE gu.group_id = :gid", array('gid' => $group_id), 'object');
+    foreach ((array) $rows as $row) {
+        rbac_sync_member_columns((int) $row->ccmp_id);
+    }
+}
+
+function rbac_member_session_flags(int $ccmp_id): void {
+    // at login / refresh: the ccmps_* role flags from the groups. A member with no login row
+    // keeps the flags already set from the ccmps columns.
+    $tg = rbac_member_login($ccmp_id, false);
+    if ($tg > 0) {
+        foreach (rbac_member_roles() as $function => $role) {
+            $_SESSION[$role['session']] = rbac_allowed_for($tg, 'ccmps', $function, true) ? 1 : 0;
+        }
+    }
+    $_SESSION['ccmps_admin'] = !empty($_SESSION['ccmps_ccmp_admin']) ? 1 : 0; // the menus check ccmps_admin
 }

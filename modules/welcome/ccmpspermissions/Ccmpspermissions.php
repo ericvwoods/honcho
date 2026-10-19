@@ -160,12 +160,16 @@ class Ccmpspermissions extends Trongate {
         }
     }
 
-    $updata[$flag] = $value;
-    $this->model->update($recid, $updata, 'ccmps');
+    // RBAC step 5: a tick joins / leaves the role's Security Group; the ccmps column is re-synced from it
+    foreach(rbac_member_roles() as $role_fn => $role){
+        if($role['col'] == $flag){
+            rbac_set_member_role($recid, $role_fn, $value == 1, intval($_SESSION['tg_user_id'] ?? 0));
+        }
+    }
 
     // changing your own flags takes effect now; everyone else at next login
     if($recid == intval($_SESSION['ccmp_rec_id'])){
-        $_SESSION[$flags[$flag][1]] = $value;
+        rbac_member_session_flags($recid);
     }
 
     // Auditlog
@@ -183,6 +187,14 @@ class Ccmpspermissions extends Trongate {
 
     $this->module('system-auditlogger');
     $this->auditlogger->logevent($type, $action, $func, $un, $time, $str3, $str4, $str5, $str6);
+
+    // read back: a role also given by another Security Group can't be removed here
+    $after = $this->model->get_where($recid, 'ccmps');
+    if(intval($after->$flag) != $value){
+        echo json_encode(array('ok' => false, 'msg' => $member->first_name.' '.$member->last_name.' still has '.$flags[$flag][0]
+                         .' through another Security Group - change it on the Security Groups page.'));
+        die();
+    }
 
     echo json_encode(array('ok' => true, 'msg' => $flags[$flag][0].($value ? ' given to ' : ' removed from ').$member->first_name.' '.$member->last_name.'.'));
     die();

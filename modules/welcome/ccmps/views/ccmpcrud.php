@@ -129,7 +129,7 @@
         <p>Are you sure?</p>
         <p>You are about to delete a Member record. This cannot be undone. Do you really want to do this?</p>
         <?php
-        echo '<p>' . form_button('close', 'Cancel', $attr_close);
+        echo '<p>' . form_button('close', 'Cancel', $attr_close ?? array('class' => 'btn btn-white', 'data-dismiss' => 'modal')); // $attr_close was never set here
         echo form_submit('submit', 'Yes - Delete Now', array("class" => 'danger')) . '</p>';
         echo form_close();
         ?>

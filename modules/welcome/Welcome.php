@@ -519,6 +519,7 @@ json($_SESSION); die();
             $_SESSION['ccmps_ccmp_admin']      = $usr_obj->ccmp_admin;
   //          $_SESSION['ccmps_cms_admin']       = $usr_obj->cms_admin; // cms_admin not a confirmed real column on ccmps — left disabled
             $_SESSION['ccmps_system_admin']    = $usr_obj->system_admin;
+            rbac_member_session_flags((int) $usr_obj->id); // RBAC step 5: the four roles come from Security Groups (columns above are the fallback)
 
             $_SESSION['honcho_national_officer'] = $usr_obj->national_officer;
 

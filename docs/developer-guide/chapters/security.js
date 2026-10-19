@@ -27,8 +27,8 @@ const sections = [
     ['1', 'Back up; build the tables, helper and screens. No module uses them.', 'Done 2026-10-18; on staging.'],
     ['2', 'Migrate the data: DMS, Honcho and CCMPS functions; existing groups and people; a report of anything that will not map.', 'Done 2026-10-18; on staging. See the Migration tab.'],
     ['3', 'Switch PMS to `rbac_require()`; team picker uses `rbac_person()`.', 'Done 2026-10-18; on staging. See the PMS chapter.'],
-    ['4', 'Switch DMS: every action asks Security Groups, either login; chapter admins manage their own chapter\'s documents.', 'Built 2026-10-18 (Mac). See the DMS chapter, RBAC tab.'],
-    ['5', 'Switch CCMPS: the `ccmps_*` session flags are set from groups at login; Member Permissions ticks become group memberships.', 'Not started'],
+    ['4', 'Switch DMS: every action asks Security Groups, either login; chapter admins manage their own chapter\'s documents.', 'Done 2026-10-18; on staging. See the DMS chapter, RBAC tab.'],
+    ['5', 'Switch CCMPS: the `ccmps_*` session flags are set from groups at login; Member Permissions ticks become group memberships.', 'Built 2026-10-18 (Mac). See the CCMPS chapter, Member Admin Roles.'],
     ['6', 'Retire the old tables (rename with `zz_`, drop later).', 'Not started'],
   ]},
 ]},
@@ -104,7 +104,7 @@ const sections = [
     "`rbac_person()` follows `trongate_users.login_acct_info_table` / `login_acct_table_id` to the account row (only `ccmps` and `honcho_user_accounts` are read), and falls back to `trongate_users.title`, then the username, when the row has no name.",
   ]},
   { type: 'p', text: "Three more: `rbac_allowed_for($tg_user_id, $module, $function)` asks about someone else (PMS uses it before putting a new team member in PM Users); `rbac_module_enabled($module)` reads the module switch; `rbac_people($kinds)` lists every staff and/or member login with a name (the Security screens' people list and PMS's pickers)." },
-  { type: 'alert', variant: 'info', text: "Switched so far: **PMS** (step 3) and **DMS** (step 4). CCMPS still uses its own permission code until step 5." },
+  { type: 'alert', variant: 'info', text: "Switched: **PMS** (step 3), **DMS** (step 4) and the **CCMPS member admin roles** (step 5: `rbac_member_roles()`, `rbac_set_member_role()`, `rbac_sync_member_columns()`, `rbac_sync_group_members()`, `rbac_member_session_flags()`). CCMPS's many individual `$_SESSION['ccmps_*']` checks still read the flags, which now come from the groups; converting them to `rbac_allowed()` is later work." },
 ]},
 
 // ============================================================

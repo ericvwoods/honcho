@@ -46,6 +46,7 @@
         _audit()
   person()                       effective access for tg user segment(3) - changes nothing
         _people()
+  _sync_member()                 member login's roles -> ccmps columns (rbac_sync_member_columns)
   _get_group()
   _enabled_functions()
   _people()
@@ -219,6 +220,7 @@ class Rbac extends Trongate {
     $updata['updated_by'] = intval($_SESSION['tg_user_id'] ?? 0);
     $updata['updated_at'] = time();
     $this->model->update($group->id, $updata, 'system_groups');
+    rbac_sync_group_members($group->id); // member admin roles: keep the ccmps columns in step
 
     $action = $updata['active'] ? 'ActivateGroup' : 'DeactivateGroup';
     $this->_audit('update', $action, 'rbac-togglegroup', $group->id, 'system_groups', 'Group: '.$group->title);
@@ -290,6 +292,7 @@ class Rbac extends Trongate {
     }
 
     if($added || $removed){
+        rbac_sync_group_members($group->id); // member admin roles: keep the ccmps columns in step
         $addlist = implode(', ', array_intersect_key($enabled, $added));
         $remlist = implode(', ', array_intersect_key($enabled, $removed));
         $this->_audit('update', 'SetGroupPrivileges', 'rbac-privilegessubmit', $group->id, 'system_groups',
@@ -348,6 +351,7 @@ class Rbac extends Trongate {
                                    'created_by' => intval($_SESSION['tg_user_id'] ?? 0), 'created_at' => time()), 'system_group_users');
         $this->_audit('insert', 'AddGroupMember', 'rbac-addmember', $group->id, 'system_group_users',
                       'Group: '.$group->title, 'Person: '.$person->name.' ('.$person->kind.', TGUID '.$tg_user_id.')');
+        $this->_sync_member($tg_user_id);
     }
 
     set_flashdata(out($person->name).' added to '.out($group->title).'.');
@@ -364,6 +368,7 @@ class Rbac extends Trongate {
 
     $this->model->query_bind("DELETE FROM system_group_users WHERE group_id = :gid AND tg_user_id = :uid",
                              array('gid' => $group->id, 'uid' => $tg_user_id));
+    $this->_sync_member($tg_user_id);
     $this->_audit('delete', 'RemoveGroupMember', 'rbac-removemember', $group->id, 'system_group_users',
                   'Group: '.$group->title, 'Person: '.$name.' (TGUID '.$tg_user_id.')');
 
@@ -441,6 +446,14 @@ class Rbac extends Trongate {
   function _people(){
     // every login, named, "staff" or "member" beside it (shared with PMS's picker)
     return rbac_people();
+  }
+
+  function _sync_member($tg_user_id){
+    // a member login's admin roles changed: keep the ccmps columns (and Member Permissions) in step
+    $tg = $this->model->get_where(intval($tg_user_id), 'trongate_users');
+    if($tg && $tg->login_acct_info_table == 'ccmps'){
+        rbac_sync_member_columns((int) $tg->login_acct_table_id);
+    }
   }
 
   function _token(){

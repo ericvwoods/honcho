@@ -409,10 +409,12 @@ $can_grant_chapter_admin = $is_system_admin
 <?php cf_section_open('roles', 'Roles & Permissions', 'fa-shield'); ?>
     <div class="form-group col-md-2"><label><input type="checkbox" name="system_admin" value="1" <?= !empty($data['system_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> System Admin</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="student_admin" value="1" <?= !empty($data['student_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Student Admin</label></div>
-    <div class="form-group col-md-2"><label><input type="checkbox" name="ccmp_admin" value="1" <?= !empty($data['ccmp_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> CCMP Admin</label></div>
+    <div class="form-group col-md-2"><label><input type="checkbox" name="ccmp_admin" value="1" <?= !empty($data['ccmp_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> <?= CCMP ?> Admin</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="content_admin" value="1" <?= !empty($data['content_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Content Admin</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="event_admin" value="1" <?= !empty($data['event_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Event Admin</label></div>
-    <!-- Chapter Admin (subentity_admin) is edited in Preferences now, not here — see the chapter-president exception -->
+    <?php if ($can_grant_chapter_admin): ?> <!-- not $locked_system: chapter presidents may grant it too -->
+    <div class="form-group col-md-2"><label><input type="checkbox" name="subentity_admin" value="1" <?= !empty($data['subentity_admin']) ? 'checked' : '' ?>> <?= SUBENTITY ?> Admin</label></div>
+    <?php endif; ?>
     <div class="form-group col-md-2"><label><input type="checkbox" name="locked" value="1" <?= !empty($data['locked']) ? 'checked' : '' ?> <?= $locked_system ?>> Locked</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="inactive" value="1" <?= !empty($data['inactive']) ? 'checked' : '' ?> <?= $locked_system ?>> Inactive</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="approved" value="1" <?= !empty($data['approved']) ? 'checked' : '' ?> <?= $locked_system ?>> Approved</label></div>
@@ -430,11 +432,6 @@ $can_grant_chapter_admin = $is_system_admin
     <div class="form-group col-md-2"><label><input type="checkbox" name="emailoptout" value="1" <?= !empty($data['emailoptout']) ? 'checked' : '' ?>> Email Opt Out</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="directoryoptout" value="1" <?= !empty($data['directoryoptout']) ? 'checked' : '' ?>> Directory Opt Out</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="mail_notices" value="1" <?= !empty($data['mail_notices']) ? 'checked' : '' ?>> Mail Notices</label></div>
-    <?php if ($can_grant_chapter_admin): ?>
-    <div class="form-group col-md-2">
-        <label><input type="checkbox" name="subentity_admin" value="1" <?= !empty($data['subentity_admin']) ? 'checked' : '' ?>> Chapter Admin</label>
-    </div>
-    <?php endif; ?>
 
     <div class="col-md-12" style="margin-top: 25px;"><h4>Display Size</h4><hr></div>
     <?php

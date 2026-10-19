@@ -42,7 +42,8 @@
                 <div class="col-md-4">
                     <br>
                     <p>Click a box to give or remove a permission. It saves straight away and is written to the Auditlog.
-                       A change takes effect the next time that <?= strtolower(CCMP) ?> logs in.</p>
+                       A change takes effect the next time that <?= strtolower(CCMP) ?> logs in.
+                       Each box is a membership of a Security Group (Member System Admins, Member Admins, Chapter Admins, Student Admins).</p>
                 </div>
 
             </div> <!-- end row -->

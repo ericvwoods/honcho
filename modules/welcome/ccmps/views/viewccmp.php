@@ -132,6 +132,10 @@
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/ccmphome">
                         <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
                     </a>
+                <?php elseif (in_array($_SESSION['ccmpmode'], array('mngallccmps', 'mngdeleted'))): ?>  <!-  coming from the All Members list -->
+                    <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/<?= $_SESSION['ccmpmode'] ?>">
+                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
+                    </a>
                 <?php elseif ($_SESSION['ccmpmode'] == 'mamv'): ?>  <!-  coming from manage page as a ccmp admin-->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/ccmp_admin">
                         <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> 137 Close</span>
@@ -379,7 +383,12 @@
     <?php
         vf_bool_row('System Admin', 'system_admin', $data);
         vf_bool_row('Student Admin', 'student_admin', $data);
-        vf_bool_row('CCMP Admin', 'ccmp_admin', $data);
+        vf_bool_row(CCMP . ' Admin', 'ccmp_admin', $data);
+    ?>
+    <?php if ($can_grant_chapter_admin): ?>
+        <?php vf_bool_row(SUBENTITY . ' Admin', 'subentity_admin', $data); ?>
+    <?php endif; ?>
+    <?php
         vf_bool_row('Locked', 'locked', $data);
         vf_bool_row('Inactive', 'inactive', $data);
         vf_bool_row('Approved', 'approved', $data);
@@ -400,9 +409,6 @@
         vf_bool_row('Directory Opt Out', 'directoryoptout', $data);
         vf_bool_row('Mail Notices', 'mail_notices', $data);
     ?>
-    <?php if ($can_grant_chapter_admin): ?>
-        <?php vf_bool_row('Chapter Admin', 'subentity_admin', $data); ?>
-    <?php endif; ?>
 
     <div class="col-md-12" style="margin-top: 25px;"><h4>Display Size</h4><hr></div>
     <?php

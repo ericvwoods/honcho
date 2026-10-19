@@ -76,7 +76,7 @@ const sections = [
     ['Roles & Permissions', '`system_admin`, `student_admin`, `ccmp_admin`, `content_admin`, `event_admin`, `locked`, `inactive`, `approved`', '`system_admin` only'],
     ['Roles & Permissions (broader visibility)', '`soft_deleted`', 'Visible to `system_admin`/`subentity_admin`; editable by `system_admin` only'],
     ['Preferences', '`vip`', '`system_admin`, `subentity_admin`, or `ccmp_admin` — deliberately excludes `student_admin`'],
-    ['Preferences', '`subentity_admin`', "See the RBAC tab's worked example — the chapter-admin-granting exception"],
+    ['Roles & Permissions', '`subentity_admin` (Chapter Admin)', "Not locked like the other role boxes: see the RBAC tab's worked example — the chapter-admin-granting exception. Moved here from Preferences 2026-10-19"],
     ['Preferences', '`language`, `donotcall`, `emailoptout`, `directoryoptout`, `mail_notices`', 'The member themselves, freely'],
     ['Admin Notes', '`notes`, `deceased`', 'Fully hidden from the member; `system_admin`/`subentity_admin`/`ccmp_admin` can see and edit'],
     ['Account', '`activate_code`, `reset_code`', 'Fully hidden from everyone except `system_admin`, who can both see and edit'],
@@ -168,9 +168,17 @@ const sections = [
   { type: 'ul', items: [
     '**Who:** member system admins only, whether or not the Honcho staff module is deployed. The check in `__construct()` reads `system_admin` from the database, not the session, so removing someone\'s System Admin locks them out of the screen at once. Staff logins are sent back to the Honcho dashboard.',
     '**Columns:** the flags login copies into the session, listed in `_permission_flags()`: `system_admin`, `ccmp_admin`, `subentity_admin`, `student_admin`. `content_admin`, `library_admin`, `financial_admin` and `event_admin` are on `ccmps` but nothing reads them yet; add them to `_permission_flags()` when something does.',
-    '**Saving:** each click posts to `togglepermission()` (AJAX, JSON reply), which saves one column and writes a `GrantPermission`/`RemovePermission` Auditlog entry. Only columns in `_permission_flags()` can be changed, and a per-session token stops other sites posting changes.',
+    '**Saving:** each click posts to `togglepermission()` (AJAX, JSON reply). Since RBAC step 5 (2026-10-18) a tick **joins or leaves the role\'s Security Group** (`rbac_set_member_role()`: Member System Admins, Member Admins, Chapter Admins, Student Admins) and the `ccmps` column is re-synced from the groups; a role the member also gets from another group can\'t be removed here (the reply says so). It writes a `GrantPermission`/`RemovePermission` Auditlog entry. Only columns in `_permission_flags()` can be changed, and a per-session token stops other sites posting changes.',
     "**Safety:** you can't remove your own System Admin, and the last System Admin can't be removed.",
-    "**When it takes effect:** at that member's next login, because login copies the flags into the session. Changing your own flags updates your session straight away.",
+    "**When it takes effect:** at that member's next login, because login sets the `ccmps_*` flags from the groups (`rbac_member_session_flags()`). Changing your own flags updates your session straight away.",
+  ]},
+
+  { type: 'h2', text: 'Member Admin Roles Live in Security Groups' },
+  { type: 'p', text: "Since RBAC step 5 (2026-10-18) the four member admin roles are Security Groups functions (`ccmps/system_admin`, `member_admin`, `chapter_admin`, `student_admin`). The `ccmps` columns (`system_admin`, `ccmp_admin`, `subentity_admin`, `student_admin`) are kept as a **copy** so existing queries and reports keep working; `rbac_sync_member_columns()` rewrites them after every change. The Member Permissions screen, the Roles & Permissions boxes on the member record (`ccmpsubmit()`) and the Security Groups screens all go through the same helpers, so the three always agree." },
+  { type: 'ul', items: [
+    "**Login and refresh** (`Welcome.php`, `refreshmysessiondata()`): the flags are set from the columns, then from the groups when the member has a login row. They also set `ccmps_admin` from `ccmps_ccmp_admin`; the menus check `ccmps_admin`, which nothing used to set, so the Member Admin menu now appears.",
+    "**A member with no login row** gets one (`trongate_users`) when given a role; a member who never gets a role doesn't need one. Members with no login row keep column-based flags.",
+    "**Deceased and deleted members** were left out of the groups in step 2, so their columns may still show roles.",
   ]},
 
   { type: 'h2', text: 'Visible-but-Disabled vs. Fully-Hidden' },

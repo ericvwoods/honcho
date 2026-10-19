@@ -59,6 +59,9 @@
 
             <div class="ibox-content">  
 
+                <a class="btn btn-primary"  type="button" href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
+                <br><br>
+
                 <?php if($_SESSION['admode'] == 'sysadmin'): ?> 
 
                     <div>
@@ -191,7 +194,7 @@
                      
                 </div> <!-- end div table responsive-->
 
-        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
+        <a class="btn btn-primary"  type="button" href="<?= BASE_URL ?><?= HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome' ?>"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
 
             </div> <!-- ibox content table -->
  

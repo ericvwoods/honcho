@@ -20,6 +20,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] The Honcho login doesn't reset `acct_table`, so member and staff session flags mix when both logins are used in one browser.
 - [ ] Chapter-admin delete redirects to the Honcho login.
 - [ ] `/honcho` shows "Error 256" instead of the login page.
+- [ ] **Staff Account profile CRUD**: staff side menu My Profile → My Account (`adminsidemenu.php` / `usersidemenu.php`) links to the old `honcho/index/system_accounts/view/<tg_user_id>` route and shows a blank page. Build view/edit for the logged-in staff member's own account (name, job title, email, phone, photo, font sizes, password change), likely from `modules/honcho/users/` (a copy of the CCMPS views, not wired up). Log changes with `logevent()`; update the Developer's Guide.
 - [x] After the staff login the dashboard was drawn at `honcho/authenticate`, so the back button went to the login form's address; PMS's Home breadcrumb went to the member home. Login now redirects to `honcho`; PMS Home goes to `honcho` (2026-10-18).
 
 ## Permissions (RBAC)

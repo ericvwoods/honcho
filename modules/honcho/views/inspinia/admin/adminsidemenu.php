@@ -45,7 +45,7 @@
 
 
                 <li>
-                    <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label"><?= CCMPS ?></span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-users"></i> <span class="nav-label"><?= CCMPS ?></span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
 
                     <li>
@@ -63,15 +63,15 @@
                 </li>
                 <?php if(rbac_allowed('dms', 'view_library')): ?> <!-- DMS: Security Groups decide (RBAC step 4) -->
                 <li>
-                    <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">DMS</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-files-o"></i> <span class="nav-label">DMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Document Library</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-play"></i> Document Library</a></li>
                         <?php if(rbac_allowed('dms', 'view_kanban')): ?>
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/kanban"><i class="fa fa-play"></i><span class="hidden-tablet"> Kanban Board</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/kanban"><i class="fa fa-play"></i> Kanban Board</a></li>
                         <?php endif; ?>
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryaccess/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Library Access</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryaccess/manage"><i class="fa fa-play"></i> Library Access</a></li>
                         <?php /* Library Functions edited dms_filelibrary_functions, which nothing reads since RBAC step 4 (Security Groups decide). Retire with the old tables in step 6.
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryfunctions/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Library Functions</span></a></li> */ ?>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmsfilelibraryfunctions/manage"><i class="fa fa-play"></i> Library Functions</a></li> */ ?>
                         <li>
 
                            <div id="ibox4" class="sk-spinner sk-spinner-wave" style="display: none;"> <!-- toggle none/show  -->
@@ -84,8 +84,8 @@
 
                             </div>
                     </li>
-                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibuser"><i class="fa fa-play"></i><span class="hidden-tablet"> Document Library</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-play"></i><span class="hidden-tablet"> DMS Admin</span></a></li>  -->
+                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibuser"><i class="fa fa-play"></i> Document Library</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-play"></i> DMS Admin</a></li>  -->
 
                     </ul>
                 </li>
@@ -94,7 +94,7 @@
                 <li>
                     <a href="#"><i class="fa fa-tasks"></i> <span class="nav-label">PMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a class="submenu" href="<?= BASE_URL ?>pm"><i class="fa fa-play"></i><span class="hidden-tablet"> Projects</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>pm"><i class="fa fa-play"></i> Projects</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>
@@ -114,8 +114,8 @@
                                 <div class="sk-rect5"></div>
                             </div>
                     </li>
-                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibuser"><i class="fa fa-play"></i><span class="hidden-tablet"> Document Library</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-play"></i><span class="hidden-tablet"> DMS Admin</span></a></li>  -->
+                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibuser"><i class="fa fa-play"></i> Document Library</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-play"></i> DMS Admin</a></li>  -->
 
                     </ul>
                 </li>
@@ -124,18 +124,18 @@
                     <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">Website CMS</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/news/index"><i class="fa fa-play"></i><span class="hidden-tablet"> News</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/news/index"><i class="fa fa-play"></i> News</a></li>
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-comments"></i><span class="hidden-tablet"> Blog</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-comments"></i> Blog</a></li>
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-truck"></i><span class="hidden-tablet"> Online Store</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/manage"><i class="fa fa-picture-o"></i><span class="hidden-tablet"> Homepage Slider</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-truck"></i> Online Store</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/manage"><i class="fa fa-picture-o"></i> Homepage Slider</a></li>
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/contacts/manage"><i class="fa fa-calendar-o"></i><span class="hidden-tablet"> Events Calendar</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/contacts/manage"><i class="fa fa-calendar-o"></i> Events Calendar</a></li>
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-camera"></i><span class="hidden-tablet"> Photo Gallery</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-camera"></i> Photo Gallery</a></li>
 
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-play"></i><span class="hidden-tablet"> Videos</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-play"></i> Videos</a></li>
 
                        </ul>
                 </li>
@@ -145,8 +145,8 @@
                 <li>
                <!--     <a href="#"><i class="fa fa-group"></i> <span class="nav-label">People</span><span class="fa arrow"></span></a> -->
                     <ul class="nav nav-second-level collapse">
-                    <!--  <li><a class="submenu" href="<?= BASE_URL ?>honcho/ccmps_admin_menu"><i class="fa fa-user"></i><span class="hidden-tablet"> <?= CCMPS ?></span></a></li> -->
-                      <li><a class="submenu" href="<?= BASE_URL ?>welcome-ccmps/manage/honcho/honchomngallccmps"><i class="fa fa-user"></i><span class="hidden-tablet"> All <?= CCMPS ?></span></a></li>
+                    <!--  <li><a class="submenu" href="<?= BASE_URL ?>honcho/ccmps_admin_menu"><i class="fa fa-user"></i> <?= CCMPS ?></a></li> -->
+                      <li><a class="submenu" href="<?= BASE_URL ?>welcome-ccmps/manage/honcho/honchomngallccmps"><i class="fa fa-user"></i> All <?= CCMPS ?></a></li>
 
                     </ul>
                 </li>
@@ -156,9 +156,9 @@
                 <li>
                     <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">System Admin</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a class="submenu" href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i><span class="hidden-tablet"> System Settings</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i><span class="hidden-tablet"> Auditlog</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i><span class="hidden-tablet"> Security Groups</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-settings/manage"><i class="fa fa-gears"></i> System Settings</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-auditlogger/manage/sysadmin"><i class="fa fa-table"></i> Auditlog</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i> Security Groups</a></li>
                     </ul>
                 </li>
             <?php endif; ?>
@@ -166,7 +166,7 @@
                 <li>
                     <a href="#"><i class="fa fa-file-text"></i> <span class="nav-label">Reports</span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/export"><i class="fa fa-table"></i><span class="hidden-tablet"> Master Sheet</span></a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/export"><i class="fa fa-table"></i> Master Sheet</a></li>
                     </ul>
                 </li>
 -->
@@ -180,9 +180,9 @@
                         <a href="#"> System Acct Tables<span class="fa arrow"></span></a>
                         <ul class="nav nav-third-level">
 
-                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i><span class="hidden-tablet"> Fin Acct Types</span></a></li>
+                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i> Fin Acct Types</a></li>
 
-                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i><span class="hidden-tablet"> Fin Acct Status</span></a></li>
+                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i> Fin Acct Status</a></li>
 
                         </ul>
                     </li>
@@ -190,7 +190,7 @@
                     <li>
                         <a href="#"> System Settings<span class="fa arrow"></span></a>
                         <ul class="nav nav-third-level">
-                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i><span class="hidden-tablet"> Config Table</span></a></li>
+                            <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i> Config Table</a></li>
                          <li>
                                 <a href="#"> sys table 2</a>
                             </li>
@@ -223,28 +223,28 @@
 
                         <ul class="nav nav-second-level">
 
-                   <!--     <li><a class="submenu" href="<?= BASE_URL ?>honcho-users/manage"><i class="fa fa-group"></i><span class="hidden-tablet"> System Accounts</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/manage"><i class="fa fa-camera"></i><span class="hidden-tablet"> Audit Log</span></a></li>   -->
+                   <!--     <li><a class="submenu" href="<?= BASE_URL ?>honcho-users/manage"><i class="fa fa-group"></i> System Accounts</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/ccmps/manage"><i class="fa fa-camera"></i> Audit Log</a></li>   -->
 
-   <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-list-ul"></i><span class="hidden-tablet"> User Levels</span></a></li> -->
-
-
-
-                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-shield"></i><span class="hidden-tablet"> System Acct Access</span></a></li> -->
+   <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-list-ul"></i> User Levels</a></li> -->
 
 
-                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/system_accounts/manage"><i class="fa fa-group"></i><span class="hidden-tablet"> TG Users</span></a></li>
 
-                           <!--   <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i><span class="hidden-tablet"> TG Administrators</span></a></li>
-                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i><span class="hidden-tablet"> TG Comments</span></a></li>
+                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-shield"></i> System Acct Access</a></li> -->
+
+
+                    <!--    <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/system_accounts/manage"><i class="fa fa-group"></i> TG Users</a></li>
+
+                           <!--   <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i> TG Administrators</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>honcho/index/companies/manage"><i class="fa fa-table"></i> TG Comments</a></li>
                         </ul>
                     </li>
            <li>
-                                <li><a class="submenu" href="<?= BASE_URL ?>welcome/login" target="_blank" ><i class="fa fa-sign-in"></i><span class="hidden-tablet"> <?= CCMP ?> Login</span></a></li>
+                                <li><a class="submenu" href="<?= BASE_URL ?>welcome/login" target="_blank" ><i class="fa fa-sign-in"></i> <?= CCMP ?> Login</a></li>
 
                 </li>
                 <li>
-                                <li><a class="submenu" href="<?= BASE_URL ?>welcome" target="_blank" ><i class="fa fa-sign-in"></i><span class="hidden-tablet"> Public Website</span></a></li>
+                                <li><a class="submenu" href="<?= BASE_URL ?>welcome" target="_blank" ><i class="fa fa-sign-in"></i> Public Website</a></li>
 
                 </li> -->
             </ul>

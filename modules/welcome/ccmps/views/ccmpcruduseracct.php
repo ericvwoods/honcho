@@ -536,7 +536,7 @@
         <br>
     <?php $itemsv102 = [ 
                         "Student Admin"     => "$student_admin",
-                        "Chapter Admin"     => "$chapter_admin",
+                        SUBENTITY.' Admin'     => "$chapter_admin",
                         "Content Admin"     => "$content_mgr",
                         "Member Admin"      => "$member_admin",
                         "System Admin"      => "$system_admin"

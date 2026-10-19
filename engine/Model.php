@@ -173,12 +173,15 @@ class Model {
     /**
      * Fetches a single record by its ID from a database table.
      *
-     * @param int $id The ID of the record to fetch.
+     * @param int|null $id The ID of the record to fetch (null returns false).
      * @param string|null $target_table (optional) The name of the database table to be queried. Default is null.
      * @return object|false Returns an object representing the fetched record, or false if no record is found.
      * @throws RuntimeException If the query execution fails.
      */
-    public function get_where(int $id, ?string $target_table = null): object|false {
+    public function get_where(?int $id, ?string $target_table = null): object|false {
+        if ($id === null) { // a blank foreign key (e.g. a member with no certificate) is "not found", not a crash
+            return false;
+        }
         $data['id'] = $id;
 
         if (!isset($target_table)) {

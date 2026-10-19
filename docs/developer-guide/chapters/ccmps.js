@@ -181,6 +181,30 @@ const sections = [
     "**Deceased members** keep no roles: saving a record with Deceased ticked calls `rbac_clear_member_access()`, which removes the login from every Security Group and clears the four columns (since 2026-10-19; older records were cleared by `2026-10-19-clear-deceased-member-roles.sql`). Soft-deleted members were left out of the groups in step 2, so their columns may still show roles.",
   ]},
 
+  { type: 'h2', text: 'When a Member Is Marked Deceased' },
+  { type: 'p', text: "`ccmps.deceased` is a checkbox in the **Admin Notes** section of the edit form (hidden from the member; `system_admin`, `subentity_admin` and `ccmp_admin` can set it). Ticking it and saving does the following:" },
+  { type: 'ul', items: [
+    "**Roles and groups removed** (since 2026-10-19): after the role checkboxes are applied, `ccmpsubmit()` calls `rbac_clear_member_access()` (`rbac_helper.php`). It deletes every `system_group_users` row for the member's login (all groups, including DMS Users) and sets `system_admin`, `ccmp_admin`, `subentity_admin` and `student_admin` to 0. It runs on every save while the box stays ticked, so ticking a role on a deceased member doesn't stick.",
+    "**Email not required:** the save skips the \"Email Address is required\" check (`$is_deceased`).",
+    "**Left out of lists and counts:** home-page counts, the chapter roster (`currentroster()`), the national directory (`currentdirectory()`), the treasurer's spreadsheet (`mastercurrentroster()`), the member-list year tiers in `manage()` (the \"all records\" tier still shows them), and the PWA API's `chapterroster` and `directory` all filter `deceased != 1`. Exports show the column as TRUE/FALSE.",
+    "**Older records:** `database/migrations/2026-10-19-clear-deceased-member-roles.sql` cleared members marked deceased before the rule (Leslie Morris, 1435). Safe to re-run.",
+    "**Login refused** (since 2026-10-19): `Welcome::username_pw_check()` stops a deceased member after the password check and before any token is made (\"This account is no longer active\"). `mobile_bridge()` and the PWA API's `login()` and token check refuse them too, so an app session ends at its next request. A member already signed in on the website stays signed in until they log out or the session ends.",
+  ]},
+  { type: 'alert', variant: 'warning', text: "Unticking Deceased lets the member log in again but doesn't give back roles or groups; they have to be granted again." },
+
+  { type: 'h2', text: 'Login Holds' },
+  { type: 'p', text: "`Welcome::username_pw_check()` runs after the password is checked and before a login token is made. A hold sets a flash message and sends the person back to `welcome/login`:" },
+  { type: 'table', headers: ['Column', 'Message', 'Since'], rows: [
+    ['`locked`', "\"Your account has been locked. Please contact your <SUBENTITY> Administrator.\" (staff: \"your System Administrator\")", '2026-10-19'],
+    ['`deceased` (members)', '"This account is no longer active. Please contact your Administrator."', '2026-10-19'],
+    ['`soft_deleted`', '"Your account has been deleted. Please contact the System Administrator."', '2026-10-19'],
+    ['`inactive`', '"Your account is inactive…" (checked again in `authenticate()`)', 'earlier'],
+  ]},
+  { type: 'p', text: "The unapproved check in the same method still only `return`s an error, which `authenticate()` ignores, so it doesn't stop a login (on the to-do list)." },
+
+  { type: 'h2', text: 'Terminology Constants' },
+  { type: 'p', text: "Org-specific words come from `config/config.php`: `CCMP` / `CCMPS` (Member/Members), `SUBENTITY` / `SUBENTITIES` (Chapter/Chapters, or Branch, Office…). Screen text uses the constant, never the word: `<?= SUBENTITY ?> Admin` in a view, `SUBENTITY.' Admin'` in PHP, `strtolower(SUBENTITY)` mid-sentence. Swept through the live member, CMS, DMS and Subentities screens on 2026-10-19. Not covered: data (chapter names, Security Group titles such as \"Chapter Admins\"), code identifiers, and the phone app, which hard-codes its words in `public/ccmpsmobile/index.html` (on the to-do list)." },
+
   { type: 'h2', text: 'Visible-but-Disabled vs. Fully-Hidden' },
   { type: 'p', text: 'Two distinct patterns are used throughout, and the choice between them is deliberate, not arbitrary:' },
   { type: 'ul', items: [
@@ -229,6 +253,8 @@ const sections = [
     ['Bulk-action dropdown silently pointed at the wrong table', "`manage()` queried `subentities_bulk_actions`; a separate, similarly-named `ccmps_bulk_actions` table (the actually-intended one, per its name) had no effect when edited", 'Repointed the query. Caught by direct experience: someone edited the table expecting the dropdown to change, and nothing happened.'],
     ['Real login never actually set the admin session flags it needed to', "`successfullogin()` in `Welcome.php` — the assignments for `ccmps_student_admin`, `ccmps_system_admin`, and `ccmps_cms_admin` were commented out. A separate function, `refreshmysessiondata()`, did set them correctly, but nothing guaranteed it ran on every login. `ccmps_ccmp_admin` was never assigned at all, anywhere.", 'Uncommented and fixed the real login flow. `ccmp_admin` now gets assigned during login too. Caught directly: a real system_admin logged in and the flag still wasn\'t set.'],
     ['Font size preference: three mutually incompatible conventions for the same session variable, plus a dead-code helper function', "`$_SESSION['fontsize']` was set as a raw number in one place, a self-correcting 1/2/3 default in another, and converted to word-strings (`'Large'`/`'Medium'`/`'Small'`) via `switch` in a third — the last of which would silently break the numeric `<h#>` heading-level trick everywhere else read it as a number. Separately, `_get_font_sizes()` (called from 12+ places) referenced `$ccmp_id` before ever assigning it, so its entire database-lookup body was dead code the whole time.", "Replaced entirely with the 5-element, per-user, database-backed system described in the Styling section above — not just the heading-level trick, but the single-value session variable itself. `_get_font_sizes()` kept as a documented no-op (12+ call sites still invoke it) rather than deleted; everything else — the old column, the AJAX handler, all three inconsistent assignment sites — removed outright."],
+    ['Roster and directory never listed anyone', '`currentroster.php`, `directorylist.php`', "The views looped over `$rows`, but `currentroster()` / `currentdirectory()` pass `ccmpsrecs`. Views now loop over `$ccmpsrecs`; `$subentity_name` comes from `$_SESSION['subentity_name']`. Fixed 2026-10-19."],
+    ['Roster, directory, export and master roster crashed or showed blank pilot columns', '`currentroster()`, `currentdirectory()`, `export()`, `mastercurrentroster()` and their views', "Any blank lookup id crashed `Model::get_where()` (now returns false for null). The queries read only `ccmps`, so aux fields (certificates, ratings, total time, call sign) were missing: they now use `_member_select()`, which joins `ccmps_aux` when `CCMPS_AUX_MODULE` is on. Old column names in the views were renamed (`member_no` → `ccmp_number`, `member_type` → `ccmp_type`, `chapter` → `subentity`, `chapter_role` → `subentity_role`, `other_faq_cert` → `other_faa_cert`); aircraft type and registration come from the first `ccmps_aircraft` row (`_first_aircraft()`). `special_event` and `no_address` no longer exist and print blank. Fixed 2026-10-19."],
   ]},
 
   { type: 'h2', text: "What's Genuinely Still Broken (Not Yet Fixed)" },

@@ -104,18 +104,18 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 
 <?php if($_SESSION['ccmps_subentity_admin'] == 1 || $_SESSION['subentity_role'] == 1): ?>
 
-<li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> Chapter Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
+<li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> <?= SUBENTITY ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
     <ul class="nav nav-second-level collapse">
-        <li><a href="<?= BASE_URL ?>welcome-ccmps/manage/mngsubentity"><i class="fa fa-users"></i>Chapter <?= CCMPS ?></a></li>
+        <li><a href="<?= BASE_URL ?>welcome-ccmps/manage/mngsubentity"><i class="fa fa-users"></i><?= SUBENTITY ?> <?= CCMPS ?></a></li>
     <!--    <li>
           <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
         </li> --> <!-- (<?= $_SESSION['num_all_current_chapter_student_members'] ?>) -->
     <!--    <li><a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/momads"><i class="fa fa-ellipsis-h"></i> Chapter Marquee</a></li>  -->
-        <li><a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads"><i class="fa fa-thumb-tack"></i> Chapter Bulletins</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i>Chapter Notices</a></li>
+        <li><a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads"><i class="fa fa-thumb-tack"></i> <?= SUBENTITY ?> Bulletins</a></li>
+        <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i><?= SUBENTITY ?> Notices</a></li>
         <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/momads"><i class="fa fa-plane"></i> Job Posts</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i>Chapter Activities</a></li>
+        <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i><?= SUBENTITY ?> Activities</a></li>
     <!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
     <!--    <li><a href="#"><i class="fa fa-list"></i> Chapter Info</a></li>  -->
                      <li>
@@ -329,7 +329,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
                 <a href="<?= BASE_URL ?>welcome-ccmps/currentroster" style="color:Gray;">     <i class="fa fa-list fa-2x" style="color: cornflowerblue;"></i>
                 </div>
                 <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> My Chapter Roster (<?= $_SESSION['num_current_chapter_members'] ?>)</h2> </a>
+                      <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> My <?= SUBENTITY ?> Roster (<?= $_SESSION['num_current_chapter_members'] ?>)</h2> </a>
                 </div>
             </div>
         </div>
@@ -1774,7 +1774,7 @@ System Administration ccc
     <div class="ibox ">
         <div class="ibox-title">
             <div class="ibox-tools">
-                 <span class="label label-warning float-right">Chapter</span>
+                 <span class="label label-warning float-right"><?= SUBENTITY ?></span>
             </div>
             <h5><?= SUBENTITY ?> <?= CCMPS ?></h5>
         </div>
@@ -1833,7 +1833,7 @@ System Administration ccc
             <tr>
                 <td>
                     <button type="button" class="btn btn-warning m-r-sm"><?= $numascchaptermembers ?></button>
-                    Chapter Associate <?= CCMPS ?>
+                    <?= SUBENTITY ?> Associate <?= CCMPS ?>
                 </td>
                 <td>
                     <button type="button" class="btn btn-primary m-r-sm"><?= $numascbpamembers ?></button>
@@ -1844,7 +1844,7 @@ System Administration ccc
             <tr>
                 <td>
                     <button type="button" class="btn btn-warning m-r-sm"><?= $numstuchaptermembers ?></button>
-                    Chapter Student <?= CCMPS ?>
+                    <?= SUBENTITY ?> Student <?= CCMPS ?>
                 </td>
                 <td>
                     <button type="button" class="btn btn-primary m-r-sm"><?= $numstubpamembers ?></button>
@@ -1854,7 +1854,7 @@ System Administration ccc
             <tr>
                 <td>
                     <button type="button" class="btn btn-warning m-r-sm"><?= $numqstuchaptermembers ?></button>
-                    Chapter Q Student <?= CCMPS ?>
+                    <?= SUBENTITY ?> Q Student <?= CCMPS ?>
                 </td>
                 <td>
                     <button type="button" class="btn btn-primary m-r-sm"><?= $numqstubpamembers ?></button>
@@ -1865,7 +1865,7 @@ System Administration ccc
             <tr>
                 <td>
                     <button type="button" class="btn btn-warning m-r-sm"><?= $numhonchaptermembers ?></button>
-                    Chapter Honorary <?= CCMPS ?>
+                    <?= SUBENTITY ?> Honorary <?= CCMPS ?>
                 </td>
                 <td>
                     <button type="button" class="btn btn-primary m-r-sm"><?= $numhonbpamembers ?></button>

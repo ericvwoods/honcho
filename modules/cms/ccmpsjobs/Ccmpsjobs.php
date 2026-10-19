@@ -373,9 +373,9 @@ echo(167); die();
     case 'momads': // chapter admin
 
           $data['bc1']         = 'CMS';
-          $data['bc2']         = 'Chapter Jobs';
-          $data['activity']    = 'Chapter Admin';
-          $data['header']      = 'Manage Chapter Jobs';
+          $data['bc2']         = SUBENTITY.' Jobs';
+          $data['activity']    = SUBENTITY.' Admin';
+          $data['header']      = 'Manage '.SUBENTITY.' Jobs';
     break;
 
     case 'cmmads': // content manager
@@ -503,7 +503,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   break;
 
   case '3':
-        $data['scope'] = 'Chapter Members Only';
+        $data['scope'] = SUBENTITY.' Members Only';
   break;
 
   } */
@@ -571,7 +571,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'MSP';
         $data['bc2']          = 'View A Job';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
      
   break;
 
@@ -581,7 +581,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View A Job';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin'; 
+        $data['subheader']    = SUBENTITY.' Admin'; 
         
   break;
 
@@ -1005,7 +1005,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
       $_SESSION['admode'] = 'momadsc'; // 
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Job';
-      $data['header']     = 'Creating a New Chapter Job';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Job';
 
   break;
 
@@ -1014,7 +1014,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
     //  $_SESSION['admode'] = 'momadsc'; // already this value
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Job';
-      $data['header']     = 'Creating a New Chapter Job';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Job';
 
   break;
 }

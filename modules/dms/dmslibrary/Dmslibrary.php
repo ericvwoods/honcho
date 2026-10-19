@@ -1782,7 +1782,7 @@ if($row->subentity > 0){
     case 'dmslibsubadmin': // subentity admin
 
           $data['bc1']         = 'DMS';
-          $data['bc2']         = 'Chapter Documents';
+          $data['bc2']         = SUBENTITY.' Documents';
           $data['activity']    = $_SESSION['subentity_name'];
        //   $data['header']      = 'Manage Chapter Documents'; hard coded
     break;
@@ -4086,7 +4086,7 @@ $_SESSION['tab'] = 0; // doc board section - open collapse when close doc - no d
         $data['bc1']          = 'DMS';
         $data['bc2']          = 'View A DB Record';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
 
   break;
 
@@ -4095,7 +4095,7 @@ $_SESSION['tab'] = 0; // doc board section - open collapse when close doc - no d
         $data['bc1']          = 'DMS';
         $data['bc2']          = 'View A Document Record';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
 
   break;
 
@@ -7316,7 +7316,7 @@ json($data['rows']); die();
     case 'dmslibsubadmin': // subentity admin
 
           $data['bc1']         = 'DMS';
-          $data['bc2']         = 'Chapter Documents';
+          $data['bc2']         = SUBENTITY.' Documents';
           $data['activity']    = $_SESSION['subentity_name'];
        //   $data['header']      = 'Manage Chapter Documents'; hard coded
     break;

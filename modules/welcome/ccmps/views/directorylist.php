@@ -90,8 +90,8 @@
                         <th style="color:RoyalBlue;">Email</th> 
                         <th style="color:RoyalBlue;">Phone</th> 
                         <th style="color:RoyalBlue;">Mobile</th>
-                        <th style="color:RoyalBlue;">Chapter</th>
-                        <th style="color:RoyalBlue;">Chapter Role</th>
+                        <th style="color:RoyalBlue;"><?= SUBENTITY ?></th>
+                        <th style="color:RoyalBlue;"><?= SUBENTITY ?> Role</th>
                        
                         <th style="color:RoyalBlue;"><?= CCMP ?> Number</th>
                   <!--      <th>Type</th> -->
@@ -106,13 +106,13 @@
 
                     <tbody>
                             <?php
-                                foreach($rows as $row) { 
+                                foreach(($ccmpsrecs ?? array()) as $row) { // the controller passes ccmpsrecs 
 
                                 ?>
                                 <tr class='gradeA'>
                             <!--        <td><?= $row->id ?></td> 
                                     <td><?= $row->trongate_user_id ?></td>   -->                            
-                                 <!--   <td><a href="<= BASE_URL ?>welcome-ccmps/viewccmp/<?= $row->id ?>/msp"><?= $row->member_no ?></a></td>-->
+                                 <!--   <td><a href="<= BASE_URL ?>welcome-ccmps/viewccmp/<?= $row->id ?>/msp"><?= $row->ccmp_number ?></a></td>-->
                                     
                                     <td><?= $row->last_name ?> <?= $row->suffix ?>, <?= $row->salutation ?> <?= $row->first_name ?> <?= $row->middle_name ?></td>
                                        <td><?= $row->call_sign ?></td> 
@@ -129,11 +129,11 @@
                                         <td><?= $row->phone ?></td>
                                         <td><?= $row->mobile ?></td>
                                     <?php endif; ?>
-                                    <td><?= $row->chapter ?></td>
-                                    <td><?= $row->chapter_role ?></td>                                                       
+                                    <td><?= $row->subentity ?></td>
+                                    <td><?= $row->subentity_role ?></td>                                                       
                                  
-                                    <td><?= $row->member_no ?></td>
-                            <!--        <td><?= $row->member_type ?></td>  -->
+                                    <td><?= $row->ccmp_number ?></td>
+                            <!--        <td><?= $row->ccmp_type ?></td>  -->
                         <!--    <td><div class="btn-group">
                              <a class="btn btn-outline btn-primary" type="button"  href="<?= BASE_URL ?>welcome/mobiviewccmp/<?= $row->id ?>" >View</a>                                
                             </div></td> -->
@@ -177,7 +177,7 @@
                         <th>Email</th> 
                         <th>Phone</th> 
                         <th>Mobile</th> 
-                          <th>Chapter</th>
+                          <th><?= SUBENTITY ?></th>
                         <th>Type</th> -->
                    <!--     <th>Updated</th> -->
                   <!--      <th>Options</th> -->

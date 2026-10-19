@@ -92,13 +92,13 @@
 
                     <tbody>
                             <?php
-                                foreach($rows as $row) { 
+                                foreach(($ccmpsrecs ?? array()) as $row) { // the controller passes ccmpsrecs 
 
                                 ?>
                                 <tr class='gradeA'>
                             <!--        <td><?= $row->id ?></td> 
                                     <td><?= $row->trongate_user_id ?></td>   -->                            
-                                 <!--   <td><a href="<= BASE_URL ?>welcome-ccmps/viewccmp/<?= $row->id ?>/msp"><?= $row->member_no ?></a></td>-->
+                                 <!--   <td><a href="<= BASE_URL ?>welcome-ccmps/viewccmp/<?= $row->id ?>/msp"><?= $row->ccmp_number ?></a></td>-->
                                       
                                     <td><?= $row->last_name ?> <?= $row->suffix ?>, <?= $row->salutation ?> <?= $row->first_name ?> <?= $row->middle_name ?></td>
                                        <td><?= $row->call_sign ?></td>
@@ -106,14 +106,14 @@
                                   
                                      
                             <!--        <td><?= $row->current_year ?></td>    -->
-                                <!--      <td><?= $row->chapter ?></td>  -->                                                 
+                                <!--      <td><?= $row->subentity ?></td>  -->                                                 
                                    <td><?= $row->email_address ?></td> 
                                     <td><?= $row->phone ?></td>
                                     <td><?= $row->mobile ?></td>
                                   
-                                     <td><?= $row->member_no ?></td>
+                                     <td><?= $row->ccmp_number ?></td>
                                     <td><?= $row->highest_certificate ?></td>
-                             <!--       <td><?= $row->member_type ?></td> -->  
+                             <!--       <td><?= $row->ccmp_type ?></td> -->  
                         <!--    <td><div class="btn-group">
                              <a class="btn btn-outline btn-primary" type="button"  href="<?= BASE_URL ?>welcome/mobiviewccmp/<?= $row->id ?>" >View</a>                                
                             </div></td> -->

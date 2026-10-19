@@ -28,8 +28,8 @@ class Ccmpssubentities extends Trongate {
   function viewpage() {
 
     $data['bc1']         = 'MSP';
-    $data['bc2']         = 'chapters';
-    $data['activity']    = 'chapters';
+    $data['bc2']         = SUBENTITIES;
+    $data['activity']    = SUBENTITIES;
     $data['header']      = 'Committee';
     $data['view_module']   = 'cms/chapters';
     $data['view_file']     = 'chapters'; // 
@@ -445,17 +445,17 @@ echo(219); die();
     case 'momads': // chapter admin
 
           $data['bc1']         = 'CMS';
-          $data['bc2']         = 'Chapter Items';
-          $data['activity']    = 'Chapter Admin';
-          $data['header']      = 'Manage Chapter chapters Item';
+          $data['bc2']         = SUBENTITY.' Items';
+          $data['activity']    = SUBENTITY.' Admin';
+          $data['header']      = 'Manage '.SUBENTITY.' Item';
     break;
 
     case 'cmmads': // content manager
 
           $data['bc1']         = 'CMS';
-          $data['bc2']         = 'All chapters Items';
+          $data['bc2']         = 'All '.SUBENTITY.' Items';
           $data['activity']    = 'Content Manager';
-          $data['header']      = 'Manage chapters Item';
+          $data['header']      = 'Manage '.SUBENTITY.' Item';
           
     break;
 
@@ -609,7 +609,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   break;
 
   case '3':
-        $data['scope'] = 'Chapter Members Only';
+        $data['scope'] = SUBENTITY.' Members Only';
   break;
 
   } */
@@ -677,7 +677,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View An Item';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
      
   break;
 
@@ -687,7 +687,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View An Item';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin'; 
+        $data['subheader']    = SUBENTITY.' Admin'; 
         
   break;
 
@@ -832,7 +832,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
       $_SESSION['admode']   = 'mmyadsu'; // updating 
       $data['bc1']          = 'MSP';
-      $data['bc2']          = 'Update chapters Item';
+      $data['bc2']          = 'Update '.SUBENTITY.' Item';
   /*    $data['salutation']   = $ccmp_obj->salutation;
       $data['first_name']   = $ccmp_obj->first_name;
       $data['middle_name']  = $ccmp_obj->middle_name;
@@ -847,7 +847,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
       $_SESSION['admode']   = 'mmyadsu'; // updating 
       $data['bc1']          = 'MSP';
-      $data['bc2']          = 'Update chapters Item';
+      $data['bc2']          = 'Update '.SUBENTITY.' Item';
   /*    $data['salutation']   = $ccmp_obj->salutation;
       $data['first_name']   = $ccmp_obj->first_name;
       $data['middle_name']  = $ccmp_obj->middle_name;
@@ -862,14 +862,14 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
       $_SESSION['admode']   = 'mmyadsu'; // updating 
       $data['bc1']          = 'MSP';
-      $data['bc2']          = 'Update chapters Item';
+      $data['bc2']          = 'Update '.SUBENTITY.' Item';
   /*    $data['salutation']   = $ccmp_obj->salutation;
       $data['first_name']   = $ccmp_obj->first_name;
       $data['middle_name']  = $ccmp_obj->middle_name;
       $data['last_name']    = $ccmp_obj->last_name;
       $data['suffix']       = $ccmp_obj->suffix;
       $data['chapternm']    = $chapter_name; */
-      $data['header']       = 'Updating My chapters Item:';
+      $data['header']       = 'Updating My '.SUBENTITY.' Item:';
 //print_r($_SESSION['admode']); die();
   break;
 
@@ -877,7 +877,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
         $_SESSION['admode'] = 'cmmadsu'; // updating 
         $data['bc1']        = 'CMS';
-        $data['bc2']        = 'Update chapters Item';
+        $data['bc2']        = 'Update '.SUBENTITY.' Item';
         $data['header']     = 'Updating An Item';
         $data['subheader']  = 'Content Manager';
       //  $data['chapternm']  = $chapternm; // set dropdown?
@@ -887,7 +887,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
         $_SESSION['admode'] = 'cmmadsu'; // updating 
         $data['bc1']        = 'CMS';
-        $data['bc2']        = 'Update chapters Item';
+        $data['bc2']        = 'Update '.SUBENTITY.' Item';
         $data['header']     = 'Updating An Item';
         $data['subheader']  = 'Content Manager';
       //  $data['chapternm']  = $chapternm; // set dropdown?
@@ -905,7 +905,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
 
         $_SESSION['admode'] = 'momadsu'; // updating 
         $data['bc1']        = 'Content Mgmt';
-        $data['bc2']        = 'Update chapters Item';
+        $data['bc2']        = 'Update '.SUBENTITY.' Item';
       //  $data['chapternm']  = $chapternm;// set dropdown?
   break;
 
@@ -1117,7 +1117,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
       $_SESSION['admode'] = 'momadsc'; // 
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Item';
-      $data['header']     = 'Creating a New Chapter Item';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Item';
 
   break;
 
@@ -1126,7 +1126,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
     //  $_SESSION['admode'] = 'momadsc'; // already this value
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Item';
-      $data['header']     = 'Creating a New Chapter Item';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Item';
 
   break;
 }
@@ -2185,7 +2185,7 @@ $_SESSION['tab'] = 0; // chapters board section - no chapters collapse
                 $funcname = 'update';
                 $ccmp = CCMP;
 
-                $flash_msg = 'You are not authorized to edit another chapters records'; 
+                $flash_msg = 'You are not authorized to edit another '.strtolower(SUBENTITY).'\'s records'; 
                 set_flashdata($flash_msg);
 
                 redirect('welcome-ccmps/ccmphome');

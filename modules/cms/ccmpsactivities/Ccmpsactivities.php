@@ -385,9 +385,9 @@ echo(162); die();
     case 'momads': // chapter admin
 
           $data['bc1']         = 'CMS';
-          $data['bc2']         = 'Chapter Activities';
-          $data['activity']    = 'Chapter Admin';
-          $data['header']      = 'Manage Chapter Activities';
+          $data['bc2']         = SUBENTITY.' Activities';
+          $data['activity']    = SUBENTITY.' Admin';
+          $data['header']      = 'Manage '.SUBENTITY.' Activities';
     break;
 
     case 'cmmads': // content manager
@@ -537,7 +537,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   break;
 
   case '3':
-        $data['scope'] = 'Chapter Members Only';
+        $data['scope'] = SUBENTITY.' Members Only';
   break;
 
   } */
@@ -605,7 +605,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View an Activity';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
      
   break;
 
@@ -615,7 +615,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View an Activity';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin'; 
+        $data['subheader']    = SUBENTITY.' Admin'; 
         
   break;
 
@@ -1044,7 +1044,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
       $_SESSION['admode'] = 'momadsc'; // 
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Activity';
-      $data['header']     = 'Creating a New Chapter Activity';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Activity';
 
   break;
 
@@ -1053,7 +1053,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
     //  $_SESSION['admode'] = 'momadsc'; // already this value
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Activity';
-      $data['header']     = 'Creating a New Chapter Activity';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Activity';
 
   break;
 }

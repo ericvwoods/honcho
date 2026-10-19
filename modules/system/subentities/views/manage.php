@@ -110,7 +110,7 @@
             <tr>
 
                 <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Num</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Chapter</h<?= $_SESSION['mfontsize'] ?>></th>
+                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>><?= SUBENTITY ?></h<?= $_SESSION['mfontsize'] ?>></th>
                 <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Full Name</h<?= $_SESSION['mfontsize'] ?>></th>
                 <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Chartered</h<?= $_SESSION['mfontsize'] ?>></th>
                 <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Region</h<?= $_SESSION['mfontsize'] ?>></th>
@@ -174,7 +174,7 @@
                 </div> <!-- end div table responsive-->
 
             <!--    <div class="btn-group"> -->
-                            <a class="btn btn-outline btn-primary"  type="button" href="<?= BASE_URL ?>system-subentities/create"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-user"></i> Create New Chapter</h<?= $_SESSION['mfontsize'] ?>></a>
+                            <a class="btn btn-outline btn-primary"  type="button" href="<?= BASE_URL ?>system-subentities/create"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-user"></i> Create New <?= SUBENTITY ?></h<?= $_SESSION['mfontsize'] ?>></a>
                  
              
 

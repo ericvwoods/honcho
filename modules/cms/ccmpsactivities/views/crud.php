@@ -319,7 +319,7 @@
                                                         <?php else: ?>  
                                                             <?php if($recid > 0):  ?>   <!-- Updating  - If new the chapter is assigned to the same one as the chapter admin -->
 
-                                                                <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> Chapter<a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></strong></label>
+                                                                <div class="form-group  row"><label class="col-sm-2 col-form-label" style="color:RoyalBlue;"><strong><h<?= $_SESSION['fontsize'] ?>> <?= SUBENTITY ?><a style="color:Red;">*</a></h<?= $_SESSION['fontsize'] ?>></strong></label>
                                                                 <div class="col-sm-4"><select class="form-control m-b" name="chapter" >
                                                                 <!-- Loop through the dropdown array passed in $data  -->
                                                                 <?php foreach($chapters as $row) { ?>
@@ -428,7 +428,7 @@
                                                 </div>
 
 
-                                                <div class="form-group row"><label class="col-lg-3 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> Chapter</h<?= $_SESSION['fontsize'] ?>></label>
+                                                <div class="form-group row"><label class="col-lg-3 " style="color:RoyalBlue;"><h<?= $_SESSION['fontsize'] ?>> <?= SUBENTITY ?></h<?= $_SESSION['fontsize'] ?>></label>
                                                     <div class="col-sm-5"><h<?= $_SESSION['fontsize'] ?>><?= $chapternm ?></h<?= $_SESSION['fontsize'] ?>></div> 
                                                 </div> 
 

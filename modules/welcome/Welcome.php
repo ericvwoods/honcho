@@ -851,7 +851,7 @@ json($_SESSION); die();
         }
 
         $ccmp = $this->model->get_where((int) $claims['ccmp_id'], 'ccmps');
-        if (!$ccmp || !empty($ccmp->soft_deleted)) {
+        if (!$ccmp || !empty($ccmp->soft_deleted) || !empty($ccmp->deceased)) { // deceased members are refused login
             redirect('welcome/login');
             return;
         }
@@ -1015,13 +1015,21 @@ json($_SESSION); die();
                 $error = 'Your account is inactive. Please contact the System Administrator.';
                 return $error;
             }
-            if ($locked > 0){
-                $error = 'Your account has been locked. Please contact your subentity Administrator.';
-                return $error;
+            if ($locked > 0){ // shown on the login page - returning an error here was ignored by authenticate()
+                $who = ($fpusertype == 'ccmpuser') ? 'your '.SUBENTITY.' Administrator' : 'your System Administrator';
+                $flash_msg = 'Your account has been locked. Please contact '.$who.'.';
+                set_flashdata($flash_msg);
+                redirect('welcome/login');
             }
-            if ($soft_deleted > 0){
-                $error = 'Your account has been deleted. Please contact the System Administrator.';
-                return $error;
+            if ($soft_deleted > 0){ // shown on the login page - returning an error here was ignored by authenticate()
+                $flash_msg = 'Your account has been deleted. Please contact the System Administrator.';
+                set_flashdata($flash_msg);
+                redirect('welcome/login');
+            }
+            if ($fpusertype == 'ccmpuser' && !empty($user_obj->deceased)){ // deceased members are refused login - before any token is made
+                $flash_msg = 'This account is no longer active. Please contact your Administrator.';
+                set_flashdata($flash_msg);
+                redirect('welcome/login');
             }
 
             $remember = $fprem;

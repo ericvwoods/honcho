@@ -135,15 +135,15 @@
 <?php if(strlen($row->id) > 0) { ?> <!-- Strip off the view data records from the recordset  -->
                                  
        <!--     <td><?= $row->id ?></td> -->
-                        <td><?= $row->member_no ?></td>
-                        <td><?= $row->member_type ?></td>
+                        <td><?= $row->ccmp_number ?></td>
+                        <td><?= $row->ccmp_type ?></td>
                         <td><?= $row->salutation ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>
-                        <td><?= $row->chapter ?></td>
+                        <td><?= $row->subentity ?></td>
                         <td><?= $row->national_officer ?></td>
-                        <td><?= $row->chapter_role ?></td>
+                        <td><?= $row->subentity_role ?></td>
                         <td><?= $row->mailaddress1 ?></td>
                         <td><?= $row->mailaddress2 ?></td>
                         <td><?= $row->mailcity ?></td>
@@ -186,12 +186,12 @@
                         <td><?= $row->military_maint ?></td>
                         <td><?= $row->airship ?></td>
                         <td><?= $row->atc ?></td>
-                        <td><?= $row->other_faq_cert ?></td>                        
+                        <td><?= $row->other_faa_cert ?></td>                        
                         <td><?= $row->ofc_certnum ?></td>
                         <td><?= $row->deceased ?></td>
-                        <td><?= $row->special_event ?></td>
+                        <td><?= $row->special_event ?? '' ?></td>
                         <td><?= $row->mail_notices ?></td>
-                        <td><?= $row->no_address ?></td>
+                        <td><?= $row->no_address ?? '' ?></td>
                         <td><?= $row->call_sign ?></td>
                         <td><?= $row->aircraft_reg ?></td>
                         <td><?= $row->aircraft_type ?></td>                          
@@ -296,15 +296,15 @@
 <?php if(strlen($row->id) > 0) { ?> <!-- Strip off the view data records from the recordset  -->
                                  
        <!--     <td><?= $row->id ?></td> -->
-                        <td><?= $row->member_no ?></td>
-                        <td><?= $row->member_type ?></td>
+                        <td><?= $row->ccmp_number ?></td>
+                        <td><?= $row->ccmp_type ?></td>
                         <td><?= $row->salutation ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>
-                        <td><?= $row->chapter ?></td>
+                        <td><?= $row->subentity ?></td>
                         <td><?= $row->national_officer ?></td>
-                        <td><?= $row->chapter_role ?></td>
+                        <td><?= $row->subentity_role ?></td>
                         <td><?= $row->mailaddress1 ?></td>
                         <td><?= $row->mailaddress2 ?></td>
                         <td><?= $row->mailcity ?></td>
@@ -347,12 +347,12 @@
                         <td><?= $row->military_maint ?></td>
                         <td><?= $row->airship ?></td>
                         <td><?= $row->atc ?></td>
-                        <td><?= $row->other_faq_cert ?></td>                        
+                        <td><?= $row->other_faa_cert ?></td>                        
                         <td><?= $row->ofc_certnum ?></td>
                         <td><?= $row->deceased ?></td>
-                        <td><?= $row->special_event ?></td>
+                        <td><?= $row->special_event ?? '' ?></td>
                         <td><?= $row->mail_notices ?></td>
-                        <td><?= $row->no_address ?></td>
+                        <td><?= $row->no_address ?? '' ?></td>
                         <td><?= $row->call_sign ?></td>
                         <td><?= $row->aircraft_reg ?></td>
                         <td><?= $row->aircraft_type ?></td>                          
@@ -456,15 +456,15 @@
 <?php if(strlen($row->id) > 0) { ?> <!-- Strip off the view data records from the recordset  -->
                                  
        <!--     <td><?= $row->id ?></td> -->
-                        <td><?= $row->member_no ?></td>
-                        <td><?= $row->member_type ?></td>
+                        <td><?= $row->ccmp_number ?></td>
+                        <td><?= $row->ccmp_type ?></td>
                         <td><?= $row->salutation ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>
-                        <td><?= $row->chapter ?></td>
+                        <td><?= $row->subentity ?></td>
                         <td><?= $row->national_officer ?></td>
-                        <td><?= $row->chapter_role ?></td>
+                        <td><?= $row->subentity_role ?></td>
                         <td><?= $row->mailaddress1 ?></td>
                         <td><?= $row->mailaddress2 ?></td>
                         <td><?= $row->mailcity ?></td>
@@ -507,12 +507,12 @@
                         <td><?= $row->military_maint ?></td>
                         <td><?= $row->airship ?></td>
                         <td><?= $row->atc ?></td>
-                        <td><?= $row->other_faq_cert ?></td>                        
+                        <td><?= $row->other_faa_cert ?></td>                        
                         <td><?= $row->ofc_certnum ?></td>
                         <td><?= $row->deceased ?></td>
-                        <td><?= $row->special_event ?></td>
+                        <td><?= $row->special_event ?? '' ?></td>
                         <td><?= $row->mail_notices ?></td>
-                        <td><?= $row->no_address ?></td>
+                        <td><?= $row->no_address ?? '' ?></td>
                         <td><?= $row->call_sign ?></td>
                         <td><?= $row->aircraft_reg ?></td>
                         <td><?= $row->aircraft_type ?></td>                          

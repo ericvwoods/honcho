@@ -424,7 +424,7 @@
 
          <br>
 
-         <?php $itemsv100 = ["Chapter Id"       => "$id",
+         <?php $itemsv100 = [SUBENTITY.' Id'       => "$id",
                             "Short Name" => "$title",
                             "Full Name"  => "$description",
                             "Chartered"  => "$chartered",

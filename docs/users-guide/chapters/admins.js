@@ -19,6 +19,18 @@ const memberList = [
     ['**Delete**', 'Deletes the ticked members (can be undone one at a time with Undelete Record)'],
   ]},
   { type: 'p', text: "**Lock**, **Unlock**, **Approve User Acct**, **Approve CCMPS** and **Archive** also appear in the list but don't do anything yet." },
+  { type: 'h3', text: 'Locking a Member' },
+  { type: 'p', text: "To stop a member logging in without deleting them, open them with **Update Record**, tick **Locked** in **Roles & Permissions** and save (System Admins only). When they try to log in they see \"Your account has been locked. Please contact your Chapter Administrator.\" Untick **Locked** to let them back in." },
+  { type: 'h3', text: 'Marking a Member Deceased' },
+  { type: 'p', text: "Open the member with **Update Record**, go to **Admin Notes**, tick **Deceased** and click **Save Changes**. When you save:" },
+  { type: 'ul', items: [
+    "They can no longer log in, on the website or the phone app.",
+    "Every admin role the member had (System, Member, Chapter or Student Admin) is taken away, and they're removed from all Security Groups, including access to the Document Library.",
+    "They no longer appear on the chapter roster, the national directory, the treasurer's spreadsheet or the member counts.",
+    "Their record isn't deleted. You can still find it in the member list.",
+    "An email address isn't needed to save the record.",
+  ]},
+  { type: 'alert', variant: 'info', text: "Unticking Deceased lets the member log in again, but doesn't give their roles back. If it was a mistake, give the member their roles again." },
 ];
 
 module.exports = {

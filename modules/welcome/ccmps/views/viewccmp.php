@@ -275,8 +275,8 @@
     <?php
         vf_row('Member Number', 'ccmp_number', $data);
         vf_row('Member Type', 'ccmp_type', $data);
-        vf_row('Chapter', 'subentity', $data);
-        vf_row('Chapter Role', 'subentity_role', $data);
+        vf_row(SUBENTITY, 'subentity', $data);
+        vf_row(SUBENTITY.' Role', 'subentity_role', $data);
         vf_row('Current Year', 'current_year', $data);
         vf_row('Region', 'region', $data);
         vf_row('National Officer', 'national_officer', $data);

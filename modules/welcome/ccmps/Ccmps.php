@@ -70,14 +70,24 @@
         _check_function_permissions($ccmpsfunction)
         _get_font_sizes()
         _get_a_single_record($recid) anchor1
+        _member_select()
+        _first_aircraft($ccmp_id)
   currentdirectory($posterid = null)
         _check_function_permissions($ccmpsfunction)
         _get_font_sizes()
+        _member_select()
+        _first_aircraft($ccmp_id)
+  _member_select() // "SELECT ... FROM ccmps" with ccmps_aux joined when CCMPS_AUX_MODULE is on
+  _first_aircraft($ccmp_id) // the member's first ccmps_aircraft row, or false
   function spreadsheet_format_download()
   function ccmpupload()
   function upload_form()
   function export()
+        _member_select()
+        _first_aircraft($ccmp_id)
   function mastercurrentroster($recid = null)
+        _member_select()
+        _first_aircraft($ccmp_id)
   function lesxlsfile()
   function _generate_rand_code()
   function modaladdemail()
@@ -4185,6 +4195,20 @@ $result = 1;
 
 /*--------------------------- End ccmpuseracctsubmit -------------------------*/
 
+/*------------------- Helpers for the roster / export queries -----------------*/
+
+    function _member_select() { // aux fields (certificates, ratings, total time...) live in ccmps_aux
+        if (CCMPS_AUX_MODULE == 1) {
+            return "SELECT ccmps_aux.*, ccmps.* FROM ccmps LEFT JOIN ccmps_aux ON ccmps_aux.ccmp_id = ccmps.id"; // ccmps.* last so ccmps.id wins
+        }
+        return "SELECT * FROM ccmps";
+    }
+
+    function _first_aircraft($ccmp_id) { // aircraft moved from ccmps columns to ccmps_aircraft rows
+        $rows = $this->model->query_bind("SELECT * FROM ccmps_aircraft WHERE ccmp_id = :id ORDER BY id LIMIT 1", array('id' => (int) $ccmp_id), 'object');
+        return !empty($rows) ? $rows[0] : false;
+    }
+
 /*--------------------------- Function currentroster -------------------------*/
 
     function currentroster($posterid = null) {  // this is the subentity directory on the sidemenu - posterid comes from bulletin link
@@ -4199,7 +4223,7 @@ $result = 1;
       }
 
       $userobj    = $this->model->get_one_where('id', $recid, 'ccmps');
-      $subentity  = $userobj->subentity;
+      $subentity  = $userobj->subentity ?? '';
  //     print_r($subentity );die();
 //*------------------ Get logged in user's info & preferences ----------------*/
   // Get font size preference for views & manage page
@@ -4250,9 +4274,9 @@ $result = 1;
         //  $data['ccmpsrecs']      = $this->model->get('last_name','ccmps'); // works manage
       if($posterid > 0){
       //  echo(1009); die();
-        $sql = "SELECT * FROM ccmps WHERE id = $posterid"; // temporary until national directory - just for demo - put result in popup???
+        $sql = $this->_member_select()." WHERE ccmps.id = $posterid"; // temporary until national directory - just for demo - put result in popup???
        }else{
-          $sql = "SELECT * FROM ccmps WHERE subentity = $subentity AND deceased != 1  AND soft_deleted != 1 AND current_year > $currentyear OR  subentity = $subentity AND deceased != 1  AND soft_deleted != 1 AND status = 2 ORDER BY last_name";
+          $sql = $this->_member_select()." WHERE subentity = $subentity AND deceased != 1  AND soft_deleted != 1 AND current_year > $currentyear OR  subentity = $subentity AND deceased != 1  AND soft_deleted != 1 AND status = 2 ORDER BY last_name";
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity AND deceased < 1 AND current_year > $currentyear "; // for read only roster
        }
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity ORDER BY last_name DESC"; // doesnt work for read only roster. if hidden = NULL recs wont be included!
@@ -4270,37 +4294,39 @@ $result = 1;
 
               $highcert                 = $row->highest_certificate;  // get the integer
               $highcertobj               = $this->model->get_where($highcert,'ccmps_certificate_types'); // use the integer to get the object
-              $row->highest_certificate = $highcertobj->description; // reset the value from integer to string from the object
+              $row->highest_certificate = $highcertobj->description ?? ''; // reset the value from integer to string from the object
 
-              $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+              $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
               $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-              $levelname = $levelobj->level_title;  // capture the level name
+              $levelname = $levelobj->level_title ?? '';  // capture the level name
               // now we need to insert the levelnames in the array for display
               $row->levelname = $levelname;
 
               $memtypeid        = $row->ccmp_type;
               $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-              $row->ccmp_type = $memtypeobj->ccmp_type;
+              $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
               $natoffcrid            = $row->national_officer;
               $natoffcrobj           = $this->model->get_where( $natoffcrid,'ref_national_offices');
-              $row->national_officer = $natoffcrobj->description;
+              $row->national_officer = $natoffcrobj->description ?? '';
 
               $statusid    = $row->status;
               $statusobj   = $this->model->get_where($statusid,'ccmps_status');
-              $row->status = $statusobj->title;
+              $row->status = $statusobj->title ?? '';
 
-              $actypeid           = $row->aircraft_type;
-              $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-              $row->aircraft_type = $actypeobj->name;
+              $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+              $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+              $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
               $subentityrole    = $row->subentity_role;
               $subentityobj   = $this->model->get_where($subentityrole,'ccmps_subentity_roles');
-              $row->subentity_role = $subentityobj->description;
+              $row->subentity_role = $subentityobj->description ?? '';
 
               $subentityid    = $row->subentity;
               $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-              $row->subentity = $subentityobj->description;
+              $row->subentity = $subentityobj->description ?? '';
 
               // $fintypeid          = $row->fin_acct_type;
               // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -4322,20 +4348,20 @@ $result = 1;
               $recid = $row->id;
               $addrdataobj = $this->model->get_one_where('ccmp_id',$recid,'ccmps_addresses');
 
-              $row->mailaddress1 = $addrdataobj->mailaddress1;
-              $row->mailaddress2 = $addrdataobj->mailaddress2;
-              $row->mailcity     = $addrdataobj->mailcity;
-              $row->mailstate    = $addrdataobj->mailstate;
-              $row->mailzip      = $addrdataobj->mailzip;
+              $row->mailaddress1 = $addrdataobj->mailaddress1 ?? '';
+              $row->mailaddress2 = $addrdataobj->mailaddress2 ?? '';
+              $row->mailcity     = $addrdataobj->mailcity ?? '';
+              $row->mailstate    = $addrdataobj->mailstate ?? '';
+              $row->mailzip      = $addrdataobj->mailzip ?? '';
 
-              $row->physaddress1 = $addrdataobj->physaddress1;
-              $row->physaddress2 = $addrdataobj->physaddress2;
-              $row->physcity     = $addrdataobj->physcity;
-              $row->physstate    = $addrdataobj->physstate;
-              $row->physzip      = $addrdataobj->physzip;
+              $row->physaddress1 = $addrdataobj->physaddress1 ?? '';
+              $row->physaddress2 = $addrdataobj->physaddress2 ?? '';
+              $row->physcity     = $addrdataobj->physcity ?? '';
+              $row->physstate    = $addrdataobj->physstate ?? '';
+              $row->physzip      = $addrdataobj->physzip ?? '';
           }
 
-              $data['subentity_name']  = $subentity_name;
+              $data['subentity_name']  = $_SESSION['subentity_name'] ?? ''; // set at login
               $data['view_module']   = 'welcome/ccmps';
               $data['view_file']     = 'currentroster'; // read only roster
 
@@ -4395,9 +4421,9 @@ $result = 1;
         //  $data['ccmpsrecs']      = $this->model->get('last_name','ccmps'); // works manage
 
       if($posterid > 0){
-        $sql = "SELECT * FROM ccmps WHERE id = $posterid"; // just for demo - put result in popup???
+        $sql = $this->_member_select()." WHERE ccmps.id = $posterid"; // just for demo - put result in popup???
        }else{
-          $sql = "SELECT * FROM ccmps WHERE deceased != 1 AND directoryoptout != 1  AND soft_deleted != 1 AND current_year > $currentyear OR deceased != 1 AND directoryoptout != 1  AND soft_deleted != 1 And status = 2";
+          $sql = $this->_member_select()." WHERE deceased != 1 AND directoryoptout != 1  AND soft_deleted != 1 AND current_year > $currentyear OR deceased != 1 AND directoryoptout != 1  AND soft_deleted != 1 And status = 2";
  //         echo(787); die(); // for national directory
        }
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity ORDER BY last_name DESC"; // doesnt work for read only roster. if hidden = NULL recs wont be included!
@@ -4415,29 +4441,31 @@ $result = 1;
 
               $highcert                 = $row->highest_certificate;  // get the integer
               $highcertobj               = $this->model->get_where($highcert,'ccmps_certificate_types'); // use the integer to get the object
-              $row->highest_certificate = $highcertobj->description; // reset the value from integer to string from the object
+              $row->highest_certificate = $highcertobj->description ?? ''; // reset the value from integer to string from the object
 
-              $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+              $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
               $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-              $levelname = $levelobj->level_title;  // capture the level name
+              $levelname = $levelobj->level_title ?? '';  // capture the level name
               // now we need to insert the levelnames in the array for display
               $row->levelname = $levelname;
 
               $memtypeid        = $row->ccmp_type;
               $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-              $row->ccmp_type = $memtypeobj->ccmp_type;
+              $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
-              $actypeid           = $row->aircraft_type;
-              $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-              $row->aircraft_type = $actypeobj->name;
+              $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+              $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+              $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
               $subentityrole    = $row->subentity_role;
               $subentityobj   = $this->model->get_where($subentityrole,'ccmps_subentity_roles');
-              $row->subentity_role = $subentityobj->description;
+              $row->subentity_role = $subentityobj->description ?? '';
 
               $subentityid    = $row->subentity;
               $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-              $row->subentity = $subentityobj->description;
+              $row->subentity = $subentityobj->description ?? '';
 
               // $fintypeid          = $row->fin_acct_type;
               // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -4459,20 +4487,20 @@ $result = 1;
               $recid = $row->id;
               $addrdataobj = $this->model->get_one_where('ccmp_id',$recid,'ccmps_addresses');
 
-              $row->mailaddress1 = $addrdataobj->mailaddress1;
-              $row->mailaddress2 = $addrdataobj->mailaddress2;
-              $row->mailcity     = $addrdataobj->mailcity;
-              $row->mailstate    = $addrdataobj->mailstate;
-              $row->mailzip      = $addrdataobj->mailzip;
+              $row->mailaddress1 = $addrdataobj->mailaddress1 ?? '';
+              $row->mailaddress2 = $addrdataobj->mailaddress2 ?? '';
+              $row->mailcity     = $addrdataobj->mailcity ?? '';
+              $row->mailstate    = $addrdataobj->mailstate ?? '';
+              $row->mailzip      = $addrdataobj->mailzip ?? '';
 
-              $row->physaddress1 = $addrdataobj->physaddress1;
-              $row->physaddress2 = $addrdataobj->physaddress2;
-              $row->physcity     = $addrdataobj->physcity;
-              $row->physstate    = $addrdataobj->physstate;
-              $row->physzip      = $addrdataobj->physzip;
+              $row->physaddress1 = $addrdataobj->physaddress1 ?? '';
+              $row->physaddress2 = $addrdataobj->physaddress2 ?? '';
+              $row->physcity     = $addrdataobj->physcity ?? '';
+              $row->physstate    = $addrdataobj->physstate ?? '';
+              $row->physzip      = $addrdataobj->physzip ?? '';
           }
 
-              $data['subentity_name']  = $subentity_name;
+              $data['subentity_name']  = $_SESSION['subentity_name'] ?? ''; // set at login
 
               $data['view_module']   = 'welcome/ccmps';
               $data['view_file']     = 'directorylist'; // full member directory
@@ -4690,29 +4718,31 @@ switch($_SESSION['ccmpmode']){
 
             $highcert                 = $row->highest_certificate;  // get the integer
             $subentityobj               = $this->model->get_where($highcert,'ccmps_certificate_types'); // use the integer to get the object
-            $row->highest_certificate = $subentityobj->description; // reset the value from integer to string from the object
+            $row->highest_certificate = $subentityobj->description ?? ''; // reset the value from integer to string from the object
 
-            $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+            $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
             $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-            $levelname = $levelobj->level_title;  // capture the level name
+            $levelname = $levelobj->level_title ?? '';  // capture the level name
             // now we need to insert the levelnames in the array for display
             $row->levelname = $levelname;
 
             $memtypeid        = $row->ccmp_type;
             $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-            $row->ccmp_type = $memtypeobj->ccmp_type;
+            $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
-            $actypeid           = $row->aircraft_type;
-            $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-            $row->aircraft_type = $actypeobj->name;
+            $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+            $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+            $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
             $subentityrole    = $row->subentity_role;
             $subentityobj   = $this->model->get_where($subentityrole,'ccmps_subentity_roles');
-            $row->subentity_role = $subentityobj->description;
+            $row->subentity_role = $subentityobj->description ?? '';
 
             $subentityid    = $row->subentity;
             $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-            $row->subentity = $subentityobj->description;
+            $row->subentity = $subentityobj->description ?? '';
 
             // $fintypeid          = $row->fin_acct_type;
             // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -4734,17 +4764,17 @@ switch($_SESSION['ccmpmode']){
             $recid = $row->id;
             $addrdataobj = $this->model->get_one_where('ccmp_id',$recid,'ccmps_addresses');
 
-            $row->mailaddress1 = $addrdataobj->mailaddress1;
-            $row->mailaddress2 = $addrdataobj->mailaddress2;
-            $row->mailcity     = $addrdataobj->mailcity;
-            $row->mailstate    = $addrdataobj->mailstate;
-            $row->mailzip      = $addrdataobj->mailzip;
+            $row->mailaddress1 = $addrdataobj->mailaddress1 ?? '';
+            $row->mailaddress2 = $addrdataobj->mailaddress2 ?? '';
+            $row->mailcity     = $addrdataobj->mailcity ?? '';
+            $row->mailstate    = $addrdataobj->mailstate ?? '';
+            $row->mailzip      = $addrdataobj->mailzip ?? '';
 
-            $row->physaddress1 = $addrdataobj->physaddress1;
-            $row->physaddress2 = $addrdataobj->physaddress2;
-            $row->physcity     = $addrdataobj->physcity;
-            $row->physstate    = $addrdataobj->physstate;
-            $row->physzip      = $addrdataobj->physzip;
+            $row->physaddress1 = $addrdataobj->physaddress1 ?? '';
+            $row->physaddress2 = $addrdataobj->physaddress2 ?? '';
+            $row->physcity     = $addrdataobj->physcity ?? '';
+            $row->physstate    = $addrdataobj->physstate ?? '';
+            $row->physzip      = $addrdataobj->physzip ?? '';
 //print_r($addrdataobj); die();
         } // end foreach
 
@@ -4822,13 +4852,13 @@ switch($_SESSION['ccmpmode']){
 //print_r($subentity); die();
 if($scope == 'subentity'){
         // query for subentity records
-    $sql = "SELECT * FROM ccmps WHERE subentity = $subentity";
+    $sql = $this->_member_select()." WHERE subentity = $subentity";
     $data = $this->model->query($sql,'object');
 
 //json($data); die();
 }else{
     // query for all records - (syntax: 'order_by', 'table', limit, offset)
-    $data = $this->model->get('subentity','ccmps'); //
+    $data = $this->model->query($this->_member_select()." ORDER BY subentity", 'object'); // with the aux fields
 
 }
 
@@ -4841,18 +4871,18 @@ if($scope == 'subentity'){
 //print_r($ccmprecid); die();
       $addrobj   = $this->model->get_one_where('ccmp_id',$ccmprecid,'ccmps_addresses');
  // json($addrobj); die();
-      $row->mailaddress1 = $addrobj->mailaddress1;
-      $row->mailaddress2 = $addrobj->mailaddress2;
-      $row->mailcity     = $addrobj->mailcity;
-      $row->mailstate    = $addrobj->mailstate;
-      $row->mailzip      = $addrobj->mailzip;
-      $row->mailcountry  = $addrobj->mailcountry;
-      $row->physaddress1 = $addrobj->physaddress1;
-      $row->physaddress2 = $addrobj->physaddress2;
-      $row->physcity     = $addrobj->physcity;
-      $row->physstate    = $addrobj->physstate;
-      $row->physzip      = $addrobj->physzip;
-      $row->physcountry  = $addrobj->physcountry;
+      $row->mailaddress1 = $addrobj->mailaddress1 ?? '';
+      $row->mailaddress2 = $addrobj->mailaddress2 ?? '';
+      $row->mailcity     = $addrobj->mailcity ?? '';
+      $row->mailstate    = $addrobj->mailstate ?? '';
+      $row->mailzip      = $addrobj->mailzip ?? '';
+      $row->mailcountry  = $addrobj->mailcountry ?? '';
+      $row->physaddress1 = $addrobj->physaddress1 ?? '';
+      $row->physaddress2 = $addrobj->physaddress2 ?? '';
+      $row->physcity     = $addrobj->physcity ?? '';
+      $row->physstate    = $addrobj->physstate ?? '';
+      $row->physzip      = $addrobj->physzip ?? '';
+      $row->physcountry  = $addrobj->physcountry ?? '';
  //     print_r($ccmprecid); die();
 
       // dont need any financial data for Master Spreadsheet
@@ -4876,36 +4906,38 @@ if($scope == 'subentity'){
 
           // Change codes to names
 
-          $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+          $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
           $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-          $levelname = $levelobj->level_title;  // capture the level name
+          $levelname = $levelobj->level_title ?? '';  // capture the level name
           // now we need to insert the levelnames in the array for display
           $row->levelname = $levelname;
 
           $natofficeid        = $row->national_officer;
           $natofficeobj       = $this->model->get_where($natofficeid,'ref_national_offices');
-          $row->national_officer = $natofficeobj->description;
+          $row->national_officer = $natofficeobj->description ?? '';
 
 
           $memtypeid        = $row->ccmp_type;
           $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-          $row->ccmp_type = $memtypeobj->ccmp_type;
+          $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
-          $actypeid           = $row->aircraft_type;
-          $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-          $row->aircraft_type = $actypeobj->name;
+          $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+          $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+          $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
           $subentityid    = $row->subentity;
           $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-          $row->subentity = $subentityobj->description;
+          $row->subentity = $subentityobj->description ?? '';
 
           $subentityroleid     = $row->subentity_role;
           $subentityroleobj    = $this->model->get_where($subentityroleid,'ccmps_subentity_roles');
-          $row->subentity_role = $subentityroleobj->description;
+          $row->subentity_role = $subentityroleobj->description ?? '';
 
           $highcertid               = $row->highest_certificate;
           $highcertobj              = $this->model->get_where($highcertid,'ccmps_certificate_types');
-          $row->highest_certificate = $highcertobj->description;
+          $row->highest_certificate = $highcertobj->description ?? '';
 
           // $fintypeid          = $row->fin_acct_type;
           // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -4925,298 +4957,298 @@ if($scope == 'subentity'){
 
 /*------ Convert the Binary Yes/No fields ----------*/
 
-          if($row->student_admin == 1) {
+          if(!empty($row->student_admin)) {
                $row->student_admin = 'TRUE';
           }else{
                $row->student_admin = 'FALSE';
           }
 
-          if($row->cms_admin == 1) {
+          if(!empty($row->cms_admin)) {
                $row->cms_admin = 'TRUE';
           }else{
                $row->cms_admin = 'FALSE';
           }
 
-          if($row->subentity_admin == 1) {
+          if(!empty($row->subentity_admin)) {
                $row->subentity_admin = 'TRUE';
           }else{
                $row->subentity_admin = 'FALSE';
           }
 
-          if($row->admin == 1) {
+          if(!empty($row->admin)) {
                $row->admin = 'TRUE';
           }else{
                $row->admin = 'FALSE';
           }
 
 
-          if($row->system_admin == 1) {
+          if(!empty($row->system_admin)) {
                $row->system_admin = 'TRUE';
           }else{
                $row->system_admin = 'FALSE';
           }
 
-          if($row->eligible_voter == 1) {
+          if(!empty($row->eligible_voter)) {
                $row->eligible_voter = 'TRUE';
           }else{
                $row->eligible_voter = 'FALSE';
           }
 
-          if($row->emailoptout == 1) {
+          if(!empty($row->emailoptout)) {
                $row->emailoptout = 'TRUE';
           }else{
                $row->emailoptout = 'FALSE';
           }
 
-          if($row->directoryoptout == 1) {
+          if(!empty($row->directoryoptout)) {
                $row->directoryoptout = 'TRUE';
           }else{
                $row->directoryoptout = 'FALSE';
           }
 
-          if($row->dontcall == 1) {
+          if(!empty($row->dontcall)) {
                $row->donotcall = 'TRUE';
           }else{
                $row->donotcall = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->deceased == 1) {
+          if(!empty($row->deceased)) {
                $row->deceased = 'TRUE';
           }else{
                $row->deceased = 'FALSE';
           }
 
-          if($row->no_address == 1) {
+          if(!empty($row->no_address)) {
                $row->no_address = 'TRUE';
           }else{
                $row->no_address = 'FALSE';
           }
 
-          if($row->special_event == 1) {
+          if(!empty($row->special_event)) {
                $row->special_event = 'TRUE';
           }else{
                $row->special_event = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->aircraft_owner == 1) {
+          if(!empty($row->aircraft_owner)) {
                $row->aircraft_owner = 'TRUE';
           }else{
                $row->aircraft_owner = 'FALSE';
           }
 
 
-          if($row->hall_of_fame == 1) {
+          if(!empty($row->hall_of_fame)) {
                $row->hall_of_fame = 'TRUE';
           }else{
                $row->hall_of_fame = 'FALSE';
           }
 
-          if($row->alumnus == 1) {
+          if(!empty($row->alumnus)) {
                $row->alumnus = 'TRUE';
           }else{
                $row->alumnus = 'FALSE';
           }
 
-          if($row->active_duty == 1) {
+          if(!empty($row->active_duty)) {
                $row->active_duty = 'TRUE';
           }else{
                $row->active_duty = 'FALSE';
           }
 
-          if($row->former_military == 1) {
+          if(!empty($row->former_military)) {
                $row->former_military = 'TRUE';
           }else{
                $row->former_military = 'FALSE';
           }
 
-          if($row->military_pilot == 1) {
+          if(!empty($row->military_pilot)) {
                $row->military_pilot = 'TRUE';
           }else{
                $row->military_pilot = 'FALSE';
           }
 
-          if($row->vip == 1) {
+          if(!empty($row->vip)) {
                $row->vip = 'TRUE';
           }else{
                $row->vip = 'FALSE';
           }
 
-          if($row->student == 1) {
+          if(!empty($row->student)) {
                $row->student = 'TRUE';
           }else{
                $row->student = 'FALSE';
           }
 
-          if($row->minor == 1) {
+          if(!empty($row->minor)) {
                $row->minor = 'TRUE';
           }else{
                $row->minor = 'FALSE';
           }
 
-          if($row->private == 1) {
+          if(!empty($row->private)) {
                $row->private = 'TRUE';
           }else{
                $row->private = 'FALSE';
           }
 
 
-          if($row->commercial == 1) {
+          if(!empty($row->commercial)) {
                $row->commercial = 'TRUE';
           }else{
                $row->commercial = 'FALSE';
           }
 
-          if($row->atp == 1) {
+          if(!empty($row->atp)) {
                $row->atp = 'TRUE';
           }else{
                $row->atp = 'FALSE';
           }
 
-          if($row->drone == 1) {
+          if(!empty($row->drone)) {
                $row->drone = 'TRUE';
           }else{
                $row->drone = 'FALSE';
           }
 
-          if($row->ap == 1) {
+          if(!empty($row->ap)) {
                $row->ap = 'TRUE';
           }else{
                $row->ap = 'FALSE';
           }
 
-          if($row->ia == 1) {
+          if(!empty($row->ia)) {
                $row->ia = 'TRUE';
           }else{
                $row->ia = 'FALSE';
           }
 
-          if($row->military_maint == 1) {
+          if(!empty($row->military_maint)) {
                $row->military_maint = 'TRUE';
           }else{
                $row->military_maint = 'FALSE';
           }
 
-          if($row->maintenance == 1) {
+          if(!empty($row->maintenance)) {
                $row->maintenance = 'TRUE';
           }else{
                $row->maintenance = 'FALSE';
           }
 
-          if($row->atc == 1) {
+          if(!empty($row->atc)) {
                $row->atc = 'TRUE';
           }else{
                $row->atc = 'FALSE';
           }
 
-          if($row->dispatcher == 1) {
+          if(!empty($row->dispatcher)) {
                $row->dispatcher = 'TRUE';
           }else{
                $row->dispatcher = 'FALSE';
           }
 
-          if($row->se_land == 1) {
+          if(!empty($row->se_land)) {
                $row->se_land = 'TRUE';
           }else{
                $row->se_land = 'FALSE';
           }
 
-          if($row->me_land == 1) {
+          if(!empty($row->me_land)) {
                $row->me_land = 'TRUE';
           }else{
                $row->me_land = 'FALSE';
           }
 
-          if($row->se_sea == 1) {
+          if(!empty($row->se_sea)) {
                $row->se_sea = 'TRUE';
           }else{
                $row->se_sea = 'FALSE';
           }
 
-          if($row->me_sea == 1) {
+          if(!empty($row->me_sea)) {
                $row->me_sea = 'TRUE';
           }else{
                $row->me_sea = 'FALSE';
           }
 
-          if($row->instrument == 1) {
+          if(!empty($row->instrument)) {
                $row->instrument = 'TRUE';
           }else{
                $row->instrument = 'FALSE';
           }
 
-          if($row->cfi == 1) {
+          if(!empty($row->cfi)) {
                $row->cfi = 'TRUE';
           }else{
                $row->cfi = 'FALSE';
           }
 
-          if($row->cfii == 1) {
+          if(!empty($row->cfii)) {
                $row->cfii = 'TRUE';
           }else{
                $row->cfii = 'FALSE';
           }
 
-          if($row->mei == 1) {
+          if(!empty($row->mei)) {
                $row->mei = 'TRUE';
           }else{
                $row->mei = 'FALSE';
           }
 
-          if($row->dpe == 1) {
+          if(!empty($row->dpe)) {
                $row->dpe = 'TRUE';
           }else{
                $row->dpe = 'FALSE';
           }
 
-          if($row->bgi == 1) {
+          if(!empty($row->bgi)) {
                $row->bgi = 'TRUE';
           }else{
                $row->bgi = 'FALSE';
           }
 
-          if($row->agi == 1) {
+          if(!empty($row->agi)) {
                $row->agi = 'TRUE';
           }else{
                $row->agi = 'FALSE';
           }
 
-          if($row->rotocraft == 1) {
+          if(!empty($row->rotocraft)) {
                $row->rotocraft = 'TRUE';
           }else{
                $row->rotocraft = 'FALSE';
           }
 
-          if($row->glider == 1) {
+          if(!empty($row->glider)) {
                $row->glider = 'TRUE';
           }else{
                $row->glider = 'FALSE';
           }
 
-          if($row->balloon == 1) {
+          if(!empty($row->balloon)) {
                $row->balloon = 'TRUE';
           }else{
                $row->balloon = 'FALSE';
           }
 
-          if($row->airship == 1) {
+          if(!empty($row->airship)) {
                $row->airship = 'TRUE';
           }else{
                $row->airship = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
@@ -5247,7 +5279,7 @@ if($scope == 'subentity'){
 
 }
 
-    //   $data['subentity_name']  = $subentity_name;
+    //   $data['subentity_name']  = $_SESSION['subentity_name'] ?? ''; // set at login
       $data['view_module']   = 'welcome/ccmps';
       $data['view_file']     = 'export'; // read only roster
 
@@ -5300,10 +5332,10 @@ if($scope == 'subentity'){
       $currentyear  = $currentyear - 1;
 
       if( $recid > 0){
-        $sql = "SELECT * FROM ccmps WHERE id = $recid"; // what if deleted or archived off ???
+        $sql = $this->_member_select()." WHERE ccmps.id = $recid"; // what if deleted or archived off ???
       }else{
 
-         $sql = "SELECT * FROM ccmps WHERE deceased != 1 AND current_year > $currentyear";
+         $sql = $this->_member_select()." WHERE deceased != 1 AND current_year > $currentyear";
       }
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity ORDER BY last_name DESC"; // doesnt work for read only roster. if hidden = NULL recs wont be included!
           $data = $this->model->query($sql,'object');
@@ -5315,18 +5347,18 @@ if($scope == 'subentity'){
 //print_r($ccmprecid); die();
       $addrobj   = $this->model->get_one_where('ccmp_id',$ccmprecid,'ccmps_addresses');
 //  print_r($addrobj); die();
-      $row->mailaddress1 = $addrobj->mailaddress1;
-      $row->mailaddress2 = $addrobj->mailaddress2;
-      $row->mailcity     = $addrobj->mailcity;
-      $row->mailstate    = $addrobj->mailstate;
-      $row->mailzip      = $addrobj->mailzip;
-      $row->mailcountry  = $addrobj->mailcountry;
-      $row->physaddress1 = $addrobj->physaddress1;
-      $row->physaddress2 = $addrobj->physaddress2;
-      $row->physcity     = $addrobj->physcity;
-      $row->physstate    = $addrobj->physstate;
-      $row->physzip      = $addrobj->physzip;
-      $row->physcountry  = $addrobj->physcountry;
+      $row->mailaddress1 = $addrobj->mailaddress1 ?? '';
+      $row->mailaddress2 = $addrobj->mailaddress2 ?? '';
+      $row->mailcity     = $addrobj->mailcity ?? '';
+      $row->mailstate    = $addrobj->mailstate ?? '';
+      $row->mailzip      = $addrobj->mailzip ?? '';
+      $row->mailcountry  = $addrobj->mailcountry ?? '';
+      $row->physaddress1 = $addrobj->physaddress1 ?? '';
+      $row->physaddress2 = $addrobj->physaddress2 ?? '';
+      $row->physcity     = $addrobj->physcity ?? '';
+      $row->physstate    = $addrobj->physstate ?? '';
+      $row->physzip      = $addrobj->physzip ?? '';
+      $row->physcountry  = $addrobj->physcountry ?? '';
  //     print_r($ccmprecid); die();
 
       // dont need any financial data for Master Spreadsheet
@@ -5348,35 +5380,37 @@ if($scope == 'subentity'){
 
           // Change codes to names
 
-          $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+          $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
           $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-          $levelname = $levelobj->level_title;  // capture the level name
+          $levelname = $levelobj->level_title ?? '';  // capture the level name
           // now we need to insert the levelnames in the array for display
           $row->levelname = $levelname;
 
           $memtypeid        = $row->ccmp_type;
           $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-          $row->ccmp_type = $memtypeobj->ccmp_type;
+          $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
           $natoffcrid            = $row->national_officer;
           $natoffcrobj           = $this->model->get_where( $natoffcrid,'ref_national_offices');
-          $row->national_officer = $natoffcrobj->description;
+          $row->national_officer = $natoffcrobj->description ?? '';
 
-          $actypeid           = $row->aircraft_type;
-          $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-          $row->aircraft_type = $actypeobj->name;
+          $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+          $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+          $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
           $subentityid    = $row->subentity;
           $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-          $row->subentity = $subentityobj->description;
+          $row->subentity = $subentityobj->description ?? '';
 
           $subentityroleid     = $row->subentity_role;
           $subentityroleobj    = $this->model->get_where($subentityroleid,'ccmps_subentity_roles');
-          $row->subentity_role = $subentityroleobj->description;
+          $row->subentity_role = $subentityroleobj->description ?? '';
 
           $highcertid               = $row->highest_certificate;
           $highcertobj              = $this->model->get_where($highcertid,'ccmps_certificate_types');
-          $row->highest_certificate = $highcertobj->description;
+          $row->highest_certificate = $highcertobj->description ?? '';
 
           // $fintypeid          = $row->fin_acct_type;
           // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -5396,292 +5430,292 @@ if($scope == 'subentity'){
 
 /*------ Convert the Binary Yes/No fields ----------*/
 
-          if($row->student_admin == 1) {
+          if(!empty($row->student_admin)) {
                $row->student_admin = 'TRUE';
           }else{
                $row->student_admin = 'FALSE';
           }
 
-          if($row->cms_admin == 1) {
+          if(!empty($row->cms_admin)) {
                $row->cms_admin = 'TRUE';
           }else{
                $row->cms_admin = 'FALSE';
           }
 
-          if($row->subentity_admin == 1) {
+          if(!empty($row->subentity_admin)) {
                $row->subentity_admin = 'TRUE';
           }else{
                $row->subentity_admin = 'FALSE';
           }
 
-          if($row->admin == 1) {
+          if(!empty($row->admin)) {
                $row->admin = 'TRUE';
           }else{
                $row->admin = 'FALSE';
           }
 
-          if($row->system_admin == 1) {
+          if(!empty($row->system_admin)) {
                $row->system_admin = 'TRUE';
           }else{
                $row->system_admin = 'FALSE';
           }
 
-          if($row->eligible_voter == 1) {
+          if(!empty($row->eligible_voter)) {
                $row->eligible_voter = 'TRUE';
           }else{
                $row->eligible_voter = 'FALSE';
           }
 
-          if($row->emailoptout == 1) {
+          if(!empty($row->emailoptout)) {
                $row->emailoptout = 'TRUE';
           }else{
                $row->emailoptout = 'FALSE';
           }
 
-          if($row->directoryoptout == 1) {
+          if(!empty($row->directoryoptout)) {
                $row->directoryoptout = 'TRUE';
           }else{
                $row->directoryoptout = 'FALSE';
           }
 
-          if($row->dontcall == 1) {
+          if(!empty($row->dontcall)) {
                $row->donotcall = 'TRUE';
           }else{
                $row->donotcall = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->deceased == 1) {
+          if(!empty($row->deceased)) {
                $row->deceased = 'TRUE';
           }else{
                $row->deceased = 'FALSE';
           }
 
-          if($row->no_address == 1) {
+          if(!empty($row->no_address)) {
                $row->no_address = 'TRUE';
           }else{
                $row->no_address = 'FALSE';
           }
 
-          if($row->special_event == 1) {
+          if(!empty($row->special_event)) {
                $row->special_event = 'TRUE';
           }else{
                $row->special_event = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->aircraft_owner == 1) {
+          if(!empty($row->aircraft_owner)) {
                $row->aircraft_owner = 'TRUE';
           }else{
                $row->aircraft_owner = 'FALSE';
           }
 
 
-          if($row->hall_of_fame == 1) {
+          if(!empty($row->hall_of_fame)) {
                $row->hall_of_fame = 'TRUE';
           }else{
                $row->hall_of_fame = 'FALSE';
           }
 
 
-          if($row->alumnus == 1) {
+          if(!empty($row->alumnus)) {
                $row->alumnus = 'TRUE';
           }else{
                $row->alumnus = 'FALSE';
           }
 
-          if($row->active_duty == 1) {
+          if(!empty($row->active_duty)) {
                $row->active_duty = 'TRUE';
           }else{
                $row->active_duty = 'FALSE';
           }
 
-          if($row->former_military == 1) {
+          if(!empty($row->former_military)) {
                $row->former_military = 'TRUE';
           }else{
                $row->former_military = 'FALSE';
           }
 
-          if($row->military_pilot == 1) {
+          if(!empty($row->military_pilot)) {
                $row->military_pilot = 'TRUE';
           }else{
                $row->military_pilot = 'FALSE';
           }
 
-          if($row->vip == 1) {
+          if(!empty($row->vip)) {
                $row->vip = 'TRUE';
           }else{
                $row->vip = 'FALSE';
           }
 
-          if($row->student == 1) {
+          if(!empty($row->student)) {
                $row->student = 'TRUE';
           }else{
                $row->student = 'FALSE';
           }
 
-          if($row->private == 1) {
+          if(!empty($row->private)) {
                $row->private = 'TRUE';
           }else{
                $row->private = 'FALSE';
           }
 
 
-          if($row->commercial == 1) {
+          if(!empty($row->commercial)) {
                $row->commercial = 'TRUE';
           }else{
                $row->commercial = 'FALSE';
           }
 
-          if($row->atp == 1) {
+          if(!empty($row->atp)) {
                $row->atp = 'TRUE';
           }else{
                $row->atp = 'FALSE';
           }
 
-          if($row->drone == 1) {
+          if(!empty($row->drone)) {
                $row->drone = 'TRUE';
           }else{
                $row->drone = 'FALSE';
           }
 
-          if($row->ap == 1) {
+          if(!empty($row->ap)) {
                $row->ap = 'TRUE';
           }else{
                $row->ap = 'FALSE';
           }
 
-          if($row->ia == 1) {
+          if(!empty($row->ia)) {
                $row->ia = 'TRUE';
           }else{
                $row->ia = 'FALSE';
           }
 
-          if($row->military_maint == 1) {
+          if(!empty($row->military_maint)) {
                $row->military_maint = 'TRUE';
           }else{
                $row->military_maint = 'FALSE';
           }
 
-          if($row->maintenance == 1) {
+          if(!empty($row->maintenance)) {
                $row->maintenance = 'TRUE';
           }else{
                $row->maintenance = 'FALSE';
           }
 
-          if($row->atc == 1) {
+          if(!empty($row->atc)) {
                $row->atc = 'TRUE';
           }else{
                $row->atc = 'FALSE';
           }
 
-          if($row->dispatcher == 1) {
+          if(!empty($row->dispatcher)) {
                $row->dispatcher = 'TRUE';
           }else{
                $row->dispatcher = 'FALSE';
           }
 
-          if($row->se_land == 1) {
+          if(!empty($row->se_land)) {
                $row->se_land = 'TRUE';
           }else{
                $row->se_land = 'FALSE';
           }
 
-          if($row->me_land == 1) {
+          if(!empty($row->me_land)) {
                $row->me_land = 'TRUE';
           }else{
                $row->me_land = 'FALSE';
           }
 
-          if($row->se_sea == 1) {
+          if(!empty($row->se_sea)) {
                $row->se_sea = 'TRUE';
           }else{
                $row->se_sea = 'FALSE';
           }
 
-          if($row->me_sea == 1) {
+          if(!empty($row->me_sea)) {
                $row->me_sea = 'TRUE';
           }else{
                $row->me_sea = 'FALSE';
           }
 
-          if($row->instrument == 1) {
+          if(!empty($row->instrument)) {
                $row->instrument = 'TRUE';
           }else{
                $row->instrument = 'FALSE';
           }
 
-          if($row->cfi == 1) {
+          if(!empty($row->cfi)) {
                $row->cfi = 'TRUE';
           }else{
                $row->cfi = 'FALSE';
           }
 
-          if($row->cfii == 1) {
+          if(!empty($row->cfii)) {
                $row->cfii = 'TRUE';
           }else{
                $row->cfii = 'FALSE';
           }
 
-          if($row->mei == 1) {
+          if(!empty($row->mei)) {
                $row->mei = 'TRUE';
           }else{
                $row->mei = 'FALSE';
           }
 
-          if($row->dpe == 1) {
+          if(!empty($row->dpe)) {
                $row->dpe = 'TRUE';
           }else{
                $row->dpe = 'FALSE';
           }
 
-          if($row->bgi == 1) {
+          if(!empty($row->bgi)) {
                $row->bgi = 'TRUE';
           }else{
                $row->bgi = 'FALSE';
           }
 
-          if($row->agi == 1) {
+          if(!empty($row->agi)) {
                $row->agi = 'TRUE';
           }else{
                $row->agi = 'FALSE';
           }
 
-          if($row->rotocraft == 1) {
+          if(!empty($row->rotocraft)) {
                $row->rotocraft = 'TRUE';
           }else{
                $row->rotocraft = 'FALSE';
           }
 
-          if($row->glider == 1) {
+          if(!empty($row->glider)) {
                $row->glider = 'TRUE';
           }else{
                $row->glider = 'FALSE';
           }
 
-          if($row->balloon == 1) {
+          if(!empty($row->balloon)) {
                $row->balloon = 'TRUE';
           }else{
                $row->balloon = 'FALSE';
           }
 
-          if($row->airship == 1) {
+          if(!empty($row->airship)) {
                $row->airship = 'TRUE';
           }else{
                $row->airship = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
@@ -5696,7 +5730,7 @@ if($scope == 'subentity'){
 $previousyear = $currentyear; // because 1 has been subtracted from current year already to use the > sign in query becuase some pay for yesrs in advance
 
 //print_r($previousyear); die();
-      $sql2 = "SELECT * FROM ccmps WHERE deceased != 1 AND current_year = $previousyear"; // for read only roster
+      $sql2 = $this->_member_select()." WHERE deceased != 1 AND current_year = $previousyear"; // for read only roster
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity ORDER BY last_name DESC"; // doesnt work for read only roster. if hidden = NULL recs wont be included!
           $data2 = $this->model->query($sql2,'object');
     // convert the object to an array to add additional data for the view
@@ -5707,18 +5741,18 @@ $previousyear = $currentyear; // because 1 has been subtracted from current year
 //print_r($ccmprecid); die();
       $addrobj   = $this->model->get_one_where('ccmp_id',$ccmprecid,'ccmps_addresses');
 //  print_r($addrobj); die();
-      $row->mailaddress1 = $addrobj->mailaddress1;
-      $row->mailaddress2 = $addrobj->mailaddress2;
-      $row->mailcity     = $addrobj->mailcity;
-      $row->mailstate    = $addrobj->mailstate;
-      $row->mailzip      = $addrobj->mailzip;
-      $row->mailcountry  = $addrobj->mailcountry;
-      $row->physaddress1 = $addrobj->physaddress1;
-      $row->physaddress2 = $addrobj->physaddress2;
-      $row->physcity     = $addrobj->physcity;
-      $row->physstate    = $addrobj->physstate;
-      $row->physzip      = $addrobj->physzip;
-      $row->physcountry  = $addrobj->physcountry;
+      $row->mailaddress1 = $addrobj->mailaddress1 ?? '';
+      $row->mailaddress2 = $addrobj->mailaddress2 ?? '';
+      $row->mailcity     = $addrobj->mailcity ?? '';
+      $row->mailstate    = $addrobj->mailstate ?? '';
+      $row->mailzip      = $addrobj->mailzip ?? '';
+      $row->mailcountry  = $addrobj->mailcountry ?? '';
+      $row->physaddress1 = $addrobj->physaddress1 ?? '';
+      $row->physaddress2 = $addrobj->physaddress2 ?? '';
+      $row->physcity     = $addrobj->physcity ?? '';
+      $row->physstate    = $addrobj->physstate ?? '';
+      $row->physzip      = $addrobj->physzip ?? '';
+      $row->physcountry  = $addrobj->physcountry ?? '';
  //     print_r($ccmprecid); die();
 
       // dont need any financial data for Master Spreadsheet
@@ -5742,35 +5776,37 @@ print_r($currentyear );
 
           // Change codes to names
 
-          $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+          $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
           $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-          $levelname = $levelobj->level_title;  // capture the level name
+          $levelname = $levelobj->level_title ?? '';  // capture the level name
           // now we need to insert the levelnames in the array for display
           $row->levelname = $levelname;
 
           $memtypeid        = $row->ccmp_type;
           $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-          $row->ccmp_type = $memtypeobj->ccmp_type;
+          $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
           $natoffcrid            = $row->national_officer;
           $natoffcrobj           = $this->model->get_where( $natoffcrid,'ref_national_offices');
-          $row->national_officer = $natoffcrobj->description;
+          $row->national_officer = $natoffcrobj->description ?? '';
 
-          $actypeid           = $row->aircraft_type;
-          $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-          $row->aircraft_type = $actypeobj->name;
+          $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+          $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+          $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
           $subentityid    = $row->subentity;
           $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-          $row->subentity = $subentityobj->description;
+          $row->subentity = $subentityobj->description ?? '';
 
           $subentityroleid     = $row->subentity_role;
           $subentityroleobj    = $this->model->get_where($subentityroleid,'ccmps_subentity_roles');
-          $row->subentity_role = $subentityroleobj->description;
+          $row->subentity_role = $subentityroleobj->description ?? '';
 
           $highcertid               = $row->highest_certificate;
           $highcertobj              = $this->model->get_where($highcertid,'ccmps_certificate_types');
-          $row->highest_certificate = $highcertobj->description;
+          $row->highest_certificate = $highcertobj->description ?? '';
 
           // $fintypeid          = $row->fin_acct_type;
           // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -5790,291 +5826,291 @@ print_r($currentyear );
 
 /*------ Convert the Binary Yes/No fields ----------*/
 
-          if($row->student_admin == 1) {
+          if(!empty($row->student_admin)) {
                $row->student_admin = 'TRUE';
           }else{
                $row->student_admin = 'FALSE';
           }
 
-          if($row->cms_admin == 1) {
+          if(!empty($row->cms_admin)) {
                $row->cms_admin = 'TRUE';
           }else{
                $row->cms_admin = 'FALSE';
           }
 
-          if($row->subentity_admin == 1) {
+          if(!empty($row->subentity_admin)) {
                $row->subentity_admin = 'TRUE';
           }else{
                $row->subentity_admin = 'FALSE';
           }
 
-          if($row->admin == 1) {
+          if(!empty($row->admin)) {
                $row->admin = 'TRUE';
           }else{
                $row->admin = 'FALSE';
           }
 
-          if($row->system_admin == 1) {
+          if(!empty($row->system_admin)) {
                $row->system_admin = 'TRUE';
           }else{
                $row->system_admin = 'FALSE';
           }
 
-          if($row->eligible_voter == 1) {
+          if(!empty($row->eligible_voter)) {
                $row->eligible_voter = 'TRUE';
           }else{
                $row->eligible_voter = 'FALSE';
           }
 
-          if($row->emailoptout == 1) {
+          if(!empty($row->emailoptout)) {
                $row->emailoptout = 'TRUE';
           }else{
                $row->emailoptout = 'FALSE';
           }
 
-          if($row->directoryoptout == 1) {
+          if(!empty($row->directoryoptout)) {
                $row->directoryoptout = 'TRUE';
           }else{
                $row->directoryoptout = 'FALSE';
           }
 
-          if($row->dontcall == 1) {
+          if(!empty($row->dontcall)) {
                $row->donotcall = 'TRUE';
           }else{
                $row->donotcall = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->deceased == 1) {
+          if(!empty($row->deceased)) {
                $row->deceased = 'TRUE';
           }else{
                $row->deceased = 'FALSE';
           }
 
-          if($row->no_address == 1) {
+          if(!empty($row->no_address)) {
                $row->no_address = 'TRUE';
           }else{
                $row->no_address = 'FALSE';
           }
 
-          if($row->special_event == 1) {
+          if(!empty($row->special_event)) {
                $row->special_event = 'TRUE';
           }else{
                $row->special_event = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->aircraft_owner == 1) {
+          if(!empty($row->aircraft_owner)) {
                $row->aircraft_owner = 'TRUE';
           }else{
                $row->aircraft_owner = 'FALSE';
           }
 
 
-          if($row->hall_of_fame == 1) {
+          if(!empty($row->hall_of_fame)) {
                $row->hall_of_fame = 'TRUE';
           }else{
                $row->hall_of_fame = 'FALSE';
           }
 
-          if($row->alumnus == 1) {
+          if(!empty($row->alumnus)) {
                $row->alumnus = 'TRUE';
           }else{
                $row->alumnus = 'FALSE';
           }
 
-          if($row->active_duty == 1) {
+          if(!empty($row->active_duty)) {
                $row->active_duty = 'TRUE';
           }else{
                $row->active_duty = 'FALSE';
           }
 
-          if($row->former_military == 1) {
+          if(!empty($row->former_military)) {
                $row->former_military = 'TRUE';
           }else{
                $row->former_military = 'FALSE';
           }
 
-          if($row->military_pilot == 1) {
+          if(!empty($row->military_pilot)) {
                $row->military_pilot = 'TRUE';
           }else{
                $row->military_pilot = 'FALSE';
           }
 
-          if($row->vip == 1) {
+          if(!empty($row->vip)) {
                $row->vip = 'TRUE';
           }else{
                $row->vip = 'FALSE';
           }
 
-          if($row->student == 1) {
+          if(!empty($row->student)) {
                $row->student = 'TRUE';
           }else{
                $row->student = 'FALSE';
           }
 
-          if($row->private == 1) {
+          if(!empty($row->private)) {
                $row->private = 'TRUE';
           }else{
                $row->private = 'FALSE';
           }
 
 
-          if($row->commercial == 1) {
+          if(!empty($row->commercial)) {
                $row->commercial = 'TRUE';
           }else{
                $row->commercial = 'FALSE';
           }
 
-          if($row->atp == 1) {
+          if(!empty($row->atp)) {
                $row->atp = 'TRUE';
           }else{
                $row->atp = 'FALSE';
           }
 
-          if($row->drone == 1) {
+          if(!empty($row->drone)) {
                $row->drone = 'TRUE';
           }else{
                $row->drone = 'FALSE';
           }
 
-          if($row->ap == 1) {
+          if(!empty($row->ap)) {
                $row->ap = 'TRUE';
           }else{
                $row->ap = 'FALSE';
           }
 
-          if($row->ia == 1) {
+          if(!empty($row->ia)) {
                $row->ia = 'TRUE';
           }else{
                $row->ia = 'FALSE';
           }
 
-          if($row->military_maint == 1) {
+          if(!empty($row->military_maint)) {
                $row->military_maint = 'TRUE';
           }else{
                $row->military_maint = 'FALSE';
           }
 
-          if($row->maintenance == 1) {
+          if(!empty($row->maintenance)) {
                $row->maintenance = 'TRUE';
           }else{
                $row->maintenance = 'FALSE';
           }
 
-          if($row->atc == 1) {
+          if(!empty($row->atc)) {
                $row->atc = 'TRUE';
           }else{
                $row->atc = 'FALSE';
           }
 
-          if($row->dispatcher == 1) {
+          if(!empty($row->dispatcher)) {
                $row->dispatcher = 'TRUE';
           }else{
                $row->dispatcher = 'FALSE';
           }
 
-          if($row->se_land == 1) {
+          if(!empty($row->se_land)) {
                $row->se_land = 'TRUE';
           }else{
                $row->se_land = 'FALSE';
           }
 
-          if($row->me_land == 1) {
+          if(!empty($row->me_land)) {
                $row->me_land = 'TRUE';
           }else{
                $row->me_land = 'FALSE';
           }
 
-          if($row->se_sea == 1) {
+          if(!empty($row->se_sea)) {
                $row->se_sea = 'TRUE';
           }else{
                $row->se_sea = 'FALSE';
           }
 
-          if($row->me_sea == 1) {
+          if(!empty($row->me_sea)) {
                $row->me_sea = 'TRUE';
           }else{
                $row->me_sea = 'FALSE';
           }
 
-          if($row->instrument == 1) {
+          if(!empty($row->instrument)) {
                $row->instrument = 'TRUE';
           }else{
                $row->instrument = 'FALSE';
           }
 
-          if($row->cfi == 1) {
+          if(!empty($row->cfi)) {
                $row->cfi = 'TRUE';
           }else{
                $row->cfi = 'FALSE';
           }
 
-          if($row->cfii == 1) {
+          if(!empty($row->cfii)) {
                $row->cfii = 'TRUE';
           }else{
                $row->cfii = 'FALSE';
           }
 
-          if($row->mei == 1) {
+          if(!empty($row->mei)) {
                $row->mei = 'TRUE';
           }else{
                $row->mei = 'FALSE';
           }
 
-          if($row->dpe == 1) {
+          if(!empty($row->dpe)) {
                $row->dpe = 'TRUE';
           }else{
                $row->dpe = 'FALSE';
           }
 
-          if($row->bgi == 1) {
+          if(!empty($row->bgi)) {
                $row->bgi = 'TRUE';
           }else{
                $row->bgi = 'FALSE';
           }
 
-          if($row->agi == 1) {
+          if(!empty($row->agi)) {
                $row->agi = 'TRUE';
           }else{
                $row->agi = 'FALSE';
           }
 
-          if($row->rotocraft == 1) {
+          if(!empty($row->rotocraft)) {
                $row->rotocraft = 'TRUE';
           }else{
                $row->rotocraft = 'FALSE';
           }
 
-          if($row->glider == 1) {
+          if(!empty($row->glider)) {
                $row->glider = 'TRUE';
           }else{
                $row->glider = 'FALSE';
           }
 
-          if($row->balloon == 1) {
+          if(!empty($row->balloon)) {
                $row->balloon = 'TRUE';
           }else{
                $row->balloon = 'FALSE';
           }
 
-          if($row->airship == 1) {
+          if(!empty($row->airship)) {
                $row->airship = 'TRUE';
           }else{
                $row->airship = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
@@ -6089,7 +6125,7 @@ print_r($currentyear );
 $twoyearsago = $currentyear - 1; // because 1 has already been subtracted from current year already to use the > sign in query because some pay for yesrs in advance
 //echo(7210);
 //print_r($previousyear); die();
-      $sql3 = "SELECT * FROM ccmps WHERE deceased != 1 AND current_year = $twoyearsago"; // for read only roster
+      $sql3 = $this->_member_select()." WHERE deceased != 1 AND current_year = $twoyearsago"; // for read only roster
        //   $sql = "SELECT * FROM ccmps WHERE subentity = $subentity ORDER BY last_name DESC"; // doesnt work for read only roster. if hidden = NULL recs wont be included!
           $data3 = $this->model->query($sql3,'object');
     // convert the object to an array to add additional data for the view
@@ -6100,18 +6136,18 @@ $twoyearsago = $currentyear - 1; // because 1 has already been subtracted from c
 //print_r($ccmprecid); die();
       $addrobj   = $this->model->get_one_where('ccmp_id',$ccmprecid,'ccmps_addresses');
 //  print_r($addrobj); die();
-      $row->mailaddress1 = $addrobj->mailaddress1;
-      $row->mailaddress2 = $addrobj->mailaddress2;
-      $row->mailcity     = $addrobj->mailcity;
-      $row->mailstate    = $addrobj->mailstate;
-      $row->mailzip      = $addrobj->mailzip;
-      $row->mailcountry  = $addrobj->mailcountry;
-      $row->physaddress1 = $addrobj->physaddress1;
-      $row->physaddress2 = $addrobj->physaddress2;
-      $row->physcity     = $addrobj->physcity;
-      $row->physstate    = $addrobj->physstate;
-      $row->physzip      = $addrobj->physzip;
-      $row->physcountry  = $addrobj->physcountry;
+      $row->mailaddress1 = $addrobj->mailaddress1 ?? '';
+      $row->mailaddress2 = $addrobj->mailaddress2 ?? '';
+      $row->mailcity     = $addrobj->mailcity ?? '';
+      $row->mailstate    = $addrobj->mailstate ?? '';
+      $row->mailzip      = $addrobj->mailzip ?? '';
+      $row->mailcountry  = $addrobj->mailcountry ?? '';
+      $row->physaddress1 = $addrobj->physaddress1 ?? '';
+      $row->physaddress2 = $addrobj->physaddress2 ?? '';
+      $row->physcity     = $addrobj->physcity ?? '';
+      $row->physstate    = $addrobj->physstate ?? '';
+      $row->physzip      = $addrobj->physzip ?? '';
+      $row->physcountry  = $addrobj->physcountry ?? '';
 
   }
 
@@ -6129,35 +6165,37 @@ $twoyearsago = $currentyear - 1; // because 1 has already been subtracted from c
 
           // Change codes to names
 
-          $levelid   = $tgusrobj->user_level_id; // capture the level id to query for the level name
+          $levelid   = $tgusrobj->user_level_id ?? null; // capture the level id to query for the level name
           $levelobj  = $this->model->get_where($levelid,'trongate_user_levels'); // from trongate_user_levels
-          $levelname = $levelobj->level_title;  // capture the level name
+          $levelname = $levelobj->level_title ?? '';  // capture the level name
           // now we need to insert the levelnames in the array for display
           $row->levelname = $levelname;
 
           $memtypeid        = $row->ccmp_type;
           $memtypeobj       = $this->model->get_where($memtypeid,'ccmps_types');
-          $row->ccmp_type = $memtypeobj->ccmp_type;
+          $row->ccmp_type = $memtypeobj->ccmp_type ?? '';
 
           $natoffcrid            = $row->national_officer;
           $natoffcrobj           = $this->model->get_where( $natoffcrid,'ref_national_offices');
-          $row->national_officer = $natoffcrobj->description;
+          $row->national_officer = $natoffcrobj->description ?? '';
 
-          $actypeid           = $row->aircraft_type;
-          $actypeobj          = $this->model->get_where($actypeid,'aircraft_types');
-          $row->aircraft_type = $actypeobj->name;
+          $acobj = $this->_first_aircraft($row->id); // first aircraft from ccmps_aircraft
+
+          $row->aircraft_type = $acobj ? trim($acobj->make.' '.$acobj->model) : '';
+
+          $row->aircraft_reg  = $acobj ? $acobj->registration_number : '';
 
           $subentityid    = $row->subentity;
           $subentityobj   = $this->model->get_where($subentityid,'ccmps_subentities');
-          $row->subentity = $subentityobj->description;
+          $row->subentity = $subentityobj->description ?? '';
 
           $subentityroleid     = $row->subentity_role;
           $subentityroleobj    = $this->model->get_where($subentityroleid,'ccmps_subentity_roles');
-          $row->subentity_role = $subentityroleobj->description;
+          $row->subentity_role = $subentityroleobj->description ?? '';
 
           $highcertid               = $row->highest_certificate;
           $highcertobj              = $this->model->get_where($highcertid,'ccmps_certificate_types');
-          $row->highest_certificate = $highcertobj->description;
+          $row->highest_certificate = $highcertobj->description ?? '';
 
           // $fintypeid          = $row->fin_acct_type;
           // $fintypeobj         = $this->model->get_where($fintypeid ,'ccmps_financial_types');
@@ -6178,291 +6216,291 @@ $twoyearsago = $currentyear - 1; // because 1 has already been subtracted from c
 /*------ Convert the Binary Yes/No fields ----------*/
 
 
-          if($row->student_admin == 1) {
+          if(!empty($row->student_admin)) {
                $row->student_admin = 'TRUE';
           }else{
                $row->student_admin = 'FALSE';
           }
 
-          if($row->cms_admin == 1) {
+          if(!empty($row->cms_admin)) {
                $row->cms_admin = 'TRUE';
           }else{
                $row->cms_admin = 'FALSE';
           }
 
-          if($row->subentity_admin == 1) {
+          if(!empty($row->subentity_admin)) {
                $row->subentity_admin = 'TRUE';
           }else{
                $row->subentity_admin = 'FALSE';
           }
 
-          if($row->admin == 1) {
+          if(!empty($row->admin)) {
                $row->admin = 'TRUE';
           }else{
                $row->admin = 'FALSE';
           }
 
-          if($row->system_admin == 1) {
+          if(!empty($row->system_admin)) {
                $row->system_admin = 'TRUE';
           }else{
                $row->system_admin = 'FALSE';
           }
 
-          if($row->eligible_voter == 1) {
+          if(!empty($row->eligible_voter)) {
                $row->eligible_voter = 'TRUE';
           }else{
                $row->eligible_voter = 'FALSE';
           }
 
-          if($row->emailoptout == 1) {
+          if(!empty($row->emailoptout)) {
                $row->emailoptout = 'TRUE';
           }else{
                $row->emailoptout = 'FALSE';
           }
 
-          if($row->directoryoptout == 1) {
+          if(!empty($row->directoryoptout)) {
                $row->directoryoptout = 'TRUE';
           }else{
                $row->directoryoptout = 'FALSE';
           }
 
-          if($row->donotcall == 1) {
+          if(!empty($row->donotcall)) {
                $row->donotcall = 'TRUE';
           }else{
                $row->donotcall = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->deceased == 1) {
+          if(!empty($row->deceased)) {
                $row->deceased = 'TRUE';
           }else{
                $row->deceased = 'FALSE';
           }
 
-          if($row->no_address == 1) {
+          if(!empty($row->no_address)) {
                $row->no_address = 'TRUE';
           }else{
                $row->no_address = 'FALSE';
           }
 
-          if($row->special_event == 1) {
+          if(!empty($row->special_event)) {
                $row->special_event = 'TRUE';
           }else{
                $row->special_event = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';
           }
 
-          if($row->aircraft_owner == 1) {
+          if(!empty($row->aircraft_owner)) {
                $row->aircraft_owner = 'TRUE';
           }else{
                $row->aircraft_owner = 'FALSE';
           }
 
 
-          if($row->hall_of_fame == 1) {
+          if(!empty($row->hall_of_fame)) {
                $row->hall_of_fame = 'TRUE';
           }else{
                $row->hall_of_fame = 'FALSE';
           }
 
-          if($row->alumnus == 1) {
+          if(!empty($row->alumnus)) {
                $row->alumnus = 'TRUE';
           }else{
                $row->alumnus = 'FALSE';
           }
 
-          if($row->active_duty == 1) {
+          if(!empty($row->active_duty)) {
                $row->active_duty = 'TRUE';
           }else{
                $row->active_duty = 'FALSE';
           }
 
-          if($row->former_military == 1) {
+          if(!empty($row->former_military)) {
                $row->former_military = 'TRUE';
           }else{
                $row->former_military = 'FALSE';
           }
 
-          if($row->military_pilot == 1) {
+          if(!empty($row->military_pilot)) {
                $row->military_pilot = 'TRUE';
           }else{
                $row->military_pilot = 'FALSE';
           }
 
-          if($row->vip == 1) {
+          if(!empty($row->vip)) {
                $row->vip = 'TRUE';
           }else{
                $row->vip = 'FALSE';
           }
 
-          if($row->student == 1) {
+          if(!empty($row->student)) {
                $row->student = 'TRUE';
           }else{
                $row->student = 'FALSE';
           }
 
-          if($row->private == 1) {
+          if(!empty($row->private)) {
                $row->private = 'TRUE';
           }else{
                $row->private = 'FALSE';
           }
 
 
-          if($row->commercial == 1) {
+          if(!empty($row->commercial)) {
                $row->commercial = 'TRUE';
           }else{
                $row->commercial = 'FALSE';
           }
 
-          if($row->atp == 1) {
+          if(!empty($row->atp)) {
                $row->atp = 'TRUE';
           }else{
                $row->atp = 'FALSE';
           }
 
-          if($row->drone == 1) {
+          if(!empty($row->drone)) {
                $row->drone = 'TRUE';
           }else{
                $row->drone = 'FALSE';
           }
 
-          if($row->ap == 1) {
+          if(!empty($row->ap)) {
                $row->ap = 'TRUE';
           }else{
                $row->ap = 'FALSE';
           }
 
-          if($row->ia == 1) {
+          if(!empty($row->ia)) {
                $row->ia = 'TRUE';
           }else{
                $row->ia = 'FALSE';
           }
 
-          if($row->military_maint == 1) {
+          if(!empty($row->military_maint)) {
                $row->military_maint = 'TRUE';
           }else{
                $row->military_maint = 'FALSE';
           }
 
-          if($row->maintenance == 1) {
+          if(!empty($row->maintenance)) {
                $row->maintenance = 'TRUE';
           }else{
                $row->maintenance = 'FALSE';
           }
 
-          if($row->atc == 1) {
+          if(!empty($row->atc)) {
                $row->atc = 'TRUE';
           }else{
                $row->atc = 'FALSE';
           }
 
-          if($row->dispatcher == 1) {
+          if(!empty($row->dispatcher)) {
                $row->dispatcher = 'TRUE';
           }else{
                $row->dispatcher = 'FALSE';
           }
 
-          if($row->se_land == 1) {
+          if(!empty($row->se_land)) {
                $row->se_land = 'TRUE';
           }else{
                $row->se_land = 'FALSE';
           }
 
-          if($row->me_land == 1) {
+          if(!empty($row->me_land)) {
                $row->me_land = 'TRUE';
           }else{
                $row->me_land = 'FALSE';
           }
 
-          if($row->se_sea == 1) {
+          if(!empty($row->se_sea)) {
                $row->se_sea = 'TRUE';
           }else{
                $row->se_sea = 'FALSE';
           }
 
-          if($row->me_sea == 1) {
+          if(!empty($row->me_sea)) {
                $row->me_sea = 'TRUE';
           }else{
                $row->me_sea = 'FALSE';
           }
 
-          if($row->instrument == 1) {
+          if(!empty($row->instrument)) {
                $row->instrument = 'TRUE';
           }else{
                $row->instrument = 'FALSE';
           }
 
-          if($row->cfi == 1) {
+          if(!empty($row->cfi)) {
                $row->cfi = 'TRUE';
           }else{
                $row->cfi = 'FALSE';
           }
 
-          if($row->cfii == 1) {
+          if(!empty($row->cfii)) {
                $row->cfii = 'TRUE';
           }else{
                $row->cfii = 'FALSE';
           }
 
-          if($row->mei == 1) {
+          if(!empty($row->mei)) {
                $row->mei = 'TRUE';
           }else{
                $row->mei = 'FALSE';
           }
 
-          if($row->dpe == 1) {
+          if(!empty($row->dpe)) {
                $row->dpe = 'TRUE';
           }else{
                $row->dpe = 'FALSE';
           }
 
-          if($row->bgi == 1) {
+          if(!empty($row->bgi)) {
                $row->bgi = 'TRUE';
           }else{
                $row->bgi = 'FALSE';
           }
 
-          if($row->agi == 1) {
+          if(!empty($row->agi)) {
                $row->agi = 'TRUE';
           }else{
                $row->agi = 'FALSE';
           }
 
-          if($row->rotocraft == 1) {
+          if(!empty($row->rotocraft)) {
                $row->rotocraft = 'TRUE';
           }else{
                $row->rotocraft = 'FALSE';
           }
 
-          if($row->glider == 1) {
+          if(!empty($row->glider)) {
                $row->glider = 'TRUE';
           }else{
                $row->glider = 'FALSE';
           }
 
-          if($row->balloon == 1) {
+          if(!empty($row->balloon)) {
                $row->balloon = 'TRUE';
           }else{
                $row->balloon = 'FALSE';
           }
 
-          if($row->airship == 1) {
+          if(!empty($row->airship)) {
                $row->airship = 'TRUE';
           }else{
                $row->airship = 'FALSE';
           }
 
-          if($row->mail_notices == 1) {
+          if(!empty($row->mail_notices)) {
                $row->mail_notices = 'TRUE';
           }else{
                $row->mail_notices = 'FALSE';

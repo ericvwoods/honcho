@@ -487,7 +487,7 @@ function create($retrying = ''){ // only used by CA Adding - may be first time o
 
       $_SESSION['admode'] = 'cmmadsc'; // 
       $data['bc1']        = 'CMS';
-      $data['bc2']        = 'Create New Chapter';
+      $data['bc2']        = 'Create New '.SUBENTITY;
       $data['subheader']  = 'Content Manager';
   break;
 

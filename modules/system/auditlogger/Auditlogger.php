@@ -831,7 +831,7 @@ function create($retrying = ''){ // only used by CA Adding - may be first time o
       $_SESSION['admode'] = 'momadsc'; // 
       $data['bc1']        = 'MSP';
       $data['bc2']        = 'Create New Notice';
-      $data['header']     = 'Creating a New Chapter Notice';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Notice';
 
   break;
 
@@ -840,7 +840,7 @@ function create($retrying = ''){ // only used by CA Adding - may be first time o
     //  $_SESSION['admode'] = 'momadsc'; // already this value
       $data['bc1']        = 'MSP';
       $data['bc2']        = 'Create New Notice';
-      $data['header']     = 'Creating a New Chapter Notice';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Notice';
 
   break;
 }

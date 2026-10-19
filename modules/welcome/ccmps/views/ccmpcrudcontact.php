@@ -307,8 +307,8 @@ $can_grant_chapter_admin = $is_system_admin
     <?php
         cf_text('Member Number', 'ccmp_number', $data, 'text', $locked);
         cf_select('Member Type', 'ccmp_type', $data, $ccmptypes, 'id', 'ccmp_type', 'description', $locked);
-        cf_select('Chapter', 'subentity', $data, $subentities, 'id', 'description', null, $locked);
-        cf_select('Chapter Role', 'subentity_role', $data, $ccmpsubentityroles, 'id', 'title', null, $locked);
+        cf_select(SUBENTITY, 'subentity', $data, $subentities, 'id', 'description', null, $locked);
+        cf_select(SUBENTITY.' Role', 'subentity_role', $data, $ccmpsubentityroles, 'id', 'title', null, $locked);
         cf_text('Current Year', 'current_year', $data, 'number', $locked);
         cf_select('Region', 'region', $data, $regions, 'id', 'description', null, $locked);
         cf_select('National Officer', 'national_officer', $data, $national_offices, 'id', 'description', null, $locked);

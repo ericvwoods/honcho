@@ -31,6 +31,14 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [x] RBAC step 4: switch DMS to Security Groups (either login; chapter admins limited to their own chapter; `2026-10-18-system-rbac-step4.sql`). On staging 2026-10-18 (8aab527).
 - [ ] RBAC step 5: CCMPS member admin roles live in Security Groups (Member Permissions, record checkboxes and Security screens all sync; login flags from groups). Built and tested on the Mac 2026-10-18.
 - [x] Leslie Morris (1435, deceased) still had System/Chapter/Student Admin in the `ccmps` columns. Cleared 2026-10-19 (`2026-10-19-clear-deceased-member-roles.sql`); saving a record with Deceased ticked now removes all roles and group memberships (`rbac_clear_member_access()`).
+- [x] Deceased members are refused login (2026-10-19): `username_pw_check()`, `mobile_bridge()`, and the API login and token check.
+- [x] Locked members are refused login with "Your account has been locked. Please contact your <SUBENTITY> Administrator." (2026-10-19)
+- [x] Soft-deleted accounts are refused login with "Your account has been deleted…" (2026-10-19).
+- [ ] The unapproved check in `Welcome::username_pw_check()` still only `return`s (and `$unapproved` is never set), so it never stops a login. Decide whether approval should be enforced before turning it on.
+- [x] `SUBENTITY` / `SUBENTITIES` used for screen text across the live member, CMS, DMS and Subentities screens (2026-10-19).
+- [ ] Phone app branding: `public/ccmpsmobile/index.html` / `app.js` hard-code "BPA Member Portal", "Member", "My Chapter" and the "Chapter" tab. Have the API send the `CCMP` / `SUBENTITY` terms (and the org name) and fill them in.
+- [x] Roster, directory and export crashed (500) on a blank lookup id: `Model::get_where()` now returns false for null (2026-10-19).
+- [x] Roster, directory, export and master roster: aux fields joined (`_member_select()`), old column names renamed, aircraft from `ccmps_aircraft`, and the roster/directory views now actually list members (2026-10-19).
 - [x] Every DMS file upload gave a 500: `$this->file->upload()` (stock v2 File module) doesn't exist here, and two `$this->dmslibrary->viewdocrec()` self-calls crashed. New `_upload_doc()` in `Dmslibrary.php`; Mac upload folders made writable (2026-10-18).
 - [ ] DMS: replacing the file on a document that already has one is unfinished - deliberate `echo(6233); die();` / `echo(4812); die();` stops in `submit_upload()`, and its duplicate check (`isset()` on `false`) always says "already associated". First uploads work.
 - [x] Saving a new DMS document gave a 500: `document_id` required with no default (strict mode). Default `''` added in the step 4 script; the document form's copied delete pop-up crashed on an unset `$attr_close` (2026-10-18).

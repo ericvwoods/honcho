@@ -192,7 +192,7 @@ class Api extends Trongate {
         // was deactivated shouldn't keep working just because it hasn't
         // technically expired yet.
         $ccmp = $this->model->get_where((int) $claims['ccmp_id'], 'ccmps');
-        if (!$ccmp || !empty($ccmp->soft_deleted)) {
+        if (!$ccmp || !empty($ccmp->soft_deleted) || !empty($ccmp->deceased)) {
             $this->json_error('Account no longer active.', 401);
             return null;
         }
@@ -219,7 +219,7 @@ class Api extends Trongate {
         // against the bcrypt hash already stored in ccmps.password.
         $ccmp = $this->model->get_one_where('username', $username, 'ccmps');
 
-        if (!$ccmp || !empty($ccmp->soft_deleted)) {
+        if (!$ccmp || !empty($ccmp->soft_deleted) || !empty($ccmp->deceased)) {
             // Deliberately the same error for "no such user" and "wrong
             // password" — a different message for each would let an
             // attacker enumerate valid usernames.
@@ -543,7 +543,7 @@ class Api extends Trongate {
         $subentity_id = $me->subentity ?? null;
 
         if (empty($subentity_id)) {
-            $this->json_error('You are not assigned to a chapter.', 404);
+            $this->json_error('You are not assigned to a '.strtolower(SUBENTITY).'.', 404);
             return;
         }
 

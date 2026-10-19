@@ -500,9 +500,9 @@ echo(219); die();
     case 'momads': // chapter admin
 
           $data['bc1']         = 'CMS';
-          $data['bc2']         = 'Chapter Items';
-          $data['activity']    = 'Chapter Admin';
-          $data['header']      = 'Manage Chapter sunshine Item';
+          $data['bc2']         = SUBENTITY.' Items';
+          $data['activity']    = SUBENTITY.' Admin';
+          $data['header']      = 'Manage '.SUBENTITY.' sunshine Item';
     break;
 
     case 'cmmads': // content manager
@@ -664,7 +664,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   break;
 
   case '3':
-        $data['scope'] = 'Chapter Members Only';
+        $data['scope'] = SUBENTITY.' Members Only';
   break;
 
   } */
@@ -732,7 +732,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View An Item';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin';
+        $data['subheader']    = SUBENTITY.' Admin';
      
   break;
 
@@ -742,7 +742,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
         $data['bc1']          = 'CMS';
         $data['bc2']          = 'View An Item';
         $data['header']       = $adobj->title;
-        $data['subheader']    = 'Chapter Admin'; 
+        $data['subheader']    = SUBENTITY.' Admin'; 
         
   break;
 
@@ -1172,7 +1172,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
       $_SESSION['admode'] = 'momadsc'; // 
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Item';
-      $data['header']     = 'Creating a New Chapter Item';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Item';
 
   break;
 
@@ -1181,7 +1181,7 @@ function create($retrying){ // only used by CA Adding - may be first time or
     //  $_SESSION['admode'] = 'momadsc'; // already this value
       $data['bc1']        = 'CMS';
       $data['bc2']        = 'Create New Item';
-      $data['header']     = 'Creating a New Chapter Item';
+      $data['header']     = 'Creating a New '.SUBENTITY.' Item';
 
   break;
 }
@@ -2238,7 +2238,7 @@ $_SESSION['tab'] = 0; // sunshine board section - no sunshine collapse
                 $funcname = 'update';
                 $ccmp = CCMP;
 
-                $flash_msg = 'You are not authorized to edit another chapters records'; 
+                $flash_msg = 'You are not authorized to edit another '.strtolower(SUBENTITY).'\'s records'; 
                 set_flashdata($flash_msg);
 
                 redirect('welcome-ccmps/ccmphome');

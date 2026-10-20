@@ -9,8 +9,12 @@ content: [
       ['**Page Sections**', 'Every section of the page, top to bottom: the picture slider, feature boxes, team, timeline, quotes, prices, contact details, and the Sunshine, Bulletin Board, Calendar, Marquee, Careers and member-numbers sections. Show or hide each one on the member home and on the public website, drag sections into a new order, and change headings'],
       ['**Items**', 'The pieces inside a section, such as the slides in the slider or the people in Team'],
       ['**Pictures**', 'Upload pictures once, then choose them for any slide or item'],
+      ['**Sunshine**', 'Illnesses, recoveries and passings: a name, the news, more details, a photo'],
+      ['**Bulletin Board**', 'Short notes shown as coloured sticky notes'],
+      ['**Marquee**', 'One-line announcements that scroll across the page'],
+      ['**Careers**', 'Job postings. Each has its own page with the full description and an Apply button'],
     ]},
-    { type: 'alert', variant: 'info', text: "Being rebuilt in 2026. The screens for Sunshine, Bulletin Board, Marquee, Careers and the events calendar, and the new member home page that uses all of this, come in the next steps. Until then the member home page still shows its old layout." },
+    { type: 'alert', variant: 'info', text: "Being rebuilt in 2026. The events calendar, and the new member home page that shows all of this, come in the next steps. Until then the member home page still shows its old layout. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board; activities will be calendar events." },
   ]},
   { tab: "Page Sections", blocks: [
     { type: 'ul', items: [
@@ -28,6 +32,16 @@ content: [
       "**Links** start with `https://`, `mailto:` or `tel:`, or `/` for a page on this site, or `#` for a section of the page.",
       "**Shown:** untick to hide an item without deleting it. You can also tick or untick it on the Items list.",
       "Drag items on the list to change their order. **Delete** asks first and can't be undone.",
+    ]},
+  ]},
+  { tab: "Sunshine, Bulletin Board, Marquee, Careers", blocks: [
+    { type: 'p', text: "Each has a list (open it from the **Website** menu, or **Posts** on the Page Sections list) and an **Add** button. The form only asks for what that kind of post uses." },
+    { type: 'ul', items: [
+      "**" + "Chapter" + ":** leave it on **National (everyone)**, or choose a chapter to show the post to that chapter's members only.",
+      "**Show from / until:** both optional. A post appears on its start date and disappears after its end date by itself; blank means now and no end. The list's **Today** column says whether each post is showing, waiting to start, or ended.",
+      "**Shown:** untick to take a post down at once without deleting it. **Also on the public website** lets it appear there once the public site is built and its section is switched on for it.",
+      "New posts go to the top of the list; drag rows to change the order.",
+      "**Careers:** the short description shows in the list; the full description, employer and location, picture, closing date and **Apply** button show on the job's own page.",
     ]},
   ]},
   { tab: "Pictures", blocks: [

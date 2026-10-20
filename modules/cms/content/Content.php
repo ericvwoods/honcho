@@ -71,6 +71,34 @@
         _check_access()
         _check_token()
         _audit()
+  posts()                            Sunshine, Bulletin Board, Marquee or Careers list (segment 3 = kind)
+        _check_access()
+        _kinds()
+        _chapters()
+  createpost() / updatepost()
+        _post_form()
+  _post_form($kind, $post)           shared by createpost / updatepost
+        _kinds()
+        _chapters()
+        _media_url()
+  postsubmit()
+        _check_access()
+        _check_token()
+        _post_from_post()
+        _valid_link()
+        _audit()
+  togglepost() / orderposts()        AJAX: active on or off / new order
+        _check_access()
+        _check_token()
+  delpost()
+        _check_access()
+        _check_token()
+        _audit()
+  job()                              a job's detail page, for anyone logged in (public site: phase 6)
+        _media_url()
+  _kinds()                           post kind => menu name, icon, fields and labels
+  _chapters()                        id => name, for the chapter picker
+  _post_from_post($kind)
   _layouts()                         layout => description and the item fields it uses
   _check_access()
         _home_url()
@@ -670,12 +698,308 @@ class Content extends Trongate {
 
 
 /*----------------------------------------------------------------------------*/
+/*----------------------------- function POSTS -------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function posts(){ // segment 3 = sunshine | bulletin | marquee | job
+
+    $this->_check_access();
+
+    $kind  = segment(3);
+    $kinds = $this->_kinds();
+    if(!isset($kinds[$kind])){
+        redirect('cms-content/sections');
+    }
+
+    $rows = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
+                                        LEFT JOIN cms_media m ON m.id = p.media_id
+                                       WHERE p.kind = :kind ORDER BY p.sort_order, p.id DESC",
+                                     array('kind' => $kind), 'object');
+    $chapters = $this->_chapters();
+    $today    = date('Y-m-d');
+    foreach($rows as $row){
+        $row->picture = $row->file_name ? $this->_media_url($row->file_name) : '';
+        $row->chapter = $row->subentity_id > 0 ? ($chapters[$row->subentity_id] ?? SUBENTITY.' '.$row->subentity_id) : 'National';
+        // what a visitor sees today: hidden, scheduled, expired or showing
+        if(!$row->active)                                           { $row->status = 'Hidden'; }
+        elseif($row->starts_on && $row->starts_on > $today)         { $row->status = 'Starts '.date('M j', strtotime($row->starts_on)); }
+        elseif($row->ends_on && $row->ends_on < $today)             { $row->status = 'Ended '.date('M j', strtotime($row->ends_on)); }
+        else                                                        { $row->status = 'Showing'; }
+    }
+
+    $data['kind']        = $kind;
+    $data['k']           = $kinds[$kind];
+    $data['postrecs']    = $rows;
+    $data['token']       = $this->_token();
+
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'posts';
+
+    $data['bc1']    = CMS_LABEL;
+    $data['bc2']    = $kinds[$kind]['title'];
+    $data['header'] = CMS_LABEL.': '.$kinds[$kind]['title'];
+
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------- End function posts ---------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*--------------------- function CREATEPOST / UPDATEPOST ---------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function createpost(){ // segment 3 = kind
+
+    $this->_check_access();
+
+    $kind = segment(3);
+    if(!isset($this->_kinds()[$kind])){
+        redirect('cms-content/sections');
+    }
+    $this->_post_form($kind, null);
+  }
+
+  function updatepost(){ // segment 3 = post id
+
+    $this->_check_access();
+
+    $post = $this->model->get_where(intval(segment(3)), 'cms_posts');
+    if(!$post || !isset($this->_kinds()[$post->kind])){
+        set_flashdata('That post was not found.');
+        redirect('cms-content/sections');
+    }
+    $this->_post_form($post->kind, $post);
+  }
+
+/*-------------------- End function createpost / updatepost ------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function _POST_FORM ----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function _post_form($kind, $post){
+
+    $kinds = $this->_kinds();
+    $blank = array('id' => 0, 'title' => '', 'summary' => '', 'body' => '', 'location' => '', 'link_url' => '', 'link_label' => '',
+                   'media_id' => null, 'color' => 'yellow', 'subentity_id' => 0, 'is_public' => 0, 'active' => 1, 'starts_on' => '', 'ends_on' => '');
+    $data  = $post ? array_merge($blank, (array) $post) : $blank;
+    if(!empty($_SESSION['cms_retry'])){ // failed validation: show what was typed
+        $data = array_merge($data, $_SESSION['cms_retry']);
+        unset($_SESSION['cms_retry']);
+    }
+
+    $media = $this->model->query("SELECT id, file_name, alt_text, original_name FROM cms_media ORDER BY id DESC", 'object');
+    $picked = '';
+    foreach($media as $m){
+        $m->url = $this->_media_url($m->file_name);
+        if((int) $m->id === (int) $data['media_id']){ $picked = $m->url; }
+    }
+
+    $data['recid']       = $post ? (int) $post->id : 0;
+    $data['kind']        = $kind;
+    $data['k']           = $kinds[$kind];
+    $data['chapters']    = $this->_chapters();
+    $data['colors']      = array('yellow' => 'Yellow', 'green' => 'Green', 'blue' => 'Blue', 'pink' => 'Pink');
+    $data['mediarecs']   = $media;
+    $data['picked_url']  = $picked;
+    $data['token']       = $this->_token();
+
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'postcrud';
+
+    $data['bc1']    = CMS_LABEL;
+    $data['bc2']    = $kinds[$kind]['title'];
+    $data['header'] = ($post ? 'Edit ' : 'Add ').$kinds[$kind]['one'];
+
+    $this->templates->inspinia($data);
+  }
+
+/*-------------------------- End function _post_form -------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function POSTSUBMIT ----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function postsubmit(){ // segment 3 = post id when changing; post kind when adding
+
+    $this->_check_access();
+    $this->_check_token();
+
+    $recid = intval(segment(3));
+    $kinds = $this->_kinds();
+    if($recid > 0){
+        $old  = $this->model->get_where($recid, 'cms_posts');
+        $kind = $old ? $old->kind : '';
+    }else{
+        $kind = post('kind');
+    }
+    if(!isset($kinds[$kind])){
+        set_flashdata('That post was not found.');
+        redirect('cms-content/sections');
+    }
+
+    $post   = $this->_post_from_post($kind);
+    $errors = array();
+    if($post['title'] === '' || mb_strlen($post['title']) > 150){ $errors[] = $kinds[$kind]['fields']['title'].' is required (up to 150 characters).'; }
+    if(mb_strlen($post['summary']) > 500)                        { $errors[] = 'The short text can be up to 500 characters.'; }
+    foreach(array('location' => 150, 'link_url' => 255, 'link_label' => 60) as $field => $max){
+        if(mb_strlen($post[$field]) > $max){ $errors[] = 'One of the fields is longer than '.$max.' characters.'; }
+    }
+    if($post['link_url'] !== '' && !$this->_valid_link($post['link_url'])){
+        $errors[] = 'The link must start with https://, http://, mailto:, tel:, / or #.';
+    }
+    foreach(array('starts_on', 'ends_on') as $field){
+        if($post[$field] !== null && !(preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $post[$field], $d) && checkdate((int) $d[2], (int) $d[3], (int) $d[1]))){
+            $errors[] = 'Dates must be real dates.';
+            break;
+        }
+    }
+    if($post['starts_on'] && $post['ends_on'] && $post['ends_on'] < $post['starts_on']){
+        $errors[] = 'The end date is before the start date.';
+    }
+    if($post['subentity_id'] > 0 && !isset($this->_chapters()[$post['subentity_id']])){
+        $post['subentity_id'] = 0;
+    }
+    if(!empty($post['media_id']) && !$this->model->get_where((int) $post['media_id'], 'cms_media')){
+        $post['media_id'] = null;
+    }
+
+    if(!empty($errors)){
+        $_SESSION['cms_retry']     = $post;
+        $_SESSION['flashmsgcolor'] = 0;
+        set_flashdata(out(implode(' ', array_unique($errors))));
+        redirect($recid > 0 ? 'cms-content/updatepost/'.$recid : 'cms-content/createpost/'.$kind);
+    }
+
+    $by = intval($_SESSION['tg_user_id'] ?? 0);
+    $post['updated_by'] = $by;
+    $post['updated_at'] = time();
+    if($recid > 0){
+        $this->model->update($recid, $post, 'cms_posts');
+        $this->_audit('UpdatePost', $recid, 'cms_posts', $kind.': '.$post['title']);
+        set_flashdata(out($kinds[$kind]['one']).' saved.');
+    }else{
+        $first = $this->model->query_bind('SELECT COALESCE(MIN(sort_order), 0) AS n FROM cms_posts WHERE kind = :kind', array('kind' => $kind), 'object');
+        $post['kind']       = $kind;
+        $post['sort_order'] = (int) $first[0]->n - 10; // new posts go to the top
+        $post['created_by'] = $by;
+        $post['created_at'] = time();
+        $recid = $this->model->insert($post, 'cms_posts');
+        $this->_audit('CreatePost', $recid, 'cms_posts', $kind.': '.$post['title']);
+        set_flashdata(out($kinds[$kind]['one']).' added.');
+    }
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('cms-content/posts/'.$kind);
+  }
+
+/*-------------------------- End function postsubmit -------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*------------------- function TOGGLEPOST / ORDERPOSTS / DELPOST -------------*/
+/*----------------------------------------------------------------------------*/
+
+  function togglepost(){ // AJAX: show or hide one post
+
+    $this->_check_access(true);
+    $this->_check_token(true);
+
+    $recid = intval(post('recid'));
+    $value = (post('value') == 1) ? 1 : 0;
+    if(!$this->model->get_where($recid, 'cms_posts')){
+        $this->_json(false, 'That post was not found.');
+    }
+    $this->model->update($recid, array('active' => $value, 'updated_by' => intval($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'cms_posts');
+    $this->_json(true, $value ? 'The post is shown.' : 'The post is hidden.');
+  }
+
+  function orderposts(){ // AJAX: ids in their new order
+
+    $this->_check_access(true);
+    $this->_check_token(true);
+
+    $ids = post('ids');
+    if(!is_array($ids)){
+        $this->_json(false, 'Nothing to order.');
+    }
+    $pos = 0;
+    foreach($ids as $id){
+        $pos += 10;
+        $this->model->query_bind('UPDATE cms_posts SET sort_order = :pos WHERE id = :id', array('pos' => $pos, 'id' => intval($id)));
+    }
+    $this->_json(true, 'The new order was saved.');
+  }
+
+  function delpost(){ // POST from the posts list
+
+    $this->_check_access();
+    $this->_check_token();
+
+    $post = $this->model->get_where(intval(post('recid')), 'cms_posts');
+    if(!$post){
+        set_flashdata('That post was not found.');
+        redirect('cms-content/sections');
+    }
+    $this->model->delete($post->id, 'cms_posts');
+    $this->_audit('DeletePost', $post->id, 'cms_posts', $post->kind.': '.$post->title);
+
+    $_SESSION['flashmsgcolor'] = 1;
+    set_flashdata('The post was deleted.');
+    redirect('cms-content/posts/'.$post->kind);
+  }
+
+/*------------------ End function togglepost / orderposts / delpost ----------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*------------------------------ function JOB --------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function job(){ // a job's detail page; anyone logged in (the public website gets its own in phase 6)
+
+    if(empty($_SESSION['trongatetoken'])){
+        redirect('welcome/login');
+    }
+
+    $today = date('Y-m-d');
+    $rows  = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
+                                         LEFT JOIN cms_media m ON m.id = p.media_id
+                                        WHERE p.id = :id AND p.kind = 'job' AND p.active = 1
+                                          AND (p.starts_on IS NULL OR p.starts_on <= :t1)
+                                          AND (p.ends_on IS NULL OR p.ends_on >= :t2)",
+                                      array('id' => intval(segment(3)), 't1' => $today, 't2' => $today), 'object');
+    if(empty($rows)){
+        set_flashdata('That job posting is no longer open.');
+        redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho' : 'welcome-ccmps/ccmphome');
+    }
+    $job          = $rows[0];
+    $job->picture = $job->file_name ? $this->_media_url($job->file_name) : '';
+
+    $data['job']         = $job;
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'job';
+
+    $data['bc1']    = 'Careers';
+    $data['bc2']    = $job->title;
+    $data['header'] = $job->title;
+
+    $this->templates->inspinia($data);
+  }
+
+/*------------------------------ End function job ----------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
 /*---------------------------- function _LAYOUTS -----------------------------*/
 /*----------------------------------------------------------------------------*/
 
   function _layouts(){
     // layout => array(what it is, item fields => label on the item form, or null when the
-    // content comes from elsewhere, where it comes from). Field names are cms_items columns.
+    // content comes from elsewhere, where it comes from, and the post kind when it is a cms_posts list).
+    // Field names are cms_items columns.
     $features = array('heading' => 'Title', 'body' => 'Text', 'icon' => 'Icon', 'media_id' => 'Picture');
     return array(
         'slider'       => array('Large picture slides with a headline', array('heading' => 'Headline', 'subheading' => 'Text under the headline', 'media_id' => 'Picture', 'link_url' => 'Button link', 'link_label' => 'Button label')),
@@ -689,10 +1013,10 @@ class Content extends Trongate {
         'comments'     => array('Quotes with photos', array('body' => 'Quote', 'heading' => 'Name', 'subheading' => 'Organization', 'media_id' => 'Photo')),
         'pricing'      => array('Plans and prices', array('heading' => 'Plan name', 'extra' => 'Price', 'subheading' => 'Price note (e.g. per year)', 'body' => 'What is included (one per line)', 'link_url' => 'Sign-up link', 'link_label' => 'Button label')),
         'contact'      => array('Contact details', array('heading' => 'Name or office', 'body' => 'Address (one line each)', 'extra' => 'Phone', 'link_url' => 'Email or web link', 'link_label' => 'Link label')),
-        'marquee'      => array('A scrolling line of announcements', null, 'the Marquee screen'),
-        'sunshine'     => array('Illnesses and passings', null, 'the Sunshine screen'),
-        'bulletins'    => array('Yellow sticky notes', null, 'the Bulletin Board screen'),
-        'careers'      => array('Job postings with detail pages', null, 'the Careers screen'),
+        'marquee'      => array('A scrolling line of announcements', null, 'the Marquee page', 'marquee'),
+        'sunshine'     => array('Illnesses and passings', null, 'the Sunshine page', 'sunshine'),
+        'bulletins'    => array('Sticky notes', null, 'the Bulletin Board page', 'bulletin'),
+        'careers'      => array('Job postings with detail pages', null, 'the Careers page', 'job'),
         'calendar'     => array('Events calendar', null, 'the Events screen'),
         'metrics'      => array(CCMP.' numbers (automatic)', null, CCMP.' records, counted when the page opens'),
     );
@@ -737,6 +1061,56 @@ class Content extends Trongate {
         set_flashdata('That page had expired - please try again.');
         redirect('cms-content/sections');
     }
+  }
+
+  function _kinds(){
+    // post kind => list title, one post's name, icon, and the cms_posts fields its form shows (field => label)
+    return array(
+        'sunshine' => array('title' => 'Sunshine', 'one' => 'Sunshine Post', 'icon' => 'fa-heart',
+                            'about' => 'Illnesses, recoveries and passings in our family. Shown in the Sunshine section.',
+                            'fields' => array('title' => 'Name', 'summary' => 'News (e.g. is recovering at home after surgery)', 'body' => 'More details (service times, where to send cards)',
+                                              'media_id' => 'Photo', 'link_url' => 'Link (e.g. obituary)', 'link_label' => 'Link label', 'subentity_id' => SUBENTITY, 'dates' => 'Show')),
+        'bulletin' => array('title' => 'Bulletin Board', 'one' => 'Sticky Note', 'icon' => 'fa-thumb-tack',
+                            'about' => 'Short notes shown as sticky notes on the Bulletin Board.',
+                            'fields' => array('title' => 'Heading', 'summary' => 'Note', 'color' => 'Colour', 'link_url' => 'Link', 'link_label' => 'Link label', 'subentity_id' => SUBENTITY, 'dates' => 'Show')),
+        'marquee'  => array('title' => 'Marquee', 'one' => 'Marquee Line', 'icon' => 'fa-ellipsis-h',
+                            'about' => 'Short announcements that scroll across the Marquee line.',
+                            'fields' => array('title' => 'Announcement', 'link_url' => 'Link', 'subentity_id' => SUBENTITY, 'dates' => 'Show')),
+        'job'      => array('title' => 'Careers', 'one' => 'Job Posting', 'icon' => 'fa-briefcase',
+                            'about' => 'Job postings. Each has its own page with the full description.',
+                            'fields' => array('title' => 'Job title', 'location' => 'Employer and location', 'summary' => 'Short description (shown in the list)', 'body' => 'Full description',
+                                              'media_id' => 'Logo or picture', 'link_url' => 'How to apply (link)', 'link_label' => 'Apply button label', 'subentity_id' => SUBENTITY, 'dates' => 'Open')),
+    );
+  }
+
+  function _chapters(){ // id => name, for the chapter picker and lists
+    $rows = $this->model->query("SELECT id, COALESCE(NULLIF(description, ''), chapter_title) AS name FROM ccmps_subentities ORDER BY name", 'object');
+    $list = array();
+    foreach($rows as $row){
+        $list[(int) $row->id] = (string) $row->name;
+    }
+    return $list;
+  }
+
+  function _post_from_post($kind){
+    $media_id = intval(post('media_id'));
+    $fields   = $this->_kinds()[$kind]['fields'];
+    $date     = function($name){ $v = trim(post($name)); return $v === '' ? null : $v; };
+    return array(
+        'title'        => trim(post('title')),
+        'summary'      => isset($fields['summary'])  ? trim(post('summary'))  : '',
+        'body'         => isset($fields['body'])     ? trim(post('body'))     : '',
+        'location'     => isset($fields['location']) ? trim(post('location')) : '',
+        'link_url'     => trim(post('link_url')),
+        'link_label'   => isset($fields['link_label']) ? trim(post('link_label')) : '',
+        'media_id'     => (isset($fields['media_id']) && $media_id > 0) ? $media_id : null,
+        'color'        => isset($fields['color']) && in_array(post('color'), array('yellow', 'green', 'blue', 'pink'), true) ? post('color') : '',
+        'subentity_id' => intval(post('subentity_id')),
+        'is_public'    => post('is_public') == 1 ? 1 : 0,
+        'active'       => post('active') == 1 ? 1 : 0,
+        'starts_on'    => $date('starts_on'),
+        'ends_on'      => $date('ends_on'),
+    );
   }
 
   function _item_from_post(){

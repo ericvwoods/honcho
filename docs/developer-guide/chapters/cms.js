@@ -11,14 +11,14 @@ const sections = [
 // ============================================================
 { tab: "Overview", blocks: [
   { type: 'p', text: "The content manager decides what the member home (`ccmphome.php`) and the public website show, section by section. In the code and database it is **`cms`**; users see the name in the `CMS_LABEL` constant (`config/config.php`, \"Website\" for BPA), like `CCMP` and `SUBENTITY`. Use the constant in any menu or page text." },
-  { type: 'p', text: "It replaces the eight prototype modules in `modules/cms/` (marquee, jumbotron, bulletin board, notices, jobs, activities, sunshine, subentities) and their `cms_ccmps_*` / `cms_users_*` tables, which were never finished (decided 2026-10-20: rebuild, keep nothing). Those are deleted in phase 3." },
+  { type: 'p', text: "It replaced the eight prototype modules in `modules/cms/` (marquee, jumbotron, bulletin board, notices, jobs, activities, sunshine, subentities) and their 37 `cms_ccmps_*` / `cms_users_*` tables (including the old CMS library tables), which were never finished. Decided 2026-10-20: rebuild, keep nothing; they were deleted in phase 3 (`database/migrations/2026-10-20-cms-drop-old-tables.sql`). Notices and Activities have no direct replacement: announcements go in the Marquee or Bulletin Board, activities become calendar events (phase 5)." },
 
   { type: 'h2', text: 'Phases' },
   { type: 'table', headers: ['Phase', 'What', 'Status'], rows: [
     ['1', 'Tables; Content Admin and Event Admin roles; `cms` permissions', 'Built 2026-10-20'],
     ['2', 'Content manager screens (`cms-content`): sections, items, picture library; Website menus', 'Built 2026-10-20'],
-    ['3', 'Sunshine, Bulletin Board, Marquee and Careers screens on `cms_posts`; old modules and tables deleted', 'Next'],
-    ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', ''],
+    ['3', 'Sunshine, Bulletin Board, Marquee and Careers screens on `cms_posts`; job detail page; old modules and tables deleted', 'Built 2026-10-20'],
+    ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', 'Next'],
     ['5', 'Events calendar (FullCalendar) on `events`', ''],
     ['6', 'Public website in the Welcome module; BPA content loaded', ''],
     ['Last', 'Event Module: registration events and activities on `events` + `event_activities`', ''],
@@ -48,7 +48,7 @@ const sections = [
     ['`cms/chapter_events`', 'Events for your own chapter', 'Chapter Admins'],
   ]},
   { type: 'p', text: "Members get Content Admins / Event Admins from the **Content Admin** and **Event Admin** checkboxes on their record or the Member Permissions screen (roles in `rbac_member_roles()`, columns `ccmps.content_admin` / `event_admin` kept as a synced copy; session flags `ccmps_content_admin` / `ccmps_event_admin`). Staff are added to those groups on the Security Groups screen, until the Staff Account screen exists." },
-  { type: 'p', text: "Every `cms-content` page calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
+  { type: 'p', text: "Every `cms-content` page except `job` calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
 ]},
 
 // ============================================================
@@ -60,9 +60,18 @@ const sections = [
     ['`items/{section_id}`', 'Items of one section: drag to reorder (`orderitems`), Shown checkbox (`toggleitem`), Edit, Delete (POST `delitem`). Feed sections (no item fields) redirect back'],
     ['`createitem/{section_id}`, `updateitem/{id}` → `itemsubmit/{id}`', 'One form; only the fields the layout uses, with its labels'],
     ['`media`', 'Picture library: upload several at once (`uploadmedia`), description saved on blur (`updatemedia`), Delete only when unused (POST `delmedia`)'],
+    ['`posts/{kind}`', 'Sunshine (`sunshine`), Bulletin Board (`bulletin`), Marquee (`marquee`) or Careers (`job`): list with picture, chapter, what shows **today** (Hidden / Starts / Ended / Showing), public tick, Shown checkbox (`togglepost`), drag to reorder (`orderposts`), Edit, Delete (POST `delpost`). The Sections list links feed sections to their list (**Posts**)'],
+    ['`createpost/{kind}`, `updatepost/{id}` → `postsubmit/{id}`', 'One form; `_kinds()` lists each kind\'s fields and labels (e.g. Sunshine: Name, News, More details, Photo; Careers: Job title, Employer and location, Short and Full description, Logo, How to apply). Every kind has a chapter (National = 0), show from / until dates, Shown, and Also on the public website. New posts go to the top'],
+    ['`job/{id}`', 'A job\'s detail page for anyone logged in (no Website permission needed): paragraphs from the full description, location, picture, closing date, Apply button. Hidden, not yet started or ended jobs send the visitor home with a message. The public website gets its own copy in phase 6'],
+  ]},
+  { type: 'h2', text: 'Posts (cms_posts)' },
+  { type: 'ul', items: [
+    "**What shows:** `active = 1`, `starts_on` blank or today or earlier, `ends_on` blank or today or later; for members, `subentity_id` 0 or their own chapter; on the public site, also `is_public = 1` and the section's `show_public`. Phase 4 and 6 queries apply these rules.",
+    "**Checks in `postsubmit()`:** title required (150), short text 500, location 150, link rules as for items, dates must be real (`checkdate`) and until can't be before from, unknown chapter → National, unknown picture → none.",
+    "**Bulletin colours:** yellow, green, blue, pink (`color`).",
   ]},
   { type: 'h2', text: 'Layouts' },
-  { type: 'p', text: "`Content::_layouts()` maps each `layout` to a description and the item fields it uses (field name → label on the form), or `null` plus where the content comes from (marquee, sunshine, bulletins, careers, calendar, metrics). Add a layout there, add the section row in a migration, and draw it in the page template (phase 4)." },
+  { type: 'p', text: "`Content::_layouts()` maps each `layout` to a description and the item fields it uses (field name → label on the form), or `null` plus where the content comes from (marquee, sunshine, bulletins, careers, calendar, metrics). A fourth value names the post kind for feed sections that are `cms_posts` lists (marquee, sunshine, bulletins → `bulletin`, careers → `job`). Add a layout there, add the section row in a migration, and draw it in the page template (phase 4)." },
   { type: 'h2', text: 'Safety' },
   { type: 'ul', items: [
     "**Token:** every form and AJAX call carries `$_SESSION['cms_token']` (`_token()` / `_check_token()`, `hash_equals`), so another site can't post changes in the user's name.",

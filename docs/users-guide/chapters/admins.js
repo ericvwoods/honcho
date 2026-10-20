@@ -41,10 +41,6 @@ chapterAdmins: [
     { type: 'table', headers: ['Menu item', 'What you do there'], rows: [
       ['**Chapter Members**', "See and manage your chapter's members"],
       ['**Student Members**', "Your chapter's student members"],
-      ['**Chapter Bulletins**', "Approve, edit or remove bulletins posted in your chapter"],
-      ['**Chapter Notices**', 'Post and manage notices for your chapter'],
-      ['**Job Posts**', 'Post and manage job openings'],
-      ['**Chapter Activities**', 'Post and manage events and activities'],
       ['**Doc Library**', "Your chapter's documents in the Document Library (Chapter 6): add and edit them, move them on the kanban board, approve, hide or delete them, and manage comments. You can only change your own chapter's documents, and anything you add is saved to your chapter."],
       ['**Export Members**', "Download your chapter's members as a spreadsheet"],
     ]},
@@ -54,8 +50,7 @@ chapterAdmins: [
     { type: 'p', text: "Click the button to add a member above the list, fill in their details and save. To let them log in, either tick them and use the **User Acct** bulk action, or create the account from their record. They'll be asked to choose a new password the first time they log in." },
   ])},
   { tab: "Chapter Posts", blocks: [
-    { type: 'p', text: "Notices, job posts, activities and bulletins for your chapter are managed the same way as the home-page content in Chapter 5. As a Chapter Admin you see your chapter's posts only." },
-    { type: 'p', text: "Members' bulletins can wait for approval. Open **Chapter Bulletins** to approve them so other members can see them." },
+    { type: 'p', text: "The old Chapter Bulletins, Chapter Notices, Job Posts and Chapter Activities pages were retired in October 2026 while the home page is rebuilt. For now, ask a Content Admin to post Sunshine, Bulletin Board, Marquee or Careers items for your chapter (Chapter 5); they can limit a post to your chapter. Adding your chapter's events to the new events calendar is coming." },
   ]},
 ],
 

@@ -54,28 +54,9 @@ module.exports = [
   { type: 'alert', variant: 'info', text: "Rosters and the directory are for members only. Please don't share members' details outside BPA." },
 ]},
 
-{ tab: "Posting a Bulletin", blocks: [
-  { type: 'p', text: "Bulletins are short posts members share with each other, such as an item for sale or a request for help. Click **My Bulletins** to see yours and add a new one." },
-  { type: 'ol', items: [
-    'Click **My Bulletins**, then the button to add a bulletin.',
-    'Enter a title, a short description (shown in lists) and a full description (shown when someone opens it).',
-    'Add a price or cost if there is one, and your contact details. Tick the alternate-contact option to show only an alternate contact.',
-    'Add a photo if you like.',
-    'Choose who can see it (see below) and save.',
-  ]},
-  { type: 'h3', text: 'Who Sees Your Post' },
-  { type: 'table', headers: ['Choice', 'Who sees it'], rows: [
-    ['**Public**', 'The general public, where the organization shows posts publicly'],
-    ['**All Members**', 'Members in every chapter'],
-    ['**Chapter Only**', 'Members of your chapter'],
-  ]},
-  { type: 'p', text: "New bulletins may need an admin's approval before others can see them. You can edit or remove your own bulletins from **My Bulletins** at any time." },
-]},
-
 { tab: "Library, News and Events", blocks: [
   { type: 'table', headers: ['Tile', 'What to do there'], rows: [
     ['**Doc Library**', "Browse, preview and download documents shared with members. You'll only see documents you're allowed to see."],
-    ['**Sunshine**', 'Read acknowledgements about members, or send one in with the form (your name, email, phone and message).'],
     ['**Register Me**', "Register for the current event when registration is open. If it isn't, the tile does nothing."],
     ['**Sponsors**', "See BPA's sponsors."],
   ]},

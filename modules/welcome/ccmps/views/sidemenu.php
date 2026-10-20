@@ -115,11 +115,6 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                       <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
                     </li> --> <!-- (<?= $_SESSION['num_all_current_chapter_student_members'] ?>) -->
-                <!--    <li><a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/momads"><i class="fa fa-ellipsis-h"></i> <?= CCMPSSUBENTITY ?> Marquee</a></li>  -->
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads"><i class="fa fa-thumb-tack"></i> <?= CCMPSSUBENTITY ?> Bulletins</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i><?= CCMPSSUBENTITY ?> Notices</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/momads"><i class="fa fa-briefcase"></i> Job Posts</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i><?= CCMPSSUBENTITY ?> Activities</a></li>
                  <!-- --   <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage/momads"><i class="fa fa-book"></i> <?= CCMPSSUBENTITY ?> Library</a></li> -->
                 <li>    <a href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i>  Doc Library <span class="fa arrow"></span></a> </li>
 
@@ -146,6 +141,10 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                 <ul class="nav nav-second-level collapse">
                     <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
                 </ul>
             </li>
 <?php endif; ?>
@@ -351,18 +350,6 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                     </div>
 
 
-
-                    <div class="widget style1 gray-bg">
-                        <div class="row vertical-align">
-                            <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/mmyads">     <i class="fa fa-thumb-tack fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
-                            </div>
-                            <div class="col-10 text-right">
-                                 <a href="<?= BASE_URL ?>cms-bulletinboard/manage/mmyads" style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> My Bulletins</span> </a>
-                                 <!-- -- <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> My Bulletins</h2> </a> -->
-                            </div>
-                        </div>
-                    </div>
 
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">

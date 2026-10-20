@@ -59,6 +59,10 @@
                     <ul class="nav nav-second-level collapse">
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
                     </ul>
                 </li>
                 <?php endif; ?>

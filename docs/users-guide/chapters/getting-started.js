@@ -10,7 +10,7 @@ module.exports = [
   { type: 'p', text: 'Every member can see and update their own information. Some members are also given admin roles to help run the organization; those roles add menus and pages. Use the chapters that match your roles.' },
   { type: 'table', headers: ['Role', 'Who has it', 'What it adds', 'See chapter'], rows: [
     ['**Member**', 'Every member with a login', 'Your profile, rosters, directory, bulletins, library', '2'],
-    ['**Chapter Admin**', 'Members chosen to run a chapter', "Your chapter's members, student members, chapter posts and exports", '3'],
+    ['**Chapter Admin**', 'Members chosen to run a chapter', "Your chapter's members, student members and exports", '3'],
     ['**Member Admin**', 'National membership officers', 'All members, statuses, bulk changes, master spreadsheet', '4'],
     ['**Student Admin**', 'Members who manage student programs', 'Student member lists', '3 and 4'],
     ['**Content Admin**', 'Members who manage the home page', 'Home page sections and pictures, Sunshine, Bulletin Board, Marquee, Careers (being rebuilt in 2026)', '5'],
@@ -44,15 +44,13 @@ module.exports = [
 
 { tab: "Finding Your Way Around", blocks: [
   { type: 'h2', text: 'The Home Page' },
-  { type: 'p', text: "After you log in you land on the member home page. Across the top are the **marquee** (a scrolling line of announcements) and the **jumbotron** (featured items). Below them, your chapter's notices, job posts and activities are listed, and a set of tiles takes you to everything else:" },
+  { type: 'p', text: "After you log in you land on the member home page. A set of tiles takes you to everything (the page is being rebuilt in 2026 with a picture slider, Sunshine, Bulletin Board, events calendar, Marquee and Careers):" },
   { type: 'table', headers: ['Tile', 'What it opens'], rows: [
     ['**My Profile**', 'Your own member record (Chapter 2)'],
-    ['**My Bulletins**', "Bulletins you've posted, and a button to post a new one"],
     ['**My Chapter Roster**', "Your chapter's current members"],
     ['**National Directory**', 'Current members across all chapters'],
     ['**Chapters**', "BPA's chapters and their details"],
     ['**Doc Library**', 'Shared documents you can read and download'],
-    ['**Sunshine**', 'Acknowledgements about members, and a form to send one in (your name, email, phone and message)'],
     ['**Register Me**', 'Registration for the current event, when one is open'],
     ['**Sponsors**', "BPA's sponsors"],
     ['**Admin**', 'Admin pages, shown only if you have an admin role'],

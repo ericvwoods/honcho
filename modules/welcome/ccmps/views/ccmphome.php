@@ -75,6 +75,10 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
     <ul class="nav nav-second-level collapse">
         <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
     </ul>
 </li>
 <?php endif; ?>
@@ -102,11 +106,6 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
           <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
         </li> --> <!-- (<?= $_SESSION['num_all_current_chapter_student_members'] ?>) -->
-    <!--    <li><a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/momads"><i class="fa fa-ellipsis-h"></i> Chapter Marquee</a></li>  -->
-        <li><a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads"><i class="fa fa-thumb-tack"></i> <?= SUBENTITY ?> Bulletins</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads"><i class="fa fa-podcast"></i><?= SUBENTITY ?> Notices</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/momads"><i class="fa fa-plane"></i> Job Posts</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads"><i class="fa fa-calendar"></i><?= SUBENTITY ?> Activities</a></li>
     <!--    <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-book"></i> Chapter Library</a></li>  -->
     <!--    <li><a href="#"><i class="fa fa-list"></i> Chapter Info</a></li>  -->
                      <li>
@@ -302,18 +301,6 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         </div>
 
 
-<?php if($_SESSION['device_type'] == 999 ): ?>
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-1">
-                <a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/mmyads" style="color:Gray;">     <i class="fa fa-thumb-tack fa-2x" style="color: cornflowerblue;"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> My Bulletins</h2> </a>
-                </div>
-            </div>
-        </div>
-<?php endif; ?>
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
@@ -376,18 +363,6 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
             </div>
         </div>
 */ ?>
-
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpssunshine/viewpage" style="color:Gray;">     <i class="fa fa-heart fa-2x" style="color: indianred;"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: cornflowerblue; font-size:14pt"> Sunshine</h2> </a>
-                   <!--    <h2 style="color:LightGray;"> Sunshine</h2> </a>    -->
-                </div>
-            </div>
-        </div>
 
 <?php if (empty($_SESSION['mobile_app_view'])): ?>
         <div class="widget style1 gray-bg">
@@ -487,25 +462,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
     <?php if($_SESSION['ccmpssidemenu'] == 'admin' ): ?>
 
     <?php else: ?>
-          <!-- --  <?php if(SHOW_MARQUEE == 1 ): ?>
-                <br>
-                <marquee behavior="scroll" scrollamount="13" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
-
-                            <h2 style="color:darkgoldenrod;">
-
-                            A hearty  <span style="color: Tomato;"><i class="fa fa-heart fa-flip fa-1x"></i> </span> congratulations to:
-                            <?php
-                                foreach($marqueedata as $row) { ?>
-
-                                <span style="color: <?= SN2_CLR ?>;"><strong><?= $row->title ?> </strong><small><?= $row->subentity ?></small></span> <?= $row->info1 ?>
-
-                            <?php } ?>
-
-                            <span style="color: mediumseagreen;">Great Job! <i class="fa fa-thumbs-up fa-1x"></i></span>
-                        </h2>
-                </marquee>
-                  <hr>
-            <?php endif; ?> -->
+          <!-- the old marquee (read the removed cms_ccmps_marquee) was here; the Marquee section returns in phase 4 -->
     <?php endif; ?>
     <h3>  <?= flashdata('<div style="font-weight: bold; color: orange; font-size: 13pt">', '</div>');
                 $flash_msg = '';
@@ -545,60 +502,6 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
                 </div>
                 <div class="col-10 text-right">
                       <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> <?= CCMPS ?></h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-thumb-tack fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Bulletins</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-podcast fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Notices</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-          <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-calendar fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Activities</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-ellipsis-h fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                    <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Marquee</h2> </a>
                 </div>
             </div>
         </div>
@@ -648,6 +551,58 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
                 </div>
                 <div class="col-10 text-right">
                       <h2 style="font-weight: bold; color: gray; font-size:16pt"> Pictures</h2> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <div class="widget style1 gray-bg">
+            <div class="row vertical-align">
+                <div class="col-2">
+                <a href="<?= BASE_URL ?>cms-content/posts/sunshine" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-heart fa-2x"></i>
+                </div>
+                <div class="col-10 text-right">
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Sunshine</h2> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <div class="widget style1 gray-bg">
+            <div class="row vertical-align">
+                <div class="col-2">
+                <a href="<?= BASE_URL ?>cms-content/posts/bulletin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-thumb-tack fa-2x"></i>
+                </div>
+                <div class="col-10 text-right">
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Bulletin Board</h2> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <div class="widget style1 gray-bg">
+            <div class="row vertical-align">
+                <div class="col-2">
+                <a href="<?= BASE_URL ?>cms-content/posts/marquee" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-ellipsis-h fa-2x"></i>
+                </div>
+                <div class="col-10 text-right">
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Marquee</h2> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-2">
+        <div class="widget style1 gray-bg">
+            <div class="row vertical-align">
+                <div class="col-2">
+                <a href="<?= BASE_URL ?>cms-content/posts/job" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-briefcase fa-2x"></i>
+                </div>
+                <div class="col-10 text-right">
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Careers</h2> </a>
                 </div>
             </div>
         </div>

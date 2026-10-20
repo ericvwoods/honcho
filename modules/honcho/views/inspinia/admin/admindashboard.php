@@ -47,60 +47,6 @@
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                             <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-thumb-tack fa-2x"></i>
-                            </div>
-                            <div class="col-10 text-right">
-                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Bulletins</h2> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-
-                    <div class="widget style1 gray-bg">
-                        <div class="row vertical-align">
-                            <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-podcast fa-2x"></i>
-                            </div>
-                            <div class="col-10 text-right">
-                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Notices</h2> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                      <div class="col-lg-2">
-
-                    <div class="widget style1 gray-bg">
-                        <div class="row vertical-align">
-                            <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-calendar fa-2x"></i>
-                            </div>
-                            <div class="col-10 text-right">
-                                  <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Activities</h2> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-2">
-
-                    <div class="widget style1 gray-bg">
-                        <div class="row vertical-align">
-                            <div class="col-2">
-                            <a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/momads" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-ellipsis-h fa-2x"></i>
-                            </div>
-                            <div class="col-10 text-right">
-                                <h2 style="font-weight: bold; color: gray; font-size:16pt"> Our<br> Marquee</h2> </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-2">
-
-                    <div class="widget style1 gray-bg">
-                        <div class="row vertical-align">
-                            <div class="col-2">
                             <a href="<?= BASE_URL ?>dms-dmslibrary/manage" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
                             </div>
                             <div class="col-10 text-right">

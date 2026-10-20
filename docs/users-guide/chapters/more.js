@@ -13,9 +13,19 @@ content: [
       ['**Bulletin Board**', 'Short notes shown as coloured sticky notes'],
       ['**Marquee**', 'One-line announcements that scroll across the page'],
       ['**Careers**', 'Job postings. Each has its own page with the full description and an Apply button'],
+      ['**Events**', 'The events calendar (Event Admins and System Admins: every event; Chapter Admins: their own chapter\'s events, under **Chapter Events** in the Chapter Admin menu)'],
     ]},
     { type: 'p', text: "What you enter shows on the lower part of the member home page, below the member tiles, in the order of the Page Sections list. A menu bar across the top of that part has a link for each section that has a menu label; clicking one scrolls down to it. A section that is switched off, or has nothing in it yet, doesn't show at all." },
-    { type: 'alert', variant: 'info', text: "Still being built in 2026: the full events calendar (today the Calendar section lists the next events) and the public website. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board; activities will be calendar events." },
+    { type: 'alert', variant: 'info', text: "Still being built in 2026: the public website. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board, and activities on the events calendar." },
+  ]},
+  { tab: "Events Calendar", blocks: [
+    { type: 'p', text: "The Calendar section of the member home shows every chapter's events: national events in green, your own chapter's in blue and other chapters' in grey. Members can switch between **Month**, **Week** and **List**, and click an event to see its details and its button (for example **Register**). On a phone the calendar opens as a list." },
+    { type: 'ul', items: [
+      "**Who adds events:** Event Admins and System Admins add and change any event, national or for any chapter (**Website → Events**). Chapter Admins add and change their own chapter's events (**Chapter Admin → Chapter Events**, or the Events tile on the Admin page); their events are always saved to their chapter.",
+      "**Adding one:** click **Add an Event**. Give it a title and a start date; the start time, end date and end time are optional. Tick **All day** for an event without times. Add a location, a short description (shown in the details), a full description, a picture and a link with a button label if you like.",
+      "**Public:** tick it to also show the event on the public website's calendar, once the public site is built.",
+      "The list shows upcoming events; **Show past events** lists the ones that are over. **Delete** asks first and can't be undone.",
+    ]},
   ]},
   { tab: "Page Sections", blocks: [
     { type: 'ul', items: [

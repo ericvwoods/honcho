@@ -54,6 +54,8 @@
                     <td style="white-space: nowrap;">
                         <?php if(!empty($layout[1])): ?>
                         <a class="btn btn-outline btn-success" href="<?= BASE_URL ?>cms-content/items/<?= (int) $row->id ?>"><i class="fa fa-list"></i> Items</a>
+                        <?php elseif($row->layout == 'calendar'): ?>
+                        <a class="btn btn-outline btn-success" href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> Events</a>
                         <?php elseif(!empty($layout[3])): ?>
                         <a class="btn btn-outline btn-success" href="<?= BASE_URL ?>cms-content/posts/<?= $layout[3] ?>"><i class="fa fa-list"></i> Posts</a>
                         <?php endif; ?>

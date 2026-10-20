@@ -96,6 +96,25 @@
         _audit()
   job()                              a job's detail page, for anyone logged in (public site: phase 6)
         _media_url()
+  events()                           calendar events: all (Event Admins) or your chapter's (Chapter Admins)
+        _event_scope()
+        _chapters()
+  createevent() / updateevent()
+        _event_form()
+  _event_form($event)                shared by createevent / updateevent
+        _event_scope()
+        _chapters()
+        _media_url()
+  eventsubmit()
+        _event_scope()
+        _check_token()
+        _valid_link()
+        _audit()
+  delevent()
+        _event_scope()
+        _check_token()
+        _audit()
+  _event_scope()                     'all', a chapter id, or back home with a message
   _kinds()                           post kind => menu name, icon, fields and labels
   _chapters()                        id => name, for the chapter picker
   _post_from_post($kind)
@@ -993,6 +1012,236 @@ class Content extends Trongate {
 
 
 /*----------------------------------------------------------------------------*/
+/*----------------------------- function EVENTS ------------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function events(){ // segment 3 = 'past' for events that are over
+
+    $scope = $this->_event_scope();
+    $past  = (segment(3) == 'past');
+
+    $params = array('now' => date('Y-m-d 00:00:00'));
+    $where  = $past ? 'COALESCE(e.end_at, e.start_at) < :now' : 'COALESCE(e.end_at, e.start_at) >= :now';
+    if($scope !== 'all'){
+        $where .= ' AND e.subentity_id = :sub';
+        $params['sub'] = $scope;
+    }
+    $rows = $this->model->query_bind("SELECT e.* FROM events e WHERE $where ORDER BY e.start_at ".($past ? 'DESC' : 'ASC')." LIMIT 500", $params, 'object');
+    $chapters = $this->_chapters();
+    foreach($rows as $row){
+        $row->chapter = $row->subentity_id > 0 ? ($chapters[$row->subentity_id] ?? SUBENTITY.' '.$row->subentity_id) : 'National';
+    }
+
+    $data['eventrecs']   = $rows;
+    $data['past']        = $past;
+    $data['scope_name']  = $scope === 'all' ? '' : ($chapters[$scope] ?? '');
+    $data['token']       = $this->_token();
+
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'events';
+
+    $data['bc1']    = CMS_LABEL;
+    $data['bc2']    = 'Events';
+    $data['header'] = ($scope === 'all' ? 'Events' : out($data['scope_name']).' Events').($past ? ' (past)' : '');
+
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------- End function events --------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*-------------------- function CREATEEVENT / UPDATEEVENT --------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function createevent(){
+    $this->_event_scope();
+    $this->_event_form(null);
+  }
+
+  function updateevent(){ // segment 3 = event id
+
+    $scope = $this->_event_scope();
+    $event = $this->model->get_where(intval(segment(3)), 'events');
+    if(!$event || ($scope !== 'all' && (int) $event->subentity_id !== $scope)){
+        set_flashdata('That event was not found.');
+        redirect('cms-content/events');
+    }
+    $this->_event_form($event);
+  }
+
+/*------------------- End function createevent / updateevent -----------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function _EVENT_FORM ----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function _event_form($event){
+
+    $scope = $this->_event_scope();
+    $blank = array('id' => 0, 'title' => '', 'summary' => '', 'description' => '', 'location' => '', 'all_day' => 0,
+                   'subentity_id' => ($scope === 'all' ? 0 : $scope), 'is_public' => 0, 'media_id' => null, 'link_url' => '', 'link_label' => '',
+                   'start_date' => date('Y-m-d', strtotime('+7 days')), 'start_time' => '09:00', 'end_date' => '', 'end_time' => '');
+    $data = $blank;
+    if($event){
+        $data = array_merge($blank, (array) $event);
+        $data['start_date'] = substr($event->start_at, 0, 10);
+        $data['start_time'] = substr($event->start_at, 11, 5);
+        $data['end_date']   = $event->end_at ? substr($event->end_at, 0, 10) : '';
+        $data['end_time']   = $event->end_at ? substr($event->end_at, 11, 5) : '';
+    }
+    if(!empty($_SESSION['cms_retry'])){ // failed validation: show what was typed
+        $data = array_merge($data, $_SESSION['cms_retry']);
+        unset($_SESSION['cms_retry']);
+    }
+
+    $media = $this->model->query("SELECT id, file_name, alt_text, original_name FROM cms_media ORDER BY id DESC", 'object');
+    $picked = '';
+    foreach($media as $m){
+        $m->url = $this->_media_url($m->file_name);
+        if((int) $m->id === (int) $data['media_id']){ $picked = $m->url; }
+    }
+
+    $data['recid']       = $event ? (int) $event->id : 0;
+    $data['scope']       = $scope;
+    $data['chapters']    = $this->_chapters();
+    $data['mediarecs']   = $media;
+    $data['picked_url']  = $picked;
+    $data['token']       = $this->_token();
+
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'eventcrud';
+
+    $data['bc1']    = CMS_LABEL;
+    $data['bc2']    = 'Events';
+    $data['header'] = $event ? 'Edit Event' : 'Add an Event';
+
+    $this->templates->inspinia($data);
+  }
+
+/*-------------------------- End function _event_form ------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function EVENTSUBMIT ----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function eventsubmit(){ // segment 3 = event id when changing
+
+    $scope = $this->_event_scope();
+    $this->_check_token();
+
+    $recid = intval(segment(3));
+    if($recid > 0){
+        $old = $this->model->get_where($recid, 'events');
+        if(!$old || ($scope !== 'all' && (int) $old->subentity_id !== $scope)){
+            set_flashdata('That event was not found.');
+            redirect('cms-content/events');
+        }
+    }
+
+    $form = array(
+        'title'        => trim(post('title')),
+        'summary'      => trim(post('summary')),
+        'description'  => trim(post('description')),
+        'location'     => trim(post('location')),
+        'all_day'      => post('all_day') == 1 ? 1 : 0,
+        'subentity_id' => $scope === 'all' ? intval(post('subentity_id')) : $scope, // chapter admins: always their own chapter
+        'is_public'    => post('is_public') == 1 ? 1 : 0,
+        'media_id'     => intval(post('media_id')) > 0 ? intval(post('media_id')) : null,
+        'link_url'     => trim(post('link_url')),
+        'link_label'   => trim(post('link_label')),
+        'start_date'   => trim(post('start_date')),
+        'start_time'   => trim(post('start_time')),
+        'end_date'     => trim(post('end_date')),
+        'end_time'     => trim(post('end_time')),
+    );
+
+    $errors = array();
+    $date_ok = function($d){ return preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $d, $m) && checkdate((int) $m[2], (int) $m[3], (int) $m[1]); };
+    $time_ok = function($t){ return $t === '' || preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $t); };
+    if($form['title'] === '' || mb_strlen($form['title']) > 150){ $errors[] = 'A title of up to 150 characters is required.'; }
+    if(mb_strlen($form['summary']) > 500)  { $errors[] = 'The short description can be up to 500 characters.'; }
+    if(mb_strlen($form['location']) > 150) { $errors[] = 'The location can be up to 150 characters.'; }
+    if(mb_strlen($form['link_label']) > 60){ $errors[] = 'The button label can be up to 60 characters.'; }
+    if(!$date_ok($form['start_date']))     { $errors[] = 'Choose the date the event starts.'; }
+    if($form['end_date'] !== '' && !$date_ok($form['end_date'])){ $errors[] = 'The end date must be a real date.'; }
+    if(!$time_ok($form['start_time']) || !$time_ok($form['end_time'])){ $errors[] = 'Times must be real times.'; }
+    if($form['link_url'] !== '' && (mb_strlen($form['link_url']) > 255 || !$this->_valid_link($form['link_url']))){
+        $errors[] = 'The link must start with https://, http://, mailto:, tel:, / or #.';
+    }
+    if($form['subentity_id'] > 0 && !isset($this->_chapters()[$form['subentity_id']])){ $form['subentity_id'] = 0; }
+    if(!empty($form['media_id']) && !$this->model->get_where((int) $form['media_id'], 'cms_media')){ $form['media_id'] = null; }
+
+    $start = $end = null;
+    if(empty($errors)){
+        $start = $form['start_date'].' '.($form['all_day'] || $form['start_time'] === '' ? '00:00' : $form['start_time']).':00';
+        if($form['end_date'] !== '' || $form['end_time'] !== ''){
+            $end_date = $form['end_date'] !== '' ? $form['end_date'] : $form['start_date'];
+            $end = $end_date.' '.($form['all_day'] ? '23:59' : ($form['end_time'] !== '' ? $form['end_time'] : '23:59')).':00';
+            if($end < $start){ $errors[] = 'The event ends before it starts.'; }
+        }
+    }
+
+    if(!empty($errors)){
+        $_SESSION['cms_retry']     = $form;
+        $_SESSION['flashmsgcolor'] = 0;
+        set_flashdata(out(implode(' ', $errors)));
+        redirect($recid > 0 ? 'cms-content/updateevent/'.$recid : 'cms-content/createevent');
+    }
+
+    $by  = intval($_SESSION['tg_user_id'] ?? 0);
+    $row = array(
+        'title' => $form['title'], 'summary' => $form['summary'], 'description' => $form['description'], 'location' => $form['location'],
+        'start_at' => $start, 'end_at' => $end, 'all_day' => $form['all_day'], 'subentity_id' => $form['subentity_id'],
+        'is_public' => $form['is_public'], 'approved' => 1, 'media_id' => $form['media_id'],
+        'link_url' => $form['link_url'], 'link_label' => $form['link_label'], 'updated_by' => $by, 'updated_at' => time(),
+    );
+    if($recid > 0){
+        $this->model->update($recid, $row, 'events');
+        $this->_audit('UpdateEvent', $recid, 'events', $row['title'].' '.$row['start_at']);
+        set_flashdata('The event was saved.');
+    }else{
+        $row['created_by'] = $by;
+        $row['created_at'] = time();
+        $recid = $this->model->insert($row, 'events');
+        $this->_audit('CreateEvent', $recid, 'events', $row['title'].' '.$row['start_at']);
+        set_flashdata('The event was added.');
+    }
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('cms-content/events');
+  }
+
+/*-------------------------- End function eventsubmit ------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
+/*---------------------------- function DELEVENT -----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function delevent(){ // POST from the events list
+
+    $scope = $this->_event_scope();
+    $this->_check_token();
+
+    $event = $this->model->get_where(intval(post('recid')), 'events');
+    if(!$event || ($scope !== 'all' && (int) $event->subentity_id !== $scope)){
+        set_flashdata('That event was not found.');
+        redirect('cms-content/events');
+    }
+    $this->model->delete($event->id, 'events');
+    $this->_audit('DeleteEvent', $event->id, 'events', $event->title.' '.$event->start_at);
+
+    $_SESSION['flashmsgcolor'] = 1;
+    set_flashdata('The event was deleted.');
+    redirect('cms-content/events');
+  }
+
+/*---------------------------- End function delevent -------------------------*/
+
+
+/*----------------------------------------------------------------------------*/
 /*---------------------------- function _LAYOUTS -----------------------------*/
 /*----------------------------------------------------------------------------*/
 
@@ -1017,7 +1266,7 @@ class Content extends Trongate {
         'sunshine'     => array('Illnesses and passings', null, 'the Sunshine page', 'sunshine'),
         'bulletins'    => array('Sticky notes', null, 'the Bulletin Board page', 'bulletin'),
         'careers'      => array('Job postings with detail pages', null, 'the Careers page', 'job'),
-        'calendar'     => array('Events calendar', null, 'the Events screen'),
+        'calendar'     => array('Events calendar', null, 'the Events page'),
         'metrics'      => array(CCMP.' numbers (automatic)', null, CCMP.' records, counted when the page opens'),
     );
   }
@@ -1061,6 +1310,25 @@ class Content extends Trongate {
         set_flashdata('That page had expired - please try again.');
         redirect('cms-content/sections');
     }
+  }
+
+  function _event_scope(){
+    // who may manage which events: 'all' (cms/manage_events: Event Admins, System Admins) or the
+    // member's own chapter id (cms/chapter_events: Chapter Admins); anyone else goes home
+    if(empty($_SESSION['trongatetoken'])){
+        set_flashdata('Your Session has expired - please login again.');
+        redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho/logout' : 'welcome/logout');
+    }
+    if(rbac_allowed('cms', 'manage_events')){
+        return 'all';
+    }
+    $chapter = intval($_SESSION['ccmps_subentity'] ?? 0);
+    if(empty($_SESSION['honcho_logged_in']) && $chapter > 0 && rbac_allowed('cms', 'chapter_events')){
+        return $chapter;
+    }
+    $_SESSION['flashmsgcolor'] = 0;
+    set_flashdata('You are not allowed to manage events.');
+    redirect($this->_home_url());
   }
 
   function _kinds(){

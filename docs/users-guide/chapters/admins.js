@@ -50,7 +50,8 @@ chapterAdmins: [
     { type: 'p', text: "Click the button to add a member above the list, fill in their details and save. To let them log in, either tick them and use the **User Acct** bulk action, or create the account from their record. They'll be asked to choose a new password the first time they log in." },
   ])},
   { tab: "Chapter Posts", blocks: [
-    { type: 'p', text: "The old Chapter Bulletins, Chapter Notices, Job Posts and Chapter Activities pages were retired in October 2026 while the home page is rebuilt. For now, ask a Content Admin to post Sunshine, Bulletin Board, Marquee or Careers items for your chapter (Chapter 5); they can limit a post to your chapter. Adding your chapter's events to the new events calendar is coming." },
+    { type: 'p', text: "The old Chapter Bulletins, Chapter Notices, Job Posts and Chapter Activities pages were retired in October 2026 while the home page is rebuilt. For now, ask a Content Admin to post Sunshine, Bulletin Board, Marquee or Careers items for your chapter (Chapter 5); they can limit a post to your chapter." },
+    { type: 'p', text: "**Chapter Events:** add and change your chapter's events on the events calendar from **Chapter Events** in the Chapter Admin menu (or the Events tile on the Admin page). Every member sees them on the calendar, marked with your chapter's name; tick **Public** to also show one on the public website. See Chapter 5, Events Calendar." },
   ]},
 ],
 

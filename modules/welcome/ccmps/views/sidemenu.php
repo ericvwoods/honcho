@@ -47,7 +47,7 @@
 // (Member, Chapter, System Admin, the Website content manager, trainer, or a honcho staff module flag).
 // Chapter President alone (subentity_role 1) has no section, so it no longer opens an empty menu.
 $has_admin_menu = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_admin'])
-    || !empty($_SESSION['ccmps_subentity_admin']) || rbac_allowed('cms', 'manage_content')
+    || !empty($_SESSION['ccmps_subentity_admin']) || rbac_allowed('cms', 'manage_content') || rbac_allowed('cms', 'manage_events')
     || !empty($_SESSION['honcho_trainer']) || !empty($_SESSION['honcho_all_modules'])
     || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_ccmps_module_ccmps'])
     || !empty($_SESSION['honcho_ccmps_module_subentities']) || !empty($_SESSION['honcho_ccmps_module_cms']);
@@ -111,6 +111,9 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
             <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> <?= CCMPSSUBENTITY ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
                 <ul class="nav nav-second-level collapse">
                     <li><a href="<?= BASE_URL ?>welcome-ccmps/manage/subentity_admin"><i class="fa fa-users"></i><?= CCMPSSUBENTITY ?> <?= CCMPS ?></a></li> <!-- manage subentity members-->
+                    <?php if(rbac_allowed('cms', 'chapter_events') && !rbac_allowed('cms', 'manage_events')): ?> <!-- Event Admins find Events under Website -->
+                    <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> <?= CCMPSSUBENTITY ?> Events</a></li>
+                    <?php endif; ?>
                 <!--    <li>
                       <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
@@ -136,15 +139,20 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 
 <?php endif; ?>
 
-<?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (cms-content): Content Admins and System Admins; replaces the old Content Admin screens (2026-10-20) -->
+<?php if(rbac_allowed('cms', 'manage_content') || rbac_allowed('cms', 'manage_events')): ?> <!-- content manager (cms-content): Content Admins, Event Admins and System Admins; replaces the old Content Admin screens (2026-10-20) -->
             <li> <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"> <?= CMS_LABEL ?> </span><span class="fa fa-chevron-down"></span></a>
                 <ul class="nav nav-second-level collapse">
+                    <?php if(rbac_allowed('cms', 'manage_events')): ?>
+                    <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> Events</a></li>
+                    <?php endif; ?>
+                    <?php if(rbac_allowed('cms', 'manage_content')): ?>
                     <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
                     <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
+                    <?php endif; ?>
                 </ul>
             </li>
 <?php endif; ?>

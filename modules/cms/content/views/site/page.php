@@ -54,6 +54,22 @@ $cms_job_url = function($id) use ($cms){ // a job's detail page on this site
     .cms-job { border-bottom: 1px solid #e7eaec; padding: 15px 0; }
     .cms-job:last-child { border-bottom: 0; }
     .cms-event { border-left: 4px solid #1ab394; padding: 8px 15px; margin-bottom: 15px; background: #fff; }
+    /* FullCalendar 6: undo Inspinia's rules for its old calendar (style.css "FULLCALENDAR": .fc-button, .fc-event...) */
+    .cms-site .fc .fc-button { height: auto; line-height: 1.5; overflow: visible; padding: .35em .7em; color: #fff;
+                               background-color: #1ab394; border: 1px solid #1ab394; text-transform: none; box-shadow: none; }
+    .cms-site .fc .fc-button:hover, .cms-site .fc .fc-button-primary:not(:disabled).fc-button-active,
+    .cms-site .fc .fc-button-primary:not(:disabled):active { background-color: #127e68; border-color: #127e68; color: #fff; }
+    .cms-site .fc .fc-button:disabled { opacity: .6; }
+    .cms-site .fc .fc-toolbar-title { font-size: 20px; white-space: nowrap; margin: 0 .5em; }
+    .cms-site .fc .fc-toolbar-chunk { display: flex; align-items: center; gap: .5em; }
+    .cms-site .fc .fc-button-group { display: inline-flex; width: auto; }
+    .cms-site .fc .fc-button { width: auto; min-width: 0; flex: 0 0 auto; margin: 0; }
+    .cms-site .fc .fc-direction-ltr .fc-toolbar > * > :not(:first-child) { margin-left: 0; }
+    .cms-site .fc .fc-event { padding: 1px 3px; }
+    .cms-site .fc .fc-event-time, .cms-site .fc .fc-event-title { color: inherit; padding: 0 1px; }
+    .cms-site .fc .fc-list-event { background-color: transparent; border-color: transparent; padding: 0; }
+    .cms-site .fc .fc-event a { background-color: transparent; border-color: transparent; padding: 0; color: inherit; }
+    .cms-site .fc .fc-list-event:hover td { background-color: #f5f5f5; }
 </style>
 
 <div id="page-top" class="landing-page no-skin-config cms-site">

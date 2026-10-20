@@ -70,15 +70,20 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 <li><a href="<?= BASE_URL ?>welcome-ccmps/ccmpmenu"><i class="fa fa-user"></i><span class="nav-label"> <?= CCMP?> Menu</span></a></li>
 
 
-<?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (cms-content): Content Admins and System Admins -->
+<?php if(rbac_allowed('cms', 'manage_content') || rbac_allowed('cms', 'manage_events')): ?> <!-- content manager (cms-content): Content Admins, Event Admins and System Admins -->
 <li> <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"> <?= CMS_LABEL ?> </span><span class="fa fa-chevron-down"></span></a>
     <ul class="nav nav-second-level collapse">
+        <?php if(rbac_allowed('cms', 'manage_events')): ?>
+        <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> Events</a></li>
+        <?php endif; ?>
+        <?php if(rbac_allowed('cms', 'manage_content')): ?>
         <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
         <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
+        <?php endif; ?>
     </ul>
 </li>
 <?php endif; ?>
@@ -102,6 +107,9 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> <?= SUBENTITY ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
     <ul class="nav nav-second-level collapse">
         <li><a href="<?= BASE_URL ?>welcome-ccmps/manage/mngsubentity"><i class="fa fa-users"></i><?= SUBENTITY ?> <?= CCMPS ?></a></li>
+        <?php if(rbac_allowed('cms', 'chapter_events') && !rbac_allowed('cms', 'manage_events')): ?>
+        <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> <?= SUBENTITY ?> Events</a></li>
+        <?php endif; ?>
     <!--    <li>
           <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
@@ -610,6 +618,24 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 
 </div> <!--End row   -->
 <?php endif; ?>    <!--  End Content Mgr -->
+<?php if(rbac_allowed('cms', 'manage_events') || rbac_allowed('cms', 'chapter_events')): ?> <!-- events calendar: Event Admins (all), Chapter Admins (own chapter) -->
+<br>
+Events
+<div class="row">
+    <div class="col-lg-2">
+        <div class="widget style1 gray-bg">
+            <div class="row vertical-align">
+                <div class="col-2">
+                <a href="<?= BASE_URL ?>cms-content/events" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-calendar fa-2x"></i>
+                </div>
+                <div class="col-10 text-right">
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> <?= rbac_allowed('cms', 'manage_events') ? 'Events' : SUBENTITY.' Events' ?></h2> </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> <!--End row   -->
+<?php endif; ?>
 <?php if($_SESSION['honcho_all_modules'] == 1 || $_SESSION['honcho_ccmps_module_ccmps'] == 1|| $_SESSION['honcho_ccmps_module_all'] == 1): ?>
 <br>
 <?= CCMP ?> Administration  aaa

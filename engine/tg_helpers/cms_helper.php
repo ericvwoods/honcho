@@ -86,18 +86,23 @@ function _cms_posts(string $kind, string $site, int $subentity_id): array {
 }
 
 function _cms_events(string $site, int $subentity_id): array {
-    // upcoming events (phase 5 replaces this list with the calendar)
+    // calendar events from two months back to 18 months ahead. The member home shows every
+    // chapter's events (own chapter marked); the public site only the ones ticked Public.
     $model  = new Model();
-    $params = array('now' => date('Y-m-d 00:00:00'));
-    if ($site === 'public') {
-        $scope = 'e.is_public = 1';
-    } else {
-        $scope = '(e.subentity_id = 0 OR e.subentity_id = :sub)';
-        $params['sub'] = $subentity_id;
+    $params = array('from' => date('Y-m-d 00:00:00', strtotime('-2 months')), 'to' => date('Y-m-d 23:59:59', strtotime('+18 months')));
+    $scope  = ($site === 'public') ? ' AND e.is_public = 1' : '';
+    $rows = $model->query_bind("SELECT e.*, m.file_name, m.alt_text,
+                                       COALESCE(NULLIF(s.description, ''), s.chapter_title) AS chapter
+                                  FROM events e
+                                  LEFT JOIN cms_media m ON m.id = e.media_id
+                                  LEFT JOIN ccmps_subentities s ON s.id = e.subentity_id
+                                 WHERE e.approved = 1 $scope AND e.start_at <= :to AND COALESCE(e.end_at, e.start_at) >= :from
+                                 ORDER BY e.start_at LIMIT 1000", $params, 'object');
+    foreach ((array) $rows as $row) {
+        $row->picture = $row->file_name ? cms_media_url($row->file_name) : '';
+        $row->chapter = $row->subentity_id > 0 ? (string) $row->chapter : 'National';
+        $row->mine    = ($site !== 'public' && $subentity_id > 0 && (int) $row->subentity_id === $subentity_id);
     }
-    $rows = $model->query_bind("SELECT e.* FROM events e
-                                 WHERE e.approved = 1 AND $scope AND COALESCE(e.end_at, e.start_at) >= :now
-                                 ORDER BY e.start_at LIMIT 12", $params, 'object');
     return (array) $rows;
 }
 

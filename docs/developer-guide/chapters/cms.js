@@ -19,8 +19,8 @@ const sections = [
     ['2', 'Content manager screens (`cms-content`): sections, items, picture library; Website menus', 'Built 2026-10-20'],
     ['3', 'Sunshine, Bulletin Board, Marquee and Careers screens on `cms_posts`; job detail page; old modules and tables deleted', 'Built 2026-10-20'],
     ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', 'Built 2026-10-20'],
-    ['5', 'Events calendar (FullCalendar) on `events`', 'Next'],
-    ['6', 'Public website in the Welcome module; BPA content loaded', ''],
+    ['5', 'Events calendar (FullCalendar 6) on `events`; event screens for Event Admins (all) and Chapter Admins (own chapter)', 'Built 2026-10-20'],
+    ['6', 'Public website in the Welcome module; BPA content loaded', 'Next'],
     ['Last', 'Event Module: registration events and activities on `events` + `event_activities`', ''],
   ]},
 ]},
@@ -48,7 +48,7 @@ const sections = [
     ['`cms/chapter_events`', 'Events for your own chapter', 'Chapter Admins'],
   ]},
   { type: 'p', text: "Members get Content Admins / Event Admins from the **Content Admin** and **Event Admin** checkboxes on their record or the Member Permissions screen (roles in `rbac_member_roles()`, columns `ccmps.content_admin` / `event_admin` kept as a synced copy; session flags `ccmps_content_admin` / `ccmps_event_admin`). Staff are added to those groups on the Security Groups screen, until the Staff Account screen exists." },
-  { type: 'p', text: "Every `cms-content` page except `job` calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
+  { type: 'p', text: "Every `cms-content` page except `job` and the event pages (`_event_scope()`, see Content Manager Screens) calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
 ]},
 
 // ============================================================
@@ -63,7 +63,8 @@ const sections = [
   { type: 'h2', text: 'Rules' },
   { type: 'ul', items: [
     "A section is drawn when its box for that site is ticked (`show_member`, or `show_public` and `allow_public`) **and** it has something to show; an empty section gets neither a block nor a menu link. With nothing at all the page says so.",
-    "Items: `active = 1`, in `sort_order`. Posts: `active = 1`, today between `starts_on` and `ends_on` (blanks are open), and on the member home `subentity_id` 0 or the member's own chapter (`ccmps_subentity`); on the public site `is_public = 1`. Events (until phase 5): approved, member's chapter or national (public: `is_public`), not yet over, the next 12.",
+    "Items: `active = 1`, in `sort_order`. Posts: `active = 1`, today between `starts_on` and `ends_on` (blanks are open), and on the member home `subentity_id` 0 or the member's own chapter (`ccmps_subentity`); on the public site `is_public = 1`. Events: approved, from two months back to 18 months ahead (up to 1,000); the member home shows **every** chapter's events, coloured national (green), the member's own chapter (blue) and other chapters (grey); the public site only `is_public = 1`.",
+    "**Calendar** (`site/calendar.php`): FullCalendar 6.1.15, a pinned copy in `public/js/fullcalendar-6.1.15/` (MIT licence beside it; no jQuery or moment needed; Inspinia's bundled 2.9.1 is not used). Month, week and list views; screens under 768 px open on the list. The events are written into the page as JSON (`json_encode` with the `JSON_HEX_*` flags); all-day end dates are made exclusive (the day after) as FullCalendar expects. Clicking an event fills a Bootstrap modal using `textContent` (no HTML from the data).",
     "Metrics (member home only), counted fresh each time like the member tiles: current " + "members (`current_year` ≥ the current year), renewal due (`current_year` = last year), chapters, chartered chapters.",
     "Layout notes: **slider** uses each item's picture as the slide background (none = a plain colour); **features** / **features2** put the first item that has a picture in the middle and split the rest left and right; **testimonials** rotates when there are several quotes; **pricing** highlights the middle of three plans and turns the body's lines into the list; **contact** turns the Phone field into a `tel:` link; **careers** links to `cms-content/job/{id}`.",
     "The menu, smooth scrolling (`a.page-scroll`), scrollspy and WOW animations come from the scripts already in `templates/views/inspinia.php`; the ticker uses CSS only and stands still for people who turn motion off (`prefers-reduced-motion`).",
@@ -73,7 +74,7 @@ const sections = [
 
 // ============================================================
 { tab: "Content Manager Screens", blocks: [
-  { type: 'p', text: "`modules/cms/content/Content.php` (URL `cms-content/...`), views in `modules/cms/content/views/`. Reached from **Website** in the member side menu (admin menu), the Website tiles on the member Admin page, the phone menu in `ccmphome.php`, and **Website** in both staff menus (`adminsidemenu.php`, `usersidemenu.php`); all gated by `rbac_allowed('cms', 'manage_content')`." },
+  { type: 'p', text: "`modules/cms/content/Content.php` (URL `cms-content/...`), views in `modules/cms/content/views/`. Reached from **Website** in the member side menu (admin menu), the Website tiles on the member Admin page, the phone menu in `ccmphome.php`, and **Website** in both staff menus (`adminsidemenu.php`, `usersidemenu.php`). The Website menu opens for `manage_content` or `manage_events`; inside, the content pages need `manage_content` and Events needs `manage_events`." },
   { type: 'table', headers: ['URL', 'Does'], rows: [
     ['`sections`', 'List of sections: drag to reorder (jQuery UI sortable → `ordersections`), tick Member home / Public website (AJAX `togglesection`), Edit, Items'],
     ['`updatesection/{id}` → `sectionsubmit/{id}`', 'Heading (required, 150), subtitle (255), menu label (40)'],
@@ -83,7 +84,11 @@ const sections = [
     ['`posts/{kind}`', 'Sunshine (`sunshine`), Bulletin Board (`bulletin`), Marquee (`marquee`) or Careers (`job`): list with picture, chapter, what shows **today** (Hidden / Starts / Ended / Showing), public tick, Shown checkbox (`togglepost`), drag to reorder (`orderposts`), Edit, Delete (POST `delpost`). The Sections list links feed sections to their list (**Posts**)'],
     ['`createpost/{kind}`, `updatepost/{id}` → `postsubmit/{id}`', 'One form; `_kinds()` lists each kind\'s fields and labels (e.g. Sunshine: Name, News, More details, Photo; Careers: Job title, Employer and location, Short and Full description, Logo, How to apply). Every kind has a chapter (National = 0), show from / until dates, Shown, and Also on the public website. New posts go to the top'],
     ['`job/{id}`', 'A job\'s detail page for anyone logged in (no Website permission needed): paragraphs from the full description, location, picture, closing date, Apply button. Hidden, not yet started or ended jobs send the visitor home with a message. The public website gets its own copy in phase 6'],
+    ['`events` (`events/past`)', 'Upcoming (or past) events: when, title and location, chapter, public tick, Edit, Delete (POST `delevent`). Event Admins and System Admins see all; a Chapter Admin sees only their chapter\'s'],
+    ['`createevent`, `updateevent/{id}` → `eventsubmit/{id}`', 'Title (required), start date (required) and time, optional end date and time, All day (times disabled), location, short and full description, chapter (National or any chapter; a Chapter Admin can\'t choose: always their own), picture, link and button label (e.g. Register), Public. Checks: real dates (`checkdate`) and times, end not before start, link rules as for items'],
   ]},
+  { type: 'h2', text: 'Who manages which events' },
+  { type: 'p', text: "`_event_scope()` decides for every event page: `cms/manage_events` → `'all'`; otherwise a member login with a chapter and `cms/chapter_events` → their chapter id (`ccmps_subentity`); anyone else goes home with a message. A chapter-scoped user can only open, save or delete events whose `subentity_id` is their chapter, and their saves always store their chapter whatever is posted. Menus: **Events** under Website for `manage_events`; **Chapter Events** in the Chapter Admin menu and an Events tile on the Admin page for `chapter_events`. Events are saved `approved = 1` (the column is kept for the Event Module)." },
   { type: 'h2', text: 'Posts (cms_posts)' },
   { type: 'ul', items: [
     "**What shows:** `active = 1`, `starts_on` blank or today or earlier, `ends_on` blank or today or later; for members, `subentity_id` 0 or their own chapter; on the public site, also `is_public = 1` and the section's `show_public`. Phase 4 and 6 queries apply these rules.",

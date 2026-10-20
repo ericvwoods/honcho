@@ -53,16 +53,21 @@
                     </ul>
                 </li>  
                 
-                <?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager: staff given Content Admins on the Security Groups screen -->
+                <?php if(rbac_allowed('cms', 'manage_content') || rbac_allowed('cms', 'manage_events')): ?> <!-- content manager: staff given Content Admins / Event Admins on the Security Groups screen -->
                 <li>
                     <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"><?= CMS_LABEL ?></span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
+                        <?php if(rbac_allowed('cms', 'manage_events')): ?>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> Events</a></li>
+                        <?php endif; ?>
+                        <?php if(rbac_allowed('cms', 'manage_content')): ?>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/marquee"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
                         <li><a class="submenu" href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
+                        <?php endif; ?>
                     </ul>
                 </li>
                 <?php endif; ?>

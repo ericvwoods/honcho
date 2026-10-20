@@ -11,7 +11,7 @@ Git repo: private `github.com/ericvwoods/honcho` (branch `main`, created 2026-10
 ## Running / debugging
 
 - Local URL: `http://localhost/bpausa/`.
-- **Secrets and per-install settings live in `.env`** (root, never committed; `.env.example` lists them): `BASE_URL`, `WHATENV`, `JWT_SECRET`, `DB_*`, `BREVO_*`, `SYNC_BREVO`, `HONCHO_MODULE`. `config/env.php` loads it (real environment variables win, for Docker) and provides `env('NAME', default)`; `config/config.php` and `config/database.php` read from it. Never put a key or password back into a committed file.
+- **Secrets and per-install settings live in `.env`** (root, never committed; `.env.example` lists them): `BASE_URL`, `WHATENV`, `JWT_SECRET`, `DB_*`, `BREVO_*`, `SYNC_BREVO`, `HONCHO_MODULE`, `CMS_PUBLIC_SITE` (1 = the front address shows the public Website, `welcome/website`; 0 = the login). `config/env.php` loads it (real environment variables win, for Docker) and provides `env('NAME', default)`; `config/config.php` and `config/database.php` read from it. Never put a key or password back into a committed file.
 - Schema changes go in `database/migrations/<date>-<name>.sql` (written to be safe to re-run). Never put a `.sql` file in a module folder.
 - DB config is in `config/database.php` (local MySQL `bpausa`). `ccmps.sql` / `ccmps_aux.sql` at the root are schema+test-data dumps. Treat the data as disposable.
 - Composer deps (`vendor/`): phpspreadsheet, phpmailer, brevo. Run `composer install` from the root.

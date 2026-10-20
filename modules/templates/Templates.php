@@ -25,6 +25,10 @@ class Templates extends Trongate {
         load('public', $data);
     }
 
+    function website($data) { // the public website (Welcome::website / job): Inspinia landing look, no side menu
+        load('website', $data);
+    }
+
     function error_404($data = []) { // Core::draw_error_page() calls this with no arguments
         load('error_404', $data);
     }

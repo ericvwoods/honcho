@@ -12,7 +12,9 @@ if (defined('DEBUGGING') && DEBUGGING == true) {
 
 /*--------------------------- function list ----------------------------------*/
 /*
-  index()
+  index()          the Website when CMS_PUBLIC_SITE = 1, otherwise the login
+  website()        the public website (content manager sections ticked for the public site)
+  job()            a public job posting's page
   login()
   authenticate()
   secondfactor()
@@ -54,13 +56,50 @@ class Welcome extends Trongate {
 // ************************************************************************** //
 
     function index() {
-
-//echo(58); die();
-      //  $this->view('welcome'); // public facing home page
-
+        if (CMS_PUBLIC_SITE == 1) { // this install's public website is the content manager's Website
+            $this->website();
+            return;
+        }
         $this->login();
+    }
 
+// ************************************************************************** //
+// *************************  function WEBSITE ****************************** //
+// ************************************************************************** //
 
+    function website() { // the public website; anyone, no login (also the preview when the front address goes to the login)
+        $data['cms']              = cms_page('public', 0);
+        $data['page_title']       = '';
+        $data['page_description'] = SITENAME;
+        $data['view_module']      = 'welcome';
+        $data['view_file']        = 'website';
+        $this->templates->website($data);
+    }
+
+// ************************************************************************** //
+// ***************************  function JOB ******************************** //
+// ************************************************************************** //
+
+    function job() { // a public job posting (Careers posts ticked "Also on the public website")
+        $today = date('Y-m-d');
+        $rows  = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
+                                             LEFT JOIN cms_media m ON m.id = p.media_id
+                                            WHERE p.id = :id AND p.kind = 'job' AND p.active = 1 AND p.is_public = 1
+                                              AND (p.starts_on IS NULL OR p.starts_on <= :t1)
+                                              AND (p.ends_on IS NULL OR p.ends_on >= :t2)",
+                                          array('id' => intval(segment(3)), 't1' => $today, 't2' => $today), 'object');
+        if (empty($rows)) {
+            redirect('welcome/website#sec-careers');
+        }
+        $job          = $rows[0];
+        $job->picture = $job->file_name ? cms_media_url($job->file_name) : '';
+
+        $data['job']              = $job;
+        $data['page_title']       = $job->title;
+        $data['page_description'] = $job->summary !== '' ? $job->summary : $job->title;
+        $data['view_module']      = 'welcome';
+        $data['view_file']        = 'websitejob';
+        $this->templates->website($data);
     }
 
 // ************************************************************************** //

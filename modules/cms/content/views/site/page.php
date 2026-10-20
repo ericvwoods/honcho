@@ -72,12 +72,12 @@ $cms_job_url = function($id) use ($cms){ // a job's detail page on this site
     .cms-site .fc .fc-list-event:hover td { background-color: #f5f5f5; }
 </style>
 
-<div id="page-top" class="landing-page no-skin-config cms-site">
+<div <?= $cms['site'] === 'member' ? 'id="page-top" ' : '' ?>class="landing-page no-skin-config cms-site"> <!-- the public template's <body> is #page-top -->
 
     <div class="navbar-wrapper">
         <nav class="navbar navbar-default navbar-expand-md landing-sticky-nav" role="navigation" aria-label="Page sections">
             <div class="container">
-                <a class="navbar-brand page-scroll" href="#page-top"><?= out(SHORTSITENAME) ?> <?= out(SITENAME4) ?></a>
+                <a class="navbar-brand page-scroll" href="#page-top"><?= out(SHORTSITENAME) ?><?= $cms['site'] === 'member' ? ' '.out(SITENAME4) : '' ?></a>
                 <div class="navbar-header page-scroll">
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show the page menu">
                         <i class="fa fa-bars"></i>
@@ -89,6 +89,9 @@ $cms_job_url = function($id) use ($cms){ // a job's detail page on this site
                         <?php foreach($cms['menu'] as $m): ?>
                         <li><a class="nav-link page-scroll" href="#<?= out($m['anchor']) ?>"><?= out($m['label']) ?></a></li>
                         <?php endforeach; ?>
+                        <?php if($cms['site'] === 'public'): ?>
+                        <li class="cms-login"><a class="nav-link" href="<?= BASE_URL ?><?= empty($_SESSION['ccmp_logged_in']) ? 'welcome/login' : 'welcome-ccmps/ccmphome' ?>"><?= empty($_SESSION['ccmp_logged_in']) ? out(CCMP).' Login' : out(CCMP).' Home' ?></a></li>
+                        <?php endif; ?>
                         <?php if($cms['site'] === 'member' && empty($_SESSION['mobile_app_view']) && defined('HOTLINK') && !in_array(HOTLINK, array('', '#'), true)): ?> <!-- HOTLINK '#' = no active link -->
                         <li><a class="nav-link" href="<?= HOTLINK ?>"><?= out(HOTLINKLABEL) ?></a></li>
                         <?php endif; ?>

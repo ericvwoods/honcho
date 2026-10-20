@@ -20,7 +20,7 @@ const sections = [
     ['3', 'Sunshine, Bulletin Board, Marquee and Careers screens on `cms_posts`; job detail page; old modules and tables deleted', 'Built 2026-10-20'],
     ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', 'Built 2026-10-20'],
     ['5', 'Events calendar (FullCalendar 6) on `events`; event screens for Event Admins (all) and Chapter Admins (own chapter)', 'Built 2026-10-20'],
-    ['6', 'Public website in the Welcome module; BPA content loaded', 'Next'],
+    ['6', 'Public website in the Welcome module (`welcome/website`, `welcome/job/{id}`, template `website`); BPA content loaded from bpapilots.org', 'Built 2026-10-20'],
     ['Last', 'Event Module: registration events and activities on `events` + `event_activities`', ''],
   ]},
 ]},
@@ -70,6 +70,26 @@ const sections = [
     "The menu, smooth scrolling (`a.page-scroll`), scrollspy and WOW animations come from the scripts already in `templates/views/inspinia.php`; the ticker uses CSS only and stands still for people who turn motion off (`prefers-reduced-motion`).",
     "Everything stored is printed through `out()`.",
   ]},
+]},
+
+// ============================================================
+{ tab: "Public Website", blocks: [
+  { type: 'p', text: "Phase 6 (2026-10-20). The public website is the same page code with `cms_page('public', 0)`: only sections ticked **Public website** (and allowed there), posts ticked **Also on the public website**, and events ticked **Public**. No login is needed." },
+  { type: 'table', headers: ['Piece', 'Does'], rows: [
+    ['`Welcome::website()`', '`welcome/website`: the public homepage. Template `website`, view `modules/welcome/views/website.php` (includes `site/page.php`)'],
+    ['`Welcome::job()`', '`welcome/job/{id}`: a public job page (Careers post that is shown, public and inside its dates; otherwise back to the Careers section). View `websitejob.php`. The Careers section links here on the public site and to `cms-content/job/{id}` on the member home (`$cms_job_url`)'],
+    ['`Welcome::index()`', 'The front address. `CMS_PUBLIC_SITE` = 1 shows the website; 0 (the default) goes to the login as before. `welcome/website` always works, so the site can be built and checked before it is switched on'],
+    ['`modules/templates/views/website.php`', '`Templates::website()`: a full page with the Inspinia landing styles, `<body id="page-top" class="landing-page">`, and only the scripts the page needs (jQuery, Bootstrap, scroll / scrollspy / sticky header, WOW). `$page_title` and `$page_description` fill the title and meta description'],
+    ['`CMS_PUBLIC_SITE`', 'In `config/config.php`, read from `.env` (`CMS_PUBLIC_SITE=1`), per install. BPA keeps 0 while bpapilots.org (WordPress, `PUBLIC_WEBSITE`) is its public site'],
+  ]},
+  { type: 'ul', items: [
+    "The page's menu shows **" + "Member Login** on the public site (**Member Home** when already logged in); the brand is `SHORTSITENAME` alone (the member home adds `SITENAME4`).",
+    "Member-only sections never appear publicly: Metrics has `allow_public = 0`; Sunshine, Bulletin Board and Marquee are seeded off for the public site.",
+    "The calendar opens on **Upcoming** (a 12-month list) when the current month has no events, and always on phones.",
+  ]},
+  { type: 'h2', text: 'BPA content (2026-10-20)' },
+  { type: 'p', text: "Loaded from the public pages of bpapilots.org (home, About, Officials, Join, Upcoming Meetings, Give) by a one-off loader on the Mac: slider (3 slides), About BPA, What We Do, Signature Programs, Our Year, Officials (6, with photos), Why Join BPA?, Membership Classes (dues are set by chapters, so no prices), Contact, and the 14 Board / General Membership meetings from January 2027 to 2033 as public national all-day events. 11 pictures; the three wide banner graphics were left out because their words are part of the image. Nothing was invented: no testimonials or partner quotes (those sections stay empty and hidden), no Operation Skyhook / Summer Flight Academy dates (the site gives none), no national phone or email (the site lists only chapter contacts). The site gives two Summer Flight Academy locations (Atlanta Speedway and Houston Southwest); Houston, from its About and program text, was used." },
+  { type: 'p', text: "Content is data, not code: it reaches staging by copying the five tables (`cms_sections`, `cms_items`, `cms_media`, `cms_posts`, `events`) and the `public/uploads/cms/` files, after a staging backup." },
 ]},
 
 // ============================================================

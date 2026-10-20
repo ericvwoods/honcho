@@ -74,16 +74,21 @@ foreach($section->items as $e){
         if(!el || !window.FullCalendar){ return; }
         var modalId = <?= json_encode($cms_cal_id.'-modal') ?>;
         var narrow  = window.innerWidth < 768;
+        var events  = <?= json_encode($cms_events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
+        // nothing this month: open on the list of the next 12 months instead of an empty grid
+        var now = new Date(), thisMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+        var hasThisMonth = events.some(function(e){ return e.start.substring(0, 7) === thisMonth; });
         var calendar = new FullCalendar.Calendar(el, {
-            initialView: narrow ? 'listMonth' : 'dayGridMonth',
+            initialView: (narrow || !hasThisMonth) ? 'listUpcoming' : 'dayGridMonth',
+            views: { listUpcoming: { type: 'list', duration: { months: 12 }, buttonText: 'Upcoming' } },
             headerToolbar: narrow ? { left: 'prev,next', center: 'title', right: 'today' }
-                                  : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listMonth' },
-            buttonText: { today: 'Today', month: 'Month', week: 'Week', list: 'List' },
+                                  : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,listUpcoming' },
+            buttonText: { today: 'Today', month: 'Month', week: 'Week' },
             height: 'auto',
             dayMaxEvents: 3,
             eventDisplay: 'block', // every event a coloured bar (national / own chapter / other chapters)
             noEventsContent: 'No events this month',
-            events: <?= json_encode($cms_events, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+            events: events,
             eventClick: function(info){
                 info.jsEvent.preventDefault();
                 var ev = info.event, p = ev.extendedProps, m = document.getElementById(modalId);

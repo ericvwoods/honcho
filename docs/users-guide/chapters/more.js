@@ -16,7 +16,8 @@ content: [
       ['**Events**', 'The events calendar (Event Admins and System Admins: every event; Chapter Admins: their own chapter\'s events, under **Chapter Events** in the Chapter Admin menu)'],
     ]},
     { type: 'p', text: "What you enter shows on the lower part of the member home page, below the member tiles, in the order of the Page Sections list. A menu bar across the top of that part has a link for each section that has a menu label; clicking one scrolls down to it. A section that is switched off, or has nothing in it yet, doesn't show at all." },
-    { type: 'alert', variant: 'info', text: "Still being built in 2026: the public website. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board, and activities on the events calendar." },
+    { type: 'p', text: "**The public website** uses the same sections, for anyone, without logging in. It shows only the sections whose **Public website** box is ticked, the Sunshine, Bulletin Board, Marquee and Careers posts ticked **Also on the public website**, and the events ticked **Public**. Member numbers never show there. Its menu has a **Member Login** button. Your system administrator decides whether the website is the site's front page; until then it can be viewed at the address ending in `welcome/website`." },
+    { type: 'alert', variant: 'info', text: "The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board, and activities on the events calendar." },
   ]},
   { tab: "Events Calendar", blocks: [
     { type: 'p', text: "The Calendar section of the member home shows every chapter's events: national events in green, your own chapter's in blue and other chapters' in grey. Members can switch between **Month**, **Week** and **List**, and click an event to see its details and its button (for example **Register**). On a phone the calendar opens as a list." },

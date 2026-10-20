@@ -70,20 +70,11 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 <li><a href="<?= BASE_URL ?>welcome-ccmps/ccmpmenu"><i class="fa fa-user"></i><span class="nav-label"> <?= CCMP?> Menu</span></a></li>
 
 
-<?php if($_SESSION['ccmps_cms_admin'] == 1): ?>
-<li> <a href="#"><i class="fa fa-gears"></i> <span class="nav-label"> Content Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
+<?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (cms-content): Content Admins and System Admins -->
+<li> <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"> <?= CMS_LABEL ?> </span><span class="fa fa-chevron-down"></span></a>
     <ul class="nav nav-second-level collapse">
-        <li><a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/cmsadmin"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsjumbotron/manage/cmsadmin"><i class="fa fa-window-maximize"></i> Jumbotron</a></li>
-        <li><a href="<?= BASE_URL ?>cms-bulletinboard/manage/cmsadmin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/cmsadmin"><i class="fa fa-podcast"></i> Notices</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/cmsadmin"><i class="fa fa-plane"></i> Job Posts</a></li>
-        <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/cmsadmin"><i class="fa fa-calendar"></i> Activities</a></li>
-        <li><a href="<?= BASE_URL ?>dms-dmslibrary/manage"><i class="fa fa-file-text-o"></i> Doc Library</a></li>
-        <li><a href="#"><i class="fa fa-list"></i> <?= SUBENTITIES ?> ($_SESSION['num_chapters'])</a></li>
-    <li>
-        <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>
-    </li>
+        <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
     </ul>
 </li>
 <?php endif; ?>
@@ -425,7 +416,7 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 
 
 
-<?php if(ENV == '' || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['ccmps_subentity_admin'] == 1 || $_SESSION['ccmps_cms_admin'] == 1 || $_SESSION['ccmps_admin'] == 1 || $_SESSION['ccmps_student_admin'] == 1 || $_SESSION['national_officer'] == 1  || $_SESSION['national_officer'] == 2  || $_SESSION['national_officer'] == 3  || $_SESSION['national_officer'] == 4  || $_SESSION['national_officer'] == 5   || $_SESSION['national_officer'] == 6 || $_SESSION['national_officer'] == 7 || $_SESSION['chapter_role'] == 1): ?>
+<?php if(ENV == '' || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['ccmps_subentity_admin'] == 1 || rbac_allowed('cms', 'manage_content') || $_SESSION['ccmps_admin'] == 1 || $_SESSION['ccmps_student_admin'] == 1 || $_SESSION['national_officer'] == 1  || $_SESSION['national_officer'] == 2  || $_SESSION['national_officer'] == 3  || $_SESSION['national_officer'] == 4  || $_SESSION['national_officer'] == 5   || $_SESSION['national_officer'] == 6 || $_SESSION['national_officer'] == 7 || $_SESSION['chapter_role'] == 1): ?>
 
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
@@ -631,90 +622,32 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
 </div> <!--End row   -->
 <?php endif; ?>    <!--  End Chapter Admin -->
 
-<?php if($_SESSION['ccmps_cms_admin'] == 1 || $_SESSION['honcho_ccmps_module_cms'] == 1): ?>
-<!-- <hr> -->
+<?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (cms-content) -->
 <br>
-Content Administration
+<?= CMS_LABEL ?>
 <div class="row">
 
     <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/cmsadmin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-ellipsis-h fa-2x"></i>
+                <a href="<?= BASE_URL ?>cms-content/sections" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-list fa-2x"></i>
                 </div>
                 <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Marquee</h2> </a>
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Page Sections</h2> </a>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
         <div class="widget style1 gray-bg">
             <div class="row vertical-align">
                 <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsjumbotron/manage/cmsadmin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-th-list fa-2x"></i>
+                <a href="<?= BASE_URL ?>cms-content/media" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-picture-o fa-2x"></i>
                 </div>
                 <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Jumbotron</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/cmsadmin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-thumb-tack fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Bulletins</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/cmsadmin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-podcast fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Notices</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-          <div class="col-lg-2">
-      <!--   <div class="widget style1 yellow-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/cmsadmin" style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-calendar fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Activities</h2> </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-2">
-    <!--     <div class="widget style1 white-bg"> -->
-        <div class="widget style1 gray-bg">
-            <div class="row vertical-align">
-                <div class="col-2">
-                <a href="<?= BASE_URL ?>dms-dmslibrary/manage"style="color:cornflowerblue; font-size:18pt">     <i class="fa fa-file-text-o fa-2x"></i>
-                </div>
-                <div class="col-10 text-right">
-                     <h2 style="font-weight: bold; color: gray; font-size:16pt"> Doc Library</h2> </a>
-                    <!--    <h2 style="color:LightGray;"> Sponsors</h2> </a>  -->
+                      <h2 style="font-weight: bold; color: gray; font-size:16pt"> Pictures</h2> </a>
                 </div>
             </div>
         </div>

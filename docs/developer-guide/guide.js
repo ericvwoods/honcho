@@ -15,9 +15,9 @@ const guide = [
     { title: 'CCMPS (Members)',              sections: require('./chapters/ccmps.js') },
     { title: 'DMS (Document Management)',    sections: require('./chapters/dms.js') },
     { title: 'Security (RBAC)',              sections: require('./chapters/security.js') },
-    // Planned: CMS & Welcome — the modules/cms/ content shown on
-    // ccmphome (marquee, jumbotron, bulletins, notices, jobs, activities,
-    // library) and the public-facing page in the welcome parent module.
+    { title: 'Website (CMS)',                sections: require('./chapters/cms.js') },
+    // Planned: Welcome — login, logout, second factor, mobile bridge,
+    // and the public website (phase 6 of the Website chapter).
   ]},
 
   { part: 'Part II: Add-ons', chapters: [

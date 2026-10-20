@@ -93,7 +93,16 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 ## Home page content (CMS)
 
 - [x] All 8 content modules read a table named `scopes`; now `ccmps_scopes` (2026-10-16). Can't be tested until the item below is done.
-- [ ] Finish the 8 content modules. Each `manage()` starts with a deliberate `echo(NNN); die();` stop, and the code after it uses old table names (`ccmps_bulletins` vs `cms_ccmps_bulletins`, `bulletins_bulk_actions`), old member fields (`chapter`, `chapter_admin`, `chapter_role` → `subentity*`) and wrong redirects (`cms-bulletinboard` vs `cms-ccmpsbulletinboard`).
+- [x] ~~Finish the 8 content modules~~ - replaced by the content manager below (decided 2026-10-20: the old CMS code and tables were a prototype; rebuild, best practices, throw the old ones out). Their debug stops were commented out 2026-10-20.
+
+**Content manager for the member home (`ccmphome.php`) and a public website (plan agreed 2026-10-20; sign-off after each phase):**
+- [x] Phase 1 - Foundation (built 2026-10-20, approved): tables `cms_sections` (on/off for member home and public site, order, heading, one-page menu label), `cms_items`, `cms_media` (picture library), `cms_posts` (Sunshine, Bulletin Board stickies, Marquee, Careers), `events` (top level of the future Event Module). Permissions in Security Groups: the existing Content Admin and Event Admin checkboxes become member roles (groups Content Admins, Event Admins); new `cms` functions; Chapter Admins add events for their own chapter; staff get the same through the Security Groups screen.
+- [ ] Phase 2 (built and tested on the Mac 2026-10-20, waiting on sign-off; menu name is the `CMS_LABEL` constant, "Website") - Content manager screens (`cms-content`), from both the staff and member menus: sections list (show/hide per site, order, headings, menu labels), items per section, picture uploader and picker.
+- [ ] Phase 3 - Feed screens on `cms_posts`: Sunshine (illnesses, deaths), Bulletin Board (yellow stickies), Marquee, Careers (with a detail page per job, public). Delete the 8 old CMS modules and their `cms_ccmps_*` / `cms_users_*` tables.
+- [ ] Phase 4 - `ccmphome.php` rebuilt from the tables, keeping the Inspinia look: the 11 demo sections plus Sunshine, Bulletin Board, Calendar, Marquee, Metrics (member home only) and Careers; the one-page top menu (click, scroll to the section) is built from the sections switched on.
+- [ ] Phase 5 - Events calendar (Inspinia FullCalendar): Chapter Admins add events for their chapter, Event/Content Admins for any; public checkbox; member home shows all, public site only public ones.
+- [ ] Phase 6 - Public website in the Welcome module: same template, the sections switched on for public, plus public calendar and Careers. Then load BPA's text and pictures from bpapilots.org.
+- [ ] Last: Event Module - rewrite registration's hard-coded events (Skyhook, General Meeting, Board Meeting) to use `events` with an `event_activities` child table; the calendar keeps reading `events`.
 
 ## Small fixes
 
@@ -103,4 +112,4 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Debug line numbers show on buttons: "128 Update" (`viewccmp.php` line 128) and "69Cancel" / "80 Cancel" (`ccmpcrud.php` lines 70 and 81).
 - [ ] Member-list bulk actions Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing (`Ccmps.php` `bulkaction()`).
 
-- [ ] `sidemenu.php` Content Admin block is missing its closing `</li>` (~line 161).
+- [x] `sidemenu.php` Content Admin block is missing its closing `</li>` (~line 161). Replaced by the Website block 2026-10-20.

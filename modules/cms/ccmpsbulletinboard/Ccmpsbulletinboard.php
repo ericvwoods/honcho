@@ -162,7 +162,7 @@ class Ccmpsbulletinboard extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(165); die();
+//echo(165); die();
 /*---------------------------- Security Checks -------------------------------*/
   $bbfunction = 'manage';
   $authorized = $this->_check_function_permissions($bbfunction); 

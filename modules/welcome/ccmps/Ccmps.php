@@ -8270,7 +8270,7 @@ $user_obj = $this->model->get_one_where('id', $ccmprecid , 'ccmps');
     $_SESSION['ccmps_subentity_role']   = $user_obj->subentity_role;
 
     // Security
-    $_SESSION['ccmps_cms_admin']        = $user_obj->cms_admin;
+    $_SESSION['ccmps_cms_admin']        = $user_obj->content_admin; // no cms_admin column; the old flag follows Content Admin
     $_SESSION['ccmps_ccmp_admin']       = $user_obj->ccmp_admin; // was ccmps_admin from a nonexistent admin column
     $_SESSION['ccmps_student_admin']    = $user_obj->student_admin;
     $_SESSION['ccmps_subentity_admin']  = $user_obj->subentity_admin;

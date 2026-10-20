@@ -159,7 +159,7 @@ class Ccmpsactivities extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(162); die();
+//echo(162); die();
 //print_r($_SESSION['tab']); die(); // =0 when return to ccmphome dont open any tab
 /*---------------------------- Security Checks -------------------------------*/
   $actfunction = 'manage';

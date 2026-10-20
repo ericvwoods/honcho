@@ -25,7 +25,7 @@ const memberList = [
   { type: 'p', text: "Open the member with **Update Record**, go to **Admin Notes**, tick **Deceased** and click **Save Changes**. When you save:" },
   { type: 'ul', items: [
     "They can no longer log in, on the website or the phone app.",
-    "Every admin role the member had (System, Member, Chapter or Student Admin) is taken away, and they're removed from all Security Groups, including access to the Document Library.",
+    "Every admin role the member had (System, Member, Chapter, Student, Content or Event Admin) is taken away, and they're removed from all Security Groups, including access to the Document Library.",
     "They no longer appear on the chapter roster, the national directory, the treasurer's spreadsheet or the member counts.",
     "Their record isn't deleted. You can still find it in the member list.",
     "An email address isn't needed to save the record.",

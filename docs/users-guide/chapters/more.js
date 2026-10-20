@@ -4,32 +4,38 @@ module.exports = {
 
 content: [
   { tab: "What You Manage", blocks: [
-    { type: 'p', text: "Content Admins decide what members see on the home page. Each item below has its own page under **Content Admin** in the side menu, with a list of posts and a button to add one." },
-    { type: 'table', headers: ['Menu item', 'Where it shows on the home page'], rows: [
-      ['**Marquee**', 'The scrolling line of short announcements across the top'],
-      ['**Jumbotron**', 'The large featured area near the top, with a picture and a link'],
-      ['**Bulletins**', "Members' bulletins (buy, sell, help wanted). You can approve, edit or remove any of them"],
-      ['**Notices**', 'Announcements from the organization or a chapter'],
-      ['**Job Posts**', 'Job openings, with a location'],
-      ['**Activities**', 'Events, with start and end dates and times and a location'],
-      ['**Chapters**', "Each chapter's entry on the Chapters page"],
+    { type: 'p', text: "Content Admins (and System Admins) decide what the member home page and the public website show. Open **Website** in the side menu, or the Website tiles on the Admin page. Staff with the Content Admins Security Group see **Website** in the staff menu and use the same pages." },
+    { type: 'table', headers: ['Page', 'What it does'], rows: [
+      ['**Page Sections**', 'Every section of the page, top to bottom: the picture slider, feature boxes, team, timeline, quotes, prices, contact details, and the Sunshine, Bulletin Board, Calendar, Marquee, Careers and member-numbers sections. Show or hide each one on the member home and on the public website, drag sections into a new order, and change headings'],
+      ['**Items**', 'The pieces inside a section, such as the slides in the slider or the people in Team'],
+      ['**Pictures**', 'Upload pictures once, then choose them for any slide or item'],
+    ]},
+    { type: 'alert', variant: 'info', text: "Being rebuilt in 2026. The screens for Sunshine, Bulletin Board, Marquee, Careers and the events calendar, and the new member home page that uses all of this, come in the next steps. Until then the member home page still shows its old layout." },
+  ]},
+  { tab: "Page Sections", blocks: [
+    { type: 'ul', items: [
+      "**Show or hide:** tick or untick a section's **Member home** or **Public website** box. It saves straight away and a message at the top confirms it. Some sections, such as the member numbers, are for the member home only.",
+      "**Order:** drag a row by its handle (the three lines on the left) to a new place. The new order saves when you let go.",
+      "**Edit:** change the section's **heading**, an optional **subtitle**, and its **menu label**: the link in the page's top menu that scrolls down to the section. Leave the label blank for no link.",
+      "**Items:** sections you fill yourself have an **Items** button. Sections such as Sunshine or Careers get their content from their own pages instead.",
     ]},
   ]},
-  { tab: "Adding or Changing a Post", blocks: [
-    { type: 'p', text: 'Every kind of post uses a similar form:' },
-    { type: 'table', headers: ['Field', 'Notes'], rows: [
-      ['**Title**', 'Keep it short; it shows in lists'],
-      ['**Short description**', 'One or two lines shown in lists and on the home page'],
-      ['**Full description**', 'Shown when someone opens the post'],
-      ['**Photo**', 'Optional picture'],
-      ['**Contact information**', 'Who to contact; you can show an alternate contact only'],
-      ['**Who can see it**', '**Public**, **All Members** or **Chapter Only**'],
-      ['**Dates**', 'Start and end dates for marquee items and activities'],
-      ['**Active**', 'Untick to take a post down without deleting it'],
-      ['**Approved**', "Posts from members stay hidden until this is set to Yes"],
+  { tab: "Items", blocks: [
+    { type: 'p', text: "The item form only shows the boxes that section uses, with labels that say what each is for (for example **Headline** and **Button link** for a slide, or **Name**, **Role** and **Photo** for a team member)." },
+    { type: 'ul', items: [
+      "**Picture:** click **Choose a Picture** and pick one from the library. Upload new pictures on the Pictures page first. **No Picture** removes it.",
+      "**Icon:** a Font Awesome name such as `fa-plane`; a preview shows next to the box.",
+      "**Links** start with `https://`, `mailto:` or `tel:`, or `/` for a page on this site, or `#` for a section of the page.",
+      "**Shown:** untick to hide an item without deleting it. You can also tick or untick it on the Items list.",
+      "Drag items on the list to change their order. **Delete** asks first and can't be undone.",
     ]},
-    { type: 'p', text: 'Click **Submit** to save. Only posts that are both **Active** and **Approved** appear on the home page.' },
-    { type: 'alert', variant: 'warning', text: 'Deleting a post from a list can\'t be undone. To hide a post for now, untick **Active** instead.' },
+  ]},
+  { tab: "Pictures", blocks: [
+    { type: 'ul', items: [
+      "Click **Choose Files**, pick one or more JPEG, PNG, GIF or WebP pictures (up to 10 MB each), then **Upload**. Very wide pictures are made smaller automatically so the page loads quickly.",
+      "Give each picture a short **description** of what it shows. Screen readers read it aloud to people who can't see the picture. It saves when you click out of the box.",
+      "Each picture shows how many times it's used. A picture can only be deleted when nothing uses it.",
+    ]},
   ]},
 ],
 
@@ -113,7 +119,7 @@ system: [
   { tab: "System Admin Pages", blocks: [
     { type: 'p', text: 'System Admins look after how Honcho is set up. These pages are under **System Admin** in the side menu.' },
     { type: 'table', headers: ['Menu item', 'What you do there'], rows: [
-      ['**Member Permissions**', 'Every member\'s admin roles in one list (System, Member, Chapter and Student Admin). Click a box to give or remove a role'],
+      ['**Member Permissions**', 'Every member\'s admin roles in one list (System, Member, Chapter, Student, Content and Event Admin). Click a box to give or remove a role'],
       ['**System Settings**', "Values that change how the system behaves, such as the current membership year, whether the Document Library shows its first and last kanban columns, and the colors and labels used across the site. Only on installs without the staff portal (see below)"],
       ['**Font/Color Settings**', 'The sizes and colors offered in everyone\'s Display Size choices'],
       ['**Chapters**', 'Add and edit chapters'],

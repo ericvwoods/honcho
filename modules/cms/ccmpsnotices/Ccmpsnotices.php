@@ -165,7 +165,7 @@ class Ccmpsnotices extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(168); die();
+//echo(168); die();
 /*---------------------------- Security Checks -------------------------------*/
   $ntcfunction = 'manage';
   $authorized = $this->_check_function_permissions($ntcfunction); 

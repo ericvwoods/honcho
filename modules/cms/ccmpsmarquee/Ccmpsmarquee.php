@@ -164,7 +164,7 @@ class Ccmpsmarquee extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(167); die();
+//echo(167); die();
 /*---------------------------- Security Checks -------------------------------*/
   $marqueefunction = 'manage';
   $authorized = $this->_check_function_permissions($marqueefunction); 

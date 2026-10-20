@@ -80,7 +80,10 @@ const sections = [
     ['`ccmps.ccmp_admin`', 'Member Admins', '`ccmps/member_admin`'],
     ['`ccmps.subentity_admin`', 'Chapter Admins', '`ccmps/chapter_admin` + DMS user functions'],
     ['`ccmps.student_admin`', 'Student Admins', '`ccmps/student_admin`'],
+    ['`ccmps.content_admin` (added 2026-10-20)', 'Content Admins', '`ccmps/content_admin` + `cms/manage_content`'],
+    ['`ccmps.event_admin` (added 2026-10-20)', 'Event Admins', '`ccmps/event_admin` + `cms/manage_events`'],
   ]},
+  { type: 'p', text: "Content manager (2026-10-20, `database/migrations/2026-10-20-cms-content-phase1.sql`): module `cms` has three functions: `manage_content` (sections, items, pictures, Sunshine, Bulletin Board, Marquee, Careers), `manage_events` (every event) and `chapter_events` (events for your own chapter, given to Chapter Admins). Member System Admins and staff System Admins get `manage_content` and `manage_events`. Staff are given content or event rights by adding them to Content Admins or Event Admins on the Security Groups screen; members get them from the Content Admin / Event Admin checkboxes." },
   { type: 'p', text: "DMS's 36 and Honcho's 41 method-level functions were merged into 12 and 15 actions; each function's description lists the old names it covers. Staff groups take staff logins only and member roles take member logins only, so a stale row can't cross sides. Deceased and deleted members are left out." },
 
   { type: 'h2', text: 'Not Migrated (from the report)' },

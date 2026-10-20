@@ -80,6 +80,7 @@ define('SUBENTITY','Chapter'); // Subentity - used for page headers and buttons 
 define('SUBENTITIES','Chapters'); // subentities
 define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('CCMPSSUBENTITIES','Chapters'); // subentities
+define('CMS_LABEL','Website'); // menu name for the content manager (module cms) - Website, Web Pages, Our Site etc
 
 // CCMPSHOME
 define('SHOW_MARQUEE', 1);

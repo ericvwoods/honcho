@@ -186,7 +186,7 @@ class Ccmpsjumbotron extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(189); die();
+//echo(189); die();
 /*---------------------------- Security Checks -------------------------------*/
   $jumbotronfunction = 'manage';
   $authorized = $this->_check_function_permissions($jumbotronfunction); 

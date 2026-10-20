@@ -19,7 +19,7 @@ const guide = [
     { title: 'For Every Member',                sections: require('./chapters/members.js') },
     { title: 'Chapter Admins',                  sections: admins.chapterAdmins },
     { title: 'Member Admins',                   sections: admins.memberAdmins },
-    { title: 'Home Page Content',               sections: more.content },
+    { title: 'Website (Home Page Content)',     sections: more.content },
     { title: 'Document Library',                sections: more.library },
   ]},
 

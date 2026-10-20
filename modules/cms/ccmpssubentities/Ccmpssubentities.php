@@ -216,7 +216,7 @@ class Ccmpssubentities extends Trongate {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(219); die();
+//echo(219); die();
 /*---------------------------- Security Checks -------------------------------*/
   $chaptersfunction = 'manage';
   $authorized = $this->_check_function_permissions($chaptersfunction); 

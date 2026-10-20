@@ -30,7 +30,7 @@ class Subentities extends Trongate {
 /*---------------------------- function MANAGE -------------------------------*/
 /*----------------------------------------------------------------------------*/
     function manage(){ 
-echo(33); die();
+//echo(33); die();
 /*---------------------------- Security Checks -------------------------------*/
   $ntcfunction = 'manage';
   $authorized = $this->_check_function_permissions($ntcfunction); 
@@ -664,7 +664,7 @@ json($adsdata); die();
 */
 
             $this->model->update($recid, $adsdata, 'system_subentities');
-echo(657);die();
+//echo(657);die();
 
 
 // echo(607);

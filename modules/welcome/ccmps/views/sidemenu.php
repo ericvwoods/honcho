@@ -44,10 +44,10 @@
 
 <?php
 // Admin tile and admin menu only when at least one admin section below will show
-// (Member, Chapter, Content, System Admin, trainer, or a honcho staff module flag).
+// (Member, Chapter, System Admin, the Website content manager, trainer, or a honcho staff module flag).
 // Chapter President alone (subentity_role 1) has no section, so it no longer opens an empty menu.
 $has_admin_menu = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_admin'])
-    || !empty($_SESSION['ccmps_subentity_admin']) || !empty($_SESSION['ccmps_cms_admin'])
+    || !empty($_SESSION['ccmps_subentity_admin']) || rbac_allowed('cms', 'manage_content')
     || !empty($_SESSION['honcho_trainer']) || !empty($_SESSION['honcho_all_modules'])
     || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_ccmps_module_ccmps'])
     || !empty($_SESSION['honcho_ccmps_module_subentities']) || !empty($_SESSION['honcho_ccmps_module_cms']);
@@ -141,37 +141,13 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 
 <?php endif; ?>
 
-<?php if($_SESSION['ccmps_cms_admin'] == 1 || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_cms'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1): ?>
-            <li> <a href="#"><i class="fa fa-gears"></i> <span class="nav-label"> Content Admin <?= $_SESSION['honcho_ccmps_module_all'] ?> </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
+<?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (cms-content): Content Admins and System Admins; replaces the old Content Admin screens (2026-10-20) -->
+            <li> <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"> <?= CMS_LABEL ?> </span><span class="fa fa-chevron-down"></span></a>
                 <ul class="nav nav-second-level collapse">
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsmarquee/manage/cmsadmin"><i class="fa fa-ellipsis-h"></i> Marquee</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsjumbotron/manage/cmsadmin"><i class="fa fa-th-list"></i> Jumbotron</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsbulletinboard/manage/cmsadmin"><i class="fa fa-thumb-tack"></i> Bulletins</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsnotices/manage/cmsadmin"><i class="fa fa-podcast"></i> Notices</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsjobs/manage/cmsadmin"><i class="fa fa-briefcase"></i> Job Posts</a></li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpsactivities/manage/cmsadmin"><i class="fa fa-calendar"></i> Activities</a></li>
-                        <li>
-                        <!--     <a href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i>  Doc Library <span class="fa arrow"></span></a> -->
-                            <ul class="nav nav-third-level">
-                                <li>
-                            <!-- --        <a href="<?= BASE_URL ?>dms-dmslibrary/kanban/s">Kanban Board</a> --> <!--s=invoked from sidemenu  -->
-                                </li>
-                           <!--     <li>
-                                    <a href="#">Third Level Item</a>
-                                </li>
-                                <li>
-                                    <a href="#">Third Level Item</a>
-                                </li> -->
-
-                            </ul>
-                        </li>
-                    <li><a href="<?= BASE_URL ?>cms-ccmpssubentities/manage/cmsadmin"><i class="fa fa-list"></i> <?= SUBENTITIES ?></a></li>
-
-                    <!--
-                    <li><a href="#"><i class="fa fa-list"></i> <?= SUBENTITIES ?> <?= $_SESSION['num_chapters'] ?></a></li>
-                    <li><a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a></li>
--->
+                    <li><a href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
                 </ul>
+            </li>
 <?php endif; ?>
 
 <?php /* PMS hidden from members 2026-10-18: Pm.php check_permission() only accepts the staff login

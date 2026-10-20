@@ -13,7 +13,8 @@
   rbac_people($kinds)                           every login of those kinds, named, sorted by name
         _rbac_function_list($tg_user_id)        everything one person may do, read once per page
 
-  Member admin roles (RBAC step 5) - the four roles on the member record live in Security Groups;
+  Member admin roles (RBAC step 5) - the roles on the member record (System, Member,
+  Chapter, Student, Content and Event Admin) live in Security Groups;
   the ccmps columns are kept as a copy, re-synced after every change:
   rbac_member_roles()                           ccmps/<function> => column, group, session flag
   rbac_member_login($ccmp_id, $create)          the member's login (trongate_users id); can create it
@@ -160,6 +161,8 @@ function rbac_member_roles(): array {
         'member_admin'  => array('col' => 'ccmp_admin',      'group' => 'Member Admins',        'session' => 'ccmps_ccmp_admin'),
         'chapter_admin' => array('col' => 'subentity_admin', 'group' => 'Chapter Admins',       'session' => 'ccmps_subentity_admin'),
         'student_admin' => array('col' => 'student_admin',   'group' => 'Student Admins',       'session' => 'ccmps_student_admin'),
+        'content_admin' => array('col' => 'content_admin',   'group' => 'Content Admins',       'session' => 'ccmps_content_admin'),
+        'event_admin'   => array('col' => 'event_admin',     'group' => 'Event Admins',         'session' => 'ccmps_event_admin'),
     );
 }
 
@@ -246,7 +249,7 @@ function rbac_set_member_role(int $ccmp_id, string $function, bool $on, int $by 
 }
 
 function rbac_sync_member_columns(int $ccmp_id): void {
-    // ccmps.system_admin / ccmp_admin / subentity_admin / student_admin = what the groups give now.
+    // the ccmps role columns (system_admin, ccmp_admin, ... event_admin) = what the groups give now.
     // Members with no login row keep their columns (login falls back to them).
     $tg = rbac_member_login($ccmp_id, false);
     if ($tg < 1) {
@@ -261,7 +264,7 @@ function rbac_sync_member_columns(int $ccmp_id): void {
 }
 
 function rbac_clear_member_access(int $ccmp_id): void {
-    // deceased member: out of every Security Group, and the four role columns cleared
+    // deceased member: out of every Security Group, and the role columns cleared
     $tg    = rbac_member_login($ccmp_id, false);
     $model = new Model();
     if ($tg > 0) {

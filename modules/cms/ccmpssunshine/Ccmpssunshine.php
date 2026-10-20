@@ -271,7 +271,7 @@ try {
 /*----------------------------------------------------------------------------*/
   
     function manage(){ 
-echo(219); die();
+//echo(219); die();
 /*---------------------------- Security Checks -------------------------------*/
   $sunshinefunction = 'manage';
   $authorized = $this->_check_function_permissions($sunshinefunction); 

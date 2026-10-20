@@ -98,9 +98,12 @@
                     </ul>
                 </li>
                 <?php endif; ?>
+                <?php if(rbac_allowed('cms', 'manage_content')): ?> <!-- content manager (module cms; menu name CMS_LABEL) -->
                 <li>
-                    <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">CMS</span><span class="fa arrow"></span></a>
+                    <a href="#"><i class="fa fa-globe"></i> <span class="nav-label"><?= CMS_LABEL ?></span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/sections"><i class="fa fa-list"></i> Page Sections</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>cms-content/media"><i class="fa fa-picture-o"></i> Pictures</a></li>
                         <li>
                             <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsscopes/manage"><i class="fa fa-table"></i> Post Scopes</a>
                         </li>
@@ -119,6 +122,7 @@
 
                     </ul>
                 </li>
+                <?php endif; ?>
                 <!--
                 <li>
                     <a href="#"><i class="fa fa-laptop"></i> <span class="nav-label">Website CMS</span><span class="fa arrow"></span></a>

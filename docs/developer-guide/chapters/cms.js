@@ -18,8 +18,8 @@ const sections = [
     ['1', 'Tables; Content Admin and Event Admin roles; `cms` permissions', 'Built 2026-10-20'],
     ['2', 'Content manager screens (`cms-content`): sections, items, picture library; Website menus', 'Built 2026-10-20'],
     ['3', 'Sunshine, Bulletin Board, Marquee and Careers screens on `cms_posts`; job detail page; old modules and tables deleted', 'Built 2026-10-20'],
-    ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', 'Next'],
-    ['5', 'Events calendar (FullCalendar) on `events`', ''],
+    ['4', '`ccmphome.php` drawn from the tables, with the one-page menu', 'Built 2026-10-20'],
+    ['5', 'Events calendar (FullCalendar) on `events`', 'Next'],
     ['6', 'Public website in the Welcome module; BPA content loaded', ''],
     ['Last', 'Event Module: registration events and activities on `events` + `event_activities`', ''],
   ]},
@@ -49,6 +49,26 @@ const sections = [
   ]},
   { type: 'p', text: "Members get Content Admins / Event Admins from the **Content Admin** and **Event Admin** checkboxes on their record or the Member Permissions screen (roles in `rbac_member_roles()`, columns `ccmps.content_admin` / `event_admin` kept as a synced copy; session flags `ccmps_content_admin` / `ccmps_event_admin`). Staff are added to those groups on the Security Groups screen, until the Staff Account screen exists." },
   { type: 'p', text: "Every `cms-content` page except `job` calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
+]},
+
+// ============================================================
+{ tab: "Drawing the Page", blocks: [
+  { type: 'p', text: "The lower half of the member home (`ccmphome.php`, below the member tiles) is drawn from the tables since phase 4; the hard-coded Inspinia demo block was removed. The public website (phase 6) will use the same code with `'public'`." },
+  { type: 'table', headers: ['Piece', 'Does'], rows: [
+    ['`engine/tg_helpers/cms_helper.php`', 'Loaded by `engine/ignition.php`. `cms_page($site, $subentity_id)` returns `sections` (each with `anchor` = `sec-<code>` and `items`), `menu` (label + anchor) and `site`. Also `cms_media_url()` and `cms_link_attrs()` (links to other sites open in a new tab)'],
+    ['`Ccmps::ccmphome()`', "`$data['cms'] = cms_page('member', $_SESSION['ccmps_subentity'])`"],
+    ['`modules/cms/content/views/site/page.php`', 'Included by `ccmphome.php`: the sticky one-page menu (Home + each section with a menu label; the Marquee never gets a link; `HOTLINK` when it isn\'t `#`), then each section with `site/<layout>.php`. Its `<style>` block holds the few additions to the Inspinia landing styles (ticker, sticky-note colours, Sunshine cards, metrics, careers, events)'],
+    ['`site/<layout>.php`', 'One per layout: slider, marquee, services, features, features2, features3, metrics, calendar, team, sunshine, bulletins, timeline, testimonials, comments, careers, pricing, contact. They get `$section`, `$cms`, and helpers from `page.php`: `$cms_head` (heading block), `$cms_text` (escaped, Enter = line break), `$cms_link` (button), `$cms_job_url`'],
+  ]},
+  { type: 'h2', text: 'Rules' },
+  { type: 'ul', items: [
+    "A section is drawn when its box for that site is ticked (`show_member`, or `show_public` and `allow_public`) **and** it has something to show; an empty section gets neither a block nor a menu link. With nothing at all the page says so.",
+    "Items: `active = 1`, in `sort_order`. Posts: `active = 1`, today between `starts_on` and `ends_on` (blanks are open), and on the member home `subentity_id` 0 or the member's own chapter (`ccmps_subentity`); on the public site `is_public = 1`. Events (until phase 5): approved, member's chapter or national (public: `is_public`), not yet over, the next 12.",
+    "Metrics (member home only), counted fresh each time like the member tiles: current " + "members (`current_year` ≥ the current year), renewal due (`current_year` = last year), chapters, chartered chapters.",
+    "Layout notes: **slider** uses each item's picture as the slide background (none = a plain colour); **features** / **features2** put the first item that has a picture in the middle and split the rest left and right; **testimonials** rotates when there are several quotes; **pricing** highlights the middle of three plans and turns the body's lines into the list; **contact** turns the Phone field into a `tel:` link; **careers** links to `cms-content/job/{id}`.",
+    "The menu, smooth scrolling (`a.page-scroll`), scrollspy and WOW animations come from the scripts already in `templates/views/inspinia.php`; the ticker uses CSS only and stands still for people who turn motion off (`prefers-reduced-motion`).",
+    "Everything stored is printed through `out()`.",
+  ]},
 ]},
 
 // ============================================================

@@ -115,6 +115,7 @@ require_once 'tg_helpers/string_helper.php';
 require_once 'tg_helpers/url_helper.php';
 require_once 'tg_helpers/utilities_helper.php';
 require_once 'tg_helpers/rbac_helper.php'; // rbac_allowed() / rbac_require() / rbac_person()
+require_once 'tg_helpers/cms_helper.php';  // cms_page(): Website content for the member home / public site
 
 /* --------------------------------------------------------------
  * Interceptor execution (early hooks)

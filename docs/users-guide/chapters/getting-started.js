@@ -44,7 +44,7 @@ module.exports = [
 
 { tab: "Finding Your Way Around", blocks: [
   { type: 'h2', text: 'The Home Page' },
-  { type: 'p', text: "After you log in you land on the member home page. A set of tiles takes you to everything (the page is being rebuilt in 2026 with a picture slider, Sunshine, Bulletin Board, events calendar, Marquee and Careers):" },
+  { type: 'p', text: "After you log in you land on the member home page. Below the tiles, the organization's own page shows what its Content Admins have put there, such as a picture slider, announcements, Sunshine, the Bulletin Board, upcoming events, Careers and contact details; the menu bar above it jumps to each part. The tiles take you to everything else:" },
   { type: 'table', headers: ['Tile', 'What it opens'], rows: [
     ['**My Profile**', 'Your own member record (Chapter 2)'],
     ['**My Chapter Roster**', "Your chapter's current members"],

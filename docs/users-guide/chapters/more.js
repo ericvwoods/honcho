@@ -14,7 +14,8 @@ content: [
       ['**Marquee**', 'One-line announcements that scroll across the page'],
       ['**Careers**', 'Job postings. Each has its own page with the full description and an Apply button'],
     ]},
-    { type: 'alert', variant: 'info', text: "Being rebuilt in 2026. The events calendar, and the new member home page that shows all of this, come in the next steps. Until then the member home page still shows its old layout. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board; activities will be calendar events." },
+    { type: 'p', text: "What you enter shows on the lower part of the member home page, below the member tiles, in the order of the Page Sections list. A menu bar across the top of that part has a link for each section that has a menu label; clicking one scrolls down to it. A section that is switched off, or has nothing in it yet, doesn't show at all." },
+    { type: 'alert', variant: 'info', text: "Still being built in 2026: the full events calendar (today the Calendar section lists the next events) and the public website. The old Notices and Activities pages are gone: put announcements in the Marquee or on the Bulletin Board; activities will be calendar events." },
   ]},
   { tab: "Page Sections", blocks: [
     { type: 'ul', items: [

@@ -358,6 +358,9 @@ echo('$_SESSION');
 // json($_SESSION); die();
 */
 
+    // Website sections for the lower half of the page (content manager, cms_helper.php)
+    $data['cms'] = cms_page('member', (int) ($_SESSION['ccmps_subentity'] ?? 0));
+
     $data['contentfile']   = 'ccmphome';
     $data['view_module']   = 'welcome/ccmps';
     $data['view_file']     = 'ccmphome'; //

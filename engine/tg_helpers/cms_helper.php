@@ -14,7 +14,7 @@
 
   Rules (Developer's Guide, Website chapter): a section shows when its show_member (or
   show_public and allow_public) box is ticked AND it has something to show; items need
-  active = 1; posts need active = 1, today inside starts_on / ends_on, and subentity_id 0 or
+  active = 1; posts need active = 1, status 'approved', today inside starts_on / ends_on, and subentity_id 0 or
   the member's own chapter (public: is_public = 1 and national or any chapter).
 */
 
@@ -75,7 +75,7 @@ function _cms_posts(string $kind, string $site, int $subentity_id): array {
     }
     $rows = $model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
                                   LEFT JOIN cms_media m ON m.id = p.media_id
-                                 WHERE p.kind = :kind AND p.active = 1 AND $scope
+                                 WHERE p.kind = :kind AND p.active = 1 AND p.status = 'approved' AND $scope
                                    AND (p.starts_on IS NULL OR p.starts_on <= :t1)
                                    AND (p.ends_on IS NULL OR p.ends_on >= :t2)
                                  ORDER BY p.sort_order, p.id DESC", $params, 'object');

@@ -110,6 +110,11 @@ $_SESSION['honcho_ccmp_admin']    is system_user_accounts->ccmp_admin;  // "memb
         <?php if(rbac_allowed('cms', 'chapter_events') && !rbac_allowed('cms', 'manage_events')): ?>
         <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> <?= SUBENTITY ?> Events</a></li>
         <?php endif; ?>
+        <?php if(rbac_allowed('cms', 'chapter_posts') && !rbac_allowed('cms', 'manage_content')): ?> <!-- Content Admins find these under Website -->
+        <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
+        <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
+        <?php endif; ?>
     <!--    <li>
           <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 

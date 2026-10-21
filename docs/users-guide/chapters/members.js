@@ -59,7 +59,9 @@ module.exports = [
     ['**Doc Library**', "Browse, preview and download documents shared with members. You'll only see documents you're allowed to see."],
     ['**Register Me**', "Register for the current event when registration is open. If it isn't, the tile does nothing."],
     ['**Sponsors**', "See BPA's sponsors."],
+    ['**My Sticky Notes**', "Post a short note on the home page's Bulletin Board, and change or delete the notes you posted. You can also use **Post a Sticky Note** under the Bulletin Board."],
   ]},
+  { type: 'p', text: "**Sticky notes:** your note goes up as soon as you save it, for all members or just your chapter (you choose). A Chapter Admin or Content Admin may take a note off the board; your **My Sticky Notes** list then says **Waiting for approval** or **Disapproved**. If you change a disapproved note and save it, it goes back to them for approval." },
 ]},
 
 ];

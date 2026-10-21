@@ -91,12 +91,12 @@
         <?= $cms_label($f['subentity_id'], 'subentity_id') ?>
         <div class="col-md-5">
             <select class="form-control" style="height: 40px; font-size: 18px;" name="subentity_id" id="subentity_id">
-                <option value="0">National (everyone)</option>
+                <option value="0">All <?= out(CCMPS) ?></option>
                 <?php foreach($chapters as $cid => $cname): ?>
                 <option value="<?= $cid ?>" <?= (int) $subentity_id === $cid ? 'selected' : '' ?>><?= out($cname) ?></option>
                 <?php endforeach; ?>
             </select>
-            <small class="text-muted">Choose a <?= out(strtolower(SUBENTITY)) ?> to show it to that <?= out(strtolower(SUBENTITY)) ?>'s <?= out(strtolower(CCMPS)) ?> only.</small>
+            <small class="text-muted">Choose <?= $role === 'content' ? 'a '.out(strtolower(SUBENTITY)) : 'your '.out(strtolower(SUBENTITY)) ?> to show it to that <?= out(strtolower(SUBENTITY)) ?>'s <?= out(strtolower(CCMPS)) ?> only.</small>
         </div>
     </div>
 
@@ -117,9 +117,32 @@
         <label class="col-md-2 col-form-label" style="color:<?= SN_CLR ?>; font-size: 18px;">Show</label>
         <div class="col-md-7" style="padding-top: 8px;">
             <label style="font-size: 16px; display: block;"><input type="checkbox" name="active" value="1" <?= $active ? 'checked' : '' ?> style="width: 18px; height: 18px;"> Shown</label>
+            <?php if($can_public): ?>
             <label style="font-size: 16px; display: block;"><input type="checkbox" name="is_public" value="1" <?= $is_public ? 'checked' : '' ?> style="width: 18px; height: 18px;"> Also on the public website (when its section is shown there)</label>
+            <?php endif; ?>
         </div>
     </div>
+
+    <?php if($can_moderate): ?>
+    <div class="form-group row">
+        <?= $cms_label('Approval', 'status') ?>
+        <div class="col-md-3">
+            <select class="form-control" style="height: 40px; font-size: 18px;" name="status" id="status">
+                <?php foreach($statuses as $value => $name): ?>
+                <option value="<?= $value ?>" <?= $status === $value ? 'selected' : '' ?>><?= $name ?></option>
+                <?php endforeach; ?>
+            </select>
+            <small class="text-muted">Only approved posts show on the Bulletin Board.</small>
+        </div>
+    </div>
+    <?php elseif($kind === 'bulletin' && $status !== 'approved'): ?>
+    <div class="form-group row">
+        <label class="col-md-2 col-form-label" style="color:<?= SN_CLR ?>; font-size: 18px;">Approval</label>
+        <div class="col-md-7" style="padding-top: 8px; font-size: 16px;">
+            <?= $status === 'pending' ? 'Waiting for approval.' : 'Disapproved. If you change it and save, it goes back for approval.' ?>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <div class="row">
         <div class="col-md-12">
@@ -142,7 +165,7 @@
             </div>
             <div class="modal-body">
                 <?php if(empty($mediarecs)): ?>
-                    <p>There are no pictures yet. <a href="<?= BASE_URL ?>cms-content/media" target="_blank">Upload some on the Pictures page</a>, then reload this page.</p>
+                    <p>There are no pictures yet.<?php if($role === 'content'): ?> <a href="<?= BASE_URL ?>cms-content/media" target="_blank">Upload some on the Pictures page</a>, then reload this page.<?php else: ?> The content admins add pictures to the library.<?php endif; ?></p>
                 <?php else: ?>
                 <div class="row">
                     <?php foreach($mediarecs as $m): ?>
@@ -157,7 +180,7 @@
                 <?php endif; ?>
             </div>
             <div class="modal-footer">
-                <a class="btn btn-outline btn-success" href="<?= BASE_URL ?>cms-content/media" target="_blank"><i class="fa fa-upload"></i> Upload Pictures</a>
+                <?php if($role === 'content'): ?><a class="btn btn-outline btn-success" href="<?= BASE_URL ?>cms-content/media" target="_blank"><i class="fa fa-upload"></i> Upload Pictures</a><?php endif; ?>
                 <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
         </div>

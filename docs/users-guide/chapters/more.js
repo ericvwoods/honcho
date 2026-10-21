@@ -49,7 +49,9 @@ content: [
   { tab: "Sunshine, Bulletin Board, Marquee, Careers", blocks: [
     { type: 'p', text: "Each has a list (open it from the **Website** menu, or **Posts** on the Page Sections list) and an **Add** button. The form only asks for what that kind of post uses." },
     { type: 'ul', items: [
-      "**" + "Chapter" + ":** leave it on **National (everyone)**, or choose a chapter to show the post to that chapter's members only.",
+      "**" + "Chapter" + ":** leave it on **All Members**, or choose a chapter to show the post to that chapter's members only.",
+      "**Who else posts:** Chapter Admins post Sunshine, Bulletin Board and Careers items for all members or their own chapter (not the public website), and any member can post sticky notes on the Bulletin Board. The list's **Posted by** column shows who posted each one.",
+      "**Approval (Bulletin Board):** members' sticky notes go up straight away. Change a note's **Approval** to **Pending** or **Disapproved** to take it off the board, or back to **Approved** to show it again. A member's Chapter Admin can do the same.",
       "**Show from / until:** both optional. A post appears on its start date and disappears after its end date by itself; blank means now and no end. The list's **Today** column says whether each post is showing, waiting to start, or ended.",
       "**Shown:** untick to take a post down at once without deleting it. **Also on the public website** lets it appear there once the public site is built and its section is switched on for it.",
       "New posts go to the top of the list; drag rows to change the order.",

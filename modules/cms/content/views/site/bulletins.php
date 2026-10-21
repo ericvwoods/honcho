@@ -15,5 +15,8 @@
             <?php endforeach; ?>
         </ul>
         <div style="clear: both;"></div>
+        <?php if($cms['site'] === 'member' && CMS_MEMBER_BULLETINS == 1): ?>
+        <p class="text-center m-t-md"><a class="btn btn-primary" href="<?= BASE_URL ?>cms-content/createpost/bulletin"><i class="fa fa-thumb-tack"></i> Post a Sticky Note</a></p>
+        <?php endif; ?>
     </div>
 </section>

@@ -41,6 +41,7 @@ chapterAdmins: [
     { type: 'table', headers: ['Menu item', 'What you do there'], rows: [
       ['**Chapter Members**', "See and manage your chapter's members"],
       ['**Student Members**', "Your chapter's student members"],
+      ['**Sunshine**, **Bulletin Board**, **Careers**', "Post illnesses and passings, sticky notes and job postings for all members or just your chapter, and approve your chapter members' sticky notes (see Chapter Posts)"],
       ['**Doc Library**', "Your chapter's documents in the Document Library (Chapter 6): add and edit them, move them on the kanban board, approve, hide or delete them, and manage comments. You can only change your own chapter's documents, and anything you add is saved to your chapter."],
       ['**Export Members**', "Download your chapter's members as a spreadsheet"],
     ]},
@@ -50,7 +51,14 @@ chapterAdmins: [
     { type: 'p', text: "Click the button to add a member above the list, fill in their details and save. To let them log in, either tick them and use the **User Acct** bulk action, or create the account from their record. They'll be asked to choose a new password the first time they log in." },
   ])},
   { tab: "Chapter Posts", blocks: [
-    { type: 'p', text: "The old Chapter Bulletins, Chapter Notices, Job Posts and Chapter Activities pages were retired in October 2026 while the home page is rebuilt. For now, ask a Content Admin to post Sunshine, Bulletin Board, Marquee or Careers items for your chapter (Chapter 5); they can limit a post to your chapter." },
+    { type: 'p', text: "Open **Sunshine**, **Bulletin Board** or **Careers** from the Chapter Admin menu. Each list shows the posts for your chapter, the posts you made for all members, and the posts your chapter's members made, with who posted each one. Use **Add** to post; the form works like the Content Admins' one (Chapter 5)." },
+    { type: 'ul', items: [
+      "**Chapter:** posts start on **All Members**, so everyone sees them. Choose your chapter to show a post to your chapter's members only.",
+      "**Public website:** only Content Admins and System Admins can put a post on the public website. Ask one of them if a post should go there.",
+      "**Approving sticky notes:** any member can post a sticky note on the Bulletin Board, and it goes up straight away. If one shouldn't be there, change its **Approval** on the list (or in the form) to **Pending** or **Disapproved** and it comes off the board. Set it back to **Approved** to show it again. If the member changes a disapproved note, it comes back to you as Pending.",
+      "**Pictures:** you can choose a photo from the picture library for Sunshine and Careers posts. Content Admins add pictures to the library.",
+      "The Marquee is managed by the Content Admins.",
+    ]},
     { type: 'p', text: "**Chapter Events:** add and change your chapter's events on the events calendar from **Chapter Events** in the Chapter Admin menu (or the Events tile on the Admin page). Every member sees them on the calendar, marked with your chapter's name; tick **Public** to also show one on the public website. See Chapter 5, Events Calendar." },
   ]},
 ],

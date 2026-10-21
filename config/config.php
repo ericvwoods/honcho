@@ -81,6 +81,7 @@ define('SUBENTITIES','Chapters'); // subentities
 define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('CCMPSSUBENTITIES','Chapters'); // subentities
 define('CMS_PUBLIC_SITE', (int) env('CMS_PUBLIC_SITE', 0)); // 1 = the site's front address shows the Website (welcome/website); 0 = it goes to the login (the organization uses an outside site, PUBLIC_WEBSITE)
+define('CMS_MEMBER_BULLETINS', (int) env('CMS_MEMBER_BULLETINS', 1)); // 1 = any logged-in member may post sticky notes on the Bulletin Board (moderated by Chapter, Content and System Admins)
 define('CMS_LABEL','Website'); // menu name for the content manager (module cms) - Website, Web Pages, Our Site etc
 
 // CCMPSHOME

@@ -114,6 +114,11 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                     <?php if(rbac_allowed('cms', 'chapter_events') && !rbac_allowed('cms', 'manage_events')): ?> <!-- Event Admins find Events under Website -->
                     <li><a href="<?= BASE_URL ?>cms-content/events"><i class="fa fa-calendar"></i> <?= CCMPSSUBENTITY ?> Events</a></li>
                     <?php endif; ?>
+                    <?php if(rbac_allowed('cms', 'chapter_posts') && !rbac_allowed('cms', 'manage_content')): ?> <!-- Content Admins find these under Website -->
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/sunshine"><i class="fa fa-heart"></i> Sunshine</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack"></i> Bulletin Board</a></li>
+                    <li><a href="<?= BASE_URL ?>cms-content/posts/job"><i class="fa fa-briefcase"></i> Careers</a></li>
+                    <?php endif; ?>
                 <!--    <li>
                       <a href="<?= BASE_URL ?>welcome-ccmps/manage/mosm"><i class="fa fa-child"></i> Student <?= CCMPS ?> </a>
 
@@ -397,6 +402,19 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                         </div>
                     </div>
 
+
+<?php if(CMS_MEMBER_BULLETINS == 1): ?> <!-- members post their own sticky notes (cms-content, 2026-10-20) -->
+                    <div class="widget style1 gray-bg">
+                        <div class="row vertical-align">
+                            <div class="col-2">
+                            <a href="<?= BASE_URL ?>cms-content/posts/bulletin"><i class="fa fa-thumb-tack fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i></a>
+                            </div>
+                            <div class="col-10 text-right">
+                                <a href="<?= BASE_URL ?>cms-content/posts/bulletin" style="font-family: 'Open Sans', helvetica, arial, sans-serif; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt">My Sticky Notes</a>
+                            </div>
+                        </div>
+                    </div>
+<?php endif; ?>
 
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">

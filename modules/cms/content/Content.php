@@ -8,8 +8,10 @@
   The content manager (menu name CMS_LABEL, "Website" for BPA): what the member
   home (ccmphome) and the public website show, section by section. Used from
   both logins; rbac_allowed('cms', 'manage_content') decides (Content Admins,
-  System Admins). Tables: cms_sections, cms_items, cms_media (see
-  database/migrations/2026-10-20-cms-content-phase1.sql).
+  System Admins). Chapter Admins (cms/chapter_posts) post Sunshine, Bulletin
+  Board and Careers for All Members or their chapter, and members post their own
+  sticky notes (CMS_MEMBER_BULLETINS); see _post_scope(). Tables: cms_sections,
+  cms_items, cms_media, cms_posts, events (see database/migrations/2026-10-20-cms-*.sql).
 
   sections()                         list of page sections
         _check_access()
@@ -71,27 +73,41 @@
         _check_access()
         _check_token()
         _audit()
-  posts()                            Sunshine, Bulletin Board, Marquee or Careers list (segment 3 = kind)
-        _check_access()
+  posts()                            Sunshine, Bulletin Board, Marquee or Careers list (segment 3 = kind), within the login's reach
+        _post_scope()
+        _post_reach()
         _kinds()
         _chapters()
+        _statuses()
   createpost() / updatepost()
+        _post_scope() / _load_post()
         _post_form()
-  _post_form($kind, $post)           shared by createpost / updatepost
+  _post_form($kind, $post, $scope)   shared by createpost / updatepost
         _kinds()
-        _chapters()
+        _post_chapters()
+        _statuses()
         _media_url()
   postsubmit()
-        _check_access()
+        _load_post() / _post_scope()
         _check_token()
         _post_from_post()
         _valid_link()
+        _post_chapters()
+        _statuses()
         _audit()
-  togglepost() / orderposts()        AJAX: active on or off / new order
+  togglepost()                       AJAX: active on or off
+        _load_post()
+        _check_token()
+  statuspost()                       AJAX: sticky note approved / pending / disapproved (not members)
+        _load_post()
+        _check_token()
+        _statuses()
+        _audit()
+  orderposts()                       AJAX: new order (Content Admins)
         _check_access()
         _check_token()
   delpost()
-        _check_access()
+        _load_post()
         _check_token()
         _audit()
   job()                              a job's detail page, for anyone logged in (public site: phase 6)
@@ -115,6 +131,12 @@
         _check_token()
         _audit()
   _event_scope()                     'all', a chapter id, or back home with a message
+  _post_scope($kind)                 'content', 'chapter' or 'member' (who may post what), or back home
+  _post_reach($scope)                SQL condition: the posts a login may see and change
+  _in_reach($post, $scope)           the same rule for one post
+  _load_post($recid)                 the post and the login's scope, or "not found"
+  _post_chapters($scope)             the chapters a login may post for
+  _statuses()                        approved / pending / disapproved
   _kinds()                           post kind => menu name, icon, fields and labels
   _chapters()                        id => name, for the chapter picker
   _post_from_post($kind)
@@ -720,43 +742,61 @@ class Content extends Trongate {
 /*----------------------------- function POSTS -------------------------------*/
 /*----------------------------------------------------------------------------*/
 
-  function posts(){ // segment 3 = sunshine | bulletin | marquee | job
-
-    $this->_check_access();
+  function posts(){ // segment 3 = sunshine | bulletin | marquee | job; each login sees the posts within its reach
 
     $kind  = segment(3);
     $kinds = $this->_kinds();
     if(!isset($kinds[$kind])){
-        redirect('cms-content/sections');
+        redirect($this->_home_url());
     }
+    $scope = $this->_post_scope($kind);
+    list($reach, $params) = $this->_post_reach($scope);
+    $params['kind'] = $kind;
 
     $rows = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
                                         LEFT JOIN cms_media m ON m.id = p.media_id
-                                       WHERE p.kind = :kind ORDER BY p.sort_order, p.id DESC",
-                                     array('kind' => $kind), 'object');
+                                       WHERE p.kind = :kind AND $reach ORDER BY p.sort_order, p.id DESC",
+                                     $params, 'object');
     $chapters = $this->_chapters();
     $today    = date('Y-m-d');
+    $names    = array(); // tg_user_id => name, looked up once each
     foreach($rows as $row){
         $row->picture = $row->file_name ? $this->_media_url($row->file_name) : '';
-        $row->chapter = $row->subentity_id > 0 ? ($chapters[$row->subentity_id] ?? SUBENTITY.' '.$row->subentity_id) : 'National';
-        // what a visitor sees today: hidden, scheduled, expired or showing
-        if(!$row->active)                                           { $row->status = 'Hidden'; }
-        elseif($row->starts_on && $row->starts_on > $today)         { $row->status = 'Starts '.date('M j', strtotime($row->starts_on)); }
-        elseif($row->ends_on && $row->ends_on < $today)             { $row->status = 'Ended '.date('M j', strtotime($row->ends_on)); }
-        else                                                        { $row->status = 'Showing'; }
+        $row->chapter = $row->subentity_id > 0 ? ($chapters[$row->subentity_id] ?? SUBENTITY.' '.$row->subentity_id) : 'All '.CCMPS;
+        if(!isset($names[$row->created_by])){
+            $person = rbac_person((int) $row->created_by);
+            $names[$row->created_by] = $person ? $person->name : '';
+        }
+        $row->poster = $names[$row->created_by];
+        // what a visitor sees today: waiting for approval, disapproved, hidden, scheduled, expired or showing
+        if($row->status === 'pending')                              { $row->today = 'Waiting for approval'; }
+        elseif($row->status === 'disapproved')                      { $row->today = 'Disapproved'; }
+        elseif(!$row->active)                                       { $row->today = 'Hidden'; }
+        elseif($row->starts_on && $row->starts_on > $today)         { $row->today = 'Starts '.date('M j', strtotime($row->starts_on)); }
+        elseif($row->ends_on && $row->ends_on < $today)             { $row->today = 'Ended '.date('M j', strtotime($row->ends_on)); }
+        else                                                        { $row->today = 'Showing'; }
     }
 
-    $data['kind']        = $kind;
-    $data['k']           = $kinds[$kind];
-    $data['postrecs']    = $rows;
-    $data['token']       = $this->_token();
+    $data['kind']         = $kind;
+    $data['k']            = $kinds[$kind];
+    $data['role']         = $scope['role'];
+    $data['can_moderate'] = ($kind === 'bulletin' && $scope['role'] !== 'member');
+    $data['statuses']     = $this->_statuses();
+    $data['postrecs']     = $rows;
+    $data['token']        = $this->_token();
 
     $data['view_module'] = 'cms/content';
     $data['view_file']   = 'posts';
 
-    $data['bc1']    = CMS_LABEL;
-    $data['bc2']    = $kinds[$kind]['title'];
-    $data['header'] = CMS_LABEL.': '.$kinds[$kind]['title'];
+    $data['bc1'] = CMS_LABEL;
+    $data['bc2'] = $kinds[$kind]['title'];
+    if($scope['role'] === 'member'){
+        $data['header'] = 'My '.$kinds[$kind]['one'].'s';
+    }elseif($scope['role'] === 'chapter'){
+        $data['header'] = ($chapters[$scope['chapter']] ?? SUBENTITY).': '.$kinds[$kind]['title'];
+    }else{
+        $data['header'] = CMS_LABEL.': '.$kinds[$kind]['title'];
+    }
 
     $this->templates->inspinia($data);
   }
@@ -770,25 +810,17 @@ class Content extends Trongate {
 
   function createpost(){ // segment 3 = kind
 
-    $this->_check_access();
-
     $kind = segment(3);
     if(!isset($this->_kinds()[$kind])){
-        redirect('cms-content/sections');
+        redirect($this->_home_url());
     }
-    $this->_post_form($kind, null);
+    $this->_post_form($kind, null, $this->_post_scope($kind));
   }
 
   function updatepost(){ // segment 3 = post id
 
-    $this->_check_access();
-
-    $post = $this->model->get_where(intval(segment(3)), 'cms_posts');
-    if(!$post || !isset($this->_kinds()[$post->kind])){
-        set_flashdata('That post was not found.');
-        redirect('cms-content/sections');
-    }
-    $this->_post_form($post->kind, $post);
+    list($post, $scope) = $this->_load_post(intval(segment(3)));
+    $this->_post_form($post->kind, $post, $scope);
   }
 
 /*-------------------- End function createpost / updatepost ------------------*/
@@ -798,32 +830,37 @@ class Content extends Trongate {
 /*--------------------------- function _POST_FORM ----------------------------*/
 /*----------------------------------------------------------------------------*/
 
-  function _post_form($kind, $post){
+  function _post_form($kind, $post, $scope){
 
     $kinds = $this->_kinds();
     $blank = array('id' => 0, 'title' => '', 'summary' => '', 'body' => '', 'location' => '', 'link_url' => '', 'link_label' => '',
-                   'media_id' => null, 'color' => 'yellow', 'subentity_id' => 0, 'is_public' => 0, 'active' => 1, 'starts_on' => '', 'ends_on' => '');
+                   'media_id' => null, 'color' => 'yellow', 'subentity_id' => 0, 'is_public' => 0, 'active' => 1, 'status' => 'approved',
+                   'starts_on' => '', 'ends_on' => ''); // subentity 0 = All Members, the default for everyone
     $data  = $post ? array_merge($blank, (array) $post) : $blank;
     if(!empty($_SESSION['cms_retry'])){ // failed validation: show what was typed
         $data = array_merge($data, $_SESSION['cms_retry']);
         unset($_SESSION['cms_retry']);
     }
 
-    $media = $this->model->query("SELECT id, file_name, alt_text, original_name FROM cms_media ORDER BY id DESC", 'object');
+    $media  = isset($kinds[$kind]['fields']['media_id']) ? $this->model->query("SELECT id, file_name, alt_text, original_name FROM cms_media ORDER BY id DESC", 'object') : array();
     $picked = '';
     foreach($media as $m){
         $m->url = $this->_media_url($m->file_name);
         if((int) $m->id === (int) $data['media_id']){ $picked = $m->url; }
     }
 
-    $data['recid']       = $post ? (int) $post->id : 0;
-    $data['kind']        = $kind;
-    $data['k']           = $kinds[$kind];
-    $data['chapters']    = $this->_chapters();
-    $data['colors']      = array('yellow' => 'Yellow', 'green' => 'Green', 'blue' => 'Blue', 'pink' => 'Pink');
-    $data['mediarecs']   = $media;
-    $data['picked_url']  = $picked;
-    $data['token']       = $this->_token();
+    $data['recid']        = $post ? (int) $post->id : 0;
+    $data['kind']         = $kind;
+    $data['k']            = $kinds[$kind];
+    $data['role']         = $scope['role'];
+    $data['chapters']     = $this->_post_chapters($scope);    // the chapters this login may choose
+    $data['can_public']   = ($scope['role'] === 'content');   // Public: Content Admins and System Admins only
+    $data['can_moderate'] = ($kind === 'bulletin' && $scope['role'] !== 'member');
+    $data['statuses']     = $this->_statuses();
+    $data['colors']       = array('yellow' => 'Yellow', 'green' => 'Green', 'blue' => 'Blue', 'pink' => 'Pink');
+    $data['mediarecs']    = $media;
+    $data['picked_url']   = $picked;
+    $data['token']        = $this->_token();
 
     $data['view_module'] = 'cms/content';
     $data['view_file']   = 'postcrud';
@@ -844,21 +881,20 @@ class Content extends Trongate {
 
   function postsubmit(){ // segment 3 = post id when changing; post kind when adding
 
-    $this->_check_access();
-    $this->_check_token();
-
     $recid = intval(segment(3));
     $kinds = $this->_kinds();
+    $old   = null;
     if($recid > 0){
-        $old  = $this->model->get_where($recid, 'cms_posts');
-        $kind = $old ? $old->kind : '';
+        list($old, $scope) = $this->_load_post($recid);
+        $kind = $old->kind;
     }else{
         $kind = post('kind');
+        if(!isset($kinds[$kind])){
+            redirect($this->_home_url());
+        }
+        $scope = $this->_post_scope($kind);
     }
-    if(!isset($kinds[$kind])){
-        set_flashdata('That post was not found.');
-        redirect('cms-content/sections');
-    }
+    $this->_check_token();
 
     $post   = $this->_post_from_post($kind);
     $errors = array();
@@ -879,11 +915,25 @@ class Content extends Trongate {
     if($post['starts_on'] && $post['ends_on'] && $post['ends_on'] < $post['starts_on']){
         $errors[] = 'The end date is before the start date.';
     }
-    if($post['subentity_id'] > 0 && !isset($this->_chapters()[$post['subentity_id']])){
-        $post['subentity_id'] = 0;
-    }
     if(!empty($post['media_id']) && !$this->model->get_where((int) $post['media_id'], 'cms_media')){
         $post['media_id'] = null;
+    }
+
+    // what this login may set: Chapter Admins and members choose All Members or their own chapter, never Public
+    if($post['subentity_id'] > 0 && !isset($this->_post_chapters($scope)[$post['subentity_id']])){
+        $post['subentity_id'] = 0;
+    }
+    if($scope['role'] !== 'content'){
+        $post['is_public'] = $old ? (int) $old->is_public : 0;
+    }
+    // approval (Bulletin Board): members' notes go up approved; Chapter, Content and System Admins can set
+    // them pending or disapproved. A member who changes a disapproved note sends it back for approval.
+    if($kind === 'bulletin' && $scope['role'] !== 'member' && isset($this->_statuses()[post('status')])){
+        $post['status'] = post('status');
+    }elseif($old){
+        $post['status'] = ($scope['role'] === 'member' && $old->status === 'disapproved') ? 'pending' : $old->status;
+    }else{
+        $post['status'] = 'approved';
     }
 
     if(!empty($errors)){
@@ -898,14 +948,15 @@ class Content extends Trongate {
     $post['updated_at'] = time();
     if($recid > 0){
         $this->model->update($recid, $post, 'cms_posts');
-        $this->_audit('UpdatePost', $recid, 'cms_posts', $kind.': '.$post['title']);
-        set_flashdata(out($kinds[$kind]['one']).' saved.');
+        $this->_audit('UpdatePost', $recid, 'cms_posts', $kind.': '.$post['title'].' ('.$post['status'].')');
+        set_flashdata(out($kinds[$kind]['one']).' saved.'.($post['status'] === 'pending' && $scope['role'] === 'member' ? ' It will show again once it is approved.' : ''));
     }else{
         $first = $this->model->query_bind('SELECT COALESCE(MIN(sort_order), 0) AS n FROM cms_posts WHERE kind = :kind', array('kind' => $kind), 'object');
-        $post['kind']       = $kind;
-        $post['sort_order'] = (int) $first[0]->n - 10; // new posts go to the top
-        $post['created_by'] = $by;
-        $post['created_at'] = time();
+        $post['kind']                = $kind;
+        $post['poster_subentity_id'] = $scope['role'] === 'content' ? 0 : $scope['chapter']; // lets the Chapter Admin find it
+        $post['sort_order']          = (int) $first[0]->n - 10; // new posts go to the top
+        $post['created_by']          = $by;
+        $post['created_at']          = time();
         $recid = $this->model->insert($post, 'cms_posts');
         $this->_audit('CreatePost', $recid, 'cms_posts', $kind.': '.$post['title']);
         set_flashdata(out($kinds[$kind]['one']).' added.');
@@ -918,24 +969,35 @@ class Content extends Trongate {
 
 
 /*----------------------------------------------------------------------------*/
-/*------------------- function TOGGLEPOST / ORDERPOSTS / DELPOST -------------*/
+/*------------- function TOGGLEPOST / STATUSPOST / ORDERPOSTS / DELPOST ------*/
 /*----------------------------------------------------------------------------*/
 
   function togglepost(){ // AJAX: show or hide one post
 
-    $this->_check_access(true);
+    list($post, $scope) = $this->_load_post(intval(post('recid')), true);
     $this->_check_token(true);
 
-    $recid = intval(post('recid'));
     $value = (post('value') == 1) ? 1 : 0;
-    if(!$this->model->get_where($recid, 'cms_posts')){
-        $this->_json(false, 'That post was not found.');
-    }
-    $this->model->update($recid, array('active' => $value, 'updated_by' => intval($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'cms_posts');
+    $this->model->update($post->id, array('active' => $value, 'updated_by' => intval($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'cms_posts');
     $this->_json(true, $value ? 'The post is shown.' : 'The post is hidden.');
   }
 
-  function orderposts(){ // AJAX: ids in their new order
+  function statuspost(){ // AJAX: approve, set pending or disapprove a sticky note (Chapter, Content and System Admins)
+
+    list($post, $scope) = $this->_load_post(intval(post('recid')), true);
+    $this->_check_token(true);
+
+    $value    = (string) post('value');
+    $statuses = $this->_statuses();
+    if($post->kind !== 'bulletin' || $scope['role'] === 'member' || !isset($statuses[$value])){
+        $this->_json(false, 'You cannot change the approval of this post.');
+    }
+    $this->model->update($post->id, array('status' => $value, 'updated_by' => intval($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'cms_posts');
+    $this->_audit('PostStatus', $post->id, 'cms_posts', $post->kind.': '.$post->title.' -> '.$value);
+    $this->_json(true, '"'.$post->title.'" is now '.strtolower($statuses[$value]).'.');
+  }
+
+  function orderposts(){ // AJAX: ids in their new order (the order is shared, so Content Admins only)
 
     $this->_check_access(true);
     $this->_check_token(true);
@@ -954,14 +1016,9 @@ class Content extends Trongate {
 
   function delpost(){ // POST from the posts list
 
-    $this->_check_access();
+    list($post, $scope) = $this->_load_post(intval(post('recid')));
     $this->_check_token();
 
-    $post = $this->model->get_where(intval(post('recid')), 'cms_posts');
-    if(!$post){
-        set_flashdata('That post was not found.');
-        redirect('cms-content/sections');
-    }
     $this->model->delete($post->id, 'cms_posts');
     $this->_audit('DeletePost', $post->id, 'cms_posts', $post->kind.': '.$post->title);
 
@@ -970,7 +1027,7 @@ class Content extends Trongate {
     redirect('cms-content/posts/'.$post->kind);
   }
 
-/*------------------ End function togglepost / orderposts / delpost ----------*/
+/*------------ End function togglepost / statuspost / orderposts / delpost ---*/
 
 
 /*----------------------------------------------------------------------------*/
@@ -986,7 +1043,7 @@ class Content extends Trongate {
     $today = date('Y-m-d');
     $rows  = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
                                          LEFT JOIN cms_media m ON m.id = p.media_id
-                                        WHERE p.id = :id AND p.kind = 'job' AND p.active = 1
+                                        WHERE p.id = :id AND p.kind = 'job' AND p.active = 1 AND p.status = 'approved'
                                           AND (p.starts_on IS NULL OR p.starts_on <= :t1)
                                           AND (p.ends_on IS NULL OR p.ends_on >= :t2)",
                                       array('id' => intval(segment(3)), 't1' => $today, 't2' => $today), 'object');
@@ -1308,7 +1365,7 @@ class Content extends Trongate {
         if($ajax){ $this->_json(false, 'Page expired - please reload it.'); }
         $_SESSION['flashmsgcolor'] = 0;
         set_flashdata('That page had expired - please try again.');
-        redirect('cms-content/sections');
+        redirect(rbac_allowed('cms', 'manage_content') ? 'cms-content/sections' : $this->_home_url());
     }
   }
 
@@ -1329,6 +1386,86 @@ class Content extends Trongate {
     $_SESSION['flashmsgcolor'] = 0;
     set_flashdata('You are not allowed to manage events.');
     redirect($this->_home_url());
+  }
+
+  function _post_scope($kind, $ajax = false){
+    // who may manage which posts of this kind (decided 2026-10-20); returns array(role, chapter, me):
+    //   'content'  cms/manage_content (Content Admins, System Admins): every post, any scope, Public
+    //   'chapter'  cms/chapter_posts (Chapter Admins): Sunshine, Bulletin Board and Careers for All Members or
+    //              their own chapter, plus their chapter's sticky notes (approve, set pending, disapprove)
+    //   'member'   any member when CMS_MEMBER_BULLETINS = 1: their own Bulletin Board sticky notes
+    // anyone else goes home
+    if(empty($_SESSION['trongatetoken'])){
+        if($ajax){ $this->_json(false, 'Your session has expired - please log in again.'); }
+        set_flashdata('Your Session has expired - please login again.');
+        redirect(!empty($_SESSION['honcho_logged_in']) ? 'honcho/logout' : 'welcome/logout');
+    }
+    $me      = intval($_SESSION['tg_user_id'] ?? 0);
+    $chapter = intval($_SESSION['ccmps_subentity'] ?? 0);
+    $member  = empty($_SESSION['honcho_logged_in']) && !empty($_SESSION['ccmp_logged_in']) && $me > 0;
+    if(rbac_allowed('cms', 'manage_content')){
+        return array('role' => 'content', 'chapter' => 0, 'me' => $me);
+    }
+    if($member && $chapter > 0 && in_array($kind, array('sunshine', 'bulletin', 'job'), true) && rbac_allowed('cms', 'chapter_posts')){
+        return array('role' => 'chapter', 'chapter' => $chapter, 'me' => $me);
+    }
+    if($member && $kind === 'bulletin' && CMS_MEMBER_BULLETINS == 1){
+        return array('role' => 'member', 'chapter' => $chapter, 'me' => $me);
+    }
+    if($ajax){ $this->_json(false, 'You are not allowed to change these posts.'); }
+    $_SESSION['flashmsgcolor'] = 0;
+    set_flashdata('You are not allowed to manage these posts.');
+    redirect($this->_home_url());
+  }
+
+  function _post_reach($scope){ // SQL condition (on alias p) and its values: the posts this login may see and change
+    if($scope['role'] === 'content'){
+        return array('1 = 1', array());
+    }
+    if($scope['role'] === 'chapter'){ // posted for the chapter, posted by one of its members, or their own
+        return array('(p.subentity_id = :rch1 OR p.poster_subentity_id = :rch2 OR p.created_by = :rme)',
+                     array('rch1' => $scope['chapter'], 'rch2' => $scope['chapter'], 'rme' => $scope['me']));
+    }
+    return array('p.created_by = :rme', array('rme' => $scope['me']));
+  }
+
+  function _in_reach($post, $scope){ // the same rule as _post_reach() for one post
+    if($scope['role'] === 'content'){
+        return true;
+    }
+    if($scope['role'] === 'chapter' && ((int) $post->subentity_id === $scope['chapter'] || (int) $post->poster_subentity_id === $scope['chapter'])){
+        return true;
+    }
+    return (int) $post->created_by === $scope['me'];
+  }
+
+  function _load_post($recid, $ajax = false){ // the post and the login's scope for it, or "not found" for posts out of reach
+    $post  = $this->model->get_where($recid, 'cms_posts');
+    $kinds = $this->_kinds();
+    if($post && isset($kinds[$post->kind])){
+        $scope = $this->_post_scope($post->kind, $ajax);
+        if($this->_in_reach($post, $scope)){
+            return array($post, $scope);
+        }
+    }elseif(empty($_SESSION['trongatetoken'])){
+        $this->_post_scope('', $ajax); // sends an expired session to the login
+    }
+    if($ajax){ $this->_json(false, 'That post was not found.'); }
+    $_SESSION['flashmsgcolor'] = 0;
+    set_flashdata('That post was not found.');
+    redirect(rbac_allowed('cms', 'manage_content') ? 'cms-content/sections' : $this->_home_url());
+  }
+
+  function _post_chapters($scope){ // id => name: the chapters this login may post for (besides All Members)
+    $chapters = $this->_chapters();
+    if($scope['role'] === 'content'){
+        return $chapters;
+    }
+    return isset($chapters[$scope['chapter']]) ? array($scope['chapter'] => $chapters[$scope['chapter']]) : array();
+  }
+
+  function _statuses(){ // cms_posts.status => name; only approved posts show
+    return array('approved' => 'Approved', 'pending' => 'Pending', 'disapproved' => 'Disapproved');
   }
 
   function _kinds(){

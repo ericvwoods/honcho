@@ -84,7 +84,7 @@ class Welcome extends Trongate {
         $today = date('Y-m-d');
         $rows  = $this->model->query_bind("SELECT p.*, m.file_name, m.alt_text FROM cms_posts p
                                              LEFT JOIN cms_media m ON m.id = p.media_id
-                                            WHERE p.id = :id AND p.kind = 'job' AND p.active = 1 AND p.is_public = 1
+                                            WHERE p.id = :id AND p.kind = 'job' AND p.active = 1 AND p.status = 'approved' AND p.is_public = 1
                                               AND (p.starts_on IS NULL OR p.starts_on <= :t1)
                                               AND (p.ends_on IS NULL OR p.ends_on >= :t2)",
                                           array('id' => intval(segment(3)), 't1' => $today, 't2' => $today), 'object');

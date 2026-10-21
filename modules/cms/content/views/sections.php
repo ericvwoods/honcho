@@ -69,6 +69,7 @@
 
     <div class="row">
         <div class="col-md-12">
+            <a class="btn btn-outline btn-primary dim" href="<?= BASE_URL ?>cms-content/createsection"><h3><strong><i class="fa fa-plus"></i> Add a Section</strong></h3></a>
             <a class="btn btn-outline btn-primary dim" href="<?= BASE_URL ?>cms-content/media"><h3><strong><i class="fa fa-picture-o"></i> Pictures</strong></h3></a>
             <a class="btn btn-primary dim" href="<?= BASE_URL ?><?= $cms_home ?>"><h3><strong><i class="fa fa-times-circle"></i> Close</strong></h3></a>
         </div>

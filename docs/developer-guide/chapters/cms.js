@@ -103,6 +103,7 @@ const sections = [
   { type: 'table', headers: ['URL', 'Does'], rows: [
     ['`sections`', 'List of sections: drag to reorder (jQuery UI sortable → `ordersections`), tick Member home / Public website (AJAX `togglesection`), Edit, Items'],
     ['`updatesection/{id}` → `sectionsubmit/{id}`', 'Heading (required, 150), subtitle (255), menu label (40)'],
+    ['`createsection` → `sectionsubmit/0`', 'Add a Section (button on Page Sections, added 2026-10-21): an item layout (slider, services, features 1-3, team, timeline, testimonials, comments, pricing, contact) + heading, subtitle, menu label and the two Show boxes. The feed layouts exist once and are not offered. The new row gets `code` = `custom-<heading slug>` (unique, `-2`, `-3`...; `_section_code()`), so its anchor is `#sec-custom-...`; `allow_public = 1`; `sort_order` = last + 10. Then the Items page opens. Sections cannot be deleted yet: untick both Show boxes to hide one'],
     ['`items/{section_id}`', 'Items of one section: drag to reorder (`orderitems`), Shown checkbox (`toggleitem`), Edit, Delete (POST `delitem`). Feed sections (no item fields) redirect back'],
     ['`createitem/{section_id}`, `updateitem/{id}` → `itemsubmit/{id}`', 'One form; only the fields the layout uses, with its labels'],
     ['`media`', 'Picture library: upload several at once (`uploadmedia`), description saved on blur (`updatemedia`), Delete only when unused (POST `delmedia`)'],
@@ -129,7 +130,7 @@ const sections = [
     "**Bulletin colours:** yellow, green, blue, pink (`color`).",
   ]},
   { type: 'h2', text: 'Layouts' },
-  { type: 'p', text: "`Content::_layouts()` maps each `layout` to a description and the item fields it uses (field name → label on the form), or `null` plus where the content comes from (marquee, sunshine, bulletins, careers, calendar, metrics, vitals). A fourth value names the post kind for feed sections that are `cms_posts` lists (marquee, sunshine, bulletins → `bulletin`, careers → `job`). Add a layout there, add the section row in a migration, and draw it in the page template (phase 4)." },
+  { type: 'p', text: "`Content::_layouts()` maps each `layout` to a description and the item fields it uses (field name → label on the form), or `null` plus where the content comes from (marquee, sunshine, bulletins, careers, calendar, metrics, vitals). A fourth value names the post kind for feed sections that are `cms_posts` lists (marquee, sunshine, bulletins → `bulletin`, careers → `job`). A new kind of section = a layout added there + `site/<layout>.php`; then Content Admins add sections of it with Add a Section (a feed layout's single row goes in a migration)." },
   { type: 'h2', text: 'Safety' },
   { type: 'ul', items: [
     "**Token:** every form and AJAX call carries `$_SESSION['cms_token']` (`_token()` / `_check_token()`, `hash_equals`), so another site can't post changes in the user's name.",

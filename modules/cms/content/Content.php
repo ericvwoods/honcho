@@ -17,11 +17,16 @@
         _check_access()
         _layouts()
         _token()
+  createsection()                    add a section: an item layout (slider, boxes, people...), placed last
+        _check_access()
+        _layouts()
   updatesection()                    edit one section's heading, subtitle, menu label
         _check_access()
-  sectionsubmit()
+  sectionsubmit()                    saves both (segment 3 = 0 when adding)
         _check_access()
         _check_token()
+        _layouts()
+        _section_code()
         _audit()
   togglesection()                    AJAX: show_member / show_public on or off
         _check_access()
@@ -141,6 +146,7 @@
   _chapters()                        id => name, for the chapter picker
   _post_from_post($kind)
   _layouts()                         layout => description and the item fields it uses
+  _section_code($title)              a new section's unique code (its #anchor on the page)
   _check_access()
         _home_url()
   _home_url()                        staff dashboard or member home
@@ -202,6 +208,35 @@ class Content extends Trongate {
 
 
 /*----------------------------------------------------------------------------*/
+/*------------------------ function CREATESECTION ----------------------------*/
+/*----------------------------------------------------------------------------*/
+
+  function createsection(){ // a new section with an item layout; the feeds (Sunshine, Calendar...) exist once
+
+    $this->_check_access();
+
+    $data = array('id' => 0, 'layout' => '', 'title' => '', 'subtitle' => '', 'menu_label' => '', 'show_member' => 1, 'show_public' => 0);
+    if(!empty($_SESSION['cms_retry'])){ // failed validation: show what was typed
+        $data = array_merge($data, $_SESSION['cms_retry']);
+        unset($_SESSION['cms_retry']);
+    }
+    $data['layouts'] = array_filter($this->_layouts(), function($l){ return !empty($l[1]); }); // item layouts only
+    $data['token']   = $this->_token();
+
+    $data['view_module'] = 'cms/content';
+    $data['view_file']   = 'sectioncrud';
+
+    $data['bc1']    = CMS_LABEL;
+    $data['bc2']    = 'Add a Section';
+    $data['header'] = 'Add a Section';
+
+    $this->templates->inspinia($data);
+  }
+
+/*------------------------- End function createsection -----------------------*/
+
+
+/*----------------------------------------------------------------------------*/
 /*------------------------ function UPDATESECTION ----------------------------*/
 /*----------------------------------------------------------------------------*/
 
@@ -246,9 +281,9 @@ class Content extends Trongate {
     $this->_check_access();
     $this->_check_token();
 
-    $recid   = intval(segment(3));
-    $section = $this->model->get_where($recid, 'cms_sections');
-    if(!$section){
+    $recid   = intval(segment(3)); // 0 = adding
+    $section = $recid > 0 ? $this->model->get_where($recid, 'cms_sections') : false;
+    if($recid > 0 && !$section){
         set_flashdata('That section was not found.');
         redirect('cms-content/sections');
     }
@@ -260,6 +295,13 @@ class Content extends Trongate {
     );
 
     $errors = array();
+    if($recid == 0){ // adding: the layout and where it shows
+        $layouts = $this->_layouts();
+        $post['layout']      = trim(post('layout'));
+        $post['show_member'] = post('show_member') == 1 ? 1 : 0;
+        $post['show_public'] = post('show_public') == 1 ? 1 : 0;
+        if(empty($layouts[$post['layout']][1])){ $errors[] = 'Please choose what the section shows.'; }
+    }
     if($post['title'] === '' || mb_strlen($post['title']) > 150){ $errors[] = 'A heading of up to 150 characters is required.'; }
     if(mb_strlen($post['subtitle']) > 255)                        { $errors[] = 'The subtitle can be up to 255 characters.'; }
     if(mb_strlen($post['menu_label']) > 40)                       { $errors[] = 'The menu label can be up to 40 characters.'; }
@@ -268,7 +310,22 @@ class Content extends Trongate {
         $_SESSION['cms_retry']     = $post;
         $_SESSION['flashmsgcolor'] = 0;
         set_flashdata(implode(' ', $errors));
-        redirect('cms-content/updatesection/'.$recid);
+        redirect($recid > 0 ? 'cms-content/updatesection/'.$recid : 'cms-content/createsection');
+    }
+
+    if($recid == 0){ // new section: last on the page, items added next
+        $last = $this->model->query("SELECT COALESCE(MAX(sort_order), 0) AS n FROM cms_sections", 'object');
+        $post['code']         = $this->_section_code($post['title']);
+        $post['allow_public'] = 1;
+        $post['sort_order']   = (int) $last[0]->n + 10;
+        $post['created_by']   = intval($_SESSION['tg_user_id'] ?? 0);
+        $post['created_at']   = time();
+        $newid = $this->model->insert($post, 'cms_sections');
+        $this->_audit('CreateSection', $newid, 'cms_sections', $post['layout'].' '.$post['title']);
+
+        $_SESSION['flashmsgcolor'] = 1;
+        set_flashdata('The section was added at the bottom of the page. Add its items, then drag it into place on Page Sections.');
+        redirect('cms-content/items/'.$newid);
     }
 
     $post['updated_by'] = intval($_SESSION['tg_user_id'] ?? 0);
@@ -1330,6 +1387,16 @@ class Content extends Trongate {
   }
 
 /*---------------------------- End function _layouts -------------------------*/
+
+  function _section_code($title){ // unique code from the heading: becomes the section's #sec-<code> anchor
+    $base = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower($title)), '-');
+    $base = 'custom-'.substr($base !== '' ? $base : 'section', 0, 30);
+    $code = $base;
+    for($n = 2; $this->model->get_one_where('code', $code, 'cms_sections'); $n++){
+        $code = $base.'-'.$n;
+    }
+    return $code;
+  }
 
 
 /*----------------------------------------------------------------------------*/

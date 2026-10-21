@@ -6,6 +6,7 @@
 --   Arkansas Thunderbirds: MS (members were split evenly AR / MS)
 --   Colorado Chapter: CO (no member addresses to go on)
 --   Chicago Area Pilots Association: IL (members in IL and IN)
+--   Chapter at Large: no state (members anywhere), but still an active chapter
 -- James H. Green Chapter is left blank until its state is known.
 -- ---------------------------------------------------------------------------
 
@@ -13,3 +14,4 @@ UPDATE ccmps_subentities SET state = NULL, active = 0 WHERE id = 99 AND descript
 UPDATE ccmps_subentities SET state = 'MS' WHERE id = 3  AND description = 'Arkansas Thunderbirds';
 UPDATE ccmps_subentities SET state = 'CO' WHERE id = 12 AND description = 'Colorado Chapter';
 UPDATE ccmps_subentities SET state = 'IL' WHERE id = 11 AND description = 'Chicago Area Pilots Association';
+UPDATE ccmps_subentities SET state = NULL, active = 1 WHERE id = 10 AND description = 'Chapter at Large';

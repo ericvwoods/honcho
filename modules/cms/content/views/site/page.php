@@ -51,6 +51,8 @@ $cms_job_url = function($id) use ($cms){ // a job's detail page on this site
     .cms-metric { text-align: center; padding: 20px 10px; }
     .cms-metric i { font-size: 34px; color: #1ab394; }
     .cms-metric .cms-metric-value { font-size: 40px; font-weight: 600; line-height: 1.2; }
+    .cms-vital { text-align: center; padding: 20px 10px; margin-bottom: 15px; border: 1px solid #e7eaec; border-radius: 4px; background: #fff; }
+    .cms-vital-label { font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #676a6c; }
     .cms-job { border-bottom: 1px solid #e7eaec; padding: 15px 0; }
     .cms-job:last-child { border-bottom: 0; }
     .cms-event { border-left: 4px solid #1ab394; padding: 8px 15px; margin-bottom: 15px; background: #fff; }

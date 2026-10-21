@@ -1324,7 +1324,8 @@ class Content extends Trongate {
         'bulletins'    => array('Sticky notes', null, 'the Bulletin Board page', 'bulletin'),
         'careers'      => array('Job postings with detail pages', null, 'the Careers page', 'job'),
         'calendar'     => array('Events calendar', null, 'the Events page'),
-        'metrics'      => array(CCMP.' numbers (automatic)', null, CCMP.' records, counted when the page opens'),
+        'metrics'      => array(CCMP.' and '.SUBENTITY.' counts (automatic)', null, CCMP.' records, counted when the page opens'),
+        'vitals'       => array('Membership Vitals (automatic)', null, CCMP.' records for the viewer\'s '.SUBENTITY.' and nationally, counted when the page opens'),
     );
   }
 

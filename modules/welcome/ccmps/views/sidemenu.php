@@ -381,12 +381,13 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             <a href="<?= BASE_URL ?>welcome-ccmps/currentdirectory">     <i class="fa fa-address-card-o fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
                             </div>
                             <div class="col-10 text-right">
- <a href="<?= BASE_URL ?>welcome-ccmps/currentdirectory" style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> Directory (<?= $_SESSION['num_current_and_pd_members'] ?>)</span> </a>
-                            <!-- --      <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> Directory (<?= $_SESSION['num_current_and_pd_members'] ?>)</h2> </a> -->
+ <a href="<?= BASE_URL ?>welcome-ccmps/currentdirectory" style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> Directory (<?= $_SESSION['num_current_members'] ?>)</span> </a>
+                            <!-- --      <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> Directory (<?= $_SESSION['num_current_members'] ?>)</h2> </a> -->
                             </div>
                         </div>
                     </div>
 
+<?php if(false): ?> <!-- Chapters hidden 2026-10-21: its page (cms-ccmpschapters) was removed with the old CMS -->
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">
                             <div class="col-2">
@@ -396,11 +397,12 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             </div>
                             <div class="col-10 text-right">
                               <!---        <h2 style="color:LightGray;"> <?= SUBENTITIES ?></h2> </a>  -->
-<a href="<?= BASE_URL ?>cms-ccmpschapters/viewpage" style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> <?= SUBENTITIES ?> (<?= $_SESSION['num_chapters'] ?>)</span> </a>
-                             <!-- --     <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> <?= SUBENTITIES ?> (<?= $_SESSION['num_chapters'] ?>) </h2> </a> -->
+<a href="<?= BASE_URL ?>cms-ccmpschapters/viewpage" style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> <?= SUBENTITIES ?> (<?= $_SESSION['num_subentities'] ?>)</span> </a>
+                             <!-- --     <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> <?= SUBENTITIES ?> (<?= $_SESSION['num_subentities'] ?>) </h2> </a> -->
                             </div>
                         </div>
                     </div>
+<?php endif; ?>
 
 
 <?php if(CMS_MEMBER_BULLETINS == 1): ?> <!-- members post their own sticky notes (cms-content, 2026-10-20) -->

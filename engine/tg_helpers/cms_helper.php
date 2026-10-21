@@ -9,6 +9,8 @@
         _cms_posts($kind, $site, $subentity_id)
         _cms_events($site, $subentity_id)
         _cms_metrics()
+        _cms_vitals($subentity_id)
+        _cms_current_year()
   cms_media_url($file_name)        where a cms_media picture is served
   cms_link_attrs($url)             target/rel for links that leave the site
 
@@ -36,7 +38,9 @@ function cms_page(string $site = 'member', int $subentity_id = 0): array {
         } elseif ($section->layout === 'calendar') {
             $section->items = _cms_events($site, $subentity_id);
         } elseif ($section->layout === 'metrics') {
-            $section->items = $public ? array() : _cms_metrics();
+            $section->items = _cms_metrics();
+        } elseif ($section->layout === 'vitals') {
+            $section->items = $public ? array() : _cms_vitals($subentity_id);
         } else {
             $section->items = _cms_items((int) $section->id);
         }
@@ -107,20 +111,78 @@ function _cms_events(string $site, int $subentity_id): array {
 }
 
 function _cms_metrics(): array {
-    // member numbers, counted fresh, the same way ccmphome counts them (current_year = paid-up year)
+    // By the Numbers (member home and public site): current members, chapters and their states, counted fresh
+    // (current_year = paid-up year). Renewal and chartered counts were dropped 2026-10-21; Vitals has the renewal numbers.
     $model = new Model();
     $one   = function ($sql, $params = array()) use ($model) {
         $rows = $model->query_bind($sql, $params, 'object');
         return !empty($rows) ? (int) $rows[0]->n : 0;
     };
-    $year = (int) ($_SESSION['ccmps_current_year'] ?? date('Y'));
+    $year = _cms_current_year();
     $live = "COALESCE(deceased,0) != 1 AND COALESCE(soft_deleted,0) != 1";
-    return array(
-        array('label' => 'Current '.CCMPS,         'value' => $one("SELECT COUNT(*) AS n FROM ccmps WHERE $live AND current_year >= :y", array('y' => $year)),     'icon' => 'fa-users'),
-        array('label' => 'Renewal due',            'value' => $one("SELECT COUNT(*) AS n FROM ccmps WHERE $live AND current_year = :y", array('y' => $year - 1)), 'icon' => 'fa-refresh'),
-        array('label' => SUBENTITIES,              'value' => $one("SELECT COUNT(*) AS n FROM ccmps_subentities"),                                             'icon' => 'fa-sitemap'),
-        array('label' => 'Chartered '.SUBENTITIES, 'value' => $one("SELECT COUNT(*) AS n FROM ccmps_subentities WHERE chartered = 1"),                         'icon' => 'fa-certificate'),
+    $metrics = array(
+        array('label' => CCMPS,                    'value' => $one("SELECT COUNT(*) AS n FROM ccmps WHERE $live AND current_year >= :y", array('y' => $year)),     'icon' => 'fa-users'),
+        array('label' => SUBENTITIES,              'value' => $one("SELECT COUNT(*) AS n FROM ccmps_subentities WHERE active = 1"),                              'icon' => 'fa-sitemap'),
     );
+    // states the active chapters are in (ccmps_subentities.state); left off until at least one is filled in
+    $states = $one("SELECT COUNT(DISTINCT state) AS n FROM ccmps_subentities WHERE active = 1 AND state IS NOT NULL AND state != ''");
+    if ($states > 0) {
+        $metrics[] = array('label' => 'States', 'value' => $states, 'icon' => 'fa-map-marker');
+    }
+    return $metrics;
+}
+
+function _cms_vitals(int $subentity_id): array {
+    // Membership Vitals (member home only): current, past due (paid last year, not this year) and
+    // renewal rate = current / (current + past due), for the member's chapter and nationally,
+    // then current members by type (ccmps_types). Counted fresh, like _cms_metrics().
+    $model = new Model();
+    $year  = _cms_current_year();
+    $rows  = $model->query_bind("SELECT subentity, ccmp_type, SUM(current_year >= :y1) AS cur, SUM(current_year = :y2) AS due
+                                   FROM ccmps
+                                  WHERE COALESCE(deceased,0) != 1 AND COALESCE(soft_deleted,0) != 1
+                                  GROUP BY subentity, ccmp_type", array('y1' => $year, 'y2' => $year - 1), 'object');
+    $types = $model->query("SELECT id, description FROM ccmps_types ORDER BY id", 'object');
+
+    $box = function ($label) { return array('label' => $label, 'current' => 0, 'due' => 0, 'rate' => 0); };
+    $national = $box('National');
+    $chapter  = null;
+    if ($subentity_id > 0) {
+        $sub = $model->get_where($subentity_id, 'ccmps_subentities');
+        $chapter = $box($sub ? ($sub->description !== '' && $sub->description !== null ? $sub->description : $sub->chapter_title) : SUBENTITY);
+    }
+    $by_type = array();
+    foreach ((array) $types as $t) {
+        $by_type[(int) $t->id] = array('label' => $t->description, 'chapter' => 0, 'national' => 0);
+    }
+    foreach ((array) $rows as $r) {
+        $mine = ($chapter !== null && (int) $r->subentity === $subentity_id);
+        $national['current'] += (int) $r->cur;
+        $national['due']     += (int) $r->due;
+        if ($mine) {
+            $chapter['current'] += (int) $r->cur;
+            $chapter['due']     += (int) $r->due;
+        }
+        if (isset($by_type[(int) $r->ccmp_type])) {
+            $by_type[(int) $r->ccmp_type]['national'] += (int) $r->cur;
+            if ($mine) { $by_type[(int) $r->ccmp_type]['chapter'] += (int) $r->cur; }
+        }
+    }
+    $rate = function ($b) { return ($b['current'] + $b['due'] > 0) ? (int) round(100 * $b['current'] / ($b['current'] + $b['due'])) : 0; };
+    $national['rate'] = $rate($national);
+    if ($chapter !== null) { $chapter['rate'] = $rate($chapter); }
+    return array('chapter' => $chapter, 'national' => $national, 'types' => array_values($by_type));
+}
+
+function _cms_current_year(): int {
+    // the membership year: from the session when logged in, else the same setting login reads
+    // (public visitors have no session value)
+    if (!empty($_SESSION['ccmps_current_year'])) {
+        return (int) $_SESSION['ccmps_current_year'];
+    }
+    $model = new Model();
+    $row   = $model->get_one_where('title', 'system_current_year', 'ccmps_financial_settings');
+    return ($row && (int) $row->settingvalue > 0) ? (int) $row->settingvalue : (int) date('Y');
 }
 
 function cms_media_url(string $file_name): string {

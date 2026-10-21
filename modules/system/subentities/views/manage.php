@@ -1,284 +1,159 @@
-<!-- *********************************************************************** -->
-<!--                               NAVBAR                                  -->
-<!--                                                           --> 
-<!--                                                          -->
-<!--                                                  -->                                         
-<!-- *********************************************************************** -->
-<?php 
+<?php
   include('navbar.php');
-?>    
-<!-- *********************************************************************** -->
-<!--                               Header                                    -->
-<!--  Picture                                                                --> 
-<!--  Or Logo                                                                -->
-<!--  Users Full Name                                                        -->                                         
-<!-- *********************************************************************** -->
+?>
 
-<!-- Begin Content   -->
+<!-- Begin Content -->
 
 <div class="ibox-content"> <!-- ibox for page header -->
     <div class="row">
         <div class="col-lg-12">
-            <div class="ibox-title">   
-                <div class="row"> 
+            <div class="ibox-content">
+                <div class="row">
 
-                    <?php if(strlen($picture) > 0): ?> <!--  if user pic -->
-                        <div class="col-md-1">   
-<img alt="user picture" class="rounded-circle" src="<?= BASE_URL?>ccmps_photos_thumbnails/<?= $recid ?>/<?= $picture ?>"/>                        
-                        </div> <!-- end col -->
-                    <?php else: ?> <!-- No pic  -->
-                        <div class="col-md-1">  
-                      
-                            <div class="row">
-                                <div class="col-md-1"> <!-- for spacing --> 
-                                </div>
-                               <a href="#" title="">
-<img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
-                               </a>
+                    <div class="col-md-1">
+                        <div class="row">
+                            <div class="col-md-6"> <!-- for spacing -->
                             </div>
-                        <br>
-                        </div> <!-- end col -->
-                    <?php endif; ?>
-                        <div class="col-md-9">
-                  
-                        
-                        <span class="m-r">
-                           <h1 style="color:RoyalBlue;"><?= $header ?></h1>
-                            <a href="#">
-<h2><?= $salutation ?> <?= $first_name ?> <?= $middle_name ?> <?= $last_name ?> <?= $suffix ?></h2>
+                            <a href="#" title="">
+                                <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
                             </a>
-                            <a href="#"><h2><?= $activity ?></h2></a>
-                 
+                        </div>
+                    </div> <!-- end col -->
+
+                    <div class="col-md-7">
+
+                        <span class="m-r">
+                            <span style="color:<?= SN_CLR ?>; font-size: 30px;"><?= $header ?></span>
                         </span>
 
-                        </div> <!-- end column -->
-                        <ul class="nav navbar-top-links navbar-right">
-                            <li>
-                                <?php if(strlen($picture) > 0): ?>
-                                    <div class="col-md-2">   
-                                        <h1 class="logo text-center">
-                                            <a href="#" title="bpalogo">
-                                                <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
-                                            </a>
-                                        </h1>
-                                    </div> <!-- end col -->
-                                <?php endif; ?> 
-                            </li>
-                        </ul>
-                </div> <!-- end row -->
+                <?php if(($_SESSION['flashmsgcolor'] ?? 0) == 1): ?>
+                  <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: lightseagreen;">', '</div>');
+                  $flash_msg = '';
+                  set_flashdata($flash_msg); ?>
+                <?php else: ?>
+                  <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>');
+                  $flash_msg = '';
+                  set_flashdata($flash_msg); ?>
+                <?php endif; ?>
+                    </div> <!-- end column -->
 
-            </div> <!-- end ibox-title- ln 17 -->
-<!-- *********************************************************************** -->
-<!--                               Table Label                               -->                                     
-<!-- *********************************************************************** -->
-            <div class="ibox-content">  
+                <div class="col-md-4">
+                    <p class="text-muted" style="margin-top: 10px;">Untick <strong>Active</strong> to leave a <?= strtolower(SUBENTITY) ?> out of the counts on the website. A <?= strtolower(SUBENTITY) ?> can only be deleted when no <?= CCMP ?> record belongs to it.</p>
+                </div>
 
-                    <div>
-                      <h3><strong><?= SHORTSITENAME ?> <?= SUBENTITIES ?></strong></h3> 
-                   
-                    </div>
-          
+            </div> <!-- end row -->
 
-                <br>
+        </div> <!-- end col-lg-12 -->
 
-    <!-- Show flash message then reset it to blank  -->
+    </div> <!-- end row -->
 
-    <?php if($_SESSION['flashmsgcolor'] == 1): ?>
+</div> <!-- End Ibox for page -->
 
-     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: lightseagreen;">', '</div>'); 
-     $flash_msg = '';
-     set_flashdata($flash_msg); 
-     $_SESSION['flashmsgcolor'] = 0; ?> 
+<div class="ibox-content">
 
-   <?php else: ?>
-     <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>'); 
-     $flash_msg = '';
-     set_flashdata($flash_msg); 
-     $_SESSION['flashmsgcolor'] = 0; ?> 
-   
-   <?php endif; ?>
-
-<!-- *********************************************************************** -->
-<!--                                 Datatable                               -->                                     
-<!-- *********************************************************************** -->
-                                   
-<div class="table-responsive">
-    <table class="table table-striped table-bordered table-hover dataTables-example" > 
-
-        <thead>
-
-            <tr>
-
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Num</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>><?= SUBENTITY ?></h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Full Name</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Chartered</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Region</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Website</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Facebook</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Instagram</h<?= $_SESSION['mfontsize'] ?>></th>
-                <th style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>YouTube</h<?= $_SESSION['mfontsize'] ?>></th>
-
-                <th style="color:RoyalBlue;">                  
-                    <div class="row">                              
-                        <div class="col-sm-6"> 
-                            <a style="color:RoyalBlue;"><h<?= $_SESSION['mfontsize'] ?>>Options</h<?= $_SESSION['mfontsize'] ?>></a>                                
-                        </div>
-                     </div>  
-                </th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-                <?php
-                    foreach($subentities as $row) { 
-
-                    ?>
-                    <tr class='gradeA'>
-
-                        <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->id ?></h<?= $_SESSION['mfontsize'] ?>></td>
-                        <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->title ?></h<?= $_SESSION['mfontsize'] ?>></td>
-                        <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->description ?></h<?= $_SESSION['mfontsize'] ?>></td>
-                                                              
-                        <?php   if($row->chartered == 1) { 
-                               $row->chartered = 'Yes';
-                          }else{ 
-                               $row->chartered = 'No';
-                          }
-                          ?>
-                        <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->chartered ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                        <td><h<?= $_SESSION['mfontsize'] ?>><?= $row->region ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                        <td><h<?= $_SESSION['mfontsize'] ?>><a href=<?= $row->website ?> target="_blank" title="BPA"><?= $row->website ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                        <td><h<?= $_SESSION['mfontsize'] ?>><a href=<?= $row->facebook ?> target="_blank" title="BPA"><?= $row->facebook ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                        <td><h<?= $_SESSION['mfontsize'] ?>><a href=<?= $row->instagram ?> target="_blank" title="BPA"><?= $row->instagram ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                        <td><h<?= $_SESSION['mfontsize'] ?>><a href=<?= $row->youtube ?> target="_blank" title="BPA"><?= $row->youtube ?></h<?= $_SESSION['mfontsize'] ?>></td> 
-                <td> 
-                  <a class="btn btn-outline btn-primary" type="button" data-toggle="tooltip" data-placement="right" title="View Record" href="<?= BASE_URL ?>system-subentities/viewrecord/<?= $row->id ?>" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-eye"> View</i></h<?= $_SESSION['mfontsize'] ?>></a>
-                <a class="btn btn-outline btn-warning"  type="button"  data-toggle="tooltip" data-placement="right" title="Update Record"  href="<?= BASE_URL ?>system-subentities/update/<?= $row->id ?>" ><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-pencil"> Update</i></h<?= $_SESSION['mfontsize'] ?>></a>
-                         
-                                    </td>                                                           
-
-                                </tr>
-                                <?php } ?> 
-
-        </tbody>
-
-        <tfoot>
-            <tr>
-
-            </tr>
-        </tfoot>
-    </table>
-                     
-                </div> <!-- end div table responsive-->
-
-            <!--    <div class="btn-group"> -->
-                            <a class="btn btn-outline btn-primary"  type="button" href="<?= BASE_URL ?>system-subentities/create"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-user"></i> Create New <?= SUBENTITY ?></h<?= $_SESSION['mfontsize'] ?>></a>
-                 
-             
-
-        <a class="btn btn-outline btn-warning"  type="button" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><h<?= $_SESSION['mfontsize'] ?>><i class="fa fa-times-circle"></i> Close</h<?= $_SESSION['mfontsize'] ?>></a>  
- <!--  </div> -->
-            </div> <!-- ibox content table -->
- 
-
-        </div> <!-- end col-lg-12 ln 16 -->
-  
-    </div> <!-- row -->
- 
-    </div> <!-- ibox content page -->
-
-<!-- End Content   -->
 <br>
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
 
-   <!-- Begin Modals -->
+                <table class="table table-striped table-bordered table-hover dataTables-example">
 
+                    <thead>
+                        <tr>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Id</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Short Name</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Full Name</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>State</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Region</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Chartered</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Active</h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>><?= CCMPS ?></h<?= $_SESSION['tfontsize'] ?>></th>
+                            <th style="color:<?= SN_CLR ?>;"><h<?= $_SESSION['tfontsize'] ?>>Options</h<?= $_SESSION['tfontsize'] ?>></th>
+                        </tr>
+                    </thead>
 
-<!-- Must load jquery first when locally controlling datatables settings below. OK for datatables js to be in Inspinia template file  -->
-    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
-        <script>
-        $(document).ready(function(){
-            // code to dynamically generate for DelButton
-            var myRow = 0;
-            $(".DelButton").each(function(){
-                myRow = myRow +1;
-                $(this).attr("id", "DelButton" + myRow);
-            });
+                    <tbody>
+                        <?php foreach($subentitiesrecs as $row) { ?>
+                            <tr class='gradeA'<?= $row->active ? '' : ' style="color: #999;"' ?>>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= $row->id ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= out($row->chapter_title) ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= out($row->description) ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= out($row->state) ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= out($row->region_title) ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= $row->chartered ? 'Yes' : 'No' ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= $row->active ? 'Yes' : 'No' ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td><h<?= $_SESSION['tfontsize'] ?>><?= (int) $row->members ?></h<?= $_SESSION['tfontsize'] ?>></td>
+                                <td style="white-space: nowrap;">
+                                    <a class="btn btn-outline btn-primary" type="button" data-toggle="tooltip" data-placement="right" title="Update Record" href="<?= BASE_URL ?>system-subentities/updatesubentity/<?= $row->id ?>"><h<?= $_SESSION['tfontsize'] ?>><i class="fa fa-pencil"></i></h<?= $_SESSION['tfontsize'] ?>> Update</a>
 
-            //from datatables
-            $('.dataTables-example').DataTable({
-                paging: true,
-                searching: true,
-                pageLength: 1000,
-                responsive: true,
-                dom: '<"html5buttons"B>lTfgitp',
-                buttons: [
-              /*      { extend: 'copy'},
-                    {extend: 'csv'},
-                    {extend: 'excel', title: 'ExcelFile'},
-                    {extend: 'pdf', title: 'PDFFile'},
+                                    <?php if((int) $row->members == 0): ?>
+                                    <form method="post" action="<?= BASE_URL ?>system-subentities/delrecord/<?= $row->id ?>" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this record?');">
+                                        <input type="hidden" name="token" value="<?= $token ?>">
+                                        <button class="btn btn-outline btn-danger" type="submit" data-toggle="tooltip" data-placement="right" title="Delete Record"><h<?= $_SESSION['tfontsize'] ?>><i class="fa fa-trash"></i></h<?= $_SESSION['tfontsize'] ?>> Delete</button>
+                                    </form>
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
 
-                    {extend: 'print',
-                     customize: function (win){
-                            $(win.document.body).addClass('white-bg');
-                            $(win.document.body).css('font-size', '10px');
+                    <tfoot>
+                        <tr></tr>
+                    </tfoot>
 
-                            $(win.document.body).find('table')
-                                    .addClass('compact')
-                                    .css('font-size', 'inherit');
-                    }
-                    } */
-                ] 
+                </table>
 
-            });
-                    // $("#btn.8").on('click',function(){  
-                        $("#btn.5").click(function(){  
-alert('fired!');                
+            </div> <!-- end table-responsive -->
 
-            });
-                        $("#checkAll").click(function(){  
-//alert('fired!');  
-  // Each submit button on a tab that triggers what is selected in the dropdown for bulk actions must be unique.
-                if($(this).is(":checked")){
-             
-                    $(".checkItem").prop('checked',true);
-                }else{
-               
-                    $(".checkItem").prop('checked',false);
+        </div> <!-- end col -->
+    </div> <!-- end row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <a class="btn btn-outline btn-primary dim" href="<?= BASE_URL ?>system-subentities/createsubentity"><h3><strong><i class="fa fa-clone"></i> Add a <?= $entityname ?></strong></h3></a>
+            <a class="btn btn-outline btn-warning dim" href="<?= BASE_URL ?><?= $home_url ?>"><h3><strong><i class="fa fa-times-circle"></i> Close</strong></h3></a>
+        </div>
+    </div>
+
+</div> <!-- end ibox-content for all subentities -->
+
+<!-- End Content -->
+<br>
+
+<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+<script>
+    $(document).ready(function(){
+        $('.dataTables-example').DataTable({
+            paging: true,
+            searching: true,
+            pageLength: 100,
+            responsive: true,
+            order: [],
+            dom: '<"html5buttons"B>lTfgitp',
+            buttons: [
+                {extend: 'excel', title: '<?= SUBENTITIES ?>'},
+                {extend: 'print',
+                 customize: function (win){
+                        $(win.document.body).addClass('white-bg');
+                        $(win.document.body).css('font-size', '10px');
+
+                        $(win.document.body).find('table')
+                                .addClass('compact')
+                                .css('font-size', 'inherit');
                 }
-           
-            });
- 
-             $("#checkAll2").click(function(){     
-
-                if($(this).is(":checked")){
-             
-                    $(".checkItem").prop('checked',true);
-                }else{
-               
-                    $(".checkItem").prop('checked',false);
                 }
-           
-            });
- 
-             $("#checkAll3").click(function(){     
-
-                if($(this).is(":checked")){
-             
-                    $(".checkItem").prop('checked',true);
-                }else{
-               
-                    $(".checkItem").prop('checked',false);
-                }
-           
-            });            
-
-
-
-         
+            ]
+        });
     });
-    </script>
+</script>
 
-
+<?php if(DEBUGGING == true): ?>
+ <?php
+    echo('<h3>View: system-subentities/views/manage</h3>');
+    echo('<h3>$_SESSION</h3>');
+    json($_SESSION);
+    echo('<h3>$data</h3>');
+    json($data);
+ ?>
+<?php endif; ?>

@@ -51,6 +51,9 @@
                     <li>
                         <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsaddresstypes/manage"><i class="fa fa-table"></i> Address Types</a>
                     </li>
+                    <li>
+                        <a id="toggleSpinner4" href="<?= BASE_URL ?>system-subentities/manage"><i class="fa fa-sitemap"></i> <?= SUBENTITIES ?></a>
+                    </li>
                <!-- Financial Types hidden: ccmps_financial_types was never built (route blocked in Ccmpsfinancialtypes.php)
                     <li>
                         <a id="toggleSpinner4" href="<?= BASE_URL ?>welcome-ccmpsfinancialtypes/manage"><i class="fa fa-table"></i> Financial Types</a>

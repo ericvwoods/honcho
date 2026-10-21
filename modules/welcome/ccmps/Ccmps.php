@@ -340,7 +340,19 @@ print_r($currentyear);die();
     $chtrdsubentities = $this->model->query($sql,'array');
     $_SESSION['num_chartered_subentities'] =  count($chtrdsubentities,COUNT_NORMAL);
 
-    $data['device_type']   = $_SESSION['device_type']; //  $data['show_buttons']  = 0; // 1 0r 2 will show in mobile interface
+    // Counts shown in () on the My Chapter Roster and National Directory buttons.
+    // Same filters as currentroster() and currentdirectory() so the numbers match those pages.
+    $rosteryear = max((int) $currentyear, 2023) - 1; // since using > in $sql not >=
+    $subentity  = (int) $_SESSION['ccmps_subentity'];
+    $sql = "SELECT COUNT(*) AS n FROM ccmps WHERE subentity = $subentity AND deceased != 1 AND soft_deleted != 1 AND (current_year > $rosteryear OR status = 2)";
+    $rows = $this->model->query($sql,'object');
+    $_SESSION['num_current_chapter_members'] = $rows ? (int) $rows[0]->n : 0;
+
+    $sql = "SELECT COUNT(*) AS n FROM ccmps WHERE deceased != 1 AND directoryoptout != 1 AND soft_deleted != 1 AND (current_year > $rosteryear OR status = 2)";
+    $rows = $this->model->query($sql,'object');
+    $_SESSION['num_current_members'] = $rows ? (int) $rows[0]->n : 0;
+
+    $data['device_type']  = $_SESSION['device_type']; //  $data['show_buttons']  = 0; // 1 0r 2 will show in mobile interface
     $data['tg_user_level'] = $_SESSION['tg_user_level'];
 
 /* Marquee, jumbotron, notices, jobs, activities and bulletins were read here from the old

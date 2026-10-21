@@ -111,7 +111,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## Small fixes
 
-- [ ] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. The real table is `ccmps_subentities` (different columns, e.g. `chapter_title`). Decide whether it gets the staff-only / Lite rule like Settings and the Auditlog.
+- [x] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. Rebuilt 2026-10-21 on `ccmps_subentities` (maintenance-table pattern, State and Active added). Still open: whether it gets the staff-only / Lite rule like Settings and the Auditlog.
+- [ ] **Revisit National HQ** (`ccmps_subentities` id 99, `SUBENTITY_NATIONAL_ID` in `config.php`): why is it in the chapter table? No members, events or posts use it (checked 2026-10-21). For now it is inactive, has no state, is hidden from the Chapters screen and never counted. Decide whether to keep it (and what for) or delete it.
+- [ ] James H. Green Chapter has no state (no member addresses to go on); fill it in on the Chapters screen.
 - [ ] Member home ATIS tile hidden 2026-10-16 (it downloaded doc 1 from the removed CMS library). Upload ATIS to DMS and put its id in the link in `ccmphome.php`, then re-add it to the Users' Guide.
 
 - [ ] Debug line numbers show on buttons: "128 Update" (`viewccmp.php` line 128) and "69Cancel" / "80 Cancel" (`ccmpcrud.php` lines 70 and 81).

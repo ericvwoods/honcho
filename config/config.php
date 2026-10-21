@@ -78,6 +78,7 @@ define('CCMPS','Members'); // Customers, Clients, Members, Participants
 define('CCMPS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
 define('SUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('SUBENTITIES','Chapters'); // subentities
+define('SUBENTITY_NATIONAL_ID', 99); // ccmps_subentities row for National HQ: not a chapter - hidden from the Chapters screen, never counted (0 = none). Why it exists is on docs/todo.md
 define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('CCMPSSUBENTITIES','Chapters'); // subentities
 define('CMS_PUBLIC_SITE', (int) env('CMS_PUBLIC_SITE', 0)); // 1 = the site's front address shows the Website (welcome/website); 0 = it goes to the login (the organization uses an outside site, PUBLIC_WEBSITE)

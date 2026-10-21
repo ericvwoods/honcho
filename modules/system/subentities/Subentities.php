@@ -48,6 +48,7 @@
        description       (varchar 255)  full name
        chartered         (tinyint)      1 = chartered
        active            (tinyint)      1 = a working chapter; 0 = left out of counts (e.g. Place Holder rows)
+       The National HQ row (SUBENTITY_NATIONAL_ID in config.php) is not listed here and is never counted.
        region            (int)          ref_region_codes.id
        state             (char 2)       ref_states.state_code - By the Numbers counts the states
        logo, website, facebook, instagram, youtube              (varchar 255)
@@ -104,8 +105,9 @@ class Subentities extends Trongate {
                    (SELECT COUNT(*) FROM ccmps c WHERE c.subentity = s.id AND COALESCE(c.deceased,0) != 1 AND COALESCE(c.soft_deleted,0) != 1) AS members
               FROM ccmps_subentities s
               LEFT JOIN ref_region_codes r ON r.id = s.region
+             WHERE s.id != :national
              ORDER BY s.active DESC, s.chapter_title, s.id";
-    $data['subentitiesrecs'] = $this->model->query($sql, 'object');
+    $data['subentitiesrecs'] = $this->model->query_bind($sql, array('national' => (int) SUBENTITY_NATIONAL_ID), 'object'); // National HQ is not a chapter
 
     $data['view_module'] = 'system/subentities';
     $data['view_file']   = 'manage';

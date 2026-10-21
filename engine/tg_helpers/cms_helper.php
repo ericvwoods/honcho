@@ -122,10 +122,10 @@ function _cms_metrics(): array {
     $live = "COALESCE(deceased,0) != 1 AND COALESCE(soft_deleted,0) != 1";
     $metrics = array(
         array('label' => CCMPS,                    'value' => $one("SELECT COUNT(*) AS n FROM ccmps WHERE $live AND current_year >= :y", array('y' => $year)),     'icon' => 'fa-users'),
-        array('label' => SUBENTITIES,              'value' => $one("SELECT COUNT(*) AS n FROM ccmps_subentities WHERE active = 1"),                              'icon' => 'fa-sitemap'),
+        array('label' => SUBENTITIES,              'value' => $one("SELECT COUNT(*) AS n FROM ccmps_subentities WHERE active = 1 AND id != :hq", array('hq' => (int) SUBENTITY_NATIONAL_ID)), 'icon' => 'fa-sitemap'),
     );
     // states the active chapters are in (ccmps_subentities.state); left off until at least one is filled in
-    $states = $one("SELECT COUNT(DISTINCT state) AS n FROM ccmps_subentities WHERE active = 1 AND state IS NOT NULL AND state != ''");
+    $states = $one("SELECT COUNT(DISTINCT state) AS n FROM ccmps_subentities WHERE active = 1 AND id != :hq AND state IS NOT NULL AND state != ''", array('hq' => (int) SUBENTITY_NATIONAL_ID));
     if ($states > 0) {
         $metrics[] = array('label' => 'States', 'value' => $states, 'icon' => 'fa-map-marker');
     }

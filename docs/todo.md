@@ -108,6 +108,8 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Content manager lists: the Delete button in the Options column is drawn far too big (wide box). Already like this before phase 7; find which stylesheet sizes form buttons in tables.
 - [ ] The Chapters tile / menu item on the member home links to `cms-ccmpschapters/viewpage`, a module that never existed (the unused bulletin modal and the old Vue/axios jumbotron script were removed in phase 4).
 - [ ] Last: Event Module - rewrite registration's hard-coded events (Skyhook, General Meeting, Board Meeting) to use `events` with an `event_activities` child table; the calendar keeps reading `events`.
+    - Who hosts (owner's notes, 2026-10-21): **Operation Skyhook** and the **Summer Flight Academy** are national events. The **General Membership Meeting** and the **National Board Meeting** rotate between chapters, and the registration money goes **directly to the host chapter**.
+    - So an event needs a host (National or a chapter, `events.subentity_id`), and registration must take payment into the host's account: the host chapter's payment-acceptance details (payment account / processor settings, payee, contact) need a home, probably on the Chapters screen (`ccmps_subentities`, next to `financial_email` / `financial_contact`), with National's own details for national events. Keep payment secrets out of the database in plain text.
 
 ## Small fixes
 

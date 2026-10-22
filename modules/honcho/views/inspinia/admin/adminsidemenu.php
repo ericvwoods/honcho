@@ -168,6 +168,9 @@
                 </li>
             <?php endif; ?>
 
+            <?php if(!is_system_admin() && rbac_allowed('system', 'edit_financial_settings')): ?> <!-- staff in Financial Admins: only the Financial tab of System Settings -->
+                <li><a href="<?= BASE_URL ?>system-settings/manage/financial"><i class="fa fa-usd"></i> <span class="nav-label">Financial Settings</span></a></li>
+            <?php endif; ?>
             <?php if(HONCHO_MODULE == 1 && !empty($_SESSION['honcho_sysadmin'])): ?> <!-- members reach these in Honcho Lite (system_admin_only()) -->
                 <li>
                     <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">System Admin</span><span class="fa arrow"></span></a>

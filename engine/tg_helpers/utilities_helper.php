@@ -30,32 +30,40 @@ function block_url(string $block_path): void {
 }
 
 /**
- * Limits a System page (Settings, Auditlog) to system admins.
+ * Is the logged-in person a system admin? The rule behind every System page:
  * Honcho deployed (HONCHO_MODULE = 1): only staff sysadmins (honcho/login).
  * Honcho Lite (HONCHO_MODULE = 0): only members with system_admin (welcome/login).
+ *
+ * @return bool
+ */
+function is_system_admin(): bool {
+    if (HONCHO_MODULE == 1) {
+        return !empty($_SESSION['honcho_logged_in']) && !empty($_SESSION['honcho_sysadmin']);
+    }
+    return !empty($_SESSION['ccmp_logged_in']) && !empty($_SESSION['ccmps_system_admin']);
+}
+
+/**
+ * Limits a System page (Settings, Auditlog) to system admins (is_system_admin()),
+ * or also to anyone holding system/<$or_function> in Security Groups
+ * (System Settings lets Financial Admins in with 'edit_financial_settings').
  * Internal calls such as $this->auditlogger->logevent() are not affected.
  *
  * @param string $module_name The module as it appears in the URL, e.g. 'system-settings'
+ * @param string $or_function A system function that also opens the page, or ''
  * @return void
  */
-function system_admin_only(string $module_name): void {
+function system_admin_only(string $module_name, string $or_function = ''): void {
     if (strcasecmp(segment(1), $module_name) !== 0) {
         return; // called by another module, not visited as a page
     }
 
-    if (HONCHO_MODULE == 1) {
-        $logged_in = !empty($_SESSION['honcho_logged_in']);
-        $allowed   = $logged_in && !empty($_SESSION['honcho_sysadmin']);
-        $home      = 'honcho';
-    } else {
-        $logged_in = !empty($_SESSION['ccmp_logged_in']);
-        $allowed   = $logged_in && !empty($_SESSION['ccmps_system_admin']);
-        $home      = 'welcome-ccmps/ccmphome';
-    }
-
-    if ($allowed) {
+    if (is_system_admin() || ($or_function !== '' && rbac_allowed('system', $or_function))) {
         return;
     }
+
+    $home = HONCHO_MODULE == 1 ? 'honcho' : 'welcome-ccmps/ccmphome';
+    $logged_in = HONCHO_MODULE == 1 ? !empty($_SESSION['honcho_logged_in']) : !empty($_SESSION['ccmp_logged_in']);
     if ($logged_in) {
         set_flashdata('You are not authorized to use that page.');
         redirect($home);
@@ -69,6 +77,28 @@ function system_admin_only(string $module_name): void {
         redirect('welcome-ccmps/ccmphome');
     }
     redirect('welcome/logout'); // not logged in at all
+}
+
+/**
+ * One value from system_settings, by its title (e.g. 'system_current_year',
+ * 'grace_period'). All rows are read once per page. Returns $default when
+ * the row doesn't exist.
+ *
+ * @param string $title   system_settings.title
+ * @param mixed  $default Returned when there is no such row
+ * @param bool   $refresh Read the table again (after a save)
+ * @return mixed
+ */
+function setting(string $title, $default = null, bool $refresh = false) {
+    static $values = null;
+    if ($values === null || $refresh) {
+        $values = array();
+        $model = new Model();
+        foreach ((array) $model->query("SELECT title, settingvalue FROM system_settings", 'object') as $row) {
+            $values[$row->title] = $row->settingvalue;
+        }
+    }
+    return array_key_exists($title, $values) ? $values[$title] : $default;
 }
 
 /**

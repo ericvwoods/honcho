@@ -610,17 +610,12 @@ json($_SESSION); die();
 
 /**************  Extract module settings from table ***************************/
 
-    // Superseded: system_settings id-1/id-2 and ccmps_settings id-1/id-2
-    // lookups. ccmps_financial_settings is now the single title-based
-    // source of truth for these values — see
-    // ccmps_financial_transactions_plan.md. Both legacy session variable
-    // names are still populated (with the same value) since other parts
-    // of the app read one or the other.
-    $fin_setting_obj = $this->model->get_one_where('title', 'system_current_year', 'ccmps_financial_settings');
-    $system_current_year_val = $fin_setting_obj ? intval($fin_setting_obj->settingvalue) : 0;
-
-    $fin_setting_obj = $this->model->get_one_where('title', 'grace_period', 'ccmps_financial_settings');
-    $grace_period_val = $fin_setting_obj ? intval($fin_setting_obj->settingvalue) : 0;
+    // The financial settings live in system_settings (Financial tab of System
+    // Settings; moved there from ccmps_financial_settings 2026-10-22), read by
+    // title with setting(). Both legacy session variable names are still
+    // populated (with the same value) since other parts of the app read one or the other.
+    $system_current_year_val = intval(setting('system_current_year', 0));
+    $grace_period_val        = intval(setting('grace_period', 0));
 
     $_SESSION['system_current_year'] = $system_current_year_val;
     $_SESSION['system_grace_period'] = $grace_period_val;

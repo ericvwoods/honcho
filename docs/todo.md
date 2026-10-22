@@ -43,7 +43,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [x] Every DMS file upload gave a 500: `$this->file->upload()` (stock v2 File module) doesn't exist here, and two `$this->dmslibrary->viewdocrec()` self-calls crashed. New `_upload_doc()` in `Dmslibrary.php`; Mac upload folders made writable (2026-10-18).
 - [ ] DMS: replacing the file on a document that already has one is unfinished - deliberate `echo(6233); die();` / `echo(4812); die();` stops in `submit_upload()`, and its duplicate check (`isset()` on `false`) always says "already associated". First uploads work.
 - [x] Saving a new DMS document gave a 500: `document_id` required with no default (strict mode). Default `''` added in the step 4 script; the document form's copied delete pop-up crashed on an unset `$attr_close` (2026-10-18).
-- [ ] RBAC step 6 (later): delete the unused `system_settings` row 16 (`PM_SYS_SETTING_ID`) along with the old `pm_*` security tables.
+- [ ] RBAC step 6 (later): delete the old `pm_*` security tables. (`system_settings` row 16, `PM_SYS_SETTING_ID`, was deleted 2026-10-22 in settings phase 1.)
 - [x] RBAC step 4: decide what DMS functions Chapter Admins need (the dmslibsubadmin role has none in the tables; it's handled in code today). Decided 2026-10-18: manage their own chapter's documents (all DMS functions, own chapter only).
 - [ ] Creating a member inserts into `trongate_users` with columns this database doesn't have (`user_level_id`, `user_acct_info_table`, `code`; this table has `title`, `login_acct_table_id`, `login_acct_info_table`) - `Ccmps.php` ~3285 and ~3978. Check the real BPA `trongate_users` before go-live: RBAC and member creation must agree on one shape.
 - [x] Staff DMS checks in `Dmslibrary.php` look for staff security groups 5-8, which don't exist. Turned out to be commented out (dead code), 2026-10-18.
@@ -110,6 +110,17 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Last: Event Module - rewrite registration's hard-coded events (Skyhook, General Meeting, Board Meeting) to use `events` with an `event_activities` child table; the calendar keeps reading `events`.
     - Who hosts (owner's notes, 2026-10-21): **Operation Skyhook** and the **Summer Flight Academy** are national events. The **General Membership Meeting** and the **National Board Meeting** rotate between chapters, and the registration money goes **directly to the host chapter**.
     - So an event needs a host (National or a chapter, `events.subentity_id`), and registration must take payment into the host's account: the host chapter's payment-acceptance details (payment account / processor settings, payee, contact) need a home, probably on the Chapters screen (`ccmps_subentities`, next to `financial_email` / `financial_contact`), with National's own details for national events. Keep payment secrets out of the database in plain text.
+
+## Settings (plan approved 2026-10-22)
+
+[Honcho Settings Plan](https://claude.ai/artifact/1duFrj6djyVgxZdH8xMJtW): every setting in one home (`.env`, `config.php`, or `system_settings` with a screen). Sign-off after each phase.
+- [x] Phase 1 (built 2026-10-22, not yet deployed): `system_settings` gains label/category/input_type/options/rbac_function/help/sort_order; the four financial settings moved in from `ccmps_financial_settings` (Financial tab); new Financial Admins group and member role (`ccmps.financial_admin`); System Settings rebuilt as tabs, each person sees only what they may change; saving the year or grace period re-checks member statuses after a confirmation. Migrations `2026-10-22-settings-phase1.sql`, `2026-10-22-lifetime-members.sql` (both run on the Mac; backup `~/honcho-backups/bpausa-2026-10-22-before-settings-phase1.sql.gz`) and `-drop-old-table.sql` (not run yet).
+- [x] Lifetime members and the status re-check: `current_year` 2099 = lifetime member, always Current (decided 2026-10-22). `recalcstatus()` rule 2, `CCMP_LIFETIME_YEAR` in `config.php`, saving a record keeps 2099; `2026-10-22-lifetime-members.sql` changed the 9999s to 2099 and set lifetime members Current (run on the Mac).
+- [ ] Phase 2: `setting()` in `config.php`; Organization, Wording, Features & Policy tabs; fix `PUBLIC_WEBSITE`; move `CMS_PUBLIC_SITE` / `CMS_MEMBER_BULLETINS` from `.env`.
+- [ ] Phase 3: color schemes (`system_color_schemes`, six roles, picker with a Custom option).
+- [ ] Phase 4: delete the 68 unused constants and duplicate color sets; Configuration chapter of the Developer's Guide.
+- [ ] `Ccmps::recalcstatus()` and `recalc_all_member_statuses()` are public, so anyone can run them from the address bar (`welcome-ccmps/recalc_all_member_statuses`). Make them `_`-prefixed (update the callers) or check permissions.
+- [ ] New members get the password `123456` (`DEFAULT_CCMP_PASSWORD`). Give them a random one and a set-password link (with Forgot password).
 
 ## Small fixes
 

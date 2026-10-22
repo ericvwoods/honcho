@@ -14,7 +14,7 @@
         _rbac_function_list($tg_user_id)        everything one person may do, read once per page
 
   Member admin roles (RBAC step 5) - the roles on the member record (System, Member,
-  Chapter, Student, Content and Event Admin) live in Security Groups;
+  Chapter, Student, Content, Event and Financial Admin) live in Security Groups;
   the ccmps columns are kept as a copy, re-synced after every change:
   rbac_member_roles()                           ccmps/<function> => column, group, session flag
   rbac_member_login($ccmp_id, $create)          the member's login (trongate_users id); can create it
@@ -163,6 +163,7 @@ function rbac_member_roles(): array {
         'student_admin' => array('col' => 'student_admin',   'group' => 'Student Admins',       'session' => 'ccmps_student_admin'),
         'content_admin' => array('col' => 'content_admin',   'group' => 'Content Admins',       'session' => 'ccmps_content_admin'),
         'event_admin'   => array('col' => 'event_admin',     'group' => 'Event Admins',         'session' => 'ccmps_event_admin'),
+        'financial_admin' => array('col' => 'financial_admin', 'group' => 'Financial Admins',   'session' => 'ccmps_financial_admin'),
     );
 }
 

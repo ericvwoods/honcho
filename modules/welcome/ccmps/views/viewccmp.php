@@ -386,6 +386,7 @@
         vf_bool_row(CCMP . ' Admin', 'ccmp_admin', $data);
         vf_bool_row('Content Admin', 'content_admin', $data);
         vf_bool_row('Event Admin', 'event_admin', $data);
+        vf_bool_row('Financial Admin', 'financial_admin', $data);
     ?>
     <?php if ($can_grant_chapter_admin): ?>
         <?php vf_bool_row(SUBENTITY . ' Admin', 'subentity_admin', $data); ?>

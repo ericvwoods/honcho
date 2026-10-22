@@ -82,6 +82,7 @@ const sections = [
     ['`ccmps.student_admin`', 'Student Admins', '`ccmps/student_admin`'],
     ['`ccmps.content_admin` (added 2026-10-20)', 'Content Admins', '`ccmps/content_admin` + `cms/manage_content`'],
     ['`ccmps.event_admin` (added 2026-10-20)', 'Event Admins', '`ccmps/event_admin` + `cms/manage_events`'],
+    ['`ccmps.financial_admin` (added 2026-10-22)', 'Financial Admins', '`ccmps/financial_admin` + `system/edit_financial_settings`'],
   ]},
   { type: 'p', text: "Content manager (2026-10-20, `database/migrations/2026-10-20-cms-content-phase1.sql`): module `cms` has four functions: `manage_content` (sections, items, pictures, Sunshine, Bulletin Board, Marquee, Careers), `manage_events` (every event), `chapter_events` (events for your own chapter) and `chapter_posts` (Sunshine, Bulletin Board and Careers for All Members or your own chapter, and approving your chapter's sticky notes; `2026-10-20-cms-posting-roles.sql`); the last two are given to Chapter Admins. Members' own sticky notes need no function, only `CMS_MEMBER_BULLETINS` = 1. Member System Admins and staff System Admins get `manage_content` and `manage_events`. Staff are given content or event rights by adding them to Content Admins or Event Admins on the Security Groups screen; members get them from the Content Admin / Event Admin checkboxes." },
   { type: 'p', text: "DMS's 36 and Honcho's 41 method-level functions were merged into 12 and 15 actions; each function's description lists the old names it covers. Staff groups take staff logins only and member roles take member logins only, so a stale row can't cross sides. Deceased and deleted members are left out." },
@@ -130,6 +131,22 @@ const sections = [
     "Every change is a POST carrying a per-session token (`$_SESSION['rbac_token']`, checked with `hash_equals`); a page without it saves nothing.",
     "Only function ids of switched-on modules are accepted from the privileges form; ticks for switched-off modules are left as they are.",
     "Every change is written to the Auditlog: `CreateGroup`, `UpdateGroup`, `ActivateGroup`, `DeactivateGroup`, `SetGroupPrivileges` (lists what was added and removed), `AddGroupMember`, `RemoveGroupMember`.",
+  ]},
+]},
+
+// ============================================================
+{ tab: "System Settings", blocks: [
+  { type: 'p', text: "`system-settings` (`modules/system/settings/Settings.php`, rebuilt 2026-10-22, Settings plan phase 1) edits the `system_settings` table, one tab per `category`. Every row says which `system` function is needed to change it (`rbac_function`); the screen shows each person only the tabs and rows they may change, and a save is checked row by row on the server, so a value posted for any other row is ignored. Code reads a setting with `setting('<title>', $default)` (`utilities_helper.php`), all rows read once per page." },
+  { type: 'table', headers: ['Who', 'Function', 'Tabs'], rows: [
+    ['System Admins (`is_system_admin()`: staff sysadmins with `HONCHO_MODULE=1`, member system admins with `0`)', 'none needed', 'Every tab'],
+    ['Financial Admins (group; member role `ccmps/financial_admin` from the Financial Admin tick, staff added on the Security Groups screen)', '`system/edit_financial_settings`', 'Financial only'],
+    ['Anyone given `system/edit_settings`', '`system/edit_settings`', 'Every tab except Financial (nobody has it by default)'],
+  ]},
+  { type: 'ul', items: [
+    "The page gate is `system_admin_only('system-settings', 'edit_financial_settings')`: system admins, or anyone holding that function. The menu link for Financial Admins is **Financial Settings** (member admin menu and staff side menu), shown only to people who aren't system admins.",
+    "**Financial tab:** current membership year (row 1), grace period (row 2), dues payment year, new member dues proration. They moved from `ccmps_financial_settings` (`2026-10-22-settings-phase1.sql`; the old table is dropped by `2026-10-22-settings-phase1-drop-old-table.sql`). Login, `Ccmps::_get_financial_setting()`, the phone API and `cms_helper.php` read them with `setting()`; the staff login still reads rows 1 and 2 by id.",
+    "Saving the current year or grace period goes through a confirmation page, then runs `Ccmps::recalc_all_member_statuses()` and reports how many members' status changed (`RecheckMemberStatuses` in the Auditlog). Lifetime members (year 2099, `CCMP_LIFETIME_YEAR`) always stay Current (`2026-10-22-lifetime-members.sql`). Each changed row is logged as `UpdateSetting` with the old and new value.",
+    "Input types (`input_type`): `text`, `yesno` (On/Off), `year` (2000-2100), `number`, `fraction` (0 to 1), `select` (`options` = `value=Label;value=Label`). New settings come in with migrations, not on the screen: a setting does nothing until code reads it.",
   ]},
 ]},
 

@@ -412,6 +412,7 @@ $can_grant_chapter_admin = $is_system_admin
     <div class="form-group col-md-2"><label><input type="checkbox" name="ccmp_admin" value="1" <?= !empty($data['ccmp_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> <?= CCMP ?> Admin</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="content_admin" value="1" <?= !empty($data['content_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Content Admin</label></div>
     <div class="form-group col-md-2"><label><input type="checkbox" name="event_admin" value="1" <?= !empty($data['event_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Event Admin</label></div>
+    <div class="form-group col-md-2"><label><input type="checkbox" name="financial_admin" value="1" <?= !empty($data['financial_admin']) ? 'checked' : '' ?> <?= $locked_system ?>> Financial Admin</label></div>
     <?php if ($can_grant_chapter_admin): ?> <!-- not $locked_system: chapter presidents may grant it too -->
     <div class="form-group col-md-2"><label><input type="checkbox" name="subentity_admin" value="1" <?= !empty($data['subentity_admin']) ? 'checked' : '' ?>> <?= SUBENTITY ?> Admin</label></div>
     <?php endif; ?>

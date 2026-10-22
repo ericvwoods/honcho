@@ -180,9 +180,8 @@ function _cms_current_year(): int {
     if (!empty($_SESSION['ccmps_current_year'])) {
         return (int) $_SESSION['ccmps_current_year'];
     }
-    $model = new Model();
-    $row   = $model->get_one_where('title', 'system_current_year', 'ccmps_financial_settings');
-    return ($row && (int) $row->settingvalue > 0) ? (int) $row->settingvalue : (int) date('Y');
+    $year = (int) setting('system_current_year', 0);
+    return $year > 0 ? $year : (int) date('Y');
 }
 
 function cms_media_url(string $file_name): string {

@@ -53,8 +53,8 @@ class Ccmpspermissions extends Trongate {
 
   function _permission_flags() {
     // ccmps column => array(column heading, session variable login sets from it)
-    // library_admin & financial_admin are on ccmps too but nothing reads them
-    // yet - add them here (and to rbac_member_roles()) when something does
+    // library_admin is on ccmps too but nothing reads it
+    // yet - add it here (and to rbac_member_roles()) when something does
     return array(
         'system_admin'    => array('System Admin',        'ccmps_system_admin'),
         'ccmp_admin'      => array(CCMP.' Admin',         'ccmps_ccmp_admin'),
@@ -62,6 +62,7 @@ class Ccmpspermissions extends Trongate {
         'student_admin'   => array('Student Admin',       'ccmps_student_admin'),
         'content_admin'   => array('Content Admin',       'ccmps_content_admin'),
         'event_admin'     => array('Event Admin',         'ccmps_event_admin'),
+        'financial_admin' => array('Financial Admin',     'ccmps_financial_admin'),
     );
   }
 

@@ -48,6 +48,7 @@
 // Chapter President alone (subentity_role 1) has no section, so it no longer opens an empty menu.
 $has_admin_menu = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_admin'])
     || !empty($_SESSION['ccmps_subentity_admin']) || rbac_allowed('cms', 'manage_content') || rbac_allowed('cms', 'manage_events')
+    || rbac_allowed('system', 'edit_financial_settings')
     || !empty($_SESSION['honcho_trainer']) || !empty($_SESSION['honcho_all_modules'])
     || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_ccmps_module_ccmps'])
     || !empty($_SESSION['honcho_ccmps_module_subentities']) || !empty($_SESSION['honcho_ccmps_module_cms']);
@@ -175,6 +176,9 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 <?php endif; ?>
 
 <!-- <php endif; ?> -->
+<?php if(!is_system_admin() && rbac_allowed('system', 'edit_financial_settings')): ?> <!-- Financial Admins: only the Financial tab of System Settings -->
+            <li><a href="<?= BASE_URL ?>system-settings/manage/financial"><i class="fa fa-usd"></i> <span class="nav-label">Financial Settings</span></a></li>
+<?php endif; ?>
 <?php if($_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1): ?>
 
             <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> System Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->

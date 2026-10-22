@@ -77,6 +77,7 @@ define('CCMPS','Members'); // Customers, Clients, Members, Participants
 define('CCMPS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
 define('SUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('SUBENTITIES','Chapters'); // subentities
+define('CCMP_LIFETIME_YEAR', 2099); // current_year of lifetime members: always Current (status 1); recalcstatus() and the dues year check in ccmpsubmit()
 define('SUBENTITY_NATIONAL_ID', 99); // ccmps_subentities row for National HQ: not a chapter - hidden from the Chapters screen, never counted (0 = none). Why it exists is on docs/todo.md
 define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
 define('CCMPSSUBENTITIES','Chapters'); // subentities

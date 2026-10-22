@@ -551,7 +551,7 @@ class Api extends Trongate {
         // request, since this was previously missing here, meaning a
         // lapsed member would still show up in their own chapter's
         // roster despite already correctly disappearing from Directory.
-        $system_current_year = (int) ($this->model->get_where(1, 'system_settings')->settingvalue ?? date('Y'));
+        $system_current_year = (int) setting('system_current_year', date('Y'));
 
         $sql = "
             SELECT c.id, c.first_name, c.last_name,
@@ -602,7 +602,7 @@ class Api extends Trongate {
             return;
         }
 
-        $system_current_year = (int) ($this->model->get_where(1, 'system_settings')->settingvalue ?? date('Y'));
+        $system_current_year = (int) setting('system_current_year', date('Y'));
 
         $sql = "
             SELECT c.id, c.first_name, c.last_name,

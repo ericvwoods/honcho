@@ -28,6 +28,7 @@ const guide = [
   ]},
 
   { part: 'Part III: Installation & Configuration', chapters: [
+    { title: 'Developer Workstation (VS Code & Claude Code)', sections: require('./chapters/workstation.js') },
     { title: 'Deploying on DigitalOcean',    sections: require('./chapters/deployment.js') },
     // Planned: Configuration — the config folder, defaults, and what
     // to change for a new client.

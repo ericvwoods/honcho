@@ -1599,7 +1599,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         'minor', 'student', 'active_duty', 'former_military', 'eligible_voter', 'deceased',
         'donotcall', 'emailoptout', 'directoryoptout', 'mail_notices', 'vip',
         // admin-only — see guard below
-        'system_admin', 'student_admin', 'subentity_admin', 'ccmp_admin', 'content_admin', 'event_admin',
+        'system_admin', 'student_admin', 'subentity_admin', 'ccmp_admin', 'content_admin', 'event_admin', 'financial_admin',
         'locked', 'inactive', 'approved', 'soft_deleted'
     ];
 
@@ -1681,7 +1681,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
 
     if (!$is_system_admin) {
         $system_admin_only = [
-            'system_admin', 'student_admin', 'ccmp_admin', 'content_admin', 'event_admin',
+            'system_admin', 'student_admin', 'ccmp_admin', 'content_admin', 'event_admin', 'financial_admin',
             'locked', 'inactive', 'approved', 'soft_deleted'
         ];
         $ccmps_bool_fields = array_diff($ccmps_bool_fields, $system_admin_only);
@@ -1858,7 +1858,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
     // -----------------------------------------------------------------------
     // 2b. DUES YEAR VALIDATION — current_year may only move to the National
     //     Treasurer's currently open dues payment year
-    //     (ccmps_financial_settings.current_dues_pmt_year). See
+    //     (system_settings current_dues_pmt_year). See
     //     ccmps_financial_transactions_plan.md, Section 4, Steps 1-3.
     // -----------------------------------------------------------------------
 
@@ -1889,7 +1889,11 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
 
         $posted_current_year = (int) $ccmps_data['current_year'];
 
-        if ($is_new_member) {
+        if ($posted_current_year >= CCMP_LIFETIME_YEAR) {
+            // Lifetime member (2099): kept as posted, no dues transaction (3a only
+            // creates one for the open dues payment year). recalcstatus() makes them Current.
+            $ccmps_data['current_year'] = CCMP_LIFETIME_YEAR;
+        } elseif ($is_new_member) {
             // Bug fix: a brand-new member's dues year must default to the
             // currently open dues payment year, not system_current_year.
             // Any other posted value is silently corrected to match — a
@@ -8167,22 +8171,21 @@ $user_obj = $this->model->get_one_where('id', $ccmprecid , 'ccmps');
 // ************************  function RECALCSTATUS ************************** //
 
 // ***********************  function _GET_FINANCIAL_SETTING ***************** //
-// ccmps_financial_settings is a title/value table (not id-indexed like the
-// legacy system_settings/ccmps_settings tables it replaces). Look up a
+// The financial settings are rows of system_settings (Financial tab of System
+// Settings; moved from ccmps_financial_settings 2026-10-22). Look up a
 // setting by its title, e.g. 'system_current_year', 'grace_period',
 // 'dues_proration', 'current_dues_pmt_year'.
 function _get_financial_setting($title){
 
-    $row = $this->model->get_one_where('title', $title, 'ccmps_financial_settings');
-    return $row ? $row->settingvalue : null;
+    return setting($title);
 }
 
 // ************************  function RECALCSTATUS ************************** //
 // Triggered after an update or new record save (single-member
 // recalculation — ccmps_financial_transactions_plan.md, Section 6-A).
-// Also call this from recalc_all_member_statuses() for the batch path
-// (Section 6-B), triggered whenever ccmps_financial_settings.
-// system_current_year or grace_period changes.
+// Also called by recalc_all_member_statuses() for the batch path
+// (Section 6-B), which System Settings runs when the current year or
+// grace period is saved.
 function recalcstatus($recid){
 
     $usrobj = $this->model->get_one_where('id', $recid,'ccmps');
@@ -8195,6 +8198,15 @@ function recalcstatus($recid){
     // regardless of dues standing.
     if($usrobj->deceased == 1 || $usrobj->soft_deleted == 1){
         $upddata['status'] = 0; // None
+        $this->model->update($recid, $upddata, 'ccmps');
+        return;
+    }
+
+    // Rule 2 — lifetime members (current_year = CCMP_LIFETIME_YEAR, 2099) are
+    // always Current: they pay no dues, so there is no transaction to check.
+    // (9999 meant the same and was changed to 2099 on 2026-10-22.)
+    if((int) $usrobj->current_year >= CCMP_LIFETIME_YEAR){
+        $upddata['status'] = 1; // Current
         $this->model->update($recid, $upddata, 'ccmps');
         return;
     }
@@ -8273,7 +8285,7 @@ function recalcstatus($recid){
 
 // ****************  function RECALC_ALL_MEMBER_STATUSES ******************** //
 // Batch recalculation (ccmps_financial_transactions_plan.md, Section 6-B).
-// Call this from wherever ccmps_financial_settings gets saved, but ONLY
+// Called by System Settings (Settings::_recheck_member_statuses()), ONLY
 // when system_current_year or grace_period actually changed value — not on
 // every settings save (e.g. dues_proration or current_dues_pmt_year
 // changing alone doesn't require a full re-scan).

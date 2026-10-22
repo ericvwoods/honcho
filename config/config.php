@@ -15,6 +15,7 @@ Warning: Constant REQUEST_TYPE already defined in /home/bpapilots/bpauat/engine/
 
 // Environment Specific - values come from .env (see config/env.php and .env.example)
 require_once __DIR__.'/env.php';
+require_once __DIR__.'/settings.php'; // setting('<title>', default): values from the System Settings screen
 define('BASE_URL', env('BASE_URL', 'http://localhost/bpausa/'));
 
 // API
@@ -40,55 +41,55 @@ define('VERSION_RELEASE', '1.0');
 define('ADDRDB_STRUCTURE', 0); // 0 = multi in one table 1 = simple is only mail & phys in table
 
 // Organization Specific
-define('SITENAME','Black Pilots of America'); // honcho
-define('SITENAME2','Enterprise Management System'); // CORE, MVP
-define('SITENAME3','Enterprise Mgmt System'); // honcho/views/inspinia/login
-define('SITENAME4','Member Portal'); // welcome/views/security/login
-define('SHORTSITENAME','BPA'); //
-define('SHORTSITENAME2','EMS'); // second factor entry page
+define('SITENAME', setting('SITENAME', 'Black Pilots of America')); // honcho
+define('SITENAME2', setting('SITENAME2', 'Enterprise Management System')); // CORE, MVP
+define('SITENAME3', setting('SITENAME3', 'Enterprise Mgmt System')); // honcho/views/inspinia/login
+define('SITENAME4', setting('SITENAME4', 'Member Portal')); // welcome/views/security/login
+define('SHORTSITENAME', setting('SHORTSITENAME', 'BPA')); //
+define('SHORTSITENAME2', setting('SHORTSITENAME2', 'EMS')); // second factor entry page
 
 // Sysadmin Contact Info
-define('SYS_ADMIN_PHONE', '202.207.5353');
+define('SYS_ADMIN_PHONE', setting('SYS_ADMIN_PHONE', '202.207.5353'));
 define('DEVEMAIL', 'ericvwoods@hotmail.com'); // if WHATDEV = dev the will use this email address for testing.
 // login header.php EXT_WEBSITE, SITENAME, FACEBOOK_URL, TWITTER_URL, YOUTUBE_URL
 define('WEBEMAIL', 'ericvwoods@hotmail.com'); // webmaster email for 404 page
 
 // honcho
 define('USERS_IDNUM_REQ', 0); // user accts must have employee number
-define('HONCHOUSER','Staffer'); // Employee, User, Staffer
-define('HONCHOUSERS','Staff'); // Employees, Users, Staff
+define('HONCHOUSER', setting('HONCHOUSER', 'Staffer')); // Employee, User, Staffer
+define('HONCHOUSERS', setting('HONCHOUSERS', 'Staff')); // Employees, Users, Staff
 define('USERS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
 define('USERS_JUMBO_IMG','gaye318x326.jpg');
 
 // SECOND FACTOR SETTINGS
 // if user community has limitations on texting or email (perhaps a minor)can use a table field. Each user table has a "second factor" field that can be used like high school mascot
 define('CCMPS_RBAC', 1); // Use RBAC vs. CCMPrecord for super user priviledges
-define('CCMP_SECOND_FACTOR_NAME','Member Number'); // High School Mascot
+define('CCMP_SECOND_FACTOR_NAME', setting('CCMP_SECOND_FACTOR_NAME', 'Member Number')); // High School Mascot
 define('CCMP_SECOND_FACTOR_FIELD_NAME','id_number'); // second_factor
-define('SYSTEM_SECOND_FACTOR_NAME','Verification Code'); //
+define('SYSTEM_SECOND_FACTOR_NAME', setting('SYSTEM_SECOND_FACTOR_NAME', 'Verification Code')); //
 define('SYSTEM_SECOND_FACTOR_FIELD_NAME','second_factor'); // second_factor
 
 define('WELCOME_BYPASS_2ND_FACTOR', false); //
 define('USERS_BYPASS_2ND_FACTOR', false); //
 
 // CCMPS Nomenclature
-define('CCMP','Member'); // Customer, Client, Member, Participant
-define('CCMPS','Members'); // Customers, Clients, Members, Participants
+define('CCMP', setting('CCMP', 'Member')); // Customer, Client, Member, Participant
+define('CCMPS', setting('CCMPS', 'Members')); // Customers, Clients, Members, Participants
 define('CCMPS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
-define('SUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
-define('SUBENTITIES','Chapters'); // subentities
+define('SUBENTITY', setting('SUBENTITY', 'Chapter')); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
+define('SUBENTITIES', setting('SUBENTITIES', 'Chapters')); // subentities
 define('CCMP_LIFETIME_YEAR', 2099); // current_year of lifetime members: always Current (status 1); recalcstatus() and the dues year check in ccmpsubmit()
 define('SUBENTITY_NATIONAL_ID', 99); // ccmps_subentities row for National HQ: not a chapter - hidden from the Chapters screen, never counted (0 = none). Why it exists is on docs/todo.md
-define('CCMPSSUBENTITY','Chapter'); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
-define('CCMPSSUBENTITIES','Chapters'); // subentities
-define('CMS_PUBLIC_SITE', (int) env('CMS_PUBLIC_SITE', 0)); // 1 = the site's front address shows the Website (welcome/website); 0 = it goes to the login (the organization uses an outside site, PUBLIC_WEBSITE)
-define('CMS_MEMBER_BULLETINS', (int) env('CMS_MEMBER_BULLETINS', 1)); // 1 = any logged-in member may post sticky notes on the Bulletin Board (moderated by Chapter, Content and System Admins)
-define('CMS_LABEL','Website'); // menu name for the content manager (module cms) - Website, Web Pages, Our Site etc
+define('CCMPSSUBENTITY', SUBENTITY); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
+define('CCMPSSUBENTITIES', SUBENTITIES); // subentities
+define('CMS_PUBLIC_SITE', (int) setting('CMS_PUBLIC_SITE', 0)); // 1 = the site's front address shows the Website (welcome/website); 0 = it goes to the login (the organization uses an outside site, PUBLIC_WEBSITE)
+define('CMS_MEMBER_BULLETINS', (int) setting('CMS_MEMBER_BULLETINS', 1)); // 1 = any logged-in member may post sticky notes on the Bulletin Board (moderated by Chapter, Content and System Admins)
+define('CMS_LABEL', setting('CMS_LABEL', 'Website')); // menu name for the content manager (module cms) - Website, Web Pages, Our Site etc
 
 // CCMPSHOME
 define('SHOW_MARQUEE', 1);
-define('HOTLINK', '#'); // '#' if no active link
-define('HOTLINKLABEL', 'Register'); // General Meeting Registration, Skyhook Registration
+define('HOTLINK', setting('HOTLINK', '#')); // '#' if no active link
+define('HOTLINKLABEL', setting('HOTLINKLABEL', 'Register')); // General Meeting Registration, Skyhook Registration
 
 // Color Branding
 define('SP_CLR','lightseagreen'); // site primary color
@@ -145,10 +146,10 @@ define('PLAIN_LOGO',''); // welcome_module/images/xyz100x82.jpg
 
 // Social Media
 //define('EXT_WEBSITE','https://www');
-define('PUBLIC_WEBSITE','https://www.sgapleaders.org'); // https://www.bpapilots.org
-define('FACEBOOK_URL','');
-define('TWITTER_URL','');
-define('YOUTUBE_URL','');
+define('PUBLIC_WEBSITE', setting('PUBLIC_WEBSITE', 'https://www.bpapilots.org')); // the organization's public website (was sgapleaders.org by mistake until 2026-10-22)
+define('FACEBOOK_URL', setting('FACEBOOK_URL', ''));
+define('TWITTER_URL', setting('TWITTER_URL', ''));
+define('YOUTUBE_URL', setting('YOUTUBE_URL', ''));
 
 // CCMPSHOME COLORS
 define('CCMPS_JUMBO_IMG','gaye318x326.jpg');
@@ -190,11 +191,11 @@ define('MODULE_ASSETS_TRIGGER', '_module');
 
 // Security Settings
 define('AUDITLOGGER', 1); // Auditlogging Level 1 = log everything
-define('MINPWLGTH', 6); // password length used in layoutone.php - change password modal - used by ccmps view
+define('MINPWLGTH', (int) setting('MINPWLGTH', 6)); // password length used in layoutone.php - change password modal - used by ccmps view
 define('DEFAULT_CCMP_PASSWORD','$2y$11$0vmDNooSnMscr6MRK./fuewANo6F2GkHfpMuPr/XzsltWBuOe0e5K'); // 123456
 define('DEFAULT_USRNMEQEMAIL', 1); // 1 = TRUE 0 = FALSE CCMP
 define('HONCHO_DEFAULT_USRNMEQEMAIL', 0); // 1 = TRUE 0 = FALSE CCMP
-define('FORCE_PW_CHG_NEW_CCMP','1'); // 1 = TRUE 0 = FALSE
+define('FORCE_PW_CHG_NEW_CCMP', setting('FORCE_PW_CHG_NEW_CCMP', '1')); // 1 = TRUE 0 = FALSE
 define('SKIP_CHG_DEFAULT_USERNAME', 1); // Skip the page that allows changing the default username & Force PW Reset
 define('SKIP_NEW_ACCT_CONFIRMATION', 1); // Skip showing the acct added to the users record and return to manage page
 define('DEFAULT_CCMP_USER_LEVEL','7'); // 7 = CCMP
@@ -221,10 +222,10 @@ define('CCMPS_FL_REJECT_LEVEL', 12); // access level must be greater than to rej
 
 // DMS Filelibrary
 
-define('DMS_FL_TAG1','Organization'); // Tag 1 - limit to 14 characters if possible
-define('DMS_SUBENTITY','School'); // Subentity
-define('DMS_FL_TAG2','Category'); // Tag 2
-define('DMS_FL_TAG3','Type'); // Tag 3
+define('DMS_FL_TAG1', setting('DMS_FL_TAG1', 'Organization')); // Tag 1 - limit to 14 characters if possible
+define('DMS_SUBENTITY', setting('DMS_SUBENTITY', 'School')); // Subentity
+define('DMS_FL_TAG2', setting('DMS_FL_TAG2', 'Category')); // Tag 2
+define('DMS_FL_TAG3', setting('DMS_FL_TAG3', 'Type')); // Tag 3
 define('DMS_FL_SAVE_BAK', 1); // rename .bak vs. overwrite if same name
 define('DMS_FL_APPROVE_LEVEL', 12); // access level must be greater than to approve document
 define('DMS_FL_REJECT_LEVEL', 12); // access level must be greater than to reject document
@@ -234,12 +235,12 @@ define('DMS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
 // Also in system_settings table and in Dmslibrary _constructor as session variable
 //define('DMS_KBB_SHOW_HDR0', 1); // show 1st column - true/false
 //define('DMS_KBB_SHOW_HDR5', 1); // show 6th column - true/false
-define('DMS_KBB_HDR0', 'Unrefined (not ready to work)'); // Kanban Board Column Header 6 status id
-define('DMS_KBB_HDR1', 'Backlog (ready to assign)'); // Kanban Board Column Header 5 status id
-define('DMS_KBB_HDR2', 'In Progress'); // Kanban Board Column Header 4 status id
-define('DMS_KBB_HDR3', 'In Review'); // Kanban Board Column Header 3 status id
-define('DMS_KBB_HDR4', 'Pending Approval'); // Kanban Board Column Header 2 status id
-define('DMS_KBB_HDR5', 'Approved'); // Kanban Board Column Header 1 status id
+define('DMS_KBB_HDR0', setting('DMS_KBB_HDR0', 'Unrefined (not ready to work)')); // Kanban Board Column Header 6 status id
+define('DMS_KBB_HDR1', setting('DMS_KBB_HDR1', 'Backlog (ready to assign)')); // Kanban Board Column Header 5 status id
+define('DMS_KBB_HDR2', setting('DMS_KBB_HDR2', 'In Progress')); // Kanban Board Column Header 4 status id
+define('DMS_KBB_HDR3', setting('DMS_KBB_HDR3', 'In Review')); // Kanban Board Column Header 3 status id
+define('DMS_KBB_HDR4', setting('DMS_KBB_HDR4', 'Pending Approval')); // Kanban Board Column Header 2 status id
+define('DMS_KBB_HDR5', setting('DMS_KBB_HDR5', 'Approved')); // Kanban Board Column Header 1 status id
 
 // DMS Sizes & Colors
 define('DMS_CRUD_IBOX_HDR_CLR','crimson'); // Tag 3

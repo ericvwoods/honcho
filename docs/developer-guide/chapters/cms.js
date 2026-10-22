@@ -50,7 +50,7 @@ const sections = [
     ['`cms/chapter_events`', 'Events for your own chapter', 'Chapter Admins'],
     ['`cms/chapter_posts`', 'Sunshine, Bulletin Board and Careers posts for All Members or your own chapter (never Public); approve, hold back or disapprove your chapter\'s sticky notes', 'Chapter Admins'],
   ]},
-  { type: 'p', text: "Any member may post Bulletin Board sticky notes while `CMS_MEMBER_BULLETINS` is 1 (`.env`, default 1; set 0 where the CCMPS records are customers who shouldn't post). No group is needed." },
+  { type: 'p', text: "Any member may post Bulletin Board sticky notes while `CMS_MEMBER_BULLETINS` is 1 (System Settings > Features & Policy since 2026-10-22, default 1; set 0 where the CCMPS records are customers who shouldn't post). No group is needed." },
   { type: 'p', text: "Members get Content Admins / Event Admins from the **Content Admin** and **Event Admin** checkboxes on their record or the Member Permissions screen (roles in `rbac_member_roles()`, columns `ccmps.content_admin` / `event_admin` kept as a synced copy; session flags `ccmps_content_admin` / `ccmps_event_admin`). Staff are added to those groups on the Security Groups screen, until the Staff Account screen exists." },
   { type: 'p', text: "Every `cms-content` page except `job`, the event pages (`_event_scope()`) and the post pages (`_post_scope()`, see Content Manager Screens) calls `_check_access()`: logged in with either login (`trongatetoken`) and `rbac_allowed('cms', 'manage_content')`; otherwise back to the member home or staff dashboard with a message. The old `ccmps_cms_admin` session flag is no longer used for menus; `refreshmysessiondata` still sets it, from `content_admin`, for the one legacy check in `Ccmps::_check_function_permissions()`." },
 ]},
@@ -85,7 +85,7 @@ const sections = [
     ['`Welcome::job()`', '`welcome/job/{id}`: a public job page (Careers post that is shown, public and inside its dates; otherwise back to the Careers section). View `websitejob.php`. The Careers section links here on the public site and to `cms-content/job/{id}` on the member home (`$cms_job_url`)'],
     ['`Welcome::index()`', 'The front address. `CMS_PUBLIC_SITE` = 1 shows the website; 0 (the default) goes to the login as before. `welcome/website` always works, so the site can be built and checked before it is switched on'],
     ['`modules/templates/views/website.php`', '`Templates::website()`: a full page with the Inspinia landing styles, `<body id="page-top" class="landing-page">`, and only the scripts the page needs (jQuery, Bootstrap, scroll / scrollspy / sticky header, WOW). `$page_title` and `$page_description` fill the title and meta description'],
-    ['`CMS_PUBLIC_SITE`', 'In `config/config.php`, read from `.env` (`CMS_PUBLIC_SITE=1`), per install. BPA keeps 0 while bpapilots.org (WordPress, `PUBLIC_WEBSITE`) is its public site'],
+    ['`CMS_PUBLIC_SITE`', 'System Settings > Features & Policy ("Public website on this site"; moved from `.env` 2026-10-22), read by `config/config.php` with `setting()`. BPA keeps 0 while bpapilots.org (WordPress, `PUBLIC_WEBSITE`) is its public site'],
   ]},
   { type: 'ul', items: [
     "The page's menu shows **" + "Member Login** on the public site (**Member Home** when already logged in); the brand is `SHORTSITENAME` alone (the member home adds `SITENAME4`).",

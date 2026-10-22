@@ -15,6 +15,9 @@
   they may change, and a save is checked row by row on the server.
   Saving the current year or grace period re-checks every member's status
   (Ccmps::recalc_all_member_statuses()) after a confirmation page.
+  Phase 2 (2026-10-22) added the Organization, Wording, Features & Policy and Look
+  tabs: config.php defines those constants with setting() (config/settings.php),
+  so a change shows on the next page.
 
   __construct()
         system_admin_only('system-settings', 'edit_financial_settings')
@@ -68,8 +71,8 @@
        settingvalue      (varchar 255)
        type              (varchar 255)  old column, not used by the screen
        category          (varchar 32)   the screen's tab: Financial, DMS, ...
-       input_type        (varchar 16)   text, yesno, year, number, fraction (0 to 1), select
-       options           (varchar 255)  select choices, value=Label;value=Label
+       input_type        (varchar 16)   text, yesno, year, number, fraction (0 to 1), url, phone, select
+       options           (varchar 255)  select choices, value=Label;value=Label; for number a range, e.g. 6-64
        rbac_function     (varchar 64)   system function needed to change it
        description, help (varchar 255)  help is shown under the input
        sort_order        (int)
@@ -307,8 +310,17 @@ class Settings extends Trongate {
                 return in_array($value, array('0', '1'), true) ? '' : $label.' must be On or Off.';
             case 'year':
                 return (ctype_digit($value) && (int) $value >= 2000 && (int) $value <= 2100) ? '' : $label.' must be a year, e.g. '.date('Y').'.';
-            case 'number':
-                return preg_match('/^-?\d+$/', $value) ? '' : $label.' must be a whole number.';
+            case 'number': // options can give a range, e.g. '6-64'
+                if(!preg_match('/^-?\d+$/', $value)){ return $label.' must be a whole number.'; }
+                if(preg_match('/^(-?\d+)-(-?\d+)$/', (string) $row->options, $range) && ((int) $value < (int) $range[1] || (int) $value > (int) $range[2])){
+                    return $label.' must be from '.$range[1].' to '.$range[2].'.';
+                }
+                return '';
+            case 'url': // blank, '#' (none) or a full web address
+                if($value === '' || $value === '#'){ return ''; }
+                return (filter_var($value, FILTER_VALIDATE_URL) && preg_match('#^https?://#i', $value)) ? '' : $label.' must be a full web address starting with https://, or blank.';
+            case 'phone':
+                return ($value === '' || preg_match('/^[0-9 ().+\-]{7,25}$/', $value)) ? '' : $label.' must be a phone number (digits, spaces, dots, dashes).';
             case 'fraction':
                 return (is_numeric($value) && (float) $value >= 0 && (float) $value <= 1) ? '' : $label.' must be a number from 0 to 1, e.g. 0.75.';
             case 'select':
@@ -316,8 +328,9 @@ class Settings extends Trongate {
                     if(trim(explode('=', $option)[0]) === $value){ return ''; }
                 }
                 return $label.': choose one of the listed values.';
-            default: // text
+            default: // text - shown straight into pages, so no < or >
                 if($value === ''){ return $label.' can\'t be blank.'; }
+                if(strpbrk($value, '<>') !== false){ return $label.' can\'t contain the less-than or greater-than sign.'; }
                 return mb_strlen($value) <= 255 ? '' : $label.' is too long (255 characters at most).';
         }
     }

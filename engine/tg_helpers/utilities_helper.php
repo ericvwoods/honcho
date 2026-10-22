@@ -79,27 +79,8 @@ function system_admin_only(string $module_name, string $or_function = ''): void 
     redirect('welcome/logout'); // not logged in at all
 }
 
-/**
- * One value from system_settings, by its title (e.g. 'system_current_year',
- * 'grace_period'). All rows are read once per page. Returns $default when
- * the row doesn't exist.
- *
- * @param string $title   system_settings.title
- * @param mixed  $default Returned when there is no such row
- * @param bool   $refresh Read the table again (after a save)
- * @return mixed
- */
-function setting(string $title, $default = null, bool $refresh = false) {
-    static $values = null;
-    if ($values === null || $refresh) {
-        $values = array();
-        $model = new Model();
-        foreach ((array) $model->query("SELECT title, settingvalue FROM system_settings", 'object') as $row) {
-            $values[$row->title] = $row->settingvalue;
-        }
-    }
-    return array_key_exists($title, $values) ? $values[$title] : $default;
-}
+// setting('<title>', $default) - one value from system_settings - is in config/settings.php,
+// because config.php needs it before the database layer is loaded.
 
 /**
  * Outputs the given data as JSON in a prettified format, suitable for debugging and visualization.

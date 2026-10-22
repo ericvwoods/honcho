@@ -23,7 +23,12 @@
           case 'year':
               return '<input type="number" class="form-control m-b" style="'.$style.' max-width: 160px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" min="2000" max="2100" step="1" required>';
           case 'number':
-              return '<input type="number" class="form-control m-b" style="'.$style.' max-width: 200px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" step="1" required>';
+              $range = preg_match('/^(-?\d+)-(-?\d+)$/', (string) $row->options, $m) ? ' min="'.$m[1].'" max="'.$m[2].'"' : '';
+              return '<input type="number" class="form-control m-b" style="'.$style.' max-width: 200px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" step="1"'.$range.' required>';
+          case 'url':
+              return '<input type="text" inputmode="url" class="form-control m-b" style="'.$style.'" name="'.$name.'" id="'.$name.'" value="'.out($value).'" maxlength="255" placeholder="https://">';
+          case 'phone':
+              return '<input type="tel" class="form-control m-b" style="'.$style.' max-width: 260px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" maxlength="25">';
           case 'fraction':
               return '<input type="number" class="form-control m-b" style="'.$style.' max-width: 160px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" min="0" max="1" step="0.01" required>';
           default: // text

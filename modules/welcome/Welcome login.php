@@ -1181,7 +1181,7 @@ try {
     //SMTP username
     $mail->Username = 'noreply.honcho@gmail.com';
     //SMTP password
-    $mail->Password = 'djivvjyuyoytbdvr';
+    $mail->Password = '';
     //Enable implicit TLS encryption
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     //TCP port to connect to; use 587 if you have set 'SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS'

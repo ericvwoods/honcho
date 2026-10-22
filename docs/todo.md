@@ -5,10 +5,10 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## Security — do soon
 
-- [ ] **Revoke the Gmail app password in `Welcome.php` `checkemail()`** (around line 1262) in the Google account, create a new one, and move SMTP settings out of the code.
-- [ ] **Remove the PayPal sandbox logins, passwords and card numbers** from the comments in `config/config.php`; rotate anything still live.
-- [ ] **Remove the `TEMP_2ND_FACTOR` bypass**: `'654321'` is accepted as a second factor by both logins when the session has no code (`Welcome.php` ~429, `Honcho.php` ~1387).
-- [ ] **Call `session_regenerate_id(true)` after a successful login** in both logins (prevents session fixation).
+- [ ] **Revoke the Gmail app password** (noreply.honcho@gmail.com) in the Google account, create a new one and put it in `.env` (`SMTP_PASSWORD`) on the Mac and on staging. Moving the SMTP settings out of the code into `.env` was done 2026-10-22; the old password is still in git history.
+- [x] Remove the PayPal sandbox logins, passwords and card numbers from `config/config.php`. Already gone, and never in git (checked 2026-10-22).
+- [x] Remove the `TEMP_2ND_FACTOR` bypass (`654321`). Done 2026-10-22 in both logins; a blank entry no longer passes for an account with no second factor either (`hash_equals`, blank never matches).
+- [x] `session_regenerate_id(true)` at the start of both `successfullogin()` functions (2026-10-22). Both logins tested on the Mac (staff by Eric).
 - [x] DMS `manage()` takes the user's role from the URL. Fixed 2026-10-11 (`_get_dms_role()`), tested 2026-10-16.
 
 ## Login & accounts

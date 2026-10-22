@@ -438,8 +438,6 @@ print_r($getenv("REMOTE_ADDR");); die();
 //    echo('<br>');
 //   print_r($second_factor); die(); // strips off leading zeros bug! ???
 //
-    // if havent been assigned a second factor like new member with no member number
-    $temp_second_factor = TEMP_2ND_FACTOR;
 /*
 echo('Line 405');
 echo('<br>');
@@ -451,22 +449,14 @@ print_r($_SESSION['second_factor']); // got from DB with successful un/pw ck abo
 json($_SESSION); die();
 */
 
-    // Now you need to validate the second factor input against the correct one
-    if($_SESSION['second_factor'] == $second_factor){// valid second factor
+    // Now you need to validate the second factor input against the correct one.
+    // A blank second factor on record never matches (a blank entry used to pass),
+    // and there is no shared temporary code any more (TEMP_2ND_FACTOR removed 2026-10-22):
+    // an account with no second factor can't log in until one is set on its record.
+    $correct_second_factor = isset($_SESSION['second_factor']) ? (string) $_SESSION['second_factor'] : '';
+
+    if(strlen($correct_second_factor) > 0 AND hash_equals($correct_second_factor, (string) $second_factor)){  // valid second factor
 //echo(256); die();
-        $this->successfullogin();
-
-    }
-
-    // if the second factor comes from the acct_table but it is blank
-    // did the user put in the correct temporary second factor set
-    // in the config file. This way temp second factor only works if you dont
-    // have one and wont override one you should be using.
-    // commonly used when a new member application has not been approved yet so
-    // they dont have a member number yet when member number is the 2nd factor
-
-    if(strlen($_SESSION['second_factor']) == 0 AND TEMP_2ND_FACTOR == $second_factor){  // valid second factor
-//echo(269); die();
         $this->successfullogin();
 
     }else{
@@ -502,6 +492,10 @@ json($_SESSION); die();
 // ************************************************************************** //
 
     function successfullogin() {
+
+    // New session id now the login has passed, so an id planted before login
+    // (session fixation) is worthless. Session data is kept.
+    session_regenerate_id(true);
 
     // Successful login at this point!
  // print_r(  $_SESSION['username']); die();
@@ -1201,17 +1195,17 @@ try {
     //Send using SMTP
     $mail->isSMTP();
     //Set the SMTP server to send through
-    $mail->Host = 'smtp.gmail.com';
+    $mail->Host = SMTP_HOST;
     //Enable SMTP authentication
     $mail->SMTPAuth = true;
     //SMTP username
-    $mail->Username = 'noreply.honcho@gmail.com';
+    $mail->Username = SMTP_USERNAME;
     //SMTP password
-    $mail->Password = 'djivvjyuyoytbdvr';
+    $mail->Password = SMTP_PASSWORD; // from .env
     //Enable implicit TLS encryption
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
     //TCP port to connect to; use 587 if you have set 'SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS'
-    $mail->Port = 465;
+    $mail->Port = SMTP_PORT;
 
     //Add a recipient - From inputted email address
     $mail->addAddress('evw123@gmail.com');

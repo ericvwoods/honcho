@@ -70,7 +70,6 @@ define('SYSTEM_SECOND_FACTOR_FIELD_NAME','second_factor'); // second_factor
 
 define('WELCOME_BYPASS_2ND_FACTOR', false); //
 define('USERS_BYPASS_2ND_FACTOR', false); //
-define('TEMP_2ND_FACTOR','654321'); //
 
 // CCMPS Nomenclature
 define('CCMP','Member'); // Customer, Client, Member, Participant
@@ -277,6 +276,12 @@ define('CURRENCY_SYMBOL','$');
 define('BREVO_SMTP_KEY', env('BREVO_SMTP_KEY', ''));
 define('BREVO_API_KEY', env('BREVO_API_KEY', ''));
 define('SYNC_BREVO', (int) env('SYNC_BREVO', 0)); // 1 = SYNC, 0 no sync
+
+// SMTP email (forgot password); the password lives in .env, never in code
+define('SMTP_HOST', env('SMTP_HOST', 'smtp.gmail.com'));
+define('SMTP_PORT', (int) env('SMTP_PORT', 465));
+define('SMTP_USERNAME', env('SMTP_USERNAME', ''));
+define('SMTP_PASSWORD', env('SMTP_PASSWORD', ''));
 
 // PayPal Integration
 define('PAYPAL_IPN','');  // "ON" or not. If ON paypal.php with save order, if not, thankyou.php will save order

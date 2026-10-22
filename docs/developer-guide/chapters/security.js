@@ -133,6 +133,21 @@ const sections = [
   ]},
 ]},
 
+// ============================================================
+{ tab: "Login Hardening", blocks: [
+  { type: 'p', text: "Fixes made to both logins (member `welcome`, staff `honcho`) on 2026-10-22, ahead of go-live." },
+  { type: 'h2', text: 'Second Factor' },
+  { type: 'ul', items: [
+    "`secondfactor_check()` in `Welcome.php` and `Honcho.php` compares the entry with the value on record using `hash_equals`, and a blank value on record never matches. Before, a blank entry passed for an account with no second factor (blank equals blank).",
+    "The shared temporary code (`TEMP_2ND_FACTOR`, `654321`, in `config.php`) is gone. It let anyone with no second factor on record in with a code that never changed. An account with no second factor now can't log in until one is set on its record (for members, the member number, `ccmp_number`).",
+    "The real second factor (a one-time code by text or email) is still on the to-do list.",
+  ]},
+  { type: 'h2', text: 'New Session Id at Login' },
+  { type: 'p', text: "Both `successfullogin()` functions start with `session_regenerate_id(true)`: the session keeps its data but gets a new id, and the old id stops working. A session id planted in someone's browser before they log in (session fixation) is then worthless. The phone app's `mobile_bridge()` ends in the member `successfullogin()`, so it is covered too." },
+  { type: 'h2', text: 'No Passwords in Code' },
+  { type: 'p', text: "The forgot-password email (`Welcome::checkemail()`) had a Gmail app password written in the code. Its settings now come from `.env` (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`) through constants of the same names in `config.php`. The old password is still in git history, so it must be revoked in the Google account and replaced." },
+]},
+
 ];
 
 module.exports = sections;

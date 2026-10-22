@@ -1351,8 +1351,6 @@ function _hash_string($str){
     // get posted input from the second factor form
     $second_factor  = post('second_factor', true);
 
-    // if havent been assigned a second factor like new member with no member number
-    $temp_second_factor = TEMP_2ND_FACTOR;
 
     if(WELCOME_BYPASS_2ND_FACTOR == true){
 
@@ -1370,22 +1368,14 @@ echo('Correct 2nd Factor: ');
 print_r($_SESSION['second_factor']); die(); // got from DB with successful un/pw ck above
 */
 
-    // Now you need to validate the second factor input against the correct one
-    if($_SESSION['second_factor'] == $second_factor){// valid second factor
+    // Now you need to validate the second factor input against the correct one.
+    // A blank second factor on record never matches (a blank entry used to pass),
+    // and there is no shared temporary code any more (TEMP_2ND_FACTOR removed 2026-10-22):
+    // an account with no second factor can't log in until one is set on its record.
+    $correct_second_factor = isset($_SESSION['second_factor']) ? (string) $_SESSION['second_factor'] : '';
+
+    if(strlen($correct_second_factor) > 0 AND hash_equals($correct_second_factor, (string) $second_factor)){  // valid second factor
 //echo(256); die();
-        $this->successfullogin();
-
-    }
-
-    // if the second factor comes from the acct_table but it is blank
-    // did the user put in the correct temporary second factor set
-    // in the config file. This way temp second factor only works if you dont
-    // have one and wont override one you should be using.
-    // commonly used when a new member application has not been approved yet so
-    // they dont have a member number yet when member number is the 2nd factor
-
-    if(strlen($_SESSION['second_factor']) == 0 AND TEMP_2ND_FACTOR == $second_factor){  // valid second factor
-//echo(269); die();
         $this->successfullogin();
 
     }else{
@@ -1423,6 +1413,10 @@ function successfullogin($id, $db, $remember=null) { // after un & pw authentica
 //equivalent function as the Welcome module successfullogin();
 
 //echo(1422); die();
+    // New session id now the login has passed, so an id planted before login
+    // (session fixation) is worthless. Session data is kept.
+    session_regenerate_id(true);
+
     $this->module('trongate_tokens');
 
     if ($remember == 1) {

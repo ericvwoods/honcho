@@ -75,6 +75,7 @@ const sections = [
     ['`JWT_SECRET`', 'Signs mobile-app login tokens. Make one per install with `openssl rand -hex 32`'],
     ['`DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_DATABASE`', 'Database connection'],
     ['`BREVO_SMTP_KEY`, `BREVO_API_KEY`, `SYNC_BREVO`', 'Email through Brevo; `SYNC_BREVO=1` syncs contacts'],
+    ['`SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`', 'Email for forgot password (Gmail by default: use an app password, never the account password)'],
     ['`HONCHO_MODULE`', '`1` (default) = the Honcho staff back office is deployed, so only staff sysadmins reach System Settings and the Auditlog. `0` = Honcho Lite: member system admins reach them from the member menu.'],
   ]},
   { type: 'h2', text: 'The Docker Image' },

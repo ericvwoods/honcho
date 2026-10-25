@@ -194,7 +194,7 @@
  
     </div> <!-- ibox content page -->
 
-    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
         <script>
         $(document).ready(function(){
 

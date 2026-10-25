@@ -1332,7 +1332,7 @@ value='xxxx' for name='dbtupd' (database to update) honcho/modalresetpw by way o
 <!-- End Content   -->
 
 
-    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script> 
+    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script> 
     
  <!--   <script src="https://code.jquery.com/jquery-3.5.1.js"></script> 
  <script   src="https://cdn.datatables.net/fixedcolumns/4.2.1/js/dataTables.fixedColumns.min.js"></script>

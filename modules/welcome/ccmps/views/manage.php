@@ -204,7 +204,7 @@
      correctly on its own wasn't sufficient, since $(...).DataTable was
      still not a function afterward, meaning the DataTables library tag
      in inspinia.php is apparently just as unreliable as jQuery's was. -->
-<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
 <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/dataTables/datatables.min.js"></script>
 <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/dataTables/dataTables.bootstrap4.min.js"></script>
 

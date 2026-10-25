@@ -174,7 +174,7 @@
     </div> <!-- col-12 -->
 </div> <!-- row -->
 
-<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
 
 <script type="text/javascript">
 $(document).ready(function() {

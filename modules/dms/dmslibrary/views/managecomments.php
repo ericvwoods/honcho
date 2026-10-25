@@ -418,7 +418,7 @@ echo date("m-d-Y H:i a", $t) . "\n" . "\n";
 
 
 <!-- Must load jquery first when locally controlling datatables settings below. OK for datatables js to be in Inspinia template file  -->
-    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
         <script>
         $(document).ready(function(){
 

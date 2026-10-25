@@ -244,7 +244,7 @@ function goToUrl(targetUrl) {
 <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/pdfjs/pdf.js"></script>
 
 <!-- Landing Page scripts -->
-<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
 <script src="<?= BASE_URL ?>themes/inspinia/js/popper.min.js"></script>
 <script src="<?= BASE_URL ?>themes/inspinia/js/bootstrap.js"></script>
 <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/metisMenu/jquery.metisMenu.js"></script>
@@ -259,7 +259,7 @@ function goToUrl(targetUrl) {
 <script defer src="https://unpkg.com/@alpinejs/mask@3.x.x/dist/cdn.min.js"></script>
 <script defer src="https://unpkg.com/alpinejs"></script> -->
 
- <!--    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script> -->
+ <!--    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script> -->
     <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/sweetalert/sweetalert.min.js"></script>
 <!--<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9.6.1/dist/sweetalert2.all.min.js"></script>  -->
  <!--    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.15/dist/sweetalert2.all.min.js"></script> -->

@@ -49,7 +49,7 @@
 <!-- End Content -->
 <br>
 
-<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+<script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
 <script>
     $(document).ready(function(){
         // "Select all" per module; it shows ticked when every box in the module is ticked

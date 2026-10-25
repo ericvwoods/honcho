@@ -123,6 +123,16 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] `Ccmps::recalcstatus()` and `recalc_all_member_statuses()` are public, so anyone can run them from the address bar (`welcome-ccmps/recalc_all_member_statuses`). Make them `_`-prefixed (update the callers) or check permissions.
 - [ ] New members get the password `123456` (`DEFAULT_CCMP_PASSWORD`). Give them a random one and a set-password link (with Forgot password).
 
+## Theme (Inspinia) - decided 2026-10-25
+
+Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bootstrap 5 + a small Honcho stylesheet.
+- [x] Step 1 (2026-10-25, not yet deployed): audit done. Removed 488 unused theme files (120 demo pages, unused plugins in `js/plugins` and `css/plugins`, demo scripts, email templates; 10 MB) with git rm; every file the app references is kept, including `Landing_Page` and `img/landing` (member home, sponsors). (The 290 MB was mostly `Utils/`, 247 MB, ignored by git and never deployed; left alone on the Mac.) jQuery 3.1.1 -> 3.7.1 (checksum matches jquery.com) on the 61 Inspinia pages.
+- [ ] Eric to click-test with jQuery 3.7.1 (menus, DataTables lists, calendar, pop-ups, file upload); then delete the old `public/themes/inspinia/js/jquery-3.1.1.min.js`. To go back: swap the two names in the views.
+- [ ] 5 pages load `js/plugins/bs-custom-file/bs-custom-file-input.min.js`, which was never in the theme (a 404; the file inputs work without it). Remove the reference or add the file.
+- [ ] Other templates load their own old jQuery: janux and `js/` 1.9.1, epona 2.2.3, `Landing_Page` 2.1.1, cool_mobi CDN 1.11.0 / 3.2.1 / 3.5.1. Check which are still used; update or delete them.
+- [ ] Check the Inspinia licence terms: paid themes are usually licensed per end product, and Honcho is planned per client.
+- [ ] Later: a Honcho theme on free Bootstrap 5 (CSS variables, so the color schemes become real variables), keeping Inspinia's look and class names; move screens over as they are touched. Then no theme licence is needed.
+
 ## Small fixes
 
 - [x] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. Rebuilt 2026-10-21 on `ccmps_subentities` (maintenance-table pattern, State and Active added). Still open: whether it gets the staff-only / Lite rule like Settings and the Auditlog.

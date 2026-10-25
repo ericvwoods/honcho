@@ -107,7 +107,7 @@ echo "";}
     </div>
 
     <!-- Mainly scripts -->
-    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.1.1.min.js"></script>
+    <script src="<?= BASE_URL ?>themes/inspinia/js/jquery-3.7.1.min.js"></script>
     <script src="<?= BASE_URL ?>themes/inspinia/js/popper.min.js"></script>
     <script src="<?= BASE_URL ?>themes/inspinia/js/bootstrap.js"></script>
     <script src="<?= BASE_URL ?>themes/inspinia/js/plugins/metisMenu/jquery.metisMenu.js"></script>

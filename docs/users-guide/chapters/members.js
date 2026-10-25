@@ -41,6 +41,7 @@ module.exports = [
     ['**Pending**', "Your credentials or dues payment haven't been checked yet"],
     ['**Expired**', 'Dues unpaid and the grace period is over'],
   ]},
+  { type: 'p', text: "**Lifetime members** have the year **2099** on their Membership tab and are always Current." },
   { type: 'p', text: 'If your status looks wrong after paying, contact your Chapter Admin or the membership officer.' },
 ]},
 

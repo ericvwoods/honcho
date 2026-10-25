@@ -8,7 +8,7 @@
     <div class="col-lg-2">
     <br> 
    <!--    <a href="#" title="fullbulletin">
-           <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+           <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
        </a> -->
     </div>
 
@@ -75,7 +75,7 @@
                         <div class="col-sm-1">
        
                                            <a href="#" title="fullbulletin">
-           <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+           <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
        </a>
           </div>
             <div class="col-sm-4">

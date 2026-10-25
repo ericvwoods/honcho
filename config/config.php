@@ -91,56 +91,57 @@ define('SHOW_MARQUEE', 1);
 define('HOTLINK', setting('HOTLINK', '#')); // '#' if no active link
 define('HOTLINKLABEL', setting('HOTLINKLABEL', 'Register')); // General Meeting Registration, Skyhook Registration
 
-// Color Branding
-define('SP_CLR','lightseagreen'); // site primary color
+// Color Branding - scheme_color('<one of six>', '<Classic color>'): the System Settings > Look color scheme
+// (system_color_schemes). Classic keeps the color written here. Semantic colors (red/green DMS tabs) aren't schemed.
+define('SP_CLR', scheme_color('primary', 'lightseagreen')); // site primary color
 define('SN_FNT_WT',''); // sitename font weight
 define('SN_FNT_SZ', '36px'); // sitename font size
-define('SN_CLR','lightseagreen'); // sitename color - coral, black default, coral, cornflowerblue, lightseagreen
-define('SN2_CLR','crimson'); // sitename color - lightseagreen, black default, coral, cornflowerblue
-define('NB_CLR','lightseagreen'); // Navbar color - coral
+define('SN_CLR', scheme_color('primary', 'lightseagreen')); // sitename color - coral, black default, coral, cornflowerblue, lightseagreen
+define('SN2_CLR', scheme_color('accent', 'crimson')); // sitename color - lightseagreen, black default, coral, cornflowerblue
+define('NB_CLR', scheme_color('primary', 'lightseagreen')); // Navbar color - coral
 
 // CCMP crud
-define('CCMPS_CRUD_IBOX_HDR_CLR','crimson'); // coral
-define('CCMPS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
-define('CCMPS_CRUD_VALUE_CLR','gray'); // coral
+define('CCMPS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'crimson')); // coral
+define('CCMPS_CRUD_LABEL_CLR', scheme_color('label', 'darkgreen')); // lightseagreen
+define('CCMPS_CRUD_VALUE_CLR', scheme_color('value', 'gray')); // coral
 
 // CCMPS Colors
-define('USERS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
-define('USERS_HM_CLPSE_TITLE_CLR','coral'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_TAB_ICON_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
+define('USERS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'coral')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_ICON_CLR', scheme_color('highlight', 'lightseagreen')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 
 // CCMPS Dashboard Colors
-define('USERS_TBL_HDR_CLR','black'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_TBL_DATA_CLR','gray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_TBL_HDR_CLR', scheme_color('label', 'black')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('USERS_TBL_DATA_CLR', scheme_color('value', 'gray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 
 // CCMPS Dashboard Collapse
 define('USERS_HM_CLPSE_OPEN', 0); // first collapse always open
 define('USERS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
-define('USERS_HM_SIDE_MENU_CLR','crimson'); //lightseagreen
-define('USERS_HM_SIDE_ICON_CLR','crimson'); // coral
+define('USERS_HM_SIDE_MENU_CLR', scheme_color('menu', 'crimson')); //lightseagreen
+define('USERS_HM_SIDE_ICON_CLR', scheme_color('menu', 'crimson')); // coral
 
-define('USERS_CCMP_NAME_CLR','lightseagreen');
+define('USERS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('USERS_CCMP_FNT_SZ','28px');
-define('USERS_CRUD_TAB_TITLE_CLR','gray');
+define('USERS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'gray'));
 
-define('USERS_TITLE_CLR','coral');
+define('USERS_TITLE_CLR', scheme_color('highlight', 'coral'));
 define('USERS_TITLE_FNT_SZ','24px');
-define('USERS_SUB_NAME_CLR','lightseagreen');
+define('USERS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('USERS_SUB_FNT_SZ','24px');
 
 // User Crud colors
-define('USERS_CRUD_IBOX_HDR_CLR','coral'); // crimson
-define('USERS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
-define('USERS_CRUD_VALUE_CLR','gray'); // coral
+define('USERS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'coral')); // crimson
+define('USERS_CRUD_LABEL_CLR', scheme_color('label', 'darkgreen')); // lightseagreen
+define('USERS_CRUD_VALUE_CLR', scheme_color('value', 'gray')); // coral
 
 // Logos
-define('MAIN_LOGO','welcome_module/images/bpalogo100x82.jpg'); // welcome_module/images/bpalogo100x82.jpg
-define('HDR_LOGO','welcome_module/images/bpalogo100x82.jpg'); // welcome_module/images/bpalogo100x82.jpg
+define('MAIN_LOGO', setting('MAIN_LOGO', 'welcome_module/images/bpalogo100x82.jpg')); // welcome_module/images/bpalogo100x82.jpg
+define('HDR_LOGO', setting('HDR_LOGO', 'welcome_module/images/bpalogo100x82.jpg')); // welcome_module/images/bpalogo100x82.jpg
 define('SMALL_LOGO','welcome_module/images/');
 define('PLAIN_LOGO',''); // welcome_module/images/xyz100x82.jpg
 
@@ -153,27 +154,27 @@ define('YOUTUBE_URL', setting('YOUTUBE_URL', ''));
 
 // CCMPSHOME COLORS
 define('CCMPS_JUMBO_IMG','gaye318x326.jpg');
-define('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
-define('CCMPS_HM_CLPSE_TITLE_CLR','coral'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_TAB_ICON_CLR','#676a6c'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
+define('CCMPS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'coral')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_ICON_CLR', scheme_color('highlight', '#676a6c')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('CCMPS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 
 define('CCMPS_HM_CLPSE_OPEN', 0); // first collapse always open
 define('CCMPS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
-define('CCMPS_HM_SIDE_MENU_CLR','#1ab394');
-define('CCMPS_HM_SIDE_ICON_CLR','#1ab394'); // coral, crimson, Inspinia green #1ab394
+define('CCMPS_HM_SIDE_MENU_CLR', scheme_color('menu', '#1ab394'));
+define('CCMPS_HM_SIDE_ICON_CLR', scheme_color('menu', '#1ab394')); // coral, crimson, Inspinia green #1ab394
 
-define('CCMPS_CCMP_NAME_CLR','lightseagreen');
+define('CCMPS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('CCMPS_CCMP_FNT_SZ','28px');
-define('CCMPS_CRUD_TAB_TITLE_CLR','gray');
+define('CCMPS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'gray'));
 
-define('CCMPS_TITLE_CLR','coral');
+define('CCMPS_TITLE_CLR', scheme_color('highlight', 'coral'));
 define('CCMPS_TITLE_FNT_SZ','24px');
-define('CCMPS_SUB_NAME_CLR','lightseagreen');
+define('CCMPS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('CCMPS_SUB_FNT_SZ','24px');
 
 // Trongate v2: required by engine/Core.php for 404 handling.
@@ -243,32 +244,32 @@ define('DMS_KBB_HDR4', setting('DMS_KBB_HDR4', 'Pending Approval')); // Kanban B
 define('DMS_KBB_HDR5', setting('DMS_KBB_HDR5', 'Approved')); // Kanban Board Column Header 1 status id
 
 // DMS Sizes & Colors
-define('DMS_CRUD_IBOX_HDR_CLR','crimson'); // Tag 3
-define('DMS_HM_TAB_TITLE_CLR','darkgreen');
-define('DMS_HM_TAB_ICON_CLR','darkgreen');
+define('DMS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'crimson')); // Tag 3
+define('DMS_HM_TAB_TITLE_CLR', scheme_color('primary', 'darkgreen'));
+define('DMS_HM_TAB_ICON_CLR', scheme_color('highlight', 'darkgreen'));
 define('DMS_HM_TAB_TITLE_RED_CLR','crimson');  // Comment tab close
 define('DMS_HM_TAB_TITLE_GRN_CLR','darkgreen');
 define('DMS_HM_TAB_ICON_RED_CLR','crimson');
-define('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_BACK_BTN_CLR','darkgreen'); // CCMPS Back Button Color - lightseagreen
-define('DMS_HM_CLPSE_TITLE_CLR','crimson'); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_CLPSE_ICON_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_CLPSE_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_TAB_TITLE_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_TAB_ICON_CLR','lightseagreen'); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_TAB_CARET_CLR','lightgray'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_SIDE_MENU_CLR','lightseagreen');
-define('DMS_HM_SIDE_ICON_CLR','crimson'); // coral
-define('DMS_CCMP_NAME_CLR','lightseagreen');
+define('DMS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
+define('DMS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'crimson')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_ICON_CLR', scheme_color('highlight', 'lightseagreen')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
+define('DMS_HM_SIDE_MENU_CLR', scheme_color('menu', 'lightseagreen'));
+define('DMS_HM_SIDE_ICON_CLR', scheme_color('menu', 'crimson')); // coral
+define('DMS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('DMS_CCMP_FNT_SZ','28px');
-define('DMS_CRUD_TAB_TITLE_CLR','darkgreen'); // gray
-define('DMS_TITLE_CLR','crimson');
+define('DMS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'darkgreen')); // gray
+define('DMS_TITLE_CLR', scheme_color('highlight', 'crimson'));
 define('DMS_TITLE_FNT_SZ','24px');
-define('DMS_SUB_NAME_CLR','lightseagreen');
+define('DMS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('DMS_SUB_FNT_SZ','24px');
-define('DMS_CRUD_IBOX_HDR_CLR','crimson'); // coral
-define('DMS_CRUD_LABEL_CLR','darkgreen'); // lightseagreen
-define('DMS_CRUD_VALUE_CLR','gray'); // coral
+define('DMS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'crimson')); // coral
+define('DMS_CRUD_LABEL_CLR', scheme_color('label', 'darkgreen')); // lightseagreen
+define('DMS_CRUD_VALUE_CLR', scheme_color('value', 'gray')); // coral
 
 // SHOPPING CART SETTINGS
 define('CURRENCY_CODE','USD');

@@ -2,7 +2,7 @@
   include('navbar.php');
 
   // one setting: its label, the input its input_type calls for, and its help line
-  $setting_input = function($row) {
+  $setting_input = function($row) use ($schemes, $logos) {
       $name  = 'setting_'.$row->id;
       $value = (string) $row->settingvalue;
       $style = 'height: 40px; font-size: 20px;';
@@ -25,6 +25,34 @@
           case 'number':
               $range = preg_match('/^(-?\d+)-(-?\d+)$/', (string) $row->options, $m) ? ' min="'.$m[1].'" max="'.$m[2].'"' : '';
               return '<input type="number" class="form-control m-b" style="'.$style.' max-width: 200px;" name="'.$name.'" id="'.$name.'" value="'.out($value).'" step="1"'.$range.' required>';
+          case 'scheme': // one card per scheme: six swatches; Custom has color pickers
+              $slots   = array('primary' => 'Primary', 'accent' => 'Accent', 'highlight' => 'Highlight', 'label' => 'Label', 'value' => 'Value', 'menu' => 'Menu');
+              $classic = array('primary' => '#20b2aa', 'accent' => '#dc143c', 'highlight' => '#ff7f50', 'label' => '#006400', 'value' => '#808080', 'menu' => '#1ab394'); // lightseagreen, crimson, coral, darkgreen, gray, Inspinia green
+              $html = '<div style="display: flex; flex-wrap: wrap; gap: 12px;">';
+              foreach($schemes as $scheme){
+                  $checked = ((string) $scheme->id === $value);
+                  $html .= '<label style="display: block; width: 250px; border: 2px solid '.($checked ? SN_CLR : '#e7eaec').'; border-radius: 6px; padding: 10px; cursor: pointer; font-weight: normal;">';
+                  $html .= '<input type="radio" name="'.$name.'" value="'.$scheme->id.'"'.($checked ? ' checked' : '').'> <strong style="font-size: 17px;">'.out($scheme->name).'</strong>';
+                  $html .= '<div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin: 8px 0 4px;">';
+                  foreach($slots as $slot => $slot_label){
+                      $color = $scheme->{$slot.'_clr'} ?: $classic[$slot];
+                      if($scheme->is_custom){
+                          $html .= '<input type="color" name="custom_'.$slot.'" value="'.out($color).'" title="'.$slot_label.'" style="width: 100%; height: 34px; padding: 0; border: 1px solid #ccc; cursor: pointer;">';
+                      }else{
+                          $html .= '<span title="'.$slot_label.'" style="display: block; height: 34px; border-radius: 3px; border: 1px solid rgba(0,0,0,.15); background: '.out($color).';"></span>';
+                      }
+                  }
+                  $html .= '</div><small class="text-muted">'.out((string) $scheme->description).'</small></label>';
+              }
+              $html .= '</div><small class="text-muted" style="display: block; margin-top: 6px;">The six colors, left to right: Primary (site name, headings, names), Accent (record box headers), Highlight (icons), Label (form labels, Back buttons), Value (the values beside labels), Menu (side menu).</small>';
+              return $html;
+          case 'image': // the default logo or a picture from the website's picture library
+              $html = '<select class="form-control m-b" style="'.$style.'" name="'.$name.'" id="'.$name.'" onchange="document.getElementById(\'preview_'.$row->id.'\').src=\''.BASE_URL.'\'+this.value;">';
+              foreach($logos as $path => $logo_name){
+                  $html .= '<option value="'.out($path).'"'.($path === $value ? ' selected' : '').'>'.out($logo_name).'</option>';
+              }
+              $html .= '</select>';
+              return $html.'<img id="preview_'.$row->id.'" src="'.BASE_URL.out($value).'" alt="'.out($row->label).'" style="max-height: 90px; max-width: 220px; border: 1px solid #e7eaec; padding: 4px; margin-bottom: 6px;"><br>';
           case 'url':
               return '<input type="text" inputmode="url" class="form-control m-b" style="'.$style.'" name="'.$name.'" id="'.$name.'" value="'.out($value).'" maxlength="255" placeholder="https://">';
           case 'phone':

@@ -26,7 +26,7 @@
                             <center><h3></h3> </center>
                          <br>
                        <!--    <img alt="gandplogo" src="<?= BASE_URL ?>modules/welcome/views/gandplogo.png" /> --> <!--- wont see it -->
-                            <center><img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"></center> 
+                            <center><img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo"></center> 
                             <br>
                             <br>
                                              

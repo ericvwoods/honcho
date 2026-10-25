@@ -869,7 +869,7 @@
 						<!-- col #1 -->
 						<div class="logo_footer dark col-md-3">
 
-							 <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" height="50" alt="Logo"/>
+							 <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" height="50" alt="Logo"/>
                                                          <br>
 							<p class="block">
 								4th Street, Suite 88<br />

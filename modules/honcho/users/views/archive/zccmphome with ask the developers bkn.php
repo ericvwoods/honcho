@@ -81,7 +81,7 @@
               <br>
               <ul>
                   
-              <span class="m-r"><a href="https://www.bpapilots.org" target="_blank" style="color:DarkGrey;"><h1><!--<img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">--><strong><?= SITENAME ?> </strong></h1></a> </span> <!-- <?= CCMP ?> Services Portal -->
+              <span class="m-r"><a href="https://www.bpapilots.org" target="_blank" style="color:DarkGrey;"><h1><!--<img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">--><strong><?= SITENAME ?> </strong></h1></a> </span> <!-- <?= CCMP ?> Services Portal -->
               </ul>
           
  </div>
@@ -158,8 +158,8 @@
                             <div class="col-md-1">
                             <br> 
                                                       <a href="https://www.bpapilots.org" target="_blank" title="BPA">
-                                                        <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
-                                         <!--   <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"> -->
+                                                        <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
+                                         <!--   <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo"> -->
                                         </a> 
                             </div>
                             <div class="col-md-3">
@@ -700,7 +700,7 @@
                                 </div>
                                <a href="#" title="">
                           
- <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="BPA Logo">
+ <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="BPA Logo">
                                </a>
                             </div>
                         <br>
@@ -727,7 +727,7 @@
                                     <div class="col-md-2">   
                                         <h1 class="logo text-center">
                                             <a href="#" title="bpalogo">
-                                                <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+                                                <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
                                             </a>
                                         </h1>
                                     </div> <!-- end col -->

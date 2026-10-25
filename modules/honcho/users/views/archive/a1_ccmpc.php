@@ -63,7 +63,7 @@
             <div class="row"> 
 
                         <div class="col-md-1">   
-                           <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"> 
+                           <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo"> 
                         <!--    <img alt="user picture" class="rounded-circle" src="<= BASE_URL?>honcho-system_accounts_module/assets/user_pictures/<?= $picture ?>"/>  original location--> 
                         </div> <!-- end col -->
           
@@ -89,7 +89,7 @@
                                 <div class="col-md-2">   
                                     <h1 class="logo text-center">
                                         <a href="index.html" title="Boss - Multipurpose Premium Html5 Template">
-                                         <!--   <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"> -->
+                                         <!--   <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo"> -->
                                         </a>
                                     </h1>
                                 </div> <!-- end col -->

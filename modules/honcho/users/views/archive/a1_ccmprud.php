@@ -107,7 +107,7 @@
 						    <div class="col-md-1">	 
 					                <h1 class="logo text-center">
 					                    <a href="index.html" title="Boss - Multipurpose Premium Html5 Template">
-					                        <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+					                        <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
 					                    </a>
 					                </h1>
 							</div> <!-- end col -->

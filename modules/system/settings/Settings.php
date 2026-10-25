@@ -18,6 +18,8 @@
   Phase 2 (2026-10-22) added the Organization, Wording, Features & Policy and Look
   tabs: config.php defines those constants with setting() (config/settings.php),
   so a change shows on the next page.
+  Phase 3 (2026-10-25): the Look tab's color scheme (system_color_schemes; the color
+  constants use scheme_color()) with the Custom scheme's six colors, and the logos.
 
   __construct()
         system_admin_only('system-settings', 'edit_financial_settings')
@@ -26,6 +28,8 @@
         _get_font_sizes()
         _get_rows()
         _tabs($rows)
+        _get_schemes()
+        _logo_choices()
         _token()
         _home_url()
   settingssubmit($tab)
@@ -34,6 +38,8 @@
         _get_rows()
         _can_change($row)
         _validate($row, $value)
+        _custom_color_changes($errors)
+        _save_custom_colors($changes)
         _needs_recheck($changes, $rows)
         _members_to_recheck()
         _save_changes($changes, $rows)
@@ -46,6 +52,10 @@
         _save_changes($changes, $rows)
         _recheck_member_statuses()
   _get_rows()
+  _get_schemes()
+  _logo_choices()
+  _custom_color_changes(&$errors)
+  _save_custom_colors($changes)
   _tabs($rows)
   _slug($category)
   _can_change($row)
@@ -71,7 +81,8 @@
        settingvalue      (varchar 255)
        type              (varchar 255)  old column, not used by the screen
        category          (varchar 32)   the screen's tab: Financial, DMS, ...
-       input_type        (varchar 16)   text, yesno, year, number, fraction (0 to 1), url, phone, select
+       input_type        (varchar 16)   text, yesno, year, number, fraction (0 to 1), url, phone, select,
+                                        scheme (a system_color_schemes id), image (default logo or a cms_media picture)
        options           (varchar 255)  select choices, value=Label;value=Label; for number a range, e.g. 6-64
        rbac_function     (varchar 64)   system function needed to change it
        description, help (varchar 255)  help is shown under the input
@@ -143,6 +154,9 @@ class Settings extends Trongate {
         }
     }
 
+    $data['schemes'] = $this->_get_schemes(); // for a 'scheme' row (Look tab)
+    $data['logos']   = $this->_logo_choices(); // for 'image' rows (Look tab)
+
     $data['view_module'] = 'system/settings';
     $data['view_file']   = 'manage';
 
@@ -188,10 +202,27 @@ class Settings extends Trongate {
         }
     }
 
+    // the Custom scheme's six colors, posted with the Look tab's scheme row
+    $custom_changes = array();
+    foreach($rows as $row){
+        if($row->input_type == 'scheme' && $this->_slug($row->category) == $tab && $this->_can_change($row)){
+            $custom_changes = $this->_custom_color_changes($errors);
+        }
+    }
+
     if(!empty($errors)){
         set_flashdata('Nothing was saved. '.implode(' ', array_unique($errors)));
         $_SESSION['flashmsgcolor'] = 0; // crimson
         redirect('system-settings/manage/'.$tab);
+    }
+
+    if(!empty($custom_changes)){
+        $this->_save_custom_colors($custom_changes);
+        if(empty($changes)){
+            set_flashdata('Custom colors saved.');
+            $_SESSION['flashmsgcolor'] = 1;
+            redirect('system-settings/manage/'.$tab);
+        }
     }
 
     if(empty($changes)){
@@ -323,6 +354,10 @@ class Settings extends Trongate {
                 return ($value === '' || preg_match('/^[0-9 ().+\-]{7,25}$/', $value)) ? '' : $label.' must be a phone number (digits, spaces, dots, dashes).';
             case 'fraction':
                 return (is_numeric($value) && (float) $value >= 0 && (float) $value <= 1) ? '' : $label.' must be a number from 0 to 1, e.g. 0.75.';
+            case 'scheme':
+                return isset($this->_get_schemes()[(int) $value]) && ctype_digit($value) ? '' : $label.': choose one of the listed schemes.';
+            case 'image': // the default logo or a picture from the website's picture library
+                return isset($this->_logo_choices()[$value]) ? '' : $label.': choose one of the listed pictures.';
             case 'select':
                 foreach(explode(';', (string) $row->options) as $option){
                     if(trim(explode('=', $option)[0]) === $value){ return ''; }
@@ -332,6 +367,68 @@ class Settings extends Trongate {
                 if($value === ''){ return $label.' can\'t be blank.'; }
                 if(strpbrk($value, '<>') !== false){ return $label.' can\'t contain the less-than or greater-than sign.'; }
                 return mb_strlen($value) <= 255 ? '' : $label.' is too long (255 characters at most).';
+        }
+    }
+
+    function _get_schemes(){ // id => scheme row, in screen order
+        static $schemes = null;
+        if($schemes === null){
+            $schemes = array();
+            foreach((array) $this->model->query("SELECT * FROM system_color_schemes ORDER BY sort_order, id", 'object') as $row){
+                $schemes[(int) $row->id] = $row;
+            }
+        }
+        return $schemes;
+    }
+
+    function _logo_choices(){ // value (path after BASE_URL) => name: the default logo, then the picture library
+        static $choices = null;
+        if($choices === null){
+            $choices = array('welcome_module/images/bpalogo100x82.jpg' => 'Default logo');
+            foreach((array) $this->model->query("SELECT file_name, original_name FROM cms_media WHERE mime LIKE 'image/%' ORDER BY original_name, id", 'object') as $row){
+                $choices['uploads/cms/'.rawurlencode($row->file_name)] = $row->original_name;
+            }
+        }
+        return $choices;
+    }
+
+    function _custom_color_changes(&$errors){ // slot => new color, for the Custom scheme's colors that were changed
+        $custom = null;
+        foreach($this->_get_schemes() as $scheme){
+            if($scheme->is_custom){ $custom = $scheme; }
+        }
+        $changes = array();
+        if(!$custom){
+            return $changes;
+        }
+        foreach(array('primary', 'accent', 'highlight', 'label', 'value', 'menu') as $slot){
+            $posted = post('custom_'.$slot);
+            if($posted === null || $posted === ''){
+                continue; // not on this form
+            }
+            $posted = strtolower(trim((string) $posted));
+            if(!preg_match('/^#[0-9a-f]{6}$/', $posted)){
+                $errors[] = 'Custom '.$slot.' color must be a color like #1ab394.';
+                continue;
+            }
+            if($posted !== strtolower((string) $custom->{$slot.'_clr'})){
+                $changes[$slot] = $posted;
+            }
+        }
+        return $changes;
+    }
+
+    function _save_custom_colors($changes){ // updates the Custom scheme row, one Auditlog entry per color
+        foreach($this->_get_schemes() as $scheme){
+            if(!$scheme->is_custom){
+                continue;
+            }
+            $data = array('updated_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time());
+            foreach($changes as $slot => $color){
+                $data[$slot.'_clr'] = $color;
+                $this->_audit('UpdateCustomColor', 'Custom '.$slot, $scheme->{$slot.'_clr'}, $color);
+            }
+            $this->model->update($scheme->id, $data, 'system_color_schemes');
         }
     }
 

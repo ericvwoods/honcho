@@ -77,14 +77,14 @@
     
              
                   <center>       <h3>     <a href="<?= PUBLIC_WEBSITE ?>" target="_blank" title="BPA">
-                               <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo"> 
+                               <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo"> 
                        <!--    <img src="<?= BASE_URL ?><?= SMALL_LOGO ?>" alt="Small Logo">  -->  <!-- bpalogo169x50.jpg  -->
                              <!--    <img src="<?= BASE_URL ?>welcome_module/images/bpalogo169x50.jpg" alt="Logo"> 
                                <!--     <img src="<?= BASE_URL ?><?= PLAIN_LOGO ?>" alt="Plain Logo"> -->                      
                                         
                           </a> </h3>
                      
-                     <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color:Black;"><h1><!--<img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">--><strong><?= SITENAME ?> </strong></h1></a> </span> <!-- <?= CCMP ?> Services Portal -->
+                     <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color:Black;"><h1><!--<img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">--><strong><?= SITENAME ?> </strong></h1></a> </span> <!-- <?= CCMP ?> Services Portal -->
               
                   </center>
                      <?php else: ?> 
@@ -92,7 +92,7 @@
        <br>
               <ul>   
                   <br>
-             <!--   <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color:Black;"><h1><!--<img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">--><!-- <strong><?= SITENAME ?> </strong></h1></a> </span> -->  <!-- <?= CCMP ?> Services Portal -->
+             <!--   <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color:Black;"><h1><!--<img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">--><!-- <strong><?= SITENAME ?> </strong></h1></a> </span> -->  <!-- <?= CCMP ?> Services Portal -->
            <!--    <span style=" color: coral; font-size: 32px;">x<?= SITENAME ?></span>      -->
             <!--    <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME ?> </span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME2 ?> </span> </a> </span> -->
             <!-- custom  -->
@@ -630,7 +630,7 @@
                     <div class="col-md-1">
                            
                     <h3>     <a href="<?= PUBLIC_WEBSITE ?>" target="_blank" title="BPA">
-                            <!--   <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">-->                    
+                            <!--   <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">-->                    
                                         
                                         </a> </h3>
                             </div>

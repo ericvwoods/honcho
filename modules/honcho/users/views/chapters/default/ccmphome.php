@@ -47,7 +47,7 @@
                             <div class="col-md-1">
                             <br> 
                                                       <a href="#" title="Boss - Multipurpose Premium Html5 Template">
-                                            <img src="<?= BASE_URL ?>welcome_module/images/bpalogo100x82.jpg" alt="Logo">
+                                            <img src="<?= BASE_URL ?><?= MAIN_LOGO ?>" alt="Logo">
                                         </a> 
                             </div>
                             <div class="col-md-10">

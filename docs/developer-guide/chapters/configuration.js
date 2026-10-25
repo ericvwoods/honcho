@@ -3,7 +3,7 @@
 // ============================================================
 // Part III: Installation & Configuration. Written 2026-10-25 at the end of
 // the Settings plan (phases 1-4): where every setting lives, the System
-// Settings screen, color schemes, and what to change for a new client.
+// Settings screen, color schemes, the theme, and what to change for a new client.
 // Same block format and inline markup as chapters/ccmps.js.
 // ============================================================
 
@@ -65,6 +65,27 @@ const sections = [
     "A new scheme is a row in `system_color_schemes` (by migration). Choose colors that read on white.",
     "Not yet covered: about 229 colors typed straight into views. Move them to the constants as screens are touched (to-do list).",
   ]},
+]},
+
+// ============================================================
+{ tab: "Theme", blocks: [
+  { type: 'p', text: "The screens use **Inspinia**, a paid admin theme, in `public/themes/inspinia/`: **Bootstrap 4.3.1** underneath, the Inspinia skin (`css/style.css`, `js/inspinia.js`), and plugins such as DataTables, metisMenu (side menu), slimScroll, SweetAlert, FullCalendar 3, Chart.js, Flot, Summernote and jQuery UI. Pages load it through `$this->templates->inspinia($data)` and by linking files under `themes/inspinia/` directly (64 live files). The member home and public website also use its `Landing_Page/` styles and `img/landing/`." },
+  { type: 'table', headers: ['Item', 'Now'], rows: [
+    ['jQuery', '**3.7.1** (`js/jquery-3.7.1.min.js`, checksum matches jquery.com), on the 61 Inspinia pages since 2026-10-25. Was 3.1.1 (2016). The old file stays until the screens have been click-tested, so going back is a find-and-replace of the file name; then delete it.'],
+    ['Files', 'Only what the app references. On 2026-10-25 an audit of every `themes/inspinia/...` path in the code (and the fonts and images the kept CSS loads) removed 488 unused files: the 120 demo pages, unused `js/plugins` and `css/plugins` folders, demo scripts, email templates. They are in git history (commit 8947f68).'],
+    ['`Utils/`', 'The theme\'s original source package (247 MB). Ignored by git, so never deployed; kept on the Mac only.'],
+    ['Known gap', '5 pages load `js/plugins/bs-custom-file/bs-custom-file-input.min.js`, which was never in the theme (404; file inputs work without it).'],
+    ['Licence', 'Paid themes are usually licensed per end product; check Inspinia\'s terms before deploying Honcho for more than one client.'],
+  ]},
+  { type: 'h2', text: 'Rules' },
+  { type: 'ul', items: [
+    "**Need a plugin that was removed?** Restore just that folder from git: `git checkout 8947f68~1 -- public/themes/inspinia/js/plugins/<name>` (and its `css/plugins/<name>` if it has one).",
+    "**Never edit the theme's own files** (`css/style.css`, `js/inspinia.js`): add rules to `css/custom.css` or the page, so the theme can be updated or replaced.",
+    "**New libraries** go in their own pinned folder, as FullCalendar 6.1.15 did (`public/js/fullcalendar-6.1.15/`), not into the theme.",
+    "Colors come from the color scheme constants (Color Schemes tab), not typed into views.",
+  ]},
+  { type: 'h2', text: 'Where It Is Going' },
+  { type: 'p', text: "Decided 2026-10-25: keep Inspinia for now rather than hand-writing a copy of it, and move gradually to **free Bootstrap 5 plus a small Honcho stylesheet** that keeps Inspinia's look and class names (`ibox`, `navbar-static-side`, ...), screen by screen as screens are touched. Bootstrap 5 is built on CSS variables, so the color schemes become real variables, and no theme licence is needed at the end. Other old layouts (janux, epona, cool_mobi) load their own older jQuery copies; they are on the to-do list to check and update or delete." },
 ]},
 
 // ============================================================

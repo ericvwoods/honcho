@@ -88,7 +88,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] CCMPS Testing tab describes `lib/CcmpsPermissions.php` and `run_integration_tests.sh`, which aren't in the project.
 - [ ] Delete the old `CCMPS_Developer_Documentation.docx` (superseded).
 - [ ] Install Node.js on this Mac so the guide can be rebuilt without a temporary copy.
-- [ ] Rebuild both guides (`docs/developer-guide`, `docs/users-guide`): chapters changed 2026-10-16 (DMS, deployment, CCMPS Member Permissions; Users' Guide System Admin, staff portal, ATIS).
+- [x] Rebuilt both guides 2026-10-25 (temporary Node 20 + docx 9 in the session's scratch folder); fixed two unescaped quotes in `chapters/cms.js` that had stopped the Developer's Guide from building. Run `node --check chapters/*.js` after editing a chapter.
 
 ## Home page content (CMS)
 

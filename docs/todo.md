@@ -84,7 +84,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## Developer's Guide
 
-- [ ] Chapters still to write: CMS & Welcome, Participants, Configuration (config folder and per-client changes). "Deploying on DigitalOcean" started 2026-10-08 (`chapters/deployment.js`); keep it updated as each DO-xx step is done.
+- [ ] Chapters still to write: Welcome, Participants. (Configuration written 2026-10-25.) "Deploying on DigitalOcean" started 2026-10-08 (`chapters/deployment.js`); keep it updated as each DO-xx step is done.
 - [ ] CCMPS Testing tab describes `lib/CcmpsPermissions.php` and `run_integration_tests.sh`, which aren't in the project.
 - [ ] Delete the old `CCMPS_Developer_Documentation.docx` (superseded).
 - [ ] Install Node.js on this Mac so the guide can be rebuilt without a temporary copy.
@@ -119,7 +119,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [x] Phase 2 (built 2026-10-22, deployed 7060e66 with its migration run on staging after backup `~/backups/bpa_staging-2026-10-22-before-settings-phase2.sql.gz`): `setting()` in `config/settings.php`, used by `config.php`; Organization, Wording, Features & Policy and Look tabs (`2026-10-22-settings-phase2.sql`, run on the Mac); `PUBLIC_WEBSITE` now bpapilots.org; `CMS_PUBLIC_SITE` / `CMS_MEMBER_BULLETINS` moved from `.env`. Decided by going ahead with the plan's recommendations: wording is on the screen (System Admins only), the two switches moved.
 - [x] Phase 3 (built 2026-10-25, not yet deployed): color schemes (`system_color_schemes`: six scheme colors - Primary, Accent, Highlight, Label, Value, Menu - 57 color constants use `scheme_color()`; Classic = today's colors exactly; Inspinia, Navy & Gold, Slate & Crimson, Custom with color pickers) and logos from the picture library on the Look tab; 58 typed-in logo paths now use `MAIN_LOGO`. Migration `2026-10-25-settings-phase3.sql` (run on the Mac; backup `~/honcho-backups/bpausa-2026-10-25-before-settings-phase3.sql.gz`).
 - [ ] Later: the ~229 colors typed straight into views move to the scheme as each screen is touched; colors as CSS variables.
-- [ ] Phase 4: delete the 68 unused constants and duplicate color sets; Configuration chapter of the Developer's Guide.
+- [x] Phase 4 (2026-10-25, not yet deployed): deleted 60 unused constants (kept 8 for coming work: `WHATENV`, `DEVEMAIL`, `BREVO_SMTP_KEY`, `CURRENCY_*`, `PAYPAL_*`, `DEFAULT_CONTROLLER`) and the three duplicate DMS color definitions; `site_owner.php` follows the organization name; `ccmps_settings_copy` dropped (`2026-10-25-settings-phase4-cleanup.sql`, run on the Mac); Configuration chapter of the Developer's Guide (`chapters/configuration.js`).
 - [ ] `Ccmps::recalcstatus()` and `recalc_all_member_statuses()` are public, so anyone can run them from the address bar (`welcome-ccmps/recalc_all_member_statuses`). Make them `_`-prefixed (update the callers) or check permissions.
 - [ ] New members get the password `123456` (`DEFAULT_CCMP_PASSWORD`). Give them a random one and a set-password link (with Forgot password).
 

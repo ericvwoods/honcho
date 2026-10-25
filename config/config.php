@@ -36,9 +36,7 @@ define('HONCHO_MODULE', (int) env('HONCHO_MODULE', 1)); // 1 = Honcho staff back
 define('DEBUGGING', 0); // "true" or "false"
 define('ENV', 'prod'); //dev or anything else is not dev. controls navbar breadcrumbs
 define('WHATENV', env('WHATENV', 'dev')); // dev  Used in cart.php AND Welcome controller email parameters
-define('IS_MVP', false); // false is honcho core
 define('VERSION_RELEASE', '1.0');
-define('ADDRDB_STRUCTURE', 0); // 0 = multi in one table 1 = simple is only mail & phys in table
 
 // Organization Specific
 define('SITENAME', setting('SITENAME', 'Black Pilots of America')); // honcho
@@ -52,25 +50,20 @@ define('SHORTSITENAME2', setting('SHORTSITENAME2', 'EMS')); // second factor ent
 define('SYS_ADMIN_PHONE', setting('SYS_ADMIN_PHONE', '202.207.5353'));
 define('DEVEMAIL', 'ericvwoods@hotmail.com'); // if WHATDEV = dev the will use this email address for testing.
 // login header.php EXT_WEBSITE, SITENAME, FACEBOOK_URL, TWITTER_URL, YOUTUBE_URL
-define('WEBEMAIL', 'ericvwoods@hotmail.com'); // webmaster email for 404 page
 
 // honcho
 define('USERS_IDNUM_REQ', 0); // user accts must have employee number
 define('HONCHOUSER', setting('HONCHOUSER', 'Staffer')); // Employee, User, Staffer
 define('HONCHOUSERS', setting('HONCHOUSERS', 'Staff')); // Employees, Users, Staff
-define('USERS_ADDR_TABLE','ccmps_addresses'); // or ccmps_addresses or ccmps_addresses_mp
-define('USERS_JUMBO_IMG','gaye318x326.jpg');
 
 // SECOND FACTOR SETTINGS
 // if user community has limitations on texting or email (perhaps a minor)can use a table field. Each user table has a "second factor" field that can be used like high school mascot
-define('CCMPS_RBAC', 1); // Use RBAC vs. CCMPrecord for super user priviledges
 define('CCMP_SECOND_FACTOR_NAME', setting('CCMP_SECOND_FACTOR_NAME', 'Member Number')); // High School Mascot
 define('CCMP_SECOND_FACTOR_FIELD_NAME','id_number'); // second_factor
 define('SYSTEM_SECOND_FACTOR_NAME', setting('SYSTEM_SECOND_FACTOR_NAME', 'Verification Code')); //
 define('SYSTEM_SECOND_FACTOR_FIELD_NAME','second_factor'); // second_factor
 
 define('WELCOME_BYPASS_2ND_FACTOR', false); //
-define('USERS_BYPASS_2ND_FACTOR', false); //
 
 // CCMPS Nomenclature
 define('CCMP', setting('CCMP', 'Member')); // Customer, Client, Member, Participant
@@ -81,19 +74,16 @@ define('SUBENTITIES', setting('SUBENTITIES', 'Chapters')); // subentities
 define('CCMP_LIFETIME_YEAR', 2099); // current_year of lifetime members: always Current (status 1); recalcstatus() and the dues year check in ccmpsubmit()
 define('SUBENTITY_NATIONAL_ID', 99); // ccmps_subentities row for National HQ: not a chapter - hidden from the Chapters screen, never counted (0 = none). Why it exists is on docs/todo.md
 define('CCMPSSUBENTITY', SUBENTITY); // Subentity - used for page headers and buttons - Chapter, Circle, Branch etc
-define('CCMPSSUBENTITIES', SUBENTITIES); // subentities
 define('CMS_PUBLIC_SITE', (int) setting('CMS_PUBLIC_SITE', 0)); // 1 = the site's front address shows the Website (welcome/website); 0 = it goes to the login (the organization uses an outside site, PUBLIC_WEBSITE)
 define('CMS_MEMBER_BULLETINS', (int) setting('CMS_MEMBER_BULLETINS', 1)); // 1 = any logged-in member may post sticky notes on the Bulletin Board (moderated by Chapter, Content and System Admins)
 define('CMS_LABEL', setting('CMS_LABEL', 'Website')); // menu name for the content manager (module cms) - Website, Web Pages, Our Site etc
 
 // CCMPSHOME
-define('SHOW_MARQUEE', 1);
 define('HOTLINK', setting('HOTLINK', '#')); // '#' if no active link
 define('HOTLINKLABEL', setting('HOTLINKLABEL', 'Register')); // General Meeting Registration, Skyhook Registration
 
 // Color Branding - scheme_color('<one of six>', '<Classic color>'): the System Settings > Look color scheme
 // (system_color_schemes). Classic keeps the color written here. Semantic colors (red/green DMS tabs) aren't schemed.
-define('SP_CLR', scheme_color('primary', 'lightseagreen')); // site primary color
 define('SN_FNT_WT',''); // sitename font weight
 define('SN_FNT_SZ', '36px'); // sitename font size
 define('SN_CLR', scheme_color('primary', 'lightseagreen')); // sitename color - coral, black default, coral, cornflowerblue, lightseagreen
@@ -106,11 +96,6 @@ define('CCMPS_CRUD_LABEL_CLR', scheme_color('label', 'darkgreen')); // lightseag
 define('CCMPS_CRUD_VALUE_CLR', scheme_color('value', 'gray')); // coral
 
 // CCMPS Colors
-define('USERS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
-define('USERS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'coral')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('USERS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('USERS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('USERS_HM_TAB_ICON_CLR', scheme_color('highlight', 'lightseagreen')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('USERS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
@@ -119,20 +104,7 @@ define('USERS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS D
 define('USERS_TBL_HDR_CLR', scheme_color('label', 'black')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('USERS_TBL_DATA_CLR', scheme_color('value', 'gray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 
-// CCMPS Dashboard Collapse
-define('USERS_HM_CLPSE_OPEN', 0); // first collapse always open
-define('USERS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
-define('USERS_HM_SIDE_MENU_CLR', scheme_color('menu', 'crimson')); //lightseagreen
-define('USERS_HM_SIDE_ICON_CLR', scheme_color('menu', 'crimson')); // coral
-
-define('USERS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
-define('USERS_CCMP_FNT_SZ','28px');
 define('USERS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'gray'));
-
-define('USERS_TITLE_CLR', scheme_color('highlight', 'coral'));
-define('USERS_TITLE_FNT_SZ','24px');
-define('USERS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
-define('USERS_SUB_FNT_SZ','24px');
 
 // User Crud colors
 define('USERS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'coral')); // crimson
@@ -153,12 +125,8 @@ define('TWITTER_URL', setting('TWITTER_URL', ''));
 define('YOUTUBE_URL', setting('YOUTUBE_URL', ''));
 
 // CCMPSHOME COLORS
-define('CCMPS_JUMBO_IMG','gaye318x326.jpg');
 define('CCMPS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('CCMPS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
-define('CCMPS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'coral')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('CCMPS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('CCMPS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('CCMPS_HM_TAB_ICON_CLR', scheme_color('highlight', '#676a6c')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('CCMPS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('CCMPS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
@@ -172,16 +140,9 @@ define('CCMPS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
 define('CCMPS_CCMP_FNT_SZ','28px');
 define('CCMPS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'gray'));
 
-define('CCMPS_TITLE_CLR', scheme_color('highlight', 'coral'));
-define('CCMPS_TITLE_FNT_SZ','24px');
-define('CCMPS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
-define('CCMPS_SUB_FNT_SZ','24px');
-
 // Trongate v2: required by engine/Core.php for 404 handling.
 // Points at modules/templates/Templates.php::error_404()
 define('ERROR_404', 'templates/error_404');
-
-
 
 // Interface Parameters
 // could set defaults for fonts  - currently ccmps line 4441
@@ -200,26 +161,9 @@ define('FORCE_PW_CHG_NEW_CCMP', setting('FORCE_PW_CHG_NEW_CCMP', '1')); // 1 = T
 define('SKIP_CHG_DEFAULT_USERNAME', 1); // Skip the page that allows changing the default username & Force PW Reset
 define('SKIP_NEW_ACCT_CONFIRMATION', 1); // Skip showing the acct added to the users record and return to manage page
 define('DEFAULT_CCMP_USER_LEVEL','7'); // 7 = CCMP
-define('DEFAULT_DONOR_USER_LEVEL','9'); // 9 = Donor
-define('DEFAULT_DONOR_PASSWORD','$2y$11$0vmDNooSnMscr6MRK./fuewANo6F2GkHfpMuPr/XzsltWBuOe0e5K'); // 123456
-
-define('CCMP_ACCT_NEEDS_APPROVAL', 0); // set to 1 if self-registration CCMP accounts need to be approved before made active (in other words a just a LEAD)
-define('STORE_ACCT_NEEDS_APPROVAL', 0); // set to 1 if store accounts need to be approved before made active
-
-// Application specific
-//define('CURRENT_YEAR', 2023); // not used ???
-//define('SYSTEM_CURRENT_YEAR', 2023); // currently table driven an coded for a session value in welcome ccmps currentroster.php
-define('SUBENTITY_ADMIN_CAN_CREATE','1'); // ex. chapter admin can create new members or only national
-
-//define('ATP_PC_PO','1'); // Ask the President -Presidents Corner - Presidents Posts Only
 
 // CCMPS Filelibrary
 define('CCMPS_FL_TAG1','Entity'); // Tag 1 - limit to 14 characters if possible
-define('CCMPS_FL_TAG2','Category'); // Tag 2
-define('CCMPS_FL_TAG3','Doc Type'); // Tag 3
-define('CCMPS_FL_SAVE_BAK', 1); // rename .bak vs. overwrite if same name
-define('CCMPS_FL_APPROVE_LEVEL', 12); // access level must be greater than to approve document
-define('CCMPS_FL_REJECT_LEVEL', 12); // access level must be greater than to reject document
 
 // DMS Filelibrary
 
@@ -228,12 +172,9 @@ define('DMS_SUBENTITY', setting('DMS_SUBENTITY', 'School')); // Subentity
 define('DMS_FL_TAG2', setting('DMS_FL_TAG2', 'Category')); // Tag 2
 define('DMS_FL_TAG3', setting('DMS_FL_TAG3', 'Type')); // Tag 3
 define('DMS_FL_SAVE_BAK', 1); // rename .bak vs. overwrite if same name
-define('DMS_FL_APPROVE_LEVEL', 12); // access level must be greater than to approve document
-define('DMS_FL_REJECT_LEVEL', 12); // access level must be greater than to reject document
-define('DMS_HM_CLPSE_OPEN', 0); // first collapse always open
-define('DMS_HM_ALL_CLPSE_OPEN', 0); // all collapses always open
 
-// Also in system_settings table and in Dmslibrary _constructor as session variable
+// The DMS labels above and the Kanban headings below are rows of system_settings (System Settings > DMS);
+// DMS_KBB_SHOW_HDR0/5 and FORCE_EDIT_* are read from that table by Dmslibrary into the session
 //define('DMS_KBB_SHOW_HDR0', 1); // show 1st column - true/false
 //define('DMS_KBB_SHOW_HDR5', 1); // show 6th column - true/false
 define('DMS_KBB_HDR0', setting('DMS_KBB_HDR0', 'Unrefined (not ready to work)')); // Kanban Board Column Header 6 status id
@@ -248,26 +189,10 @@ define('DMS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'crimson')); // Tag 3
 define('DMS_HM_TAB_TITLE_CLR', scheme_color('primary', 'darkgreen'));
 define('DMS_HM_TAB_ICON_CLR', scheme_color('highlight', 'darkgreen'));
 define('DMS_HM_TAB_TITLE_RED_CLR','crimson');  // Comment tab close
-define('DMS_HM_TAB_TITLE_GRN_CLR','darkgreen');
 define('DMS_HM_TAB_ICON_RED_CLR','crimson');
-define('DMS_DBRD_HDR_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - lightseagreen, cornflowerblue,coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('DMS_BACK_BTN_CLR', scheme_color('label', 'darkgreen')); // CCMPS Back Button Color - lightseagreen
-define('DMS_HM_CLPSE_TITLE_CLR', scheme_color('highlight', 'crimson')); // CCMPS Dashbord Header Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_CLPSE_ICON_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_CLPSE_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_TAB_TITLE_CLR', scheme_color('primary', 'lightseagreen')); // CCMPS Collapse Title Bar Color - coral, cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_TAB_ICON_CLR', scheme_color('highlight', 'lightseagreen')); // CCMPS Collapse Title Bar Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
 define('DMS_HM_TAB_CARET_CLR', scheme_color('value', 'lightgray')); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coralfine('DMS_DBRD_HDR_CLR','lightseagreen'); // CCMPS Dashbord Header Color - cornflowerblue,lightseagreen, coral
-define('DMS_HM_SIDE_MENU_CLR', scheme_color('menu', 'lightseagreen'));
-define('DMS_HM_SIDE_ICON_CLR', scheme_color('menu', 'crimson')); // coral
-define('DMS_CCMP_NAME_CLR', scheme_color('primary', 'lightseagreen'));
-define('DMS_CCMP_FNT_SZ','28px');
 define('DMS_CRUD_TAB_TITLE_CLR', scheme_color('value', 'darkgreen')); // gray
-define('DMS_TITLE_CLR', scheme_color('highlight', 'crimson'));
-define('DMS_TITLE_FNT_SZ','24px');
-define('DMS_SUB_NAME_CLR', scheme_color('primary', 'lightseagreen'));
-define('DMS_SUB_FNT_SZ','24px');
-define('DMS_CRUD_IBOX_HDR_CLR', scheme_color('accent', 'crimson')); // coral
 define('DMS_CRUD_LABEL_CLR', scheme_color('label', 'darkgreen')); // lightseagreen
 define('DMS_CRUD_VALUE_CLR', scheme_color('value', 'gray')); // coral
 

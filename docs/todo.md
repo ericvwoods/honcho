@@ -133,6 +133,16 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 - [ ] Check the Inspinia licence terms: paid themes are usually licensed per end product, and Honcho is planned per client.
 - [ ] Later: a Honcho theme on free Bootstrap 5 (CSS variables, so the color schemes become real variables), keeping Inspinia's look and class names; move screens over as they are touched. Then no theme licence is needed.
 
+## Digital membership cards (plan drafted 2026-10-26, awaiting decisions)
+
+[Digital Membership Cards plan](https://claude.ai/artifact/3QVrXXRpZryjkkj21NLftc): a card with a QR code in the portal, phone app, Apple Wallet and Google Wallet; scanned at the door for event entry (registered and paid) and meeting attendance.
+- [ ] Answer the 7 decisions on the plan page.
+- [ ] Phase 1: My Card page and phone app tab (`ccmps_cards`, cancel and reissue).
+- [ ] Phase 2: door check-in page and attendance (`event_checkins`, Door Volunteers group, overrides, export).
+- [ ] Phase 3: Apple Wallet and Google Wallet buttons. Start the D-U-N-S number and Apple Developer (organization) enrollment early: 1 to 3 weeks.
+- [ ] Phase 4: Wallet cards update themselves on renewal or chapter change.
+- [ ] Depends on the Event Module (below) for "registered and paid" at the door and guest tickets.
+
 ## Small fixes
 
 - [x] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. Rebuilt 2026-10-21 on `ccmps_subentities` (maintenance-table pattern, State and Active added). Still open: whether it gets the staff-only / Lite rule like Settings and the Auditlog.

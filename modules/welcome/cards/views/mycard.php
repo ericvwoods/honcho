@@ -65,7 +65,13 @@
                     <h2 style="color: <?= SN_CLR ?>;"><?= $admin_view ? 'About this card' : 'Your '.out(strtolower(CCMP)).' card' ?></h2>
                     <p>Show the QR code at the door of <?= out($details->org_short) ?> events and meetings. The volunteer scans it and the system checks, at that moment, that the membership is current.</p>
                     <p>The code doesn't contain any personal information. On its own it means nothing; only <?= out($details->org_short) ?>'s check-in page can read it.</p>
-                    <p class="text-muted" style="font-size: 14px;">Card issued <?= date('F j, Y', (int) $card->issued_at) ?>. Coming soon: <strong>Add to Google Wallet</strong>.</p>
+                    <?php if($gwallet): ?>
+                    <a href="<?= BASE_URL ?>welcome-cards/googlewallet" style="display: inline-flex; align-items: center; gap: 10px; background: #000; color: #fff; border-radius: 24px; padding: 10px 22px; font-size: 16px; font-weight: 600; margin: 4px 0 10px;">
+                        <i class="fa fa-google-wallet" aria-hidden="true"></i> Add to Google Wallet
+                    </a>
+                    <p class="text-muted" style="font-size: 13px;">On an Android phone it goes straight into Google Wallet. On a computer, Google shows the card and you can send it to your phone.</p>
+                    <?php endif; ?>
+                    <p class="text-muted" style="font-size: 14px;">Card issued <?= date('F j, Y', (int) $card->issued_at) ?>.<?= $gwallet ? '' : ' Coming soon: <strong>Add to Google Wallet</strong>.' ?></p>
 
                     <h3 style="color: <?= SN_CLR ?>; margin-top: 24px;"><?= $admin_view ? 'Lost or misused?' : 'Lost your phone?' ?></h3>
                     <p><?= $admin_view ? 'Cancelling the card stops the old QR code working at once and issues a new one.' : 'Cancel this card and get a new one. The old QR code stops working at once, wherever it is.' ?></p>

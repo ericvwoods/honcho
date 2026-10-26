@@ -7,7 +7,8 @@
 /*
   Digital membership cards (plan 2026-10-26), phase 1: the card in the member portal.
   The card's logic is in engine/tg_helpers/card_helper.php, shared with the phone API
-  (welcome-api/mycard). Door check-in (phase 2) and Google Wallet (phase 3) come later.
+  (welcome-api/mycard). Google Wallet (phase 3, wallet_helper.php) is the googlewallet()
+  button; door check-in (phase 2) comes next, Apple Wallet later.
 
   mycard()
         _check_function_permissions('mycard')
@@ -19,7 +20,10 @@
   reissue()                       POST: cancel the active card, issue a new one (lost phone)
         _check_function_permissions('mycard')
         _can_manage($ccmp_id)
-        card_reissue()
+        card_reissue(), gwallet_deactivate()
+        _audit()
+  googlewallet()                  Add to Google Wallet: gwallet_save_url(), then redirect to Google
+        _check_function_permissions('mycard')
         _audit()
   _show_card($ccmp_id, $admin_view)
         card_for_member(), card_details(), card_code()
@@ -84,7 +88,12 @@ class Cards extends Trongate {
         redirect('welcome-cards/mycard');
     }
 
+    $old  = card_for_member($ccmp_id, false);
     $card = card_reissue($ccmp_id, (int) ($_SESSION['tg_user_id'] ?? 0), $own ? 'Replaced by the member' : 'Replaced by an admin');
+    if($old){
+        $old->status = 'cancelled';
+        gwallet_deactivate($old); // the old card in Google Wallet shows as inactive
+    }
     $this->_audit('ReissueCard', $ccmp_id, $card ? 'new card '.$card->id : 'no card (deceased or deleted)');
 
     if(!$card){
@@ -94,6 +103,31 @@ class Cards extends Trongate {
     }
     $_SESSION['flashmsgcolor'] = $card ? 1 : 0;
     redirect($own ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$ccmp_id);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function GOOGLEWALLET ---------------------------*/
+/*----------------------------------------------------------------------------*/
+  function googlewallet(){ // "Add to Google Wallet": refresh the card's Wallet object, then off to Google
+
+    $this->_check_function_permissions('mycard');
+    if(empty($_SESSION['ccmp_logged_in'])){
+        redirect('welcome-cards/mycard');
+    }
+
+    $ccmp_id = (int) $_SESSION['ccmp_rec_id'];
+    $card    = card_for_member($ccmp_id, true);
+    $details = card_details($ccmp_id);
+    try {
+        $url = gwallet_save_url($card, $details);
+    } catch (Throwable $e) {
+        error_log('welcome-cards/googlewallet: '.$e->getMessage());
+        set_flashdata('Google Wallet isn\'t available right now. Please try again later.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect('welcome-cards/mycard');
+    }
+    $this->_audit('GoogleWallet', $ccmp_id, 'card '.$card->id);
+    redirect($url);
   }
 
 /*----------------------------------------------------------------------------*/
@@ -113,6 +147,7 @@ class Cards extends Trongate {
         $data['details']     = $details;
         $data['code']        = card_code($card);
         $data['admin_view']  = $admin_view;
+        $data['gwallet']     = !$admin_view && gwallet_configured(); // Add to Google Wallet button
         $data['token']       = $this->_token();
         $data['home_url']    = !empty($_SESSION['honcho_logged_in']) ? 'honcho/index' : 'welcome-ccmps/ccmphome';
         $data['card_bg']     = CCMPS_CRUD_LABEL_CLR; // the scheme's Label color: dark in every scheme, so white text reads

@@ -653,6 +653,7 @@ function renderCard(card) {
 
   el.style.display = 'block';
   document.getElementById('card-reissue').style.display = 'block';
+  document.getElementById('gwallet-btn').style.display = card.google_wallet ? 'block' : 'none';
   try { localStorage.setItem('bpa_card', JSON.stringify(card)); } catch (e) { /* storage off: fine */ }
 }
 
@@ -674,6 +675,17 @@ async function loadCard() {
     }
   }
 }
+
+document.getElementById('gwallet-btn').addEventListener('click', async () => {
+  const msg = document.getElementById('gwallet-msg');
+  msg.textContent = 'Opening Google Wallet…';
+  try {
+    const data = await apiCall('/googlewallet');
+    window.location.href = data.url; // Google's save page; on Android it hands over to the Wallet app
+  } catch (err) {
+    msg.textContent = err.message;
+  }
+});
 
 document.getElementById('reissue-sure').addEventListener('change', (e) => {
   document.getElementById('reissue-btn').disabled = !e.target.checked;

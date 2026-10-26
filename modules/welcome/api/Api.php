@@ -778,7 +778,32 @@ class Api extends Trongate {
             'member_word'   => $details->member_word,
             'card_color'    => CCMPS_CRUD_LABEL_CLR,
             'accent_color'  => SN2_CLR,
+            'google_wallet' => gwallet_configured(),
         ]);
+    }
+
+    /* ------------------------------------------------------------
+       GET /welcome-api/googlewallet
+       Header: Authorization: Bearer <token>
+       The "Add to Google Wallet" address for the member's card
+       (wallet_helper.php). The app opens it in the browser.
+       ------------------------------------------------------------ */
+
+    function googlewallet() {
+        $ccmp_id = $this->require_auth();
+        if ($ccmp_id === null) {
+            return;
+        }
+        $card    = card_for_member($ccmp_id, true);
+        $details = card_details($ccmp_id);
+        try {
+            $url = gwallet_save_url($card, $details);
+        } catch (Throwable $e) {
+            error_log('welcome-api/googlewallet: '.$e->getMessage());
+            $this->json_error('Google Wallet isn\'t available right now. Please try again later.', 503);
+            return;
+        }
+        $this->json_success(['url' => $url]);
     }
 
     /* ------------------------------------------------------------
@@ -799,7 +824,12 @@ class Api extends Trongate {
         }
 
         $member = $this->model->get_where($ccmp_id, 'ccmps');
+        $old    = card_for_member($ccmp_id, false);
         $card   = card_reissue($ccmp_id, (int) ($member->trongate_user_id ?? 0), 'Replaced by the member (phone app)');
+        if ($old) {
+            $old->status = 'cancelled';
+            gwallet_deactivate($old); // the old card in Google Wallet shows as inactive
+        }
         if (!$card) {
             $this->json_error('No card for this account.', 404);
             return;

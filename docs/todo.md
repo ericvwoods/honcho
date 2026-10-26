@@ -111,6 +111,17 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
     - Who hosts (owner's notes, 2026-10-21): **Operation Skyhook** and the **Summer Flight Academy** are national events. The **General Membership Meeting** and the **National Board Meeting** rotate between chapters, and the registration money goes **directly to the host chapter**.
     - So an event needs a host (National or a chapter, `events.subentity_id`), and registration must take payment into the host's account: the host chapter's payment-acceptance details (payment account / processor settings, payee, contact) need a home, probably on the Chapters screen (`ccmps_subentities`, next to `financial_email` / `financial_contact`), with National's own details for national events. Keep payment secrets out of the database in plain text.
 
+## Legacy data load (ETL) - before UAT, and again before go-live
+
+The data on the Mac and staging is old test data. The real data comes from the legacy BPA database (bpapilots.org, different structure) by an ETL, run just before UAT starts and again just before go-live. Things the ETL must repeat or allow for (noted 2026-10-26):
+- [ ] **Data fixes made on the test data** - build them into the ETL or re-run them after it: lifetime members `current_year` 9999 -> 2099 and status Current (`2026-10-22-lifetime-members.sql`); chapter states and National HQ (`2026-10-21-chapter-state*.sql`); deceased members keep no roles (`2026-10-19-clear-deceased-member-roles.sql`); RBAC step 2 (login rows and group memberships from the role columns, `2026-10-18-system-rbac-step2.sql`) and member login numbers. Not `2026-10-18-cleanup-test-logins.sql` (test data only).
+- [ ] **Settings are not data**: the `system_settings` rows (financial year, grace period, names, wording, colors), `system_color_schemes`, CMS content and Security Groups set up on the screens must survive the load. Load members, not the whole database.
+- [ ] **Member ids**: member cards (`ccmps_cards`), Security Group memberships (`trongate_users` ids), photos (`assets/<id>/`) and the audit log all point at `ccmps.id`. Either keep the legacy ids, or clear `ccmps_cards` (and make the Google Wallet objects inactive) and rebuild logins and groups after each load, so no card or role lands on the wrong person.
+- [ ] Check `trongate_users` shape against the real data (see the RBAC item about member creation).
+- [ ] Photos: only 14 of 1,725 test members have one; see what the legacy site holds.
+- [ ] Map the legacy dues and status fields to `current_year` / `status` / `ccmps_financial_transactions`, and lifetime members to 2099.
+- [ ] Plan the ETL itself (field mapping from the legacy structure) once SSH or FTP access to the legacy host works.
+
 ## Settings (plan approved 2026-10-22)
 
 [Honcho Settings Plan](https://claude.ai/artifact/1duFrj6djyVgxZdH8xMJtW): every setting in one home (`.env`, `config.php`, or `system_settings` with a screen). Sign-off after each phase.

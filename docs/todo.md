@@ -136,10 +136,10 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 ## Digital membership cards (plan drafted 2026-10-26, awaiting decisions)
 
 [Digital Membership Cards plan](https://claude.ai/artifact/3QVrXXRpZryjkkj21NLftc): a card with a QR code in the portal, phone app, Apple Wallet and Google Wallet; scanned at the door for event entry (registered and paid) and meeting attendance.
-- [ ] Answer the 7 decisions on the plan page.
-- [ ] Phase 1: My Card page and phone app tab (`ccmps_cards`, cancel and reissue).
+- [x] Decisions (2026-10-26): go ahead with the plan's recommendations; Google Wallet now, Apple Wallet and event registration later.
+- [x] Phase 1 (built 2026-10-26, not yet deployed): My Card page (`welcome-cards`), Card button on the member record, phone app Card tab (`welcome-api/mycard`, `reissuecard`), `ccmps_cards` (`2026-10-26-member-cards.sql`, run on the Mac), cancel and reissue. Only 14 of 1,725 members have a photo: ask members to add one, or the photo check at the door won't help much.
 - [ ] Phase 2: door check-in page and attendance (`event_checkins`, Door Volunteers group, overrides, export).
-- [ ] Phase 3: Apple Wallet and Google Wallet buttons. Start the D-U-N-S number and Apple Developer (organization) enrollment early: 1 to 3 weeks.
+- [ ] Phase 3: Google Wallet button (Eric: create the issuer account at pay.google.com/business/console). Apple Wallet later: start the D-U-N-S number and Apple Developer (organization) enrollment early, 1 to 3 weeks.
 - [ ] Phase 4: Wallet cards update themselves on renewal or chapter change.
 - [ ] Depends on the Event Module (below) for "registered and paid" at the door and guest tickets.
 

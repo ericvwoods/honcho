@@ -30,6 +30,7 @@
                 <li><a class="nav-link active" data-toggle="tab" href="#tab-architecture"><i class="fa fa-sitemap"></i> Architecture</a></li>
                 <li><a class="nav-link" data-toggle="tab" href="#tab-schema"><i class="fa fa-database"></i> Schema</a></li>
                 <li><a class="nav-link" data-toggle="tab" href="#tab-rbac"><i class="fa fa-shield"></i> RBAC</a></li>
+                <li><a class="nav-link" data-toggle="tab" href="#tab-cards"><i class="fa fa-qrcode"></i> Member Cards</a></li>
                 <li><a class="nav-link" data-toggle="tab" href="#tab-auxmodule"><i class="fa fa-puzzle-piece"></i> CCMPS_AUX_MODULE</a></li>
                 <li><a class="nav-link" data-toggle="tab" href="#tab-known-issues"><i class="fa fa-exclamation-triangle"></i> Known Issues</a></li>
                 <li><a class="nav-link" data-toggle="tab" href="#tab-testing"><i class="fa fa-flask"></i> Testing</a></li>
@@ -325,6 +326,15 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
                 <!-- ============================================================
                      CCMPS_AUX_MODULE
                      ============================================================ -->
+                <div id="tab-cards" class="tab-pane">
+                    <div class="panel-body">
+                        <h2>Member Cards</h2>
+                        <p>Digital membership cards (2026-10-26), phase 1: the card in the portal (<code>welcome-cards/mycard</code>, side menu <strong>My Card</strong>; admins: <strong>Card</strong> button on the member record, <code>welcome-cards/card/&lt;id&gt;</code>) and the phone app (<code>welcome-api/mycard</code>, <code>reissuecard</code>; the <strong>Card</strong> tab). Logic in <code>engine/tg_helpers/card_helper.php</code>; table <code>ccmps_cards</code>.</p>
+                        <p>The QR holds <code>HC1:&lt;card id&gt;:&lt;signature&gt;</code>, an HMAC keyed with <code>CARD_SECRET</code> (or a key derived from <code>JWT_SECRET</code>): no personal information, and nothing in the table makes a working code. <code>card_lookup()</code> rejects made-up or tampered codes; a reissued card's old code comes back as cancelled. Changing the key cancels every card.</p>
+                        <p>Next: door check-in and attendance, then Google Wallet. See the Developer's Guide, CCMPS chapter, Member Cards tab.</p>
+                    </div>
+                </div>
+
                 <div id="tab-auxmodule" class="tab-pane">
                     <div class="panel-body">
 

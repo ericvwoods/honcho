@@ -10,7 +10,7 @@
 // stuck on a stale version indefinitely.
 // ============================================================
 
-const CACHE_VERSION = 'bpa-shell-v16';
+const CACHE_VERSION = 'bpa-shell-v17';
 const SHELL_FILES = [
   './',
   './index.html',
@@ -19,6 +19,7 @@ const SHELL_FILES = [
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
+  '../js/qrcode-generator-1.4.4/qrcode.js',
 ];
 
 self.addEventListener('install', (event) => {

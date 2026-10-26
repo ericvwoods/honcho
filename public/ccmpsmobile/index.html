@@ -403,6 +403,40 @@
     </section>
 
     <!-- ============================================================
+         MEMBERSHIP CARD (welcome-api/mycard, 2026-10-26)
+         ============================================================ -->
+    <section id="screen-card" class="screen">
+      <div class="screen-header">
+        <h1>My Card</h1>
+        <p>Show the QR code at the door of events and meetings.</p>
+      </div>
+      <div class="screen-body">
+        <p class="loading-text" id="card-loading">Loading your card…</p>
+        <div class="member-card" id="member-card" style="display:none;">
+          <div class="mc-top"><span id="mc-org"></span><span id="mc-word"></span></div>
+          <div class="mc-who">
+            <div class="mc-photo" id="mc-photo"></div>
+            <div>
+              <div class="mc-name" id="mc-name"></div>
+              <div class="mc-line" id="mc-number"></div>
+              <div class="mc-line" id="mc-chapter"></div>
+              <div class="mc-line" id="mc-type"></div>
+            </div>
+          </div>
+          <div class="mc-qr" id="mc-qr"></div>
+          <div class="mc-foot"><span>Valid through</span><b id="mc-valid"></b></div>
+        </div>
+        <div id="card-reissue" style="display:none;">
+          <h2 class="card-subhead">Lost your phone?</h2>
+          <p class="card-note">Cancel this card and get a new one. The old QR code stops working at once, wherever it is.</p>
+          <label class="card-note"><input type="checkbox" id="reissue-sure"> I understand the old card stops working</label>
+          <button class="btn-secondary" id="reissue-btn" disabled>Cancel and issue a new card</button>
+          <p class="card-note" id="reissue-msg"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
          CHANGE PASSWORD
          ============================================================ -->
     <section id="screen-changepw" class="screen">
@@ -436,6 +470,7 @@
          ============================================================ -->
     <nav class="tab-bar hidden" id="tab-bar">
       <button class="tab-btn active" data-screen="home">Home</button>
+      <button class="tab-btn" data-screen="card">Card</button>
       <button class="tab-btn" data-screen="profile">Profile</button>
       <button class="tab-btn" data-screen="chapter">Chapter</button>
       <button class="tab-btn" data-screen="directory">Directory</button>
@@ -445,6 +480,7 @@
 
   </div>
 
+  <script src="../js/qrcode-generator-1.4.4/qrcode.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

@@ -366,6 +366,17 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                         </div>
                     </div>
 
+                    <div class="widget style1 gray-bg"> <!-- digital membership card (welcome-cards, 2026-10-26) -->
+                        <div class="row vertical-align">
+                            <div class="col-2">
+                            <a href="<?= BASE_URL ?>welcome-cards/mycard">     <i class="fa fa-qrcode fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i></a>
+                            </div>
+                            <div class="col-10 text-right">
+                                <a href="<?= BASE_URL ?>welcome-cards/mycard" style="font-family: 'Open Sans', helvetica, arial, sans-serif; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> My Card</a>
+                            </div>
+                        </div>
+                    </div>
+
 
 
                     <div class="widget style1 gray-bg">

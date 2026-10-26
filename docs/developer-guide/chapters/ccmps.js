@@ -214,6 +214,27 @@ const sections = [
 ]},
 
 // ============================================================
+{ tab: "Member Cards", blocks: [
+  { type: 'p', text: "Digital membership cards ([plan](https://claude.ai/artifact/3QVrXXRpZryjkkj21NLftc), 2026-10-26). Phase 1, built: the card in the member portal and the phone app. Next: door check-in and attendance (phase 2), Google Wallet (phase 3). Apple Wallet and event registration come later." },
+  { type: 'table', headers: ['Piece', 'Where'], rows: [
+    ['Logic', '`engine/tg_helpers/card_helper.php`: `card_for_member()`, `card_code()`, `card_lookup()`, `card_reissue()`, `card_details()`'],
+    ['Portal', '`modules/welcome/cards/` (`welcome-cards`): `mycard` (the member\'s own; side menu **My Card**), `card/<id>` (admins; **Card** button on the member record), `reissue` (POST)'],
+    ['Phone app', '`welcome-api/mycard` (GET) and `welcome-api/reissuecard` (POST); the **Card** tab in `public/ccmpsmobile/` (shell cache `bpa-shell-v17`)'],
+    ['QR drawing', '`public/js/qrcode-generator-1.4.4/qrcode.js` (MIT, npm checksum in its README), in the browser'],
+    ['Table', '`ccmps_cards` (`2026-10-26-member-cards.sql`): one active row per member; cancelled rows are kept'],
+  ]},
+  { type: 'h2', text: 'The Code' },
+  { type: 'p', text: "The QR holds `HC1:<card id>:<signature>`. The signature is the first 16 bytes of `HMAC-SHA256('card:<id>:<issued_at>')`, base64url (22 characters), keyed with `CARD_SECRET` from `.env`, or a key derived from `JWT_SECRET` when that's not set. So the code carries no personal information, the table holds nothing that makes a working code, and `card_lookup()` (compares with `hash_equals`) rejects anything made up or tampered with. A cancelled card's code still verifies but returns `status = cancelled`, so the door can say \"cancelled card\" rather than \"not ours\". **Changing `CARD_SECRET` (or `JWT_SECRET` when it's unset) cancels every card at once.**" },
+  { type: 'ul', items: [
+    "A card is made the first time it's viewed (`issued_by` 0). Deceased and deleted members get none.",
+    "Reissue (lost phone) cancels the active card and issues a new row; logged as `ReissueCard` in the Auditlog.",
+    "Who may see and reissue someone else's card (`Cards::_can_manage()`): member System and Member Admins, staff system and member admins, Chapter Admins for their own chapter.",
+    "Card colors: the scheme's Label color (`CCMPS_CRUD_LABEL_CLR`, dark in every scheme) with the Accent color (`SN2_CLR`). It shows name, member number, chapter, member type, photo (initials if none) and \"Valid through\" (`current_year`, or Lifetime for 2099).",
+    "The phone app keeps the last card it loaded (`localStorage` `bpa_card`) so it opens without signal at the door; sign-out removes it.",
+  ]},
+]},
+
+// ============================================================
 { tab: "CCMPS_AUX_MODULE", blocks: [
   { type: 'h2', text: 'Core vs. Extension' },
   { type: 'p', text: 'This module was deliberately split so it can be sold and deployed two ways:' },

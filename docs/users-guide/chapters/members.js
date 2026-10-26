@@ -33,6 +33,15 @@ module.exports = [
   ]},
 ]},
 
+{ tab: "Your Membership Card", blocks: [
+  { type: 'p', text: "Click **My Card** in the side menu (or the **Card** tab in the phone app) to see your digital membership card: your name, member number, chapter, member type, the year your membership runs to, and a QR code." },
+  { type: 'p', text: "Show the QR code at the door of BPA events and meetings. A volunteer scans it and the system checks, at that moment, that your membership is current. The code contains no personal information." },
+  { type: 'p', text: "In the phone app the card also opens without signal, as long as you've opened it once before with signal." },
+  { type: 'h2', text: 'Lost Your Phone?' },
+  { type: 'p', text: "Open My Card on another device, tick **I understand the old card stops working** and click **Cancel and issue a new card**. The QR code on the lost phone stops working at once. Your Chapter Admin or a Member Admin can do this for you too." },
+  { type: 'alert', variant: 'info', text: "Coming soon: **Add to Google Wallet**, so the card sits in your phone's wallet. Apple Wallet will follow." },
+]},
+
 { tab: "Membership Status", blocks: [
   { type: 'p', text: "Your status shows on the **Membership** tab. It's worked out from your dues and records:" },
   { type: 'table', headers: ['Status', 'Meaning'], rows: [

@@ -563,3 +563,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   cursor: pointer;
   font-family: inherit;
 }
+
+/* ------------------------------------------------------------
+   Membership card (screen-card, 2026-10-26)
+   ------------------------------------------------------------ */
+.member-card { border-radius: 16px; color: #fff; padding: 18px 20px; box-shadow: 0 10px 28px rgba(0,0,0,.35); margin-bottom: 18px; }
+.member-card .mc-top { display: flex; justify-content: space-between; gap: 10px; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; opacity: .9; }
+.member-card .mc-who { display: flex; gap: 14px; align-items: center; margin: 14px 0 12px; }
+.member-card .mc-photo { width: 64px; height: 64px; flex: none; border-radius: 50%; border: 3px solid #fff; background: rgba(255,255,255,.15); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; overflow: hidden; }
+.member-card .mc-photo img { width: 100%; height: 100%; object-fit: cover; }
+.member-card .mc-name { font-size: 1.25rem; font-weight: 700; line-height: 1.2; }
+.member-card .mc-line { font-size: .85rem; opacity: .92; line-height: 1.45; }
+.member-card .mc-qr { background: #fff; border-radius: 10px; padding: 10px; display: flex; justify-content: center; }
+.member-card .mc-qr svg { width: 100%; max-width: 260px; height: auto; display: block; }
+.member-card .mc-foot { display: flex; justify-content: space-between; margin-top: 12px; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; }
+.member-card .mc-foot b { border-bottom: 3px solid #fff; }
+.card-subhead { font-size: 1rem; margin: 6px 0; }
+.card-note { font-size: .85rem; color: var(--text-muted); display: block; margin: 6px 0; }

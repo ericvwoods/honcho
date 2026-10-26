@@ -73,6 +73,7 @@ function setToken(token) {
 
 function clearToken() {
   localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem('bpa_card'); // the saved membership card goes with the login
 }
 
 /* ------------------------------------------------------------
@@ -124,7 +125,7 @@ async function apiCall(path, options = {}) {
    Screen routing
    ------------------------------------------------------------ */
 
-const TAB_SCREENS = ['home', 'profile', 'chapter', 'directory', 'changepw'];
+const TAB_SCREENS = ['home', 'card', 'profile', 'chapter', 'directory', 'changepw'];
 
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach((el) => el.classList.remove('active'));
@@ -149,6 +150,7 @@ document.querySelectorAll('.tab-btn[data-screen]').forEach((btn) => {
     // than fetching all 3 up front on login — keeps the initial
     // sign-in fast, and avoids fetching data the member never looks at.
     if (screen === 'home' && !homeLoaded) loadHome();
+    if (screen === 'card') loadCard(); // every time: a card cancelled on the website shouldn't linger here
     if (screen === 'chapter' && !chapterLoaded) loadChapter();
     if (screen === 'directory' && !directoryLoaded) loadDirectory();
   });
@@ -613,6 +615,82 @@ wireSearch(
   document.getElementById('directory-list'),
   'No current members found.'
 );
+
+/* ------------------------------------------------------------
+   Membership card (welcome-api/mycard). The QR is drawn here with
+   qrcode-generator 1.4.4 (public/js/), cached with the app shell, so
+   the card also opens without signal once it has loaded once.
+   ------------------------------------------------------------ */
+
+function renderCard(card) {
+  const el = document.getElementById('member-card');
+  el.style.background = card.card_color;
+  document.getElementById('mc-org').textContent = card.org_name;
+  document.getElementById('mc-word').textContent = card.member_word;
+  document.getElementById('mc-name').textContent = card.name;
+  document.getElementById('mc-number').textContent = card.member_word + ' No. ' + card.member_number;
+  document.getElementById('mc-chapter').textContent = card.chapter;
+  document.getElementById('mc-type').textContent = card.member_type;
+  document.getElementById('mc-valid').textContent = card.valid_through;
+  document.getElementById('mc-valid').style.borderBottomColor = card.accent_color;
+
+  const photo = document.getElementById('mc-photo');
+  photo.style.borderColor = card.accent_color;
+  photo.textContent = '';
+  if (card.photo_url) {
+    const img = document.createElement('img');
+    img.src = card.photo_url;
+    img.alt = '';
+    photo.appendChild(img);
+  } else {
+    photo.textContent = card.initials;
+  }
+
+  const qr = qrcode(0, 'M');
+  qr.addData(card.code);
+  qr.make();
+  document.getElementById('mc-qr').innerHTML = qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });
+
+  el.style.display = 'block';
+  document.getElementById('card-reissue').style.display = 'block';
+  try { localStorage.setItem('bpa_card', JSON.stringify(card)); } catch (e) { /* storage off: fine */ }
+}
+
+async function loadCard() {
+  const loadingEl = document.getElementById('card-loading');
+  try {
+    const card = await apiCall('/mycard');
+    renderCard(card);
+    loadingEl.style.display = 'none';
+  } catch (err) {
+    // no signal at the door: show the card saved last time, if any
+    let saved = null;
+    try { saved = JSON.parse(localStorage.getItem('bpa_card') || 'null'); } catch (e) { saved = null; }
+    if (saved) {
+      renderCard(saved);
+      loadingEl.textContent = 'Offline - showing your saved card.';
+    } else {
+      loadingEl.textContent = err.message;
+    }
+  }
+}
+
+document.getElementById('reissue-sure').addEventListener('change', (e) => {
+  document.getElementById('reissue-btn').disabled = !e.target.checked;
+});
+
+document.getElementById('reissue-btn').addEventListener('click', async () => {
+  const msg = document.getElementById('reissue-msg');
+  try {
+    const card = await apiCall('/reissuecard', { method: 'POST' });
+    renderCard(card);
+    msg.textContent = 'Your old card has been cancelled. This is your new card.';
+    document.getElementById('reissue-sure').checked = false;
+    document.getElementById('reissue-btn').disabled = true;
+  } catch (err) {
+    msg.textContent = err.message;
+  }
+});
 
 async function loadChapter() {
   const loadingEl = document.getElementById('chapter-loading');

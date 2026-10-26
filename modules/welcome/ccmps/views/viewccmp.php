@@ -127,6 +127,9 @@
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>">
                         <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> 128 Update</span>
                     </a>
+                    <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?><?= $_SESSION['ccmpmode'] == 'ccmp' ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$recid ?>"> <!-- membership card (welcome-cards) -->
+                        <i class="fa fa-qrcode"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Card</span>
+                    </a>
 
                 <?php if($_SESSION['ccmpmode'] == 'ccmp'): ?> <!-  coming from sidemenu of ccmphome page -->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/ccmphome">

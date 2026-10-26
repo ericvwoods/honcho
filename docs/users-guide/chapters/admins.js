@@ -78,6 +78,8 @@ memberAdmins: [
     { type: 'h2', text: 'Statuses and the Current Year' },
     { type: 'p', text: "A member's status (Current, Past Due, Pending, Expired) depends on their dues and the current membership year. At the start of a new year, use the **Current Year** bulk action on members who have paid. The current year itself and the grace period are set by a Financial Admin or System Admin (Financial Settings, Chapter 8)." },
     { type: 'p', text: "To make someone a **lifetime member**, enter **2099** as their Current Year and save. Lifetime members are always Current, whatever the dues year." },
+    { type: 'h2', text: 'Membership Cards' },
+    { type: 'p', text: "The **Card** button on a member's record shows their digital membership card. If they've lost their phone, **Cancel and issue a new card** stops the old QR code working at once. Chapter Admins can do this for their own chapter's members." },
     { type: 'h2', text: 'Giving Someone an Admin Role' },
     { type: 'p', text: "Open the member with **Update Record**, go to **Roles & Permissions**, tick the roles they should have (for example Chapter Admin or Content Admin) and save. They see the new menus the next time they log in. System, Member, Chapter, Student, Content, Event and Financial Admin are kept in Security Groups, so the change also shows there. System Admins can also set everyone's roles from one list: **System Admin > Member Permissions** (Chapter 8)." },
     { type: 'alert', variant: 'warning', text: 'Only give admin roles to people who need them. A Member Admin can see and change every member\'s details.' },

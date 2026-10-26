@@ -744,4 +744,73 @@ class Api extends Trongate {
         $this->json_success(['updated' => true]);
     }
 
+    /* ------------------------------------------------------------
+       GET /welcome-api/mycard
+       Header: Authorization: Bearer <token>
+       The member's digital membership card (card_helper.php, 2026-10-26):
+       what the card shows plus the QR text. The app draws the QR itself.
+       ------------------------------------------------------------ */
+
+    function mycard() {
+        $ccmp_id = $this->require_auth();
+        if ($ccmp_id === null) {
+            return;
+        }
+
+        $card    = card_for_member($ccmp_id, true);
+        $details = card_details($ccmp_id);
+        if (!$card || !$details) {
+            $this->json_error('No card for this account.', 404);
+            return;
+        }
+
+        $this->json_success([
+            'code'          => card_code($card),
+            'issued_at'     => (int) $card->issued_at,
+            'name'          => $details->name,
+            'member_number' => $details->member_number,
+            'member_type'   => $details->member_type,
+            'chapter'       => $details->chapter,
+            'valid_through' => $details->valid_through,
+            'photo_url'     => $details->photo_url,
+            'initials'      => $details->initials,
+            'org_name'      => $details->org_name,
+            'member_word'   => $details->member_word,
+            'card_color'    => CCMPS_CRUD_LABEL_CLR,
+            'accent_color'  => SN2_CLR,
+        ]);
+    }
+
+    /* ------------------------------------------------------------
+       POST /welcome-api/reissuecard
+       Header: Authorization: Bearer <token>
+       Lost phone: cancels the member's card and issues a new one; the
+       old QR code stops working at once. Returns the new card (as mycard).
+       ------------------------------------------------------------ */
+
+    function reissuecard() {
+        $ccmp_id = $this->require_auth();
+        if ($ccmp_id === null) {
+            return;
+        }
+        if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+            $this->json_error('Use POST.', 405);
+            return;
+        }
+
+        $member = $this->model->get_where($ccmp_id, 'ccmps');
+        $card   = card_reissue($ccmp_id, (int) ($member->trongate_user_id ?? 0), 'Replaced by the member (phone app)');
+        if (!$card) {
+            $this->json_error('No card for this account.', 404);
+            return;
+        }
+
+        $this->module('timedate');
+        $time = $this->timedate->get_nice_date(time(), 'minitime').' UTC';
+        $this->module('system-auditlogger');
+        $this->auditlogger->logevent('update', 'ReissueCard', 'welcome-api', 'UN: '.($member->username ?? ''), $time, 'Rec: '.$ccmp_id, 'Tbl: ccmps_cards', 'new card '.$card->id);
+
+        $this->mycard();
+    }
+
 }

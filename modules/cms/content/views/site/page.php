@@ -26,6 +26,7 @@ $cms_job_url = function($id) use ($cms){ // a job's detail page on this site
     /* Website page additions to the Inspinia landing styles */
     .cms-site section { scroll-margin-top: 70px; }
     .cms-site .header-back { background-size: cover !important; background-position: center !important; }
+    .cms-site .carousel .header-back { background-position: center 15% !important; } /* slides: keep the top of the picture (people's heads) when a wide screen crops it, 2026-10-27 */
     .cms-site .header-back.cms-plain { background: linear-gradient(135deg, #1c84c6, #1ab394); }
     .cms-site .carousel-caption h1 { text-shadow: 0 1px 3px rgba(0,0,0,.45); }
     .cms-site .carousel-caption p  { text-shadow: 0 1px 2px rgba(0,0,0,.45); }

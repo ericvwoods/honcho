@@ -40,7 +40,7 @@
 
         </div>
   </div>  <!-- col 6 -->
-          <div class="col-md-4">
+          <div class="col-md-3" style="white-space: nowrap;"> <!-- was col-md-4: the links column needed room for Font (2026-10-27) -->
               <br>
             <ul class="nav navbar-top-links navbar-left">
 
@@ -48,7 +48,7 @@
                     <li><span class="m-r"><a href="#"><h1 style="color: <?= NB_CLR ?>;" ><strong><?= CCMP ?> Services Portal</strong></h1></a> </span></li>
                 <?php else: ?>
 
-<li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SHORTSITENAME ?></span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"> <?= SITENAME4 ?> </span> </a> </span></li>
+<li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"><?= SHORTSITENAME ?></span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"> <?= SITENAME4 ?> </span> </a> </span></li> <!-- title shrinks a little on narrower screens so it doesn't run into the links -->
 
                      <!-- <?= SITENAME2 ?>   -->
                <!--    <li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME ?> </span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME2 ?> </span> </a> </span></li>  -->
@@ -58,9 +58,9 @@
             </ul>
 
           </div>  <!-- col 4 -->
-                <div class="col-md-3">
+                <div class="col-md-4">
 
-            <ul class="nav navbar-top-links navbar-right">
+            <ul class="nav navbar-top-links navbar-right"> <!-- Change Password, Font, Logout: one line on normal screens (col-md-4), wrap only when narrow -->
 
 
             <li>

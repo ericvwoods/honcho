@@ -34,11 +34,9 @@ if (!empty($_SESSION['mobile_app_view'])) {
 <!-- End from landing Page -->
 
     <title><?= SHORTSITENAME ?></title>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://www.paypalobjects.com/webstatic/en_US/developer/docs/css/cardfields.css"
-    />
+    <!-- Removed 2026-10-27: PayPal's developer-docs demo stylesheet (paypalobjects.com .../cardfields.css)
+         was loaded on every page; its "button { width: 229px; height: 49px; ... }" made every <button>
+         oversized (e.g. Save Changes vs Cancel). Nothing here uses PayPal card fields. -->
 
     <link href="<?= BASE_URL ?>themes/inspinia/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?= BASE_URL ?>themes/inspinia/font-awesome/css/font-awesome.css" rel="stylesheet">

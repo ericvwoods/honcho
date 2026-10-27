@@ -31,6 +31,7 @@ const guide = [
     { title: 'Developer Workstation (VS Code & Claude Code)', sections: require('./chapters/workstation.js') },
     { title: 'Deploying on DigitalOcean',    sections: require('./chapters/deployment.js') },
     { title: 'Configuration',                sections: require('./chapters/configuration.js') },
+    { title: 'Conventions',                  sections: require('./chapters/conventions.js') },
   ]},
 
 ];

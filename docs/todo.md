@@ -98,6 +98,8 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## Developer's Guide
 
+- [x] **Conventions chapter** (Part III, `chapters/conventions.js`, 2026-10-27): where things go, database, security, screens, code style, docs and releases. Keep it current when a pattern is agreed.
+- [ ] **Per-user preferences table** (core): `system_user_preferences` (login id = `trongate_users.id`, preference key, value) instead of columns on `ccmps` (`tab_setting` ... `button_setting`, `fontsize`, `mfontsize`, `language`) and on `honcho_user_accounts` (`fontsize`, `tfontsize`). One store for members and staff; new preferences need no table change; the Font pop-up then works for staff too; member reloads (ETL) don't touch preferences. Do before the ETL (requested 2026-10-27).
 - [ ] Chapters still to write: Welcome, Participants. (Configuration written 2026-10-25.) "Deploying on DigitalOcean" started 2026-10-08 (`chapters/deployment.js`); keep it updated as each DO-xx step is done.
 - [ ] CCMPS Testing tab describes `lib/CcmpsPermissions.php` and `run_integration_tests.sh`, which aren't in the project.
 - [ ] Delete the old `CCMPS_Developer_Documentation.docx` (superseded).

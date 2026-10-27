@@ -85,3 +85,15 @@ function scheme_color(string $slot, string $default): string {
     $color = $scheme[$slot.'_clr'] ?? '';
     return preg_match('/^#[0-9a-fA-F]{6}$/', (string) $color) ? $color : $default;
 }
+
+/**
+ * Is a designated member-record field shown? System Settings > Member Fields
+ * (rows CCMPS_SHOW_<FIELD>, 2026-10-27). A field with no row is always shown,
+ * so only designated fields can be hidden.
+ *
+ * @param string $field the ccmps column, e.g. 'department'
+ * @return bool
+ */
+function ccmp_field_shown(string $field): bool {
+    return (string) setting('CCMPS_SHOW_'.strtoupper($field), '1') === '1';
+}

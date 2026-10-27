@@ -209,9 +209,8 @@
     <?php
         vf_row('Title', 'title', $data);
         vf_row('Employer', 'employer', $data);
-        // Department and Reports To hidden 2026-10-27 (owner)
-        // vf_row('Department', 'department', $data);
-        // vf_row('Reports To', 'reports_to', $data);
+        if (ccmp_field_shown('department')) { vf_row('Department', 'department', $data); } // System Settings > Member Fields
+        if (ccmp_field_shown('reports_to')) { vf_row('Reports To', 'reports_to', $data); }
     ?>
 
 <?php vf_section_close(); ?>
@@ -285,7 +284,7 @@
         vf_row('Current Year', 'current_year', $data);
         vf_row('Region', 'region', $data);
         vf_row('National Officer', 'national_officer', $data);
-        // vf_row('Lead Source', 'leadsource', $data); // hidden 2026-10-27 (owner)
+        if (ccmp_field_shown('leadsource')) { vf_row('Lead Source', 'leadsource', $data); } // System Settings > Member Fields
     ?>
     <?php
         vf_bool_row('Eligible Voter', 'eligible_voter', $data);

@@ -230,10 +230,10 @@ $can_grant_chapter_admin = $is_system_admin
     <?php
         cf_text('Title', 'title', $data);
         cf_text('Employer', 'employer', $data);
-        // Department and Reports To hidden 2026-10-27 (owner). Fields not on the form
-        // aren't saved (extract_text() skips them), so existing values are kept.
-        // cf_text('Department', 'department', $data);
-        // cf_text('Reports To', 'reports_to', $data);
+        // Shown or hidden on System Settings > Member Fields. A hidden field isn't on the
+        // form, and extract_text() skips fields that aren't posted, so its value is kept.
+        if (ccmp_field_shown('department')) { cf_text('Department', 'department', $data); }
+        if (ccmp_field_shown('reports_to')) { cf_text('Reports To', 'reports_to', $data); }
     ?>
 
 <?php cf_section_close(); ?>
@@ -311,8 +311,7 @@ $can_grant_chapter_admin = $is_system_admin
         cf_text('Current Year', 'current_year', $data, 'number', $locked);
         cf_select('Region', 'region', $data, $regions, 'id', 'description', null, $locked);
         cf_select('National Officer', 'national_officer', $data, $national_offices, 'id', 'description', null, $locked);
-        // Lead Source hidden 2026-10-27 (owner); not on the form = not saved, so values are kept
-        // cf_select('Lead Source', 'leadsource', $data, $leadsources, 'id', 'title', 'referrer', $locked);
+        if (ccmp_field_shown('leadsource')) { cf_select('Lead Source', 'leadsource', $data, $leadsources, 'id', 'title', 'referrer', $locked); } // System Settings > Member Fields
     ?>
     <!-- Student moved next to Minor (Personal Information) 2026-10-27 -->
     <div class="form-group col-md-2"><label><input type="checkbox" name="eligible_voter" value="1" <?= !empty($data['eligible_voter']) ? 'checked' : '' ?> <?= $locked ?>> Eligible Voter</label></div>

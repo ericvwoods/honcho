@@ -176,6 +176,7 @@ system: [
       ['**Financial**', 'Current membership year, grace period, dues payment year, new member dues proration. See Financial Settings below'],
       ['**Organization**', 'The organization\'s name and short name, the system name, the headings on the member and staff login pages, the public website address, the support phone number, Facebook, X and YouTube pages'],
       ['**Wording**', 'What the system calls a member, a chapter and a staff member (singular and plural), the name of the Website menu, and what people are asked for after their password'],
+      ['**Member Fields**', 'Show or hide some fields of the member record (Department, Reports To and Lead Source so far). A hidden field disappears from the profile and the edit form; anything already stored in it is kept'],
       ['**Look**', 'The color scheme, the logo and header logo, and the extra button in the member home\'s top menu (for example a registration link)'],
       ['**Features & Policy**', 'Whether the site\'s front address shows the public website, whether members may post Bulletin Board sticky notes, the minimum password length, and whether new members must change their password the first time they log in'],
       ['**DMS**', 'Document Library labels: the organization and tag names, the Kanban column headings, which columns show, and when the editing page opens'],

@@ -312,7 +312,7 @@ class Settings extends Trongate {
     }
 
     function _tabs($rows){ // slug => tab name, for the categories holding a row this person may change
-        $order = array('Financial', 'Organization', 'Wording', 'Look', 'Features & Policy', 'DMS', 'General');
+        $order = array('Financial', 'Organization', 'Wording', 'Member Fields', 'Look', 'Features & Policy', 'DMS', 'General');
         $tabs  = array();
         foreach($rows as $row){
             if($this->_can_change($row)){

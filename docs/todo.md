@@ -114,6 +114,19 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
     - Who hosts (owner's notes, 2026-10-21): **Operation Skyhook** and the **Summer Flight Academy** are national events. The **General Membership Meeting** and the **National Board Meeting** rotate between chapters, and the registration money goes **directly to the host chapter**.
     - So an event needs a host (National or a chapter, `events.subentity_id`), and registration must take payment into the host's account: the host chapter's payment-acceptance details (payment account / processor settings, payee, contact) need a home, probably on the Chapters screen (`ccmps_subentities`, next to `financial_email` / `financial_contact`), with National's own details for national events. Keep payment secrets out of the database in plain text.
 
+## Core product and client configurations (hybrid SaaS / custom) - after BPA is perfected
+
+Decided 2026-10-27: once this BPA instance is right, it becomes the blueprint for the **Honcho core**. Each new client gets **its own configuration in Git**, and its own **staging and production** (one droplet per client, as planned for BPA). Core improvements flow to every client; client-specific work stays with that client.
+- [ ] **Decide the Git layout.** Options: (a) a core repo plus a small repo per client (settings, seed data, logo and pictures, custom modules) laid over the core at deploy; (b) the core repo with a `clients/<name>/` folder per client; (c) a branch per client (not recommended: merging core fixes into every branch gets painful). Recommendation to discuss: (a).
+- [ ] **Releases:** a client deploys a tagged core version plus its own configuration; a core upgrade is tested on the client's staging before production.
+- [ ] **Separate core from BPA** in what exists today:
+    - **Migrations:** core schema changes vs BPA data fixes (lifetime 2099, chapter states, BPA website content). Core migrations run for every client; client data scripts only for that client.
+    - **Defaults in `config.php`** still name BPA (organization name, logo `bpalogo100x82.jpg`, `SUBENTITY_NATIONAL_ID` 99, BPA's Wallet issuer in `.env`). New clients start from neutral defaults and set theirs on System Settings.
+    - **Aviation fields** (certificates, ratings, aircraft; `ccmps_aux`, `CCMPS_AUX_MODULE`) are BPA-specific: keep them as an optional module, off for clients that don't need them.
+    - **Phone app** wording ("BPA Member Portal", already on the list), the **Users' Guide** (written for BPA), website content.
+    - **Per-client accounts:** Google Wallet issuer (and Apple later), Brevo, email, payments; and the **Inspinia licence** question.
+- [ ] **New-client checklist:** the Configuration chapter's New Client tab grows into the full runbook (droplet, `.env`, migrations, client configuration, System Settings, accounts).
+
 ## Legacy data load (ETL) - before UAT, and again before go-live
 
 The data on the Mac and staging is old test data. The real data comes from the legacy BPA database (bpapilots.org, different structure) by an ETL, run just before UAT starts and again just before go-live. Things the ETL must repeat or allow for (noted 2026-10-26):

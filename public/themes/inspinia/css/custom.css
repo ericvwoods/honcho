@@ -21,3 +21,11 @@
    style.css directly) stays in place for any future customization
    that genuinely is static/site-wide rather than per-user.
    ============================================================ */
+
+/* Member update form (.ccmp-form-section, 2026-10-27): the member's font sizes
+   now apply here, and a fixed-height select clipped larger text. */
+.ccmp-form-section select.form-control,
+.ccmp-form-section select.form-control:not([size]):not([multiple]) { /* Bootstrap's own rule uses this selector */
+  height: auto;
+  min-height: calc(1.5em + .75rem + 2px);
+}

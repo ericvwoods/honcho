@@ -8181,10 +8181,11 @@ if($_SESSION['ccmp_logged_in'] == 1  || $_SESSION['honcho_ccmps_admin'] == 1 || 
         // row found by matching type+title — never by assuming a
         // specific id.
         $element_map = [
-            'tab_setting'    => ['tab',    '.tabs-container .nav-tabs > li > a'],
-            'header_setting' => ['header', '.tabs-container h4'],
-            'label_setting'  => ['label',  '.tabs-container label'],
-            'value_setting'  => ['value',  '.tabs-container .form-control-static'],
+            // view page: .tabs-container; update form: .ccmp-form-section (collapsible boxes, 2026-10-27)
+            'tab_setting'    => ['tab',    '.tabs-container .nav-tabs > li > a, .ccmp-form-section .faq-question'],
+            'header_setting' => ['header', '.tabs-container h4, .ccmp-form-section h4'],
+            'label_setting'  => ['label',  '.tabs-container label, .ccmp-form-section label'],
+            'value_setting'  => ['value',  '.tabs-container .form-control-static, .ccmp-form-section .form-control'],
             'button_setting' => ['button', '.btn-label-text'],
         ];
 

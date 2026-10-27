@@ -55,7 +55,7 @@ function cf_select($label, $name, $data, $options, $valueField, $displayField, $
 
 function cf_section_open($id, $title, $icon = 'fa-folder-open', $open = false) {
     $collapseClass = $open ? 'panel-collapse collapse show' : 'panel-collapse collapse';
-    echo '<div class="ibox">';
+    echo '<div class="ibox ccmp-form-section">'; // ccmp-form-section: the member's font sizes apply here too (_with_fontsize_style, 2026-10-27)
     echo '<div class="ibox-title">';
     echo '<center><a href="#' . $id . '" class="faq-question"><i class="fa ' . $icon . '"></i> ' . htmlspecialchars($title) . ' <i class="fa fa-unsorted fa-1x"></i></a></center>';
     echo '</div>';

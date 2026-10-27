@@ -21,7 +21,7 @@
           <div class="col-md-4">
               <br>
             <ul class="nav navbar-top-links navbar-left">
-                <li> <span class="m-r"><a href="<?= BASE_URL ?>" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME ?> </span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME2 ?> </span> </a> </span></li>
+                <li><span class="m-r"><?= title_bar_name('admin') ?></span></li>
             </ul>
           </div>  <!-- col 4 -->
                 <div class="col-md-3">

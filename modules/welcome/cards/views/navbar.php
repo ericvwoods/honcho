@@ -21,7 +21,7 @@
           <div class="col-md-4">
               <br>
             <ul class="nav navbar-top-links navbar-left">
-                <li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"><?= SHORTSITENAME ?></span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"> <?= SITENAME4 ?> </span> </a> </span></li> <!-- same title as the member profile pages (ccmps navbar), 2026-10-27 -->
+                <li><span class="m-r"><?= title_bar_name('member') ?></span></li> <!-- same title as the member profile pages (ccmps navbar), 2026-10-27 -->
             </ul>
           </div>  <!-- col 4 -->
                 <div class="col-md-3">

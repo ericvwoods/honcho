@@ -40,7 +40,7 @@
 
                 <li>
                        
-       <span class="m-r"><a href="#"><h1><strong>System Administration</strong></h1></a> </span>
+       <span class="m-r"><?= title_bar_name('admin') ?></span> <!-- was the page name; the breadcrumb still shows it (2026-10-27) -->
                   <!--    <h1><span class="text-navy"><strong><?= SITENAME ?></strong></span></h1> -->
                 </li>
 

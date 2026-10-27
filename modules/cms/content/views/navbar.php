@@ -17,6 +17,9 @@
                 </a>
             </li>
         </ul>
+        <ul class="nav navbar-top-links" style="padding: 15px;"> <!-- the admin title, as on the other admin screens (2026-10-27) -->
+            <li><span class="m-r"><?= title_bar_name('admin') ?></span></li>
+        </ul>
         <ul class="nav navbar-top-links navbar-right" style="padding: 15px;">
             <li><span class="m-r-sm text-muted"><i class="fa fa-user"></i> <?= out($cms_user) ?></span></li>
             <li>

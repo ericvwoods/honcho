@@ -45,10 +45,10 @@
             <ul class="nav navbar-top-links navbar-left">
 
                 <?php if($_SESSION['ccmpmode'] == 'mmdv' ||  $data['view_file'] == 'directorylist' ||  $data['view_file'] == 'currentroster'): ?>
-                    <li><span class="m-r"><a href="#"><h1 style="color: <?= NB_CLR ?>;" ><strong><?= CCMP ?> Services Portal</strong></h1></a> </span></li>
+                    <li><span class="m-r"><?= title_bar_name('member') ?></span></li>
                 <?php else: ?>
 
-<li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"><?= SHORTSITENAME ?></span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: min(<?= SN_FNT_SZ ?>, 2.4vw);"> <?= SITENAME4 ?> </span> </a> </span></li> <!-- title shrinks a little on narrower screens so it doesn't run into the links -->
+<li><span class="m-r"><?= title_bar_name('member') ?></span></li> <!-- title shrinks a little on narrower screens so it doesn't run into the links -->
 
                      <!-- <?= SITENAME2 ?>   -->
                <!--    <li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME ?> </span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SITENAME2 ?> </span> </a> </span></li>  -->

@@ -12,7 +12,7 @@
         <div class="col-md-7">
             <!-- --    <br> -->
             <ul class="nav navbar-top-links navbar-left">
-                <li> <span class="m-r"><a href="<?= PUBLIC_WEBSITE ?>" target="_blank" style="color: <?= NB_CLR ?>;"><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN2_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"><?= SHORTSITENAME ?></span><span style="font-weight: <?= SN_FNT_WT ?>; color: <?= SN_CLR ?>; font-size: <?= SN_FNT_SZ ?>;"> <?= SITENAME2 ?> </span></a> </span></li>
+                <li><span class="m-r"><?= title_bar_name('admin') ?></span></li>
             </ul>
         </div>  <!-- col 5 -->
 

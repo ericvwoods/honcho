@@ -61,6 +61,7 @@ const sections = [
     "**Site-specific CSS goes in `themes/inspinia/css/custom.css`** (linked with a version number so browsers fetch changes), never in the theme's own `style.css`.",
     "**New libraries** go in their own pinned folder under `public/js/` with a README noting the version, licence and checksum (e.g. `qrcode-generator-1.4.4`), not into the theme and not from a CDN at run time.",
     "**Buttons:** Save and Cancel sit together, same size; no debug text on labels (old line numbers like \"128 Update\" were removed).",
+    "**The top bar name** is `title_bar_name('member')` on member pages (BPA Member Portal) and `title_bar_name('admin')` on admin pages (BPA EMS): the words are System Settings > Organization (`SHORTSITENAME`, `SITENAME4`, `SHORTSITENAME2`), the colors the scheme's accent and primary. A new navbar calls the helper; never type the name into a view (old navbars said \"SGAP EMS\", another client's name, until 2026-10-27).",
     "**Hiding a member field** a client doesn't want: a Member Fields switch, never commenting it out.",
     "**Check it on screen.** For layout work, render the page in headless Chrome, screenshot and measure (`getBoundingClientRect`, `getComputedStyle`) at 1440 and 1280 wide before and after; a blind CSS fix once missed a third-party stylesheet that resized every button.",
   ]},

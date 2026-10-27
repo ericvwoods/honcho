@@ -249,6 +249,24 @@ function load(string $template_file, ?array $data = null): void {
 }
 
 /**
+ * The name in the top bar of every screen: the short name (SHORTSITENAME, e.g.
+ * "BPA") in the scheme's accent color, then "Member Portal" (SITENAME4) on
+ * member pages or "EMS" (SHORTSITENAME2) on admin pages in the primary color.
+ * The words are System Settings > Organization, the colors the color scheme,
+ * so a client changes neither in code (owner, 2026-10-27).
+ *
+ * @param string $kind 'member' or 'admin'
+ * @return string the link to the public website, ready to echo
+ */
+function title_bar_name(string $kind = 'member'): string {
+    $second = ($kind === 'admin') ? SHORTSITENAME2 : SITENAME4;
+    $style  = 'font-weight: '.SN_FNT_WT.'; font-size: min('.SN_FNT_SZ.', 2.4vw); color: '; // shrinks a little on narrow screens
+    return '<a href="'.out(PUBLIC_WEBSITE).'" target="_blank" style="color: '.NB_CLR.';">'
+         . '<span style="'.$style.SN2_CLR.';">'.out(SHORTSITENAME).'</span>'
+         . '<span style="'.$style.SN_CLR.';"> '.out($second).'</span></a>';
+}
+
+/**
  * The member's font-size choices for the Font pop-up in the member top bar
  * (modules/welcome/ccmps/views/navbar.php, saved by Ccmps::savefontsizes()).
  * One entry per element type: label, ccmps column, the small/medium/large rows

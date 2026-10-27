@@ -53,8 +53,8 @@ const sections = [
 { tab: "Color Schemes", blocks: [
   { type: 'p', text: "The Look tab's color scheme (`COLOR_SCHEME` = an id in `system_color_schemes`). A scheme is six colors, each with one job:" },
   { type: 'table', headers: ['Color', 'Used for', 'Classic value'], rows: [
-    ['Primary', 'Site name, top bar, headings, member names, tab titles', 'lightseagreen'],
-    ['Accent', 'Second part of the site name, record box headers', 'crimson / coral'],
+    ['Primary', 'Site name, second word of the top bar name (Member Portal / EMS), headings, member names, tab titles', 'lightseagreen'],
+    ['Accent', 'Short name at the start of the top bar (BPA), second part of the site name, record box headers', 'crimson / coral'],
     ['Highlight', 'Icons, collapse titles', 'coral, gray'],
     ['Label', 'Form labels, table headings, Back buttons', 'darkgreen, black'],
     ['Value', 'Values beside labels, table text, tab captions, carets', 'gray, lightgray'],

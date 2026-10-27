@@ -295,7 +295,7 @@
 <!-- ============================================================
      PILOT CERTIFICATE & RATINGS  (ccmps_aux)
      ============================================================ -->
-<?php vf_section_open('certificate', 'Pilot Certificate & Ratings', 'fa-plane'); ?>
+<?php vf_section_open('certificate', 'Certificates & Ratings', 'fa-plane'); ?>
     <?php vf_bool_row('Hall of Fame', 'hall_of_fame', $data); ?>
     <?php
         vf_row('Call Sign', 'call_sign', $data);

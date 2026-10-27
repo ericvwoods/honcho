@@ -10,7 +10,7 @@
 // stuck on a stale version indefinitely.
 // ============================================================
 
-const CACHE_VERSION = 'bpa-shell-v18';
+const CACHE_VERSION = 'bpa-shell-v19';
 const SHELL_FILES = [
   './',
   './index.html',

@@ -8,7 +8,7 @@ module.exports = [
     ['**Contact Information**', 'Your name, email addresses, phone numbers and emergency contact'],
     ['**Addresses**', 'Mailing, physical, billing and shipping addresses'],
     ['**Membership**', 'Your member number, member type, chapter, status and current year'],
-    ['**Pilot Certificate & Ratings**', 'Highest certificate, certificate number, ratings and total time'],
+    ['**Certificates & Ratings**', 'Highest certificate, certificate number, ratings and total time'],
     ['**Aircraft**', 'Aircraft you own or rent, one row each'],
     ['**Roles & Permissions**', 'Admin roles you hold, if any'],
     ['**Preferences**', 'Language, contact preferences and text size'],

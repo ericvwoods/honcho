@@ -249,7 +249,7 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
                             <thead><tr><th>Variable</th><th>Meaning</th></tr></thead>
                             <tbody>
                                 <tr><td><code>$is_system_admin</code></td><td><code>$_SESSION['ccmps_system_admin'] || $_SESSION['system_admin']</code> — the narrowest, most trusted tier, recognizing either module-scoped or future enterprise-wide admin. Controls the 7+ core system flags (System Admin, Student Admin, CCMP Admin, Content Admin, Event Admin, Locked, Inactive, Approved), permanent delete, and Account tab fields (activate_code, reset_code).</td></tr>
-                                <tr><td><code>$is_admin</code></td><td><code>system_admin || subentity_admin || ccmp_admin</code>. The broader "trusted staff" tier — Membership section, Pilot Certificate &amp; Ratings, Admin Notes, soft delete.</td></tr>
+                                <tr><td><code>$is_admin</code></td><td><code>system_admin || subentity_admin || ccmp_admin</code>. The broader "trusted staff" tier — Membership section, Certificates &amp; Ratings, Admin Notes, soft delete.</td></tr>
                                 <tr><td><code>$is_vip_admin</code></td><td><code>system_admin || subentity_admin || ccmp_admin</code> — deliberately excludes <code>student_admin</code>. Controls VIP field visibility specifically.</td></tr>
                                 <tr><td><code>$is_chapter_president</code></td><td>True if the viewer's own <code>ccmps_subentity_role</code> matches the role whose <code>title = 'President'</code> in <code>ccmps_subentity_roles</code>. Looked up dynamically — never hardcode the role id, since it can change independently of this code.</td></tr>
                                 <tr><td><code>$is_own_chapter</code></td><td>True if the viewer's own chapter (<code>$_SESSION['ccmps_subentity']</code>) matches the <em>target record's</em> chapter. Critical: the target's chapter must be read from the raw id, never from a friendly-translated display string (see the worked example below).</td></tr>
@@ -360,7 +360,7 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
                         </div>
 
                         <h2>Currently Aux-Gated Sections</h2>
-                        <p>Pilot Certificate &amp; Ratings, Aircraft. (Additional Roles was removed entirely once its fields were renamed/relocated to core <code>ccmps</code> columns — see Known Issues.)</p>
+                        <p>Certificates &amp; Ratings, Aircraft. (Additional Roles was removed entirely once its fields were renamed/relocated to core <code>ccmps</code> columns — see Known Issues.)</p>
 
                     </div>
                 </div>

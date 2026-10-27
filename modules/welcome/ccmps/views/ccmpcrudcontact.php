@@ -322,7 +322,7 @@ $can_grant_chapter_admin = $is_system_admin
 <!-- ============================================================
      PILOT CERTIFICATE & RATINGS  (ccmps_aux)
      ============================================================ -->
-<?php cf_section_open('certificate', 'Pilot Certificate & Ratings', 'fa-plane'); ?>
+<?php cf_section_open('certificate', 'Certificates & Ratings', 'fa-plane'); ?>
     <div class="form-group col-md-2"><label><input type="checkbox" name="hall_of_fame" value="1" <?= !empty($data['hall_of_fame']) ? 'checked' : '' ?> <?= $locked ?>> Hall of Fame</label></div>
     <?php
         cf_text('Call Sign', 'call_sign', $data, 'text');

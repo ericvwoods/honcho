@@ -147,7 +147,7 @@ const sections = [
   { type: 'h2', text: 'The Permission Variables' },
   { type: 'table', headers: ['Variable', 'Meaning'], rows: [
     ['`$is_system_admin`', "`$_SESSION['ccmps_system_admin'] || $_SESSION['system_admin']` — the narrowest, most trusted tier, recognizing either module-scoped or future enterprise-wide admin. Controls the 7+ core system flags (System Admin, Student Admin, CCMP Admin, Content Admin, Event Admin, Locked, Inactive, Approved), permanent delete, and Account tab fields (activate_code, reset_code)."],
-    ['`$is_admin`', '`system_admin || subentity_admin || ccmp_admin`. The broader "trusted staff" tier — Membership section, Pilot Certificate & Ratings, Admin Notes, soft delete.'],
+    ['`$is_admin`', '`system_admin || subentity_admin || ccmp_admin`. The broader "trusted staff" tier — Membership section, Certificates & Ratings, Admin Notes, soft delete.'],
     ['`$is_vip_admin`', '`system_admin || subentity_admin || ccmp_admin` — deliberately excludes `student_admin`. Controls VIP field visibility specifically.'],
     ['`$is_chapter_president`', "True if the viewer's own `ccmps_subentity_role` matches the role whose `title = 'President'` in `ccmps_subentity_roles`. Looked up dynamically — never hardcode the role id, since it can change independently of this code."],
     ['`$is_own_chapter`', "True if the viewer's own chapter (`$_SESSION['ccmps_subentity']`) matches the _target record's_ chapter. Critical: the target's chapter must be read from the raw id, never from a friendly-translated display string (see the worked example below)."],
@@ -253,7 +253,7 @@ const sections = [
   { type: 'alert', variant: 'warning', text: '**One gotcha to remember when moving a field between a core and an aux section:** if a field lives in `ccmps_aux` but ends up displayed inside an otherwise-core section (this happened once with `hall_of_fame`, briefly placed in "Roles & Permissions"), it needs its _own_ inline `CCMPS_AUX_MODULE` check — wrapping just that one field, not the whole section — or a baseline deployment without `ccmps_aux` would try to display data from a table that doesn\'t exist.' },
 
   { type: 'h2', text: 'Currently Aux-Gated Sections' },
-  { type: 'p', text: 'Pilot Certificate & Ratings, Aircraft. (Additional Roles was removed entirely once its fields were renamed/relocated to core `ccmps` columns — see Known Issues.)' },
+  { type: 'p', text: 'Certificates & Ratings, Aircraft. (Additional Roles was removed entirely once its fields were renamed/relocated to core `ccmps` columns — see Known Issues.)' },
 ]},
 
 // ============================================================

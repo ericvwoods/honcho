@@ -427,27 +427,6 @@
     ?>
 <?php vf_section_close(); ?>
 
-<?php if ($is_admin): ?>
-<!-- ============================================================
-     ADMIN NOTES  (ccmps) — visible only to subentity/member/system admins
-     ============================================================ -->
-<?php vf_section_open('notes', 'Admin Notes', 'fa-sticky-note'); ?>
-    <?php /* Deceased moved to Personal Information, next to Former Military (2026-10-27) */ ?>
-    <div class="form-group col-md-12">
-        <label>Notes</label>
-        <div class="form-control-static"><?= nl2br(htmlspecialchars($data['notes'] ?? '')) ?></div>
-    </div>
-<?php vf_section_close(); ?>
-<?php endif; ?>
-
-<?php if (defined('CCMPS_AUX_MODULE') && CCMPS_AUX_MODULE == 1): ?>
-
-<!-- Additional Roles section removed — chapter_admin merged into subentity_admin,
-     content_mgr renamed/moved to ccmps.content_admin, event_admin moved to
-     ccmps (both now shown in Roles & Permissions above), unverified deleted. -->
-
-<?php endif; // end CCMPS_AUX_MODULE ?>
-
 <!-- ============================================================
      ACCOUNT  (ccmps) — application/system-managed fields.
      num_logins/last_login/last_logout/ip_address: view-only for
@@ -469,6 +448,28 @@
         ?>
     <?php endif; ?>
 <?php vf_section_close(); ?>
+
+
+<?php if (defined('CCMPS_AUX_MODULE') && CCMPS_AUX_MODULE == 1): ?>
+
+<!-- Additional Roles section removed — chapter_admin merged into subentity_admin,
+     content_mgr renamed/moved to ccmps.content_admin, event_admin moved to
+     ccmps (both now shown in Roles & Permissions above), unverified deleted. -->
+
+<?php endif; // end CCMPS_AUX_MODULE ?>
+
+<?php if ($is_admin): ?>
+<!-- ============================================================
+     ADMIN NOTES  (ccmps; after Account since 2026-10-27) — visible only to subentity/member/system admins
+     ============================================================ -->
+<?php vf_section_open('notes', 'Admin Notes', 'fa-sticky-note'); ?>
+    <?php /* Deceased moved to Personal Information, next to Former Military (2026-10-27) */ ?>
+    <div class="form-group col-md-12">
+        <label>Notes</label>
+        <div class="form-control-static"><?= nl2br(htmlspecialchars($data['notes'] ?? '')) ?></div>
+    </div>
+<?php vf_section_close(); ?>
+<?php endif; ?>
 
 <?php
     // All sections above only buffered their content — nothing has actually

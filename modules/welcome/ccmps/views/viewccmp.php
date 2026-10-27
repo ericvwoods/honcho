@@ -204,12 +204,13 @@
         vf_row('Emergency Email', 'emergency_email', $data);
     ?>
 
-    <div class="col-md-12" style="margin-top: 25px;"><h4>Employment</h4><hr></div>
+    <div class="col-md-12" style="margin-top: 25px;"><h4>Profession</h4><hr></div>
     <?php
-        vf_row('Employer', 'employer', $data);
         vf_row('Title', 'title', $data);
-        vf_row('Department', 'department', $data);
-        vf_row('Reports To', 'reports_to', $data);
+        vf_row('Employer', 'employer', $data);
+        // Department and Reports To hidden 2026-10-27 (owner)
+        // vf_row('Department', 'department', $data);
+        // vf_row('Reports To', 'reports_to', $data);
     ?>
 
 <?php vf_section_close(); ?>

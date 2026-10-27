@@ -71,7 +71,7 @@ const sections = [
   { type: 'p', text: "One row per person. Organized below by section, matching the form's own layout — the fastest way to find \"where does this field live\" is to find its section here." },
   { type: 'table', headers: ['Section', 'Fields', 'Who can edit'], rows: [
     ['Personal / Contact / Emergency', '`salutation`, `first_name`, `middle_name`, `last_name`, `suffix`, `gender`, `birthday`, `dob`, `minor`, `email_address`, `phone`, `mobile`, `fax`, `website`, `url_string`, `alternate_contact/phone/email`, `emergency_contact/phone/email`, `active_duty`, `former_military`', 'The member themselves, freely'],
-    ['Employment', '`employer`, `title`, `reports_to`, `department`', 'The member themselves, freely'],
+    ['Profession', '`title`, `employer` (`department`, `reports_to` hidden on the form and view since 2026-10-27; values kept)', 'The member themselves, freely'],
     ['Membership', '`ccmp_number`, `ccmp_type`, `subentity`, `subentity_role`, `current_year`, `region`, `national_officer`, `leadsource`, `student`, `eligible_voter`', '`system_admin`, `subentity_admin`, or `ccmp_admin` — never the member themselves'],
     ['Roles & Permissions', '`system_admin`, `student_admin`, `ccmp_admin`, `content_admin`, `event_admin`, `financial_admin`, `locked`, `inactive`, `approved`', '`system_admin` only'],
     ['Roles & Permissions (broader visibility)', '`soft_deleted`', 'Visible to `system_admin`/`subentity_admin`; editable by `system_admin` only'],

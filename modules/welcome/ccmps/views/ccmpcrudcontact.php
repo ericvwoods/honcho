@@ -225,12 +225,14 @@ $can_grant_chapter_admin = $is_system_admin
         cf_text('Emergency Email', 'emergency_email', $data, 'email');
     ?>
 
-    <div class="col-md-12" style="margin-top: 25px;"><h4>Employment</h4><hr></div>
+    <div class="col-md-12" style="margin-top: 25px;"><h4>Profession</h4><hr></div>
     <?php
-        cf_text('Employer', 'employer', $data);
         cf_text('Title', 'title', $data);
-        cf_text('Department', 'department', $data);
-        cf_text('Reports To', 'reports_to', $data);
+        cf_text('Employer', 'employer', $data);
+        // Department and Reports To hidden 2026-10-27 (owner). Fields not on the form
+        // aren't saved (extract_text() skips them), so existing values are kept.
+        // cf_text('Department', 'department', $data);
+        // cf_text('Reports To', 'reports_to', $data);
     ?>
 
 <?php cf_section_close(); ?>

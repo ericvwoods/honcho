@@ -51,7 +51,7 @@ if (!empty($_SESSION['mobile_app_view'])) {
          theme's own rules, and survives a future theme update untouched.
          Never add rules to themes/inspinia/css/style.css directly again;
          put them here instead. See custom.css's own header comment. -->
-    <link href="<?= BASE_URL ?>themes/inspinia/css/custom.css" rel="stylesheet">
+    <link href="<?= BASE_URL ?>themes/inspinia/css/custom.css?v=<?= @filemtime(APPPATH.'public/themes/inspinia/css/custom.css') ?>" rel="stylesheet"> <!-- ?v= changes whenever the file does, so browsers fetch the new copy -->
 
     <link href="<?= BASE_URL ?>themes/inspinia/css/plugins/dataTables/datatables.min.css" rel="stylesheet">
  <!--   <link type="text/css" href="//gyrocode.github.io/jquery-datatables-checkboxes/1.2.12/css/dataTables.checkboxes.css" rel="stylesheet"/> -->

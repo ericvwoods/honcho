@@ -26,6 +26,10 @@
    now apply here, and a fixed-height select clipped larger text. */
 .ccmp-form-section select.form-control,
 .ccmp-form-section select.form-control:not([size]):not([multiple]) { /* Bootstrap's own rule uses this selector */
-  height: auto;
-  min-height: calc(1.5em + .75rem + 2px);
+  /* exactly the text boxes' height (Bootstrap .form-control), scaled by this select's own font size;
+     explicit rather than "auto", which Safari and Chrome size differently */
+  height: calc(1.5em + .75rem + 2px);
+  padding-top: .375rem;
+  padding-bottom: .375rem;
+  line-height: 1.5;
 }

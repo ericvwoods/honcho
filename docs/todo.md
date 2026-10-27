@@ -11,6 +11,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [x] `session_regenerate_id(true)` at the start of both `successfullogin()` functions (2026-10-22). Both logins tested on the Mac (staff by Eric).
 - [x] DMS `manage()` takes the user's role from the URL. Fixed 2026-10-11 (`_get_dms_role()`), tested 2026-10-16.
 
+- [ ] **Any logged-in member can save another member's record** (found and proved 2026-10-27, test value restored): `Ccmps::ccmpsubmit()` only checks that someone is logged in, not that the record is theirs. Contact details, addresses and preferences can be overwritten by a crafted request; admin-only fields stay protected. Fix: save (and open the edit page) only for your own record, Member/System Admins (member or staff), or a Chapter Admin for a member of their own chapter.
+- [ ] **Chapter Admins aren't limited to their own chapter** when editing: `updateccmp` and `ccmpsubmit` let any Chapter Admin edit Membership fields (chapter, member type, current year) of any member. Same fix as above.
+
 ## Login & accounts
 
 - [ ] **Real second factor (2FA)**: a one-time code by **text (SMS)** or **email**, valid for a few minutes, single use. Required for anyone in an admin / super-user group; optional for other members. SMS provider: being set up. Replaces today's "member number" second factor.

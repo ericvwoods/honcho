@@ -88,7 +88,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 - [ ] Design: two `system_settings` rows for the label (singular + plural).
 - **Who goes where (decided 2026-10-27):** members with type **Q, Qualified Student** (`ccmp_type` 3) **stay in CCMPS** and **vote**. Students who take part in BPA programs and have a regular **S, Student** membership (`ccmp_type` 4) **move to the Student module** and **don't vote**. The **Student checkbox** on the member record (`ccmps.student`) is information only; it decides nothing.
-- [ ] Seed from `ccmps` where `ccmp_type = 4`; still to decide: payments, aircraft, logins, and what happens to the moved `ccmps` rows. Do it in the ETL from the legacy database, not just on the test data.
+- [ ] **Seeding (owner, 2026-10-27): no seeding by default**: the module starts empty for a client. For BPA, **perhaps** seed it with the S members (`ccmps` where `ccmp_type = 4`); not decided. If so, still to decide: payments, aircraft, logins, and what happens to the moved `ccmps` rows. Do it in the ETL from the legacy database, not just on the test data.
 - [ ] Voting: Student-module participants are never eligible voters (handled by the **Eligible voter rules** task below).
 - [ ] Then the CCMPS **Student Members** list (`manage/mosm`, `mcmm`) and the home-page student counts mean Q members only (`ccmp_type` 3), which the counts already use.
 

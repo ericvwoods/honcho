@@ -183,6 +183,7 @@
     <?php
         vf_bool_row('Active Duty', 'active_duty', $data);
         vf_bool_row('Former Military', 'former_military', $data);
+        if ($is_admin) { vf_bool_row('Deceased', 'deceased', $data); } // moved from Admin Notes 2026-10-27; admins only
     ?>
 
     <div class="col-md-12" style="margin-top: 25px;"><h4>Contact Information</h4><hr></div>
@@ -431,7 +432,7 @@
      ADMIN NOTES  (ccmps) — visible only to subentity/member/system admins
      ============================================================ -->
 <?php vf_section_open('notes', 'Admin Notes', 'fa-sticky-note'); ?>
-    <?php vf_bool_row('Deceased', 'deceased', $data); ?>
+    <?php /* Deceased moved to Personal Information, next to Former Military (2026-10-27) */ ?>
     <div class="form-group col-md-12">
         <label>Notes</label>
         <div class="form-control-static"><?= nl2br(htmlspecialchars($data['notes'] ?? '')) ?></div>

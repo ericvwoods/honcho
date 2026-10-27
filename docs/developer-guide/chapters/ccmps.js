@@ -80,7 +80,7 @@ const sections = [
     ['Preferences', '`vip`', '`system_admin`, `subentity_admin`, or `ccmp_admin` — deliberately excludes `student_admin`'],
     ['Roles & Permissions', '`subentity_admin` (Chapter Admin)', "Not locked like the other role boxes: see the RBAC tab's worked example — the chapter-admin-granting exception. Moved here from Preferences 2026-10-19"],
     ['Preferences', '`language`, `donotcall`, `emailoptout`, `directoryoptout`, `mail_notices`', 'The member themselves, freely'],
-    ['Admin Notes', '`notes`, `deceased`', 'Fully hidden from the member; `system_admin`/`subentity_admin`/`ccmp_admin` can see and edit'],
+    ['Admin Notes, and Deceased in Personal Information (next to Former Military since 2026-10-27)', '`notes`, `deceased`', 'Fully hidden from the member; `system_admin`/`subentity_admin`/`ccmp_admin` can see and edit'],
     ['Account', '`activate_code`, `reset_code`', 'Fully hidden from everyone except `system_admin`, who can both see and edit'],
     ['Account (display-only)', '`num_logins`, `last_login`, `last_logout`, `ip_address`', 'Visible to everyone with page access; editable by **no one** — application-managed'],
     ['_Application-managed, not shown anywhere in the CRUD form_', '`code`, `status`, `fontsize`, `trongate_user_id`, `username`, `password`, `date_created`, `last_login_device`, `user_token`, `force_pw_chg`, `timed_reset`, `reset_interval`, `created_by`, `updated_by`, `misc1/2/3`, `created_at`, `updated_at`, `paid`, `paypal_txn_id`, `last_payment_date`, `payment_amount`, `picture`', 'Never — set entirely by business logic elsewhere (auth flow, payment processing, `recalcstatus()`)'],
@@ -184,7 +184,7 @@ const sections = [
   ]},
 
   { type: 'h2', text: 'When a Member Is Marked Deceased' },
-  { type: 'p', text: "`ccmps.deceased` is a checkbox in the **Admin Notes** section of the edit form (hidden from the member; `system_admin`, `subentity_admin` and `ccmp_admin` can set it). Ticking it and saving does the following:" },
+  { type: 'p', text: "`ccmps.deceased` is a checkbox in **Personal Information**, next to Former Military (moved from Admin Notes 2026-10-27), shown only to admins, (hidden from the member; `system_admin`, `subentity_admin` and `ccmp_admin` can set it). Ticking it and saving does the following:" },
   { type: 'ul', items: [
     "**Roles and groups removed** (since 2026-10-19): after the role checkboxes are applied, `ccmpsubmit()` calls `rbac_clear_member_access()` (`rbac_helper.php`). It deletes every `system_group_users` row for the member's login (all groups, including DMS Users) and sets `system_admin`, `ccmp_admin`, `subentity_admin` and `student_admin` to 0. It runs on every save while the box stays ticked, so ticking a role on a deceased member doesn't stick.",
     "**Email not required:** the save skips the \"Email Address is required\" check (`$is_deceased`).",

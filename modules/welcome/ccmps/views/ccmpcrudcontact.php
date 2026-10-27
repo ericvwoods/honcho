@@ -204,6 +204,9 @@ $can_grant_chapter_admin = $is_system_admin
             <label style="margin-right: 18px;"><input type="checkbox" name="active_duty" value="1" <?= !empty($data['active_duty']) ? 'checked' : '' ?>> Active Duty</label>
             <label><input type="checkbox" name="former_military" value="1" <?= !empty($data['former_military']) ? 'checked' : '' ?>> Former Military</label>
         </span>
+        <?php if ($is_admin): ?> <!-- Deceased: moved here from Admin Notes 2026-10-27; still admins only (the save ignores it from members) -->
+        <label><input type="checkbox" name="deceased" value="1" <?= !empty($data['deceased']) ? 'checked' : '' ?>> Deceased</label>
+        <?php endif; ?>
     </div>
 
     <div class="col-md-12" style="margin-top: 25px;"><h4>Contact Information</h4><hr></div>
@@ -450,7 +453,7 @@ $can_grant_chapter_admin = $is_system_admin
      ADMIN NOTES  (ccmps) — visible only to subentity/member/system admins
      ============================================================ -->
 <?php cf_section_open('notes', 'Admin Notes', 'fa-sticky-note'); ?>
-    <div class="form-group col-md-2"><label><input type="checkbox" name="deceased" value="1" <?= !empty($data['deceased']) ? 'checked' : '' ?>> Deceased</label></div>
+    <!-- Deceased moved to Personal Information, next to Former Military (2026-10-27) -->
     <?php cf_textarea('Notes', 'notes', $data, 5); ?>
 <?php cf_section_close(); ?>
 <?php endif; ?>

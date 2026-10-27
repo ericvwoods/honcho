@@ -557,6 +557,9 @@ function viewccmp($recid = NULL){ // chaper admin on computer viewing ccmp - pas
 
     // $ccmpsfunction = 'viewccmp';
     // $authorized = $this->_check_function_permissions($ccmpsfunction, $recid);
+    if (!empty($_SESSION['trongatetoken']) && !$this->_member_access($recid, 'view')) {
+        $this->_deny_member_access(); // own record, or an admin for this member (2026-10-27)
+    }
 //echo(875); die();
 if(strlen($_SESSION['trongatetoken']) > 0){
     // ok do nothing
@@ -941,6 +944,10 @@ function updateccmp($retrying = 'no'){ // subentity admin on computer needs edit
     $retry = $retrying;  // first time through for unknown reason it passes the recid, on retry = yes.
     $recid = segment(3);
 
+    if (empty($_SESSION['trongatetoken']) || !$this->_member_access($recid, 'edit')) {
+        $this->_deny_member_access(); // own record, or an admin for this member (2026-10-27)
+    }
+
     if( $retry == 'yes'){
       // retry does not pass a segment value
       // keep tab number the same for the retry
@@ -1260,9 +1267,13 @@ echo(1305); die();
 /*-------------------------- function CREATECCMP -----------------------------*/
 /*----------------------------------------------------------------------------*/
 
-function createccmp($retrying){ // Adding - may be first time or with values after failed validation
+function createccmp($retrying = 'no'){ // Adding - may be first time or with values after failed validation ('no' default: the plain address crashed for everyone, 2026-10-27)
 
   $retry = $retrying; // for failed validation repost
+
+  if (empty($_SESSION['trongatetoken']) || !$this->_member_access(0, 'create')) {
+      $this->_deny_member_access(); // admins only (2026-10-27)
+  }
 
   //*------------------ Get logged in user's info & preferences ----------------*/
   // Get font size preference for views & manage page
@@ -1490,7 +1501,7 @@ echo(2169);
         $data['state_codes'] = $this->model->get('id','ref_states');
 
         // genders
-        $data['genders'] = $this->model->get('id','genders');
+        $data['genders'] = $this->model->get('id','ref_genders'); // was 'genders', which doesn't exist (2026-10-27)
 
         // Financial Acct Types
   //      $data['accttypes'] = $this->model->get('id','ccmps_financial_types');
@@ -1572,6 +1583,18 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
     $recid  = segment(3); // if updating there will be a record id, if adding nothing
     $submit = post('submit', true);
     $crud   = ($recid > 0) ? 'updating' : 'adding';
+
+    // Only your own record, or an admin for this member; adding is for admins only (2026-10-27)
+    if (!$this->_member_access($recid, $crud == 'updating' ? 'edit' : 'create')) {
+        $this->_deny_member_access();
+    }
+    // A Chapter Admin without wider rights adds members to their own chapter only
+    if ($crud == 'adding' && !empty($_SESSION['ccmps_subentity_admin']) && empty($_SESSION['ccmps_system_admin'])
+        && empty($_SESSION['ccmps_ccmp_admin']) && empty($_SESSION['ccmps_admin']) && empty($_SESSION['ccmps_student_admin'])
+        && empty($_SESSION['honcho_sysadmin']) && empty($_SESSION['honcho_ccmps_admin'])
+        && empty($_SESSION['honcho_ccmps_module_all']) && empty($_SESSION['honcho_all_modules'])) {
+        $_POST['subentity'] = (string) ($_SESSION['ccmps_subentity'] ?? '');
+    }
 
     if ($submit != 'Submit') {
         return; // nothing posted - nothing to do
@@ -3038,6 +3061,16 @@ echo(155);
 print_r($_POST); // array of ids called id
 // print_r($_POST['selected']); die(); // the dropdown item id
 */
+        // Admins only, and only the selected members they're an admin for (2026-10-27)
+        if (empty($_SESSION['trongatetoken']) || !$this->_member_access(0, 'create')) {
+            $this->_deny_member_access();
+        }
+        if (isset($_POST['id']) && is_array($_POST['id'])) {
+            $_POST['id'] = array_values(array_filter($_POST['id'], function ($id) {
+                return strlen((string) $id) > 0 && $this->_member_access($id, 'admin');
+            }));
+        }
+
         $data = $_POST; // array of record ids called id & the dropdown item id
 
         switch ($_POST['selected']){ // the option number chosen from the dropdown
@@ -3455,6 +3488,10 @@ function createccmpuseraccount($reposted=NULL){ // may be first time or with val
   $recid    = segment(3); //
   $_SESSION['returnto'] = segment(4); // if come from the manage page vs. view page - is this used ???
 
+  if (empty($_SESSION['trongatetoken']) || !$this->_member_access($recid, 'admin')) {
+      $this->_deny_member_access(); // an admin for this member only (2026-10-27)
+  }
+
 //*------------------ Get logged in user's info & preferences ----------------*/
   // Get font size preference for views & manage page
   $this->_get_font_sizes();
@@ -3553,7 +3590,7 @@ if($reposted > 0){ // if this is a subsequent try at adding after a failed valid
         $data['state_codes'] = $this->model->get('id','ref_states');
 
         // genders
-        $data['genders'] = $this->model->get('id','genders');
+        $data['genders'] = $this->model->get('id','ref_genders'); // was 'genders', which doesn't exist (2026-10-27)
 
         // Highest Certificate
         $data['highestcerts'] = $this->model->get('id','ccmps_certificate_types');
@@ -3602,6 +3639,10 @@ if(SKIP_CHG_DEFAULT_USERNAME == 1){
 }else{
   $recid = post('id', true);// get ccmp number to add user account to
   $submit = post('submit', true);
+}
+
+if (empty($_SESSION['trongatetoken']) || !$this->_member_access($recid, 'admin')) {
+    $this->_deny_member_access(); // an admin for this member only (2026-10-27)
 }
 
 /*
@@ -4686,6 +4727,17 @@ switch($_SESSION['ccmpmode']){
     // $ccmpsfunction = 'export';
     // $authorized = $this->_check_function_permissions($ccmpsfunction);
 
+    // Every member's details: national admins only; a Chapter Admin gets their own chapter (2026-10-27)
+    if (empty($_SESSION['trongatetoken'])) {
+        $this->_deny_member_access();
+    }
+    if (!$this->_national_admin()) {
+        if (empty($_SESSION['ccmps_subentity_admin']) || segment(3) != 'subentity') {
+            $this->_deny_member_access();
+        }
+        $_SESSION['subentity'] = (int) ($_SESSION['ccmps_subentity'] ?? 0); // their own chapter, whatever was set before
+    }
+
         //*------------------ Get logged in user's info & preferences ----------------*/
   // Get font size preference for views & manage page
   $this->_get_font_sizes();
@@ -5137,6 +5189,9 @@ if($scope == 'subentity'){
     function mastercurrentroster($recid = null) { // Treasurer Master Spreadsheet Format
     // $ccmpsfunction = 'mastercurrentroster';
     // $authorized = $this->_check_function_permissions($ccmpsfunction);
+    if (empty($_SESSION['trongatetoken']) || !$this->_national_admin()) {
+        $this->_deny_member_access(); // the national roster: national admins only (2026-10-27)
+    }
 
 //*------------------ Get logged in user's info & preferences ----------------*/
   // Get font size preference for views & manage page
@@ -6658,6 +6713,9 @@ function modalchangepw() { //for changing your own system acct password. ccmps n
       $recid = segment(3);
       $frmpg = segment(4); // can lock and unlock from manage or view
 
+      if (empty($_SESSION['trongatetoken']) || !$this->_member_access($recid, 'admin')) {
+          $this->_deny_member_access(); // an admin for this member only (2026-10-27)
+      }
 
    //   echo(5916);
    //   print_r($frmpg); die();
@@ -6767,6 +6825,10 @@ function modalchangepw() { //for changing your own system acct password. ccmps n
 
         $recid = segment(3);
         $frmpg = segment(4); // can lock and unlock from manage or view
+
+        if (empty($_SESSION['trongatetoken']) || !$this->_member_access($recid, 'admin')) {
+            $this->_deny_member_access(); // an admin for this member only (2026-10-27)
+        }
 
 //echo(5963);
       //  print_r($frmpg); die();
@@ -7432,12 +7494,16 @@ $usrpic = $usrrecobj->picture;
 
 // ***********************  function DITCH_PICTURE ************************** //
 
-    function ditch_picture($update_id) {
+    function ditch_picture($update_id = NULL) {
+        $update_id = $update_id ?? segment(3); // the address doesn't pass arguments: it crashed for everyone (2026-10-27)
   //  $ccmpsfunction = 'ditch_picture';
     //$authorized = $this->_check_function_permissions($ccmpsfunction);
 
         if (!is_numeric($update_id)) {
             redirect($_SERVER['HTTP_REFERER']);
+        }
+        if (empty($_SESSION['trongatetoken']) || !$this->_member_access($update_id, 'edit')) {
+            $this->_deny_member_access(); // your own picture, or an admin for this member (2026-10-27)
         }
 
    //     $this->module('trongate_security');
@@ -7483,6 +7549,67 @@ $usrpic = $usrrecobj->picture;
         redirect($_SERVER['HTTP_REFERER']);
     }
 
+
+// *********************  function _MEMBER_ACCESS **************************** //
+// Who may view / edit / create a member record (security fix 2026-10-27: until then
+// viewccmp, updateccmp and createccmp had no check and ccmpsubmit only checked that
+// someone was logged in, so any member could open and save anyone's record).
+//   own record                                   view, edit
+//   Member Admin / System Admin (member), staff  any record, create
+//   Chapter Admin                                their own chapter's members, create (own chapter)
+//   Student Admin                                Q and S members (ccmp_type 3, 4), create
+// $action: 'view' | 'edit' | 'create' | 'admin' ('admin' = edit, but your own record
+// doesn't count: lock/unlock, create a login, bulk actions)
+// _national_admin(): Member Admin / System Admin (member) or staff - the whole membership
+    function _national_admin() {
+        return !empty($_SESSION['honcho_sysadmin']) || !empty($_SESSION['honcho_ccmps_admin'])
+            || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_all_modules'])
+            || !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_ccmp_admin']) || !empty($_SESSION['ccmps_admin']);
+    }
+
+    function _member_access($recid, $action) {
+
+        $staff_admin  = !empty($_SESSION['honcho_sysadmin']) || !empty($_SESSION['honcho_ccmps_admin'])
+                     || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_all_modules']);
+        $member_admin = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_ccmp_admin']) || !empty($_SESSION['ccmps_admin']);
+        $chapter_admin = !empty($_SESSION['ccmps_subentity_admin']);
+        $student_admin = !empty($_SESSION['ccmps_student_admin']);
+
+        if ($staff_admin || $member_admin) {
+            return true;
+        }
+        if ($action == 'create') {
+            return $chapter_admin || $student_admin;
+        }
+
+        $recid = (int) $recid;
+        if ($action != 'admin' && $recid > 0 && !empty($_SESSION['ccmp_logged_in']) && $recid == (int) ($_SESSION['ccmp_rec_id'] ?? 0)) {
+            return true; // your own record
+        }
+        if ($recid < 1 || (!$chapter_admin && !$student_admin)) {
+            return false;
+        }
+        $member = $this->model->get_where($recid, 'ccmps');
+        if (!$member) {
+            return false;
+        }
+        if ($chapter_admin && (string) $member->subentity !== '' && (string) $member->subentity === (string) ($_SESSION['ccmps_subentity'] ?? '')) {
+            return true;
+        }
+        if ($student_admin && in_array((int) $member->ccmp_type, array(3, 4))) {
+            return true;
+        }
+        return false;
+    }
+
+    function _deny_member_access() { // not allowed: back home with a message (or to the login if not logged in)
+        if (empty($_SESSION['trongatetoken'])) {
+            redirect('welcome/logout');
+        }
+        set_flashdata('You are not authorized to see or change that '.strtolower(CCMP).' record.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect(!empty($_SESSION['honcho_logged_in']) && empty($_SESSION['ccmp_logged_in']) ? 'honcho' : 'welcome-ccmps/ccmphome');
+    }
 
 // ******************  function _CHECK_FUNCTION_PERMISSIONS ***************** //
 

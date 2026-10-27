@@ -161,6 +161,12 @@ const sections = [
     "The shared temporary code (`TEMP_2ND_FACTOR`, `654321`, in `config.php`) is gone. It let anyone with no second factor on record in with a code that never changed. An account with no second factor now can't log in until one is set on its record (for members, the member number, `ccmp_number`).",
     "The real second factor (a one-time code by text or email) is still on the to-do list.",
   ]},
+  { type: 'h2', text: 'System Admin Accounts' },
+  { type: 'ul', items: [
+    "**Full Honcho (`HONCHO_MODULE=1`):** the staff `sysadmin` account (`honcho_user_accounts`) signs in at `/honcho`. Its second step asks for the **Verification Code**, the account's `second_factor` column. Entered on the member portal it passes both steps, but `Welcome::successfullogin()` sets no `tg_user_id` for staff accounts, so the member home answers \"Your Session has expired\" in a loop (login leftovers, to-do).",
+    "**Honcho Lite (`HONCHO_MODULE=0`):** the system admin is a **member** with the System Admin role (Member System Admins group). BPA has a dedicated one that isn't a person: `portaladmin`, Member Number `SA-0001`, created by `2026-10-27-member-system-admin-account.sql` (National HQ, Honorary, never current, out of the directory). The migration sets **no password**; it is set outside git and kept in `~/honcho-keys/portaladmin-<mac|staging>.txt`.",
+    "The login looks up `honcho_user_accounts` before `ccmps`, so a member username must never equal a staff username (that's why it isn't called `sysadmin`).",
+  ]},
   { type: 'h2', text: 'New Session Id at Login' },
   { type: 'p', text: "Both `successfullogin()` functions start with `session_regenerate_id(true)`: the session keeps its data but gets a new id, and the old id stops working. A session id planted in someone's browser before they log in (session fixation) is then worthless. The phone app's `mobile_bridge()` ends in the member `successfullogin()`, so it is covered too." },
   { type: 'h2', text: 'Who May Open a Member Record' },

@@ -75,7 +75,10 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 ## Participants module (add-on, branded "Student" for BPA)
 
 - [ ] Design: two `system_settings` rows for the label (singular + plural).
-- [ ] Seed from `ccmps` where `ccmp_type = 4`; decide on type 3, payments, aircraft, logins, and what happens to the moved `ccmps` rows.
+- **Who goes where (decided 2026-10-27):** members with type **Q, Qualified Student** (`ccmp_type` 3) **stay in CCMPS** and **vote**. Students who take part in BPA programs and have a regular **S, Student** membership (`ccmp_type` 4) **move to the Student module** and **don't vote**. The **Student checkbox** on the member record (`ccmps.student`) is information only; it decides nothing.
+- [ ] Seed from `ccmps` where `ccmp_type = 4`; still to decide: payments, aircraft, logins, and what happens to the moved `ccmps` rows. Do it in the ETL from the legacy database, not just on the test data.
+- [ ] Voting: Student-module participants are never eligible voters; Q members keep `eligible_voter`. Check `eligible_voter` against member type when the data loads.
+- [ ] Then the CCMPS **Student Members** list (`manage/mosm`, `mcmm`) and the home-page student counts mean Q members only (`ccmp_type` 3), which the counts already use.
 
 ## Daily Coffee Report (add-on)
 
@@ -163,7 +166,7 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 
 - [ ] `Ccmps::currentroster()` (and any other method using the same `$this->login()` line) gives a 500 when the session has expired: `login()` doesn't exist. Redirect to `welcome/logout` instead (found 2026-10-22).
 - [x] Debug line numbers on buttons removed 2026-10-27: "128 Update", "137 Close", "141 Close" (`viewccmp.php`); "69Cancel", "80 Cancel", "92 Cancel", "103 Manage All" (`ccmpcrud.php`).
-- [ ] The **Student Members** list links (`welcome-ccmps/manage/mosm`, `mcmm`) show every member: `manage()` no longer filters by student. Decide what it should list (member type Student / Qualified Student, `ccmp_type` 3 and 4, is what the home-page counts use) and add the filter (found 2026-10-27).
+- [ ] The **Student Members** list links (`welcome-ccmps/manage/mosm`, `mcmm`) show every member: `manage()` no longer filters by student. Filter to Q members (`ccmp_type` 3), as the home-page counts do; S students belong to the Student module (decided 2026-10-27). Found 2026-10-27.
 - [ ] Other screens whose Close goes to the home page instead of back where you came from: fix as they're touched (pattern: `Cards::_return_url()`).
 - [ ] Member-list bulk actions Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing (`Ccmps.php` `bulkaction()`).
 

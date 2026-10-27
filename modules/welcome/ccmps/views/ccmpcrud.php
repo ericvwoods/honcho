@@ -63,18 +63,18 @@
                     <?php if ($_SESSION['actionmode'] == 'ccmpu'): ?>
                         <div class="col-md-4">
                             <br>
-                            <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit">
-                                <span style="color: <?= NB_CLR ?>; font-size: 16px;"><i class="fa fa-save"></i> Save Changes</span>
+                            <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
-                            <a class="btn btn-outline btn-primary" href="<?= BASE_URL ?>welcome-ccmps/mydata/1">
-                                <span style="color: <?= NB_CLR ?>; font-size: 16px;"><i class="fa fa-times-circle"></i> Cancel</span>
+                            <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/mydata/1">
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
                             </a>
                         </div>
 
                     <?php elseif ($_SESSION['actionmode'] == 'subentity_admin_update' || $_SESSION['actionmode'] == 'mamu'): ?>
                         <div class="col-md-4">
                             <br>
-                            <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit">
+                            <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
                                 <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                             <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1">
@@ -85,8 +85,8 @@
                     <?php elseif ($_SESSION['ccmpmode'] == 'mamc' || $_SESSION['actionmode'] == 'createuser'): ?>
                         <div class="col-md-4">
                             <br>
-                            <button class="btn btn-outline btn-primary" name="submit" type="submit" value="Submit">
-                                <span class="btn-label-text"><i class="fa fa-save"></i> Save Changes</span>
+                            <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                         <!-- --    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps"> -->
                         <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps">

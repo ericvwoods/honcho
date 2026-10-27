@@ -23,6 +23,8 @@ module.exports = [
   { type: 'p', text: "Some fields are greyed out. Those are set by admins (for example your status, member type or chapter). If one of them is wrong, contact your Chapter Admin." },
   { type: 'h2', text: 'Your Aircraft' },
   { type: 'p', text: "In the **Aircraft** section each aircraft has its own row. Change a row to edit it, fill in a blank row to add one, or tick its delete box to remove it, then save." },
+  { type: 'h2', text: 'Text Size' },
+  { type: 'p', text: "Click **Font** in the top bar (next to Change Password) to choose how large text appears for you: tabs, headings, labels, values and buttons, each Small, Medium or Large. Click **Save** and the page reloads with the new sizes. The same choices are under **Preferences** on your profile." },
   { type: 'h2', text: 'Contact Preferences' },
   { type: 'p', text: 'Under **Preferences**:' },
   { type: 'ul', items: [

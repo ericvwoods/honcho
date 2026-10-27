@@ -247,3 +247,34 @@ function load(string $template_file, ?array $data = null): void {
         die('<br><b>ERROR:</b> View file does not exist at: ' . $file_path);
     }
 }
+
+/**
+ * The member's font-size choices for the Font pop-up in the member top bar
+ * (modules/welcome/ccmps/views/navbar.php, saved by Ccmps::savefontsizes()).
+ * One entry per element type: label, ccmps column, the small/medium/large rows
+ * of ccmps_settings, and the member's current choice (medium when unset or wrong).
+ *
+ * @param int $ccmp_id the member
+ * @return array type => ['label', 'column', 'options' => [id => 'Small (13px)'], 'current' => id]
+ */
+function member_font_sizes(int $ccmp_id): array {
+    $types = array('tab' => 'Tabs', 'header' => 'Headings', 'label' => 'Labels', 'value' => 'Values', 'button' => 'Buttons');
+    $model  = new Model();
+    $member = $ccmp_id > 0 ? $model->get_where($ccmp_id, 'ccmps') : false;
+    $result = array();
+    foreach ($types as $type => $label) {
+        $rows = $model->query_bind("SELECT id, title, settingvalue FROM ccmps_settings WHERE type = :t AND title IN ('small','medium','large')
+                                     ORDER BY FIELD(title, 'small', 'medium', 'large')", array('t' => $type), 'object');
+        $options = array();
+        $medium  = 0;
+        foreach ((array) $rows as $row) {
+            $options[(int) $row->id] = ucfirst($row->title).' ('.(int) $row->settingvalue.'px)';
+            if ($row->title == 'medium') { $medium = (int) $row->id; }
+        }
+        $column  = $type.'_setting';
+        $current = $member ? (int) ($member->$column ?? 0) : 0;
+        $result[$type] = array('label' => $label, 'column' => $column, 'options' => $options,
+                               'current' => isset($options[$current]) ? $current : $medium);
+    }
+    return $result;
+}

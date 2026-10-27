@@ -6612,6 +6612,44 @@ $twoyearsago = $currentyear - 1; // because 1 has already been subtracted from c
 
     }
 
+// *************************  function SAVEFONTSIZES ************************ //
+// The Font pop-up in the member top bar (views/navbar.php, 2026-10-27): POST of the
+// five size choices (tab/header/label/value/button_setting) for your OWN record only.
+// Each must be a small/medium/large row of ccmps_settings of the right type. JSON reply;
+// the page reloads so _with_fontsize_style() applies the new sizes.
+function savefontsizes() {
+
+    header('Content-Type: application/json');
+    if (empty($_SESSION['ccmp_logged_in']) || empty($_SESSION['ccmp_rec_id'])) {
+        echo json_encode(array('ok' => false, 'msg' => 'Please log in again.'));
+        die();
+    }
+    if (REQUEST_TYPE != 'POST' || empty($_SESSION['fontsize_token']) || !hash_equals($_SESSION['fontsize_token'], (string) post('token'))) {
+        echo json_encode(array('ok' => false, 'msg' => 'The page had expired - please reload it and try again.'));
+        die();
+    }
+
+    $ccmp_id = (int) $_SESSION['ccmp_rec_id'];
+    $upd = array();
+    foreach (member_font_sizes($ccmp_id) as $type => $choice) {
+        $picked = (int) post($choice['column']);
+        if (!isset($choice['options'][$picked])) {
+            echo json_encode(array('ok' => false, 'msg' => 'Please choose a size for '.$choice['label'].'.'));
+            die();
+        }
+        $upd[$choice['column']] = $picked;
+    }
+    $this->model->update($ccmp_id, $upd, 'ccmps');
+
+    $this->module('timedate');
+    $time = $this->timedate->get_nice_date(time(), 'minitime').' UTC';
+    $this->module('system-auditlogger');
+    $this->auditlogger->logevent('update', 'FontSizes', 'welcome-ccmps-savefontsizes', 'UN: '.($_SESSION['ccmp_username'] ?? ''), $time, 'Rec: '.$ccmp_id, 'Tbl: ccmps', json_encode($upd));
+
+    echo json_encode(array('ok' => true));
+    die();
+}
+
 // *************************  function MODALCHANGEPW ************************ //
 
 function modalchangepw() { //for changing your own system acct password. ccmps not passed because separate code in Welcome to change own ccmps password

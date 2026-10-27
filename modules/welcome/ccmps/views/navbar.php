@@ -69,6 +69,14 @@
                      <span class="m-r-sm text-muted welcome-message"><strong><i class="fa fa-key"></i>Change Password </strong></span>
                 </a>
             </li>
+            <?php if(!empty($_SESSION['ccmp_logged_in'])): ?> <!-- Font: the member's own Small/Medium/Large choices (2026-10-27) -->
+            <li>
+                   <br>
+                <a href="#" data-toggle="modal" data-target="#fontModal">
+                     <span class="m-r-sm text-muted welcome-message"><strong><i class="fa fa-font"></i> Font </strong></span>
+                </a>
+            </li>
+            <?php endif; ?>
               <?php if($_SESSION['honcho_logged_in'] == 1): ?>
                  <li>
                      <br>
@@ -136,5 +144,55 @@
     </div>
   </div>
 </div>
+
+<?php if(!empty($_SESSION['ccmp_logged_in'])): ?>
+<?php
+  // Font pop-up: the member's own size choices (member_font_sizes(), saved by welcome-ccmps/savefontsizes)
+  if (empty($_SESSION['fontsize_token'])) { $_SESSION['fontsize_token'] = bin2hex(random_bytes(16)); }
+  $font_choices = member_font_sizes((int) ($_SESSION['ccmp_rec_id'] ?? 0));
+?>
+<div class="modal fade" id="fontModal" tabindex="-1" role="dialog" aria-labelledby="fontModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="fontModalLabel">Font Size</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted">Choose how large text appears on your pages.</p>
+        <?php foreach ($font_choices as $type => $choice): ?>
+        <div class="form-group">
+          <label for="font_<?= $type ?>"><?= out($choice['label']) ?></label>
+          <select class="form-control font-size-choice" id="font_<?= $type ?>" name="<?= out($choice['column']) ?>">
+            <?php foreach ($choice['options'] as $id => $text): ?>
+            <option value="<?= (int) $id ?>"<?= $id == $choice['current'] ? ' selected' : '' ?>><?= out($text) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+        <?php endforeach; ?>
+        <span id="fontResult" class="text-danger"></span>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+        <button type="button" id="fontSaveBtn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById('fontSaveBtn').addEventListener('click', function () {
+    var body = new URLSearchParams();
+    body.append('token', <?= json_encode($_SESSION['fontsize_token']) ?>);
+    document.querySelectorAll('#fontModal .font-size-choice').forEach(function (el) { body.append(el.name, el.value); });
+    fetch(<?= json_encode(BASE_URL.'welcome-ccmps/savefontsizes') ?>, { method: 'POST', body: body, credentials: 'same-origin' })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.ok) { window.location.reload(); } // the new sizes apply on reload
+        else { document.getElementById('fontResult').textContent = res.msg; }
+      })
+      .catch(function () { document.getElementById('fontResult').textContent = 'Could not save. Please try again.'; });
+  });
+</script>
+<?php endif; ?>
 
 <!-- End Top Menu   -->

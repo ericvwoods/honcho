@@ -28,6 +28,8 @@
   _show_card($ccmp_id, $admin_view)
         card_for_member(), card_details(), card_code()
         _token()
+        _return_url($home)
+  _return_url($home)
   _can_manage($ccmp_id)
   _token()
   _audit($action, $ccmp_id, $what)
@@ -150,6 +152,7 @@ class Cards extends Trongate {
         $data['gwallet']     = !$admin_view && gwallet_configured(); // Add to Google Wallet button
         $data['token']       = $this->_token();
         $data['home_url']    = !empty($_SESSION['honcho_logged_in']) ? 'honcho/index' : 'welcome-ccmps/ccmphome';
+        $data['close_url']   = $this->_return_url($data['home_url']); // Close goes back where they came from
         $data['card_bg']     = CCMPS_CRUD_LABEL_CLR; // the scheme's Label color: dark in every scheme, so white text reads
         $data['card_accent'] = SN2_CLR;              // the scheme's Accent color
 
@@ -159,6 +162,21 @@ class Cards extends Trongate {
         $data['bc2']    = $admin_view ? $details->name.' - Card' : 'My Card';
         $data['header'] = $admin_view ? $details->name.' - '.CCMP.' Card' : 'My '.CCMP.' Card';
         $this->templates->inspinia($data);
+    }
+
+    function _return_url($home){ // the page the person came from, kept while they stay on the card pages
+        $from = (string) ($_GET['return'] ?? '');
+        if($from === '' && strpos((string) ($_SERVER['HTTP_REFERER'] ?? ''), BASE_URL) === 0){
+            $from = substr($_SERVER['HTTP_REFERER'], strlen(BASE_URL));
+        }
+        $from = (string) strtok($from, '?#');
+
+        if(strpos($from, 'welcome-cards') === 0){
+            return $_SESSION['card_return'] ?? $home; // back from Reissue or Google Wallet: keep the original page
+        }
+        // only a page of this site: module/method/args, no scheme, dots or double slashes
+        $_SESSION['card_return'] = preg_match('#^[a-z][a-z0-9_-]*(/[A-Za-z0-9_-]+)*$#', $from) ? $from : $home;
+        return $_SESSION['card_return'];
     }
 
     function _can_manage($ccmp_id){ // admins who may see and reissue someone else's card

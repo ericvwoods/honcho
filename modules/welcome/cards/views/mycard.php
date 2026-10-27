@@ -83,7 +83,7 @@
                     </form>
 
                     <br>
-                    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= $home_url ?>" style="font-size: 16px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
+                    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= out($close_url) ?>" style="font-size: 16px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>
 

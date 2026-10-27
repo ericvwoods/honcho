@@ -125,9 +125,9 @@
                 <div class="col-md-2">
                     <br>
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>">
-                        <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> 128 Update</span>
+                        <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Update</span>
                     </a>
-                    <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?><?= $_SESSION['ccmpmode'] == 'ccmp' ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$recid ?>"> <!-- membership card (welcome-cards) -->
+                    <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?><?= $_SESSION['ccmpmode'] == 'ccmp' ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$recid ?>?return=<?= rawurlencode(strtok(substr(current_url(), strlen(BASE_URL)), '?#')) ?>"> <!-- membership card (welcome-cards); Close comes back here -->
                         <i class="fa fa-qrcode"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Card</span>
                     </a>
 
@@ -141,11 +141,11 @@
                     </a>
                 <?php elseif ($_SESSION['ccmpmode'] == 'mamv'): ?>  <!-  coming from manage page as a ccmp admin-->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/ccmp_admin">
-                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> 137 Close</span>
+                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
                     </a>
                 <?php else: ?>  <!-  coming from manage page as a subentity admin-->
                 <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/subentity_admin">
-                    <i class="fa fa-times-circle"></i> <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> 141 Close</span>
+                    <i class="fa fa-times-circle"></i> <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
                 </a>
                 <?php endif; ?>
                 </div>

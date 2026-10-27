@@ -162,7 +162,8 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 - [ ] Member home ATIS tile hidden 2026-10-16 (it downloaded doc 1 from the removed CMS library). Upload ATIS to DMS and put its id in the link in `ccmphome.php`, then re-add it to the Users' Guide.
 
 - [ ] `Ccmps::currentroster()` (and any other method using the same `$this->login()` line) gives a 500 when the session has expired: `login()` doesn't exist. Redirect to `welcome/logout` instead (found 2026-10-22).
-- [ ] Debug line numbers show on buttons: "128 Update" (`viewccmp.php` line 128) and "69Cancel" / "80 Cancel" (`ccmpcrud.php` lines 70 and 81).
+- [x] Debug line numbers on buttons removed 2026-10-27: "128 Update", "137 Close", "141 Close" (`viewccmp.php`); "69Cancel", "80 Cancel", "92 Cancel", "103 Manage All" (`ccmpcrud.php`).
+- [ ] Other screens whose Close goes to the home page instead of back where you came from: fix as they're touched (pattern: `Cards::_return_url()`).
 - [ ] Member-list bulk actions Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing (`Ccmps.php` `bulkaction()`).
 
 - [x] `sidemenu.php` Content Admin block is missing its closing `</li>` (~line 161). Replaced by the Website block 2026-10-20.

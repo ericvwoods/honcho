@@ -67,7 +67,7 @@
                                 <span style="color: <?= NB_CLR ?>; font-size: 16px;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                             <a class="btn btn-outline btn-primary" href="<?= BASE_URL ?>welcome-ccmps/mydata/1">
-                                <span style="color: <?= NB_CLR ?>; font-size: 16px;"><i class="fa fa-times-circle"></i> 69Cancel</span>
+                                <span style="color: <?= NB_CLR ?>; font-size: 16px;"><i class="fa fa-times-circle"></i> Cancel</span>
                             </a>
                         </div>
 
@@ -78,7 +78,7 @@
                                 <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                             <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1">
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> 80 Cancel</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
                             </a>
                         </div>
 
@@ -90,7 +90,7 @@
                             </button>
                         <!-- --    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps"> -->
                         <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps">
-                            <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> 92 Cancel</span>
+                            <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
                         </a>
                         </div>
 
@@ -101,7 +101,7 @@
                                 <span style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-home"></i> Home</span>
                             </a>
                             <a class="btn btn-primary btn-outline" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps">
-                                <span style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-list"></i> 103 Manage All</span>
+                                <span style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-list"></i> Manage All</span>
                             </a>
                         </div>
                     <?php endif; ?>

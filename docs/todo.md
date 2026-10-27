@@ -70,6 +70,10 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
     - One PMS project per module: CCMPS (members), DMS, Security (RBAC and logins), Website (CMS), System Settings, Member Cards, PMS itself, Welcome; later the Student module and Events.
     - Each story written from the role's side ("As a Chapter Admin, I can ... so that ..."), with testable criteria (Given / When / Then), drawn from the code, the Developer's and Users' Guides and the decisions in this list.
     - Can be drafted before PMS is ready (a file per module, imported by a script later), and doubles as the **UAT test script**: worth having before UAT starts.
+    - **The system project (owner, 2026-10-27):** every client gets a **pre-seeded project that represents the system itself** (its modules' stories and criteria), alongside the projects the client creates. Design notes:
+        - Marked as the system project (e.g. a flag on `pm_projects`), seeded by a core migration; **core stories come with each core release**, the client's own (custom) stories are added to it per client (core-and-client model).
+        - An **option to surface it** (System Settings switch: shown or hidden in the project lists).
+        - **Only certain users, in defined roles**: Security Groups functions for it (e.g. view, comment, accept stories, edit), separate from ordinary PMS access. Which roles get what: to decide with the owner.
 - [ ] Test the logged-in pages and forms on this engine.
 - [x] Remove the `ini_set('display_errors'...)` / `error_reporting` debug lines at the top of `Pm.php`. Done 2026-10-18 (RBAC step 3).
 - [x] Team-member picker lists nobody (fixed by RBAC plan step 3: build the list from `trongate_users`). Done 2026-10-18 (RBAC step 3).

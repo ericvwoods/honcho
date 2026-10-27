@@ -125,27 +125,27 @@
                 <div class="col-md-5" style="white-space: nowrap; text-align: right;"> <!-- Update, Card and Close on one line -->
                     <br>
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>">
-                        <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Update</span>
+                        <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Update</span>
                     </a>
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?><?= $_SESSION['ccmpmode'] == 'ccmp' ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$recid ?>?return=<?= rawurlencode(strtok(substr(current_url(), strlen(BASE_URL)), '?#')) ?>"> <!-- membership card (welcome-cards); Close comes back here -->
-                        <i class="fa fa-qrcode"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Card</span>
+                        <i class="fa fa-qrcode"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Card</span>
                     </a>
 
                 <?php if($_SESSION['ccmpmode'] == 'ccmp'): ?> <!-  coming from sidemenu of ccmphome page -->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/ccmphome">
-                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
+                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Close</span>
                     </a>
                 <?php elseif (in_array($_SESSION['ccmpmode'], array('mngallccmps', 'mngdeleted'))): ?>  <!-  coming from the All Members list -->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/<?= $_SESSION['ccmpmode'] ?>">
-                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
+                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Close</span>
                     </a>
                 <?php elseif ($_SESSION['ccmpmode'] == 'mamv'): ?>  <!-  coming from manage page as a ccmp admin-->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/ccmp_admin">
-                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
+                        <i class="fa fa-times-circle"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Close</span>
                     </a>
                 <?php else: ?>  <!-  coming from manage page as a subentity admin-->
                 <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/subentity_admin">
-                    <i class="fa fa-times-circle"></i> <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Close</span>
+                    <i class="fa fa-times-circle"></i> <span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Close</span>
                 </a>
                 <?php endif; ?>
                 </div>

@@ -64,10 +64,10 @@
                         <div class="col-md-4">
                             <br>
                             <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                             <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/mydata/1">
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-times-circle"></i> Cancel</span>
                             </a>
                         </div>
 
@@ -75,10 +75,10 @@
                         <div class="col-md-4">
                             <br>
                             <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                             <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/viewccmp/<?= $recid ?>/1">
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-times-circle"></i> Cancel</span>
                             </a>
                         </div>
 
@@ -86,11 +86,11 @@
                         <div class="col-md-4">
                             <br>
                             <button class="btn btn-outline btn-primary" style="padding: 8px 12px;" name="submit" type="submit" value="Submit"> <!-- same size as Cancel -->
-                                <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-save"></i> Save Changes</span>
+                                <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-save"></i> Save Changes</span>
                             </button>
                         <!-- --    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps"> -->
                         <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/manage/mngallccmps">
-                            <span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"><i class="fa fa-times-circle"></i> Cancel</span>
+                            <span class="btn-label-text" style="color: <?= NB_CLR ?>;"><i class="fa fa-times-circle"></i> Cancel</span>
                         </a>
                         </div>
 

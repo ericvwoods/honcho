@@ -77,7 +77,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Design: two `system_settings` rows for the label (singular + plural).
 - **Who goes where (decided 2026-10-27):** members with type **Q, Qualified Student** (`ccmp_type` 3) **stay in CCMPS** and **vote**. Students who take part in BPA programs and have a regular **S, Student** membership (`ccmp_type` 4) **move to the Student module** and **don't vote**. The **Student checkbox** on the member record (`ccmps.student`) is information only; it decides nothing.
 - [ ] Seed from `ccmps` where `ccmp_type = 4`; still to decide: payments, aircraft, logins, and what happens to the moved `ccmps` rows. Do it in the ETL from the legacy database, not just on the test data.
-- [ ] Voting: Student-module participants are never eligible voters; Q members keep `eligible_voter`. Check `eligible_voter` against member type when the data loads.
+- [ ] Voting: Student-module participants are never eligible voters (handled by the **Eligible voter rules** task below).
 - [ ] Then the CCMPS **Student Members** list (`manage/mosm`, `mcmm`) and the home-page student counts mean Q members only (`ccmp_type` 3), which the counts already use.
 
 ## Daily Coffee Report (add-on)
@@ -156,6 +156,14 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 - [ ] Phase 3: Google Wallet button (Eric: create the issuer account at pay.google.com/business/console). Apple Wallet later: start the D-U-N-S number and Apple Developer (organization) enrollment early, 1 to 3 weeks.
 - [ ] Phase 4: Wallet cards update themselves on renewal or chapter change.
 - [ ] Depends on the Event Module (below) for "registered and paid" at the door and guest tickets.
+
+## Eligible voter rules (later)
+
+- [ ] **Work out `eligible_voter` by rules instead of a checkbox** (owner, 2026-10-27). Voting depends on **currency of membership and member type**, not type alone: e.g. Associate members can't vote even when current; Q (Qualified Student) members can; S students (Student module) never can. Steps:
+    - Write down BPA's full rule set with the owner (which member types vote; what "current" means here, e.g. status Current only or Past Due in the grace period too; lifetime and honorary members; deceased, deleted, locked; any rule about chapter or time as a member).
+    - One function (e.g. `ccmp_voting_eligible($member)`) that applies the rules, used everywhere; the member types that vote become a setting (e.g. a "Votes" column on `ccmps_types`, or a System Settings row) rather than being written into the code.
+    - Recalculate it wherever status is recalculated (`recalcstatus()`, the Financial Settings re-check, saves that change type or year) and in the ETL; the Eligible Voter box on the record becomes display-only (or an admin override with a reason, if the rules allow one).
+    - A list or export of eligible voters for elections.
 
 ## Small fixes
 

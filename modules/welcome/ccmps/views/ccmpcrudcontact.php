@@ -196,6 +196,7 @@ $can_grant_chapter_admin = $is_system_admin
     </div>
     <div class="form-group col-md-4" style="display: flex; flex-wrap: wrap; gap: 4px 18px; padding-top: 26px;"> <!-- the row's last third; Active Duty and Former Military always together -->
         <label><input type="checkbox" name="minor" value="1" <?= !empty($data['minor']) ? 'checked' : '' ?>> Minor</label>
+        <label><input type="checkbox" name="student" value="1" <?= !empty($data['student']) ? 'checked' : '' ?> <?= $locked ?>> Student</label> <!-- admins only ($locked); not the Student member type -->
         <?php if ($is_vip_admin): ?>
         <label><input type="checkbox" name="vip" value="1" <?= !empty($data['vip']) ? 'checked' : '' ?>> VIP</label>
         <?php endif; ?>
@@ -310,9 +311,10 @@ $can_grant_chapter_admin = $is_system_admin
         cf_text('Current Year', 'current_year', $data, 'number', $locked);
         cf_select('Region', 'region', $data, $regions, 'id', 'description', null, $locked);
         cf_select('National Officer', 'national_officer', $data, $national_offices, 'id', 'description', null, $locked);
-        cf_select('Lead Source', 'leadsource', $data, $leadsources, 'id', 'title', 'referrer', $locked);
+        // Lead Source hidden 2026-10-27 (owner); not on the form = not saved, so values are kept
+        // cf_select('Lead Source', 'leadsource', $data, $leadsources, 'id', 'title', 'referrer', $locked);
     ?>
-    <div class="form-group col-md-2"><label><input type="checkbox" name="student" value="1" <?= !empty($data['student']) ? 'checked' : '' ?> <?= $locked ?>> Student</label></div>
+    <!-- Student moved next to Minor (Personal Information) 2026-10-27 -->
     <div class="form-group col-md-2"><label><input type="checkbox" name="eligible_voter" value="1" <?= !empty($data['eligible_voter']) ? 'checked' : '' ?> <?= $locked ?>> Eligible Voter</label></div>
 <?php cf_section_close(); ?>
 

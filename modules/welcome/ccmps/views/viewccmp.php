@@ -175,6 +175,7 @@
     ?>
     <?php
         vf_bool_row('Minor', 'minor', $data);
+        vf_bool_row('Student', 'student', $data); // a flag only; not the Student member type
     ?>
     <?php if ($is_vip_admin): ?>
         <?php vf_bool_row('VIP', 'vip', $data); ?>
@@ -284,10 +285,9 @@
         vf_row('Current Year', 'current_year', $data);
         vf_row('Region', 'region', $data);
         vf_row('National Officer', 'national_officer', $data);
-        vf_row('Lead Source', 'leadsource', $data);
+        // vf_row('Lead Source', 'leadsource', $data); // hidden 2026-10-27 (owner)
     ?>
     <?php
-        vf_bool_row('Student', 'student', $data);
         vf_bool_row('Eligible Voter', 'eligible_voter', $data);
     ?>
 <?php vf_section_close(); ?>

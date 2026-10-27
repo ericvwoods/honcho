@@ -163,6 +163,7 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 
 - [ ] `Ccmps::currentroster()` (and any other method using the same `$this->login()` line) gives a 500 when the session has expired: `login()` doesn't exist. Redirect to `welcome/logout` instead (found 2026-10-22).
 - [x] Debug line numbers on buttons removed 2026-10-27: "128 Update", "137 Close", "141 Close" (`viewccmp.php`); "69Cancel", "80 Cancel", "92 Cancel", "103 Manage All" (`ccmpcrud.php`).
+- [ ] The **Student Members** list links (`welcome-ccmps/manage/mosm`, `mcmm`) show every member: `manage()` no longer filters by student. Decide what it should list (member type Student / Qualified Student, `ccmp_type` 3 and 4, is what the home-page counts use) and add the filter (found 2026-10-27).
 - [ ] Other screens whose Close goes to the home page instead of back where you came from: fix as they're touched (pattern: `Cards::_return_url()`).
 - [ ] Member-list bulk actions Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing (`Ccmps.php` `bulkaction()`).
 

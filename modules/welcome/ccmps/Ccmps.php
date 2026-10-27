@@ -8182,8 +8182,9 @@ if($_SESSION['ccmp_logged_in'] == 1  || $_SESSION['honcho_ccmps_admin'] == 1 || 
         // specific id.
         $element_map = [
             // view page: .tabs-container; update form: .ccmp-form-section (collapsible boxes, 2026-10-27)
-            'tab_setting'    => ['tab',    '.tabs-container .nav-tabs > li > a, .ccmp-form-section .faq-question'],
-            'header_setting' => ['header', '.tabs-container h4, .ccmp-form-section h4'],
+            'tab_setting'    => ['tab',    '.tabs-container .nav-tabs > li > a'],
+            // update form section titles (Contact Information, ...) look like headings there, so they follow Headings
+            'header_setting' => ['header', '.tabs-container h4, .ccmp-form-section h4, .ccmp-form-section .faq-question'],
             'label_setting'  => ['label',  '.tabs-container label, .ccmp-form-section label'],
             'value_setting'  => ['value',  '.tabs-container .form-control-static, .ccmp-form-section .form-control'],
             'button_setting' => ['button', '.btn-label-text'],

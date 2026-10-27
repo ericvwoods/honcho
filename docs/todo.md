@@ -66,6 +66,10 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## PMS (add-on)
 
+- [ ] **Reverse-engineer user stories with acceptance criteria for each module** (owner, 2026-10-27) and store them in PMS once its story pages are finished. PMS already has the tables: `pm_stories` (title, description, status, priority, points, accepted by/at) and `pm_story_criteria` (the acceptance criteria per story).
+    - One PMS project per module: CCMPS (members), DMS, Security (RBAC and logins), Website (CMS), System Settings, Member Cards, PMS itself, Welcome; later the Student module and Events.
+    - Each story written from the role's side ("As a Chapter Admin, I can ... so that ..."), with testable criteria (Given / When / Then), drawn from the code, the Developer's and Users' Guides and the decisions in this list.
+    - Can be drafted before PMS is ready (a file per module, imported by a script later), and doubles as the **UAT test script**: worth having before UAT starts.
 - [ ] Test the logged-in pages and forms on this engine.
 - [x] Remove the `ini_set('display_errors'...)` / `error_reporting` debug lines at the top of `Pm.php`. Done 2026-10-18 (RBAC step 3).
 - [x] Team-member picker lists nobody (fixed by RBAC plan step 3: build the list from `trongate_users`). Done 2026-10-18 (RBAC step 3).

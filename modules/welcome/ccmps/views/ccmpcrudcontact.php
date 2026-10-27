@@ -194,19 +194,15 @@ $can_grant_chapter_admin = $is_system_admin
         <label>Date of Birth</label>
         <input type="date" class="form-control" name="dob" value="<?= htmlspecialchars($dob_display) ?>">
     </div>
-    <div class="form-group col-md-1">
+    <div class="form-group col-md-4" style="display: flex; flex-wrap: wrap; gap: 4px 18px; padding-top: 26px;"> <!-- the row's last third; Active Duty and Former Military always together -->
         <label><input type="checkbox" name="minor" value="1" <?= !empty($data['minor']) ? 'checked' : '' ?>> Minor</label>
-    </div>
-    <?php if ($is_vip_admin): ?>
-    <div class="form-group col-md-1">
+        <?php if ($is_vip_admin): ?>
         <label><input type="checkbox" name="vip" value="1" <?= !empty($data['vip']) ? 'checked' : '' ?>> VIP</label>
-    </div>
-    <?php endif; ?>
-    <div class="form-group col-md-1">
-        <label><input type="checkbox" name="active_duty" value="1" <?= !empty($data['active_duty']) ? 'checked' : '' ?>> Active Duty</label>
-    </div>
-    <div class="form-group col-md-2">
-        <label><input type="checkbox" name="former_military" value="1" <?= !empty($data['former_military']) ? 'checked' : '' ?>> Former Military</label>
+        <?php endif; ?>
+        <span style="white-space: nowrap;">
+            <label style="margin-right: 18px;"><input type="checkbox" name="active_duty" value="1" <?= !empty($data['active_duty']) ? 'checked' : '' ?>> Active Duty</label>
+            <label><input type="checkbox" name="former_military" value="1" <?= !empty($data['former_military']) ? 'checked' : '' ?>> Former Military</label>
+        </span>
     </div>
 
     <div class="col-md-12" style="margin-top: 25px;"><h4>Contact Information</h4><hr></div>

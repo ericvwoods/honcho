@@ -114,7 +114,7 @@
 
                 <?php endif; ?>
 
-                <div class="col-md-7">
+                <div class="col-md-6">
 
                     <span style="color:<?= CCMPS_CCMP_NAME_CLR ?>; font-size: <?= CCMPS_CCMP_FNT_SZ ?>;">
                         <?= htmlspecialchars($data['salutation'] ?? '') ?> <?= htmlspecialchars($data['first_name'] ?? '') ?> <?= htmlspecialchars($data['middle_name'] ?? '') ?> <?= htmlspecialchars($data['last_name'] ?? '') ?> <?= htmlspecialchars($data['suffix'] ?? '') ?>
@@ -122,7 +122,7 @@
                      <h3 style="color:<?= CCMPS_CCMP_NAME_CLR ?>;"><?= $data['subentity'] ?> <?= SUBENTITY ?></h3>
                 </div>
 
-                <div class="col-md-2">
+                <div class="col-md-5" style="white-space: nowrap; text-align: right;"> <!-- Update, Card and Close on one line -->
                     <br>
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/updateccmp/<?= $recid ?>">
                         <i class="fa fa-pencil"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>; font-size: 19px;"> Update</span>

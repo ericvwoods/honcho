@@ -1,11 +1,11 @@
 <nav class="navbar-default navbar-static-side gray-bg" role="navigation">
 <style>
-#side-menu > li > a { /* admin menu: compact, like the legacy portal (2026-10-28); was 14px bold uppercase with letter spacing, which wrapped */
+#side-menu > li > a { /* admin menu: one line per item (2026-10-28); was 14px bold uppercase with letter spacing, which wrapped */
     font-family: 'Open Sans', helvetica, arial, sans-serif;
     font-weight: 600;
-    font-size: 13px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    font-size: 15px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     white-space: nowrap;
 }
 #side-menu > li > a > i { width: 18px; } /* icons in one column */

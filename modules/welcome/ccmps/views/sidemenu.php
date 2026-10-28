@@ -505,7 +505,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             <a href="<?= BASE_URL ?>welcome-ccmps/adminmenu" style="color:Gray;">     <i class="fa fa-gears fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
                             </div>
                             <div class="col-10 text-right">
-                                  <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> Admin</h2> </a>
+                                  <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> <?= SHORTSITENAME2 ?></h2> </a>
                             </div>
                         </div>
                     </div>

@@ -54,7 +54,7 @@ module.exports = [
     ['**Doc Library**', 'Shared documents you can read and download'],
     ['**Register Me**', 'Registration for the current event, when one is open'],
     ['**Sponsors**', "BPA's sponsors"],
-    ['**Admin**', 'Admin pages, shown only if you have an admin role'],
+    ['**EMS**', 'Admin pages, shown only if you have an admin role (the name is set on System Settings > Organization)'],
     ['**Logout**', 'Ends your session'],
   ]},
   { type: 'h2', text: 'The Side Menu (Admins)' },

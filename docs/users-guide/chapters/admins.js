@@ -37,7 +37,7 @@ module.exports = {
 
 chapterAdmins: [
   { tab: "Your Chapter Admin Pages", blocks: [
-    { type: 'p', text: "If you're a Chapter Admin, the side menu has a **Chapter Admin** section, and the home page's **Admin** tile shows **Chapter Administration**. Everything here is limited to your own chapter." },
+    { type: 'p', text: "If you're a Chapter Admin, the side menu has a **Chapter Admin** section, and the side menu's **EMS** item shows **Chapter Administration**. Everything here is limited to your own chapter." },
     { type: 'table', headers: ['Menu item', 'What you do there'], rows: [
       ['**Chapter Members**', "See and manage your chapter's members"],
       ['**Student Members**', "Your chapter's student members"],

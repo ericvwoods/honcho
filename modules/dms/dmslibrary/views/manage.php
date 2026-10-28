@@ -15,9 +15,7 @@
                 <div class="row">
 
 
-                        <div class="col-md-1">
-                         <br>
-                           <br>
+                        <div class="col-md-1"> <!-- logo level with the heading: the two <br> above it removed 2026-10-28 -->
                             <div class="row">
                                 <div class="col-md-6"> <!-- for spacing -->
                                 </div>
@@ -39,9 +37,7 @@
 
                         </span>
                         </div> <!-- end column -->
-                          <div class="col-md-4">
-                              <br>
-                               <br>
+                          <div class="col-md-4" style="padding-top: 18px;"> <!-- buttons level with the heading (2026-10-28) -->
 
                                <?php if($_SESSION['filelibrary_rolename'] == 'dmslibadmin'): ?>
                     <ul class="nav navbar-top-links navbar-right">
@@ -53,8 +49,7 @@
                        <?php endif; ?>
               <div class="col-md-1">
                    </div>
-                            <br>
-                               <br>
+                <?php if($_SESSION['filelibrary_rolename'] == 'dmslibadmin'): ?><br><br><?php endif; ?> <!-- only to put the back button under Kanban Board -->
                 <?php if($_SESSION['acct_table'] == 'ccmps' && ($_SESSION['ccmpssidemenu'] ?? '') == 'admin'): ?> <!-- came from the EMS (admin) side menu -->
 <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-th-list"></i> Dashboard</span></a>
                 <?php elseif($_SESSION['acct_table'] == 'ccmps'): ?> <!-- came from the member home (2026-10-28) -->

@@ -58,7 +58,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 }
 ?>
 <?php if($_SESSION['ccmpssidemenu'] == 'admin' && $has_admin_menu): ?>  <!-- buttons on sidemenu -->
-            <li><a class="navbar-minimalize " href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-right"></i><span class="nav-label"> Expand/Hide Menu</span></a></li>
+            <li><a class="navbar-minimalize " href="#"><i class="fa fa-chevron-left"></i><i class="fa fa-chevron-right"></i><span class="nav-label"> Expand/Hide</span></a></li>
 <!--  Only show Member Menu For honcho sysadmin or a ccmp user-->
              <?php if($_SESSION['honcho_all_modules'] == 1 || $_SESSION['ccmp_logged_in'] == 1): ?>  <!-- no member ccmphome for honcho admins -->
 <li><a href="<?= BASE_URL ?>welcome-ccmps/ccmpmenu"><i class="fa fa-home"></i><span class="nav-label"> <?= CCMP?> Home</span></a></li>

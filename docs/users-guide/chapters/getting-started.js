@@ -58,7 +58,7 @@ module.exports = [
     ['**Logout**', 'Ends your session'],
   ]},
   { type: 'h2', text: 'The Side Menu (Admins)' },
-  { type: 'p', text: "Members with admin roles also get a side menu on the left with a section per role: Member Admin, Chapter Admin, Content Admin, PMS, System Admin and Reports. **Expand/Hide Menu** at the top shrinks it to icons to give the page more room. Click a section to open its list of pages." },
+  { type: 'p', text: "Members with admin roles also get a side menu on the left with a section per role: Member Admin, Chapter Admin, Content Admin, PMS, System Admin and Reports. **Expand/Hide** at the top shrinks it to icons to give the page more room. Click a section to open its list of pages." },
   { type: 'h2', text: 'Text Size' },
   { type: 'p', text: "You can make tabs, section headings, labels, values and buttons larger or smaller. Open **My Profile**, click **Update**, go to the **Preferences** section and choose a size for each under **Display Size**, then save." },
 ]},

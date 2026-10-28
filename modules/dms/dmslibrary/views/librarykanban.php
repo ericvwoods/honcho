@@ -50,7 +50,7 @@ There is a column for each of the currently six statuses. A dataset is passed fo
                       <div class="col-md-1"> 
                       </div>
 
-<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>honcho"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 24px;"><i class="fa fa-th-list"></i> Dashboard</span></a>                                                
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?><?= ($_SESSION['acct_table'] ?? '') == 'ccmps' ? 'welcome-ccmps/ccmphome' : 'honcho' ?>"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 24px;"><i class="fa fa-th-list"></i> Dashboard</span></a>                                                
                         </ul> <!-- End Navbar right  --> 
                       </div> <!-- end column -->
                        

@@ -112,7 +112,7 @@
 
 <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/kanban/m"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list-alt"></i> Kanban Board</span></a>
 <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-gears"></i> Manage</span></a>
-<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>honcho"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list"></i> Dashboard</span></a>
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?><?= ($_SESSION['acct_table'] ?? '') == 'ccmps' ? 'welcome-ccmps/ccmphome' : 'honcho' ?>"><span style="color: <?= DMS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-list"></i> Dashboard</span></a>
 
                     </ul> <!-- End Navbar right  -->
                        <?php endif; ?>

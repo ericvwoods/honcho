@@ -1,14 +1,14 @@
 <nav class="navbar-default navbar-static-side gray-bg" role="navigation">
 <style>
-#side-menu > li > a {
+#side-menu > li > a { /* admin menu: compact, like the legacy portal (2026-10-28); was 14px bold uppercase with letter spacing, which wrapped */
     font-family: 'Open Sans', helvetica, arial, sans-serif;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 14px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    white-space: nowrap;
 }
+#side-menu > li > a > i { width: 18px; } /* icons in one column */
 
 .navbar-static-side .widget.style1.gray-bg {
     margin-top: 0px;

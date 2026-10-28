@@ -55,8 +55,10 @@
                    </div>
                             <br>
                                <br>
-                <?php if($_SESSION['acct_table'] == 'ccmps'): ?>
+                <?php if($_SESSION['acct_table'] == 'ccmps' && ($_SESSION['ccmpssidemenu'] ?? '') == 'admin'): ?> <!-- came from the EMS (admin) side menu -->
 <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-th-list"></i> Dashboard</span></a>
+                <?php elseif($_SESSION['acct_table'] == 'ccmps'): ?> <!-- came from the member home (2026-10-28) -->
+<a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>welcome-ccmps/ccmphome"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-home"></i> Home</span></a>
                 <?php else: ?>
 <a class="btn btn-primary btn-rounded btn-outline" href="<?= BASE_URL ?>honcho"><span style="color: <?= CCMPS_BACK_BTN_CLR ?>; font-size: 20px;"><i class="fa fa-th-list"></i> Dashboard</span></a>
                 <?php endif; ?>

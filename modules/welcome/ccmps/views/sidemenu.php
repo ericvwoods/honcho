@@ -10,6 +10,8 @@
     color: gray; /* same grey as the admin tiles' labels on the member home (ccmphome.php), 2026-10-28 */
 }
 #side-menu > li > a > i { width: 18px; } /* icons in one column */
+#side-menu > li > a.navbar-minimalize { font-size: 13px; } /* Expand/Hide: smaller than the other items (2026-10-28) */
+#side-menu > li > a.navbar-minimalize > i { width: auto; margin-right: 1px; } /* the < > pair sits close to the words */
 
 .navbar-static-side .widget.style1.gray-bg {
     margin-top: 0px;

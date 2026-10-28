@@ -64,6 +64,20 @@ content: [
       "Give each picture a short **description** of what it shows. Screen readers read it aloud to people who can't see the picture. It saves when you click out of the box.",
       "Each picture shows how many times it's used. A picture can only be deleted when nothing uses it.",
     ]},
+    { type: 'h2', text: 'Pictures for the Slider' },
+    { type: 'p', text: "The slider on the member home and the public website is always **470 pixels tall**; its width follows the screen, so the picture is cropped to fit:" },
+    { type: 'table', headers: ['Screen width', 'Slide size', 'Shape (width : height)'], rows: [
+      ['1280', 'about 990 x 470', '2.1 : 1'],
+      ['1440', 'about 1150 x 470', '2.4 : 1'],
+      ['1920', 'about 1630 x 470', '3.5 : 1'],
+    ]},
+    { type: 'p', text: "**Best size: 1920 x 640 pixels** (3 : 1), a JPEG under about 400 KB. Uploads wider than 1920 pixels are made 1920 wide automatically, so a larger picture gains nothing." },
+    { type: 'ul', items: [
+      "**Keep people and key details in the middle**, roughly the middle 60% of the width: the sides are cut off on narrower screens.",
+      "**Leave the left third fairly plain.** The slide's headline, text and button sit over it.",
+      "**Give heads room at the top.** The slider keeps the upper part of a picture, but a tall picture still loses some of its top and bottom.",
+      "**Avoid portrait and square pictures.** A 4 : 3 photo (for example 1024 x 768) is cropped heavily and looks soft stretched across a wide screen.",
+    ]},
   ]},
 ],
 

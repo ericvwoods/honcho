@@ -39,6 +39,7 @@
 
 <span style="font-family: 'Open Sans', helvetica, arial, sans-serif; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-weight: bold; letter-spacing: 1px; font-size:8pt" class="block m-t-xs font-bold"><?= $_SESSION['subentity_name'] ?></span>
           </a>
+    </div> <!-- end profile-element: was never closed, so the menu sat inside it and vanished when Expand/Hide collapsed the menu (2026-10-28) -->
         <ul class="nav metismenu" id="side-menu">
 
 

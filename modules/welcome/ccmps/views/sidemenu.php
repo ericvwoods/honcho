@@ -80,7 +80,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 -->
 <?php if($_SESSION['ccmps_admin'] == 1 || $_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_ccmps'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1): ?>
 
- <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> <?= CCMP ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
+ <li> <a href="#"><i class="fa fa-users"></i><span class="nav-label"> <?= CCMP ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
             <ul class="nav nav-second-level collapse">
 
                 <li>
@@ -113,7 +113,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 
 
 
-            <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> <?= CCMPSSUBENTITY ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
+            <li> <a href="#"><i class="fa fa-building"></i><span class="nav-label"> <?= CCMPSSUBENTITY ?> Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->
                 <ul class="nav nav-second-level collapse">
                     <li><a href="<?= BASE_URL ?>welcome-ccmps/manage/subentity_admin"><i class="fa fa-users"></i><?= CCMPSSUBENTITY ?> <?= CCMPS ?></a></li> <!-- manage subentity members-->
                     <?php if(rbac_allowed('cms', 'chapter_events') && !rbac_allowed('cms', 'manage_events')): ?> <!-- Event Admins find Events under Website -->

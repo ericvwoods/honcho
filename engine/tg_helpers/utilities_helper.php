@@ -249,6 +249,26 @@ function load(string $template_file, ?array $data = null): void {
 }
 
 /**
+ * The words for a member's salutation (ccmps.salutation holds a ref_salutations
+ * id; 0 = none). Lists and the profile printed the number, so 0 showed up in
+ * front of every first name (2026-10-28).
+ *
+ * @param mixed $id ccmps.salutation
+ * @return string e.g. "Dr.", or '' for none / unknown
+ */
+function salutation_title($id): string {
+    static $titles = null;
+    if ($titles === null) {
+        $titles = array();
+        $model  = new Model();
+        foreach ((array) $model->get('id', 'ref_salutations') as $row) {
+            $titles[(int) $row->id] = trim((string) $row->title);
+        }
+    }
+    return $titles[(int) $id] ?? '';
+}
+
+/**
  * The name in the top bar of every screen: the short name (SHORTSITENAME, e.g.
  * "BPA") in the scheme's accent color, then "Member Portal" (SITENAME4) on
  * member pages or "EMS" (SHORTSITENAME2) on admin pages in the primary color.

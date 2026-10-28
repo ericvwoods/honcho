@@ -64,6 +64,7 @@ const sections = [
 // ============================================================
 { tab: "Schema", blocks: [
   { type: 'alert', variant: 'info', text: '**Resolved:** `ccmps.salutation` was originally `varchar(55)` despite the code treating it as an integer FK to `ref_salutations` — since fixed by converting the column to `tinyint(1) DEFAULT 0` directly in the database. If any member record had a pre-existing free-text salutation (like "Mr.") saved before this change, it\'s worth a quick check that the type conversion didn\'t silently coerce it to `0` rather than mapping it to the correct `ref_salutations.id` — MySQL will happily do that coercion without erroring, especially outside strict SQL mode.' },
+  { type: 'p', text: 'Showing it: always print `salutation_title($id)` (`utilities_helper.php`), never the column itself; 0 = none. The Directory, Current Roster, Master Roster, export and profile printed the id, so every name read "Smith, 0 John" (fixed 2026-10-28).' },
   { type: 'p', text: 'Of everything in the full database dump, only the tables below are actually referenced by this module\'s code. Tables prefixed `cms_` belong to a separate content-management module and aren\'t used here at all. Tables prefixed `dms_` and `honcho_` are separate modules entirely (document library and superuser administration, respectively) — conceptually related in places, but not queried directly by any file in this module.' },
 
   { type: 'h2', text: 'Core Tables' },

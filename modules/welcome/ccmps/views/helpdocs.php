@@ -137,7 +137,7 @@ echo '&lt;style&gt;' . implode("\n", $css_rules) . '&lt;/style&gt;';</pre>
 
                         <div class="alert alert-info">
                             <strong>Resolved:</strong> <code>ccmps.salutation</code> was originally <code>varchar(55)</code> despite the code treating it as an integer FK to <code>ref_salutations</code> — since fixed by converting the column to <code>tinyint(1) DEFAULT 0</code> directly in the database. If any member record had a pre-existing free-text salutation (like "Mr.") saved before this change, it's worth a quick check that the type conversion didn't silently coerce it to <code>0</code> rather than mapping it to the correct <code>ref_salutations.id</code> — MySQL will happily do that coercion without erroring, especially outside strict SQL mode.
-                        </div>
+                         Showing it: always print <code>salutation_title($id)</code> (<code>utilities_helper.php</code>), never the column itself; 0 = none (fixed 2026-10-28: lists printed the id, so names read &ldquo;Smith, 0 John&rdquo;).</div>
 
                         <p>Of everything in the full database dump, only the tables below are actually referenced by this module's code. Tables prefixed <code>cms_</code> belong to a separate content-management module and aren't used here at all. Tables prefixed <code>dms_</code> and <code>honcho_</code> are separate modules entirely (document library and superuser administration, respectively) — conceptually related in places, but not queried directly by any file in this module.</p>
 

@@ -114,7 +114,7 @@
                                     <td><?= $row->trongate_user_id ?></td>   -->                            
                                  <!--   <td><a href="<= BASE_URL ?>welcome-ccmps/viewccmp/<?= $row->id ?>/msp"><?= $row->ccmp_number ?></a></td>-->
                                     
-                                    <td><?= $row->last_name ?> <?= $row->suffix ?>, <?= $row->salutation ?> <?= $row->first_name ?> <?= $row->middle_name ?></td>
+                                    <td><?= $row->last_name ?> <?= $row->suffix ?>, <?= out(salutation_title($row->salutation)) ?> <?= $row->first_name ?> <?= $row->middle_name ?></td>
                                        <td><?= $row->call_sign ?></td> 
                                     <?php if($row->vip == 1): ?>
                                         <td>Restricted Access</td>

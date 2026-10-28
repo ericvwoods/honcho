@@ -137,7 +137,7 @@
        <!--     <td><?= $row->id ?></td> -->
                         <td><?= $row->ccmp_number ?></td>
                         <td><?= $row->ccmp_type ?></td>
-                        <td><?= $row->salutation ?></td>
+                        <td><?= out(salutation_title($row->salutation)) ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>
@@ -298,7 +298,7 @@
        <!--     <td><?= $row->id ?></td> -->
                         <td><?= $row->ccmp_number ?></td>
                         <td><?= $row->ccmp_type ?></td>
-                        <td><?= $row->salutation ?></td>
+                        <td><?= out(salutation_title($row->salutation)) ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>
@@ -458,7 +458,7 @@
        <!--     <td><?= $row->id ?></td> -->
                         <td><?= $row->ccmp_number ?></td>
                         <td><?= $row->ccmp_type ?></td>
-                        <td><?= $row->salutation ?></td>
+                        <td><?= out(salutation_title($row->salutation)) ?></td>
                         <td><?= $row->first_name ?></td>
                         <td><?= $row->middle_name ?></td>
                         <td><?= $row->last_name ?></td>

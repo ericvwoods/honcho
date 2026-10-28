@@ -117,7 +117,7 @@
                 <div class="col-md-6">
 
                     <span style="color:<?= CCMPS_CCMP_NAME_CLR ?>; font-size: <?= CCMPS_CCMP_FNT_SZ ?>;">
-                        <?= htmlspecialchars($data['salutation'] ?? '') ?> <?= htmlspecialchars($data['first_name'] ?? '') ?> <?= htmlspecialchars($data['middle_name'] ?? '') ?> <?= htmlspecialchars($data['last_name'] ?? '') ?> <?= htmlspecialchars($data['suffix'] ?? '') ?>
+                        <?= htmlspecialchars(salutation_title($data['salutation'] ?? 0)) ?> <?= htmlspecialchars($data['first_name'] ?? '') ?> <?= htmlspecialchars($data['middle_name'] ?? '') ?> <?= htmlspecialchars($data['last_name'] ?? '') ?> <?= htmlspecialchars($data['suffix'] ?? '') ?>
                     </span>
                      <h3 style="color:<?= CCMPS_CCMP_NAME_CLR ?>;"><?= $data['subentity'] ?> <?= SUBENTITY ?></h3>
                 </div>
@@ -164,7 +164,7 @@
 
     <div class="col-md-12"><h4>Personal Information</h4><hr></div>
     <?php
-        vf_row('Salutation', 'salutation', $data);
+        vf_row('Salutation', 'salutation_title', array('salutation_title' => salutation_title($data['salutation'] ?? 0))); // the words, not the ref_salutations id
         vf_row('First Name', 'first_name', $data);
         vf_row('Middle Name', 'middle_name', $data);
         vf_row('Last Name', 'last_name', $data);

@@ -7,6 +7,7 @@
     padding-top: 8px;
     padding-bottom: 8px;
     white-space: nowrap;
+    color: gray; /* same grey as the admin tiles' labels on the member home (ccmphome.php), 2026-10-28 */
 }
 #side-menu > li > a > i { width: 18px; } /* icons in one column */
 

@@ -83,7 +83,7 @@ module.exports = [
 { tab: "Step 5: Test, Then Switch On", blocks: [
   { type: 'ul', items: [
     "**Preview** builds today's report and shows it on the page. Nothing is sent. Use it while choosing sections.",
-    "**Send me a test** emails it to you (if your account has no email address, to the report's extra addresses).",
+    "**Send a test** emails it **To me** (your own address), or **To everyone on the \"Sent to\" list** as a dry run of the real email. If your account has no email address, only the list choice is offered.",
     "**Telegram test** sends it to the Telegram chat.",
     "When you're happy, set **Report** to **On** and **Save**. From the next scheduled time it goes out on the days you ticked, once a day.",
   ]},

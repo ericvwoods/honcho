@@ -866,7 +866,7 @@
         ],
         [
          "**Coffee Report**",
-         "When the AI module is switched on: a short daily email for National's admins with membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and weather, news and YouTube sections you choose. Pick the days, time, recipients and tone, and optionally a Telegram chat to send it to as well (make a bot with @BotFather, paste its token, message the bot, then use **Find chat ID**); **Preview** shows today's report without sending, **Send me a test** emails it to you, and **Sent** lists every report sent with the facts it was written from. With an AI connection the AI writes it up; without one the plain facts are sent"
+         "When the AI module is switched on: a short daily email for National's admins with membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and weather, news and YouTube sections you choose. Pick the days, time, recipients and tone, and optionally a Telegram chat to send it to as well (make a bot with @BotFather, paste its token, message the bot, then use **Find chat ID**); **Preview** shows today's report without sending, **Send a test** emails it to you or to everyone on the list, and **Sent** lists every report sent with the facts it was written from. With an AI connection the AI writes it up; without one the plain facts are sent"
         ],
         [
          "**AI Connections**",
@@ -1298,7 +1298,7 @@
        "type": "ul",
        "items": [
         "**Preview** builds today's report and shows it on the page. Nothing is sent. Use it while choosing sections.",
-        "**Send me a test** emails it to you (if your account has no email address, to the report's extra addresses).",
+        "**Send a test** emails it **To me** (your own address), or **To everyone on the \"Sent to\" list** as a dry run of the real email. If your account has no email address, only the list choice is offered.",
         "**Telegram test** sends it to the Telegram chat.",
         "When you're happy, set **Report** to **On** and **Save**. From the next scheduled time it goes out on the days you ticked, once a day."
        ]

@@ -74,7 +74,7 @@
                             <label style="font-weight: normal;"><input type="checkbox" name="send_to_admins" value="1"<?= $config->send_to_admins ? ' checked' : '' ?>>
                                 <?= out($scope_name) ?>'s admins (<?= $admins ?> with an email address: <?= $subentity_id === 0 ? 'System and '.CCMP.' Admins' : SUBENTITY.' Admins' ?>)</label>
                             <textarea class="form-control" name="extra_recipients" id="extra_recipients" rows="3" placeholder="More addresses, one per line"><?= out((string) $config->extra_recipients) ?></textarea>
-                            <small class="text-muted">Anyone else who should get it (not an admin): one email address per line. Each person gets their own copy. Send me a test uses these when your account has no email address.</small>
+                            <small class="text-muted">Anyone else who should get it (not an admin): one email address per line. Each person gets their own copy. A test can go to everyone on this list as a dry run.</small>
                         </div>
                     </div>
 
@@ -152,7 +152,12 @@
                         </form>
                         <form method="post" action="<?= BASE_URL ?>ai/coffeetest" style="display: inline;">
                             <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
-                            <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-paper-plane"></i> Send me a test</button>
+                            <?php $list_count = ($config->send_to_admins ? $admins : 0) + count(_coffee_lines((string) $config->extra_recipients)); ?>
+                            <select class="form-control" name="test_to" id="test_to" aria-label="Send the test to" style="display: inline-block; width: auto; height: 38px; font-size: 16px; vertical-align: middle;">
+                                <option value="me"<?= $my_email !== '' ? ' selected' : ' disabled' ?>>To me<?= $my_email !== '' ? ' ('.out($my_email).')' : ' (your account has no email)' ?></option>
+                                <option value="list"<?= $my_email === '' ? ' selected' : '' ?>>To everyone on the "Sent to" list (<?= (int) $list_count ?>)</option>
+                            </select>
+                            <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-paper-plane"></i> Send a test</button>
                         </form>
                         <?php if(!empty($config->telegram_token_enc)): ?>
                         <form method="post" action="<?= BASE_URL ?>ai/coffeetelegramtest" style="display: inline;">
@@ -164,7 +169,7 @@
                             <button type="submit" class="btn btn-outline btn-default" style="font-size: 18px;"><i class="fa fa-search"></i> Find chat ID</button>
                         </form>
                         <?php endif; ?>
-                        <p class="text-muted" style="margin-top: 8px;">Preview shows today's report here and sends nothing. Send me a test emails it to you; Telegram test sends it to the Telegram chat. Both take up to a minute while the sections are collected<?= $ai ? ' and the AI writes it up' : '' ?>.</p>
+                        <p class="text-muted" style="margin-top: 8px;">Preview shows today's report here and sends nothing. Send a test emails it to you, or to everyone on the "Sent to" list as a dry run of the real thing; Telegram test sends it to the Telegram chat. Both take up to a minute while the sections are collected<?= $ai ? ' and the AI writes it up' : '' ?>.</p>
                         <?php if($preview): ?>
                         <div style="margin-top: 12px;">
                             <p><strong><?= $preview['ai'] ? 'Written by the AI' : 'Plain report (no AI)' ?></strong><?= $preview['message'] ? '<br><small class="text-muted">'.out($preview['message']).'</small>' : '' ?></p>

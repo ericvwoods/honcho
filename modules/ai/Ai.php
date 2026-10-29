@@ -35,7 +35,7 @@
         _check_token(), _can_manage(), _audit()
   coffeepreview()                    POST: build today's report and show it; nothing is sent
         _check_token(), _can_manage(), coffee_run($id, 'preview')
-  coffeetest()                       POST: build it and email it to the person asking (no address: the report's extra addresses)
+  coffeetest()                       POST: build it and email it to the person asking (test_to=me) or the "Sent to" list (test_to=list)
         _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', $to, ['email']), _audit()
   coffeetelegramtest()               POST: build it and send it to the scope's Telegram chat
         _check_token(), _can_manage(), coffee_run($id, 'test', null, ['telegram']), _audit()
@@ -371,6 +371,7 @@ class Ai extends Trongate {
     $data['catalog']      = coffee_sections();
     $data['ai']           = (bool) _coffee_connection($subentity_id);
     $data['admins']       = count(coffee_scope_admin_emails($subentity_id));
+    $data['my_email']     = $this->_my_email(); // for the test's "To me" choice
     $data['preview']      = $_SESSION['coffee_preview'] ?? null; // set by coffeepreview(), shown once
     unset($_SESSION['coffee_preview']);
     $data['token']        = $this->_token();
@@ -493,7 +494,7 @@ class Ai extends Trongate {
 /*----------------------------------------------------------------------------*/
 /*--------------------------- function COFFEETEST ----------------------------*/
 /*----------------------------------------------------------------------------*/
-  function coffeetest(){ // build it and email it to the person asking
+  function coffeetest(){ // build it and email it: to the person asking, or to everyone on the "Sent to" list (2026-10-29)
 
     $subentity_id = (int) post('subentity_id');
     $back = 'ai/coffeesettings/'.$subentity_id;
@@ -502,12 +503,17 @@ class Ai extends Trongate {
         redirect('ai/coffee');
     }
     $email = $this->_my_email();
-    $to    = $email !== '' ? array($email) : _coffee_lines((string) coffee_config($subentity_id)->extra_recipients); // no address of your own: the report's extra addresses
-    $note  = $email !== '' ? '' : 'Your account has no email address, so it went to the report\'s "More addresses". ';
-    if(empty($to)){
-        set_flashdata('Your account has no email address and the report has no "More addresses" to send the test to.');
-        $_SESSION['flashmsgcolor'] = 0;
-        redirect($back);
+    if(post('test_to') === 'list'){
+        $to   = null; // coffee_run() uses the saved "Sent to" list: the scope's admins (if ticked) and the extra addresses
+        $note = 'Sent to the "Sent to" list. ';
+    }else{
+        if($email === ''){
+            set_flashdata('Your account has no email address. Choose "To everyone on the Sent to list", or add an email address to your profile.');
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect($back);
+        }
+        $to   = array($email);
+        $note = '';
     }
     set_time_limit(180);
     $run = coffee_run($subentity_id, 'test', $to, array('email'));

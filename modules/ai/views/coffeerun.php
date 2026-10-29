@@ -18,7 +18,7 @@
         <br>
         <div class="ibox">
             <div class="ibox-content" style="font-size: 16px;">
-                <p><strong><?= $run->ai_used ? 'Written by the AI' : 'Plain report' ?></strong>, <?= (int) $run->recipients ?> recipient(s).
+                <p><strong><?= $run->ai_used ? 'Written by the AI' : 'Plain report' ?></strong>, <?= (int) $run->recipients ?> email(s)<?= !empty($run->telegram_sent) ? ', sent to Telegram' : '' ?>.
                    <?= $run->message ? '<br><small class="text-muted">'.out($run->message).'</small>' : '' ?></p>
                 <pre style="white-space: pre-wrap; font-family: inherit; font-size: 15px; background: #f8f8f8; border: 1px solid #e7eaec; padding: 14px; max-width: 760px;"><?= out((string) $run->report_text) ?></pre>
 

@@ -13,10 +13,12 @@
  *   coffee_default_config($subentity_id)  a new scope's settings
  *   coffee_config($subentity_id)          the saved settings (or the defaults), sections decoded
  *   coffee_collect($config)               [ [key, label, text, ok], ... ] for the enabled sections
- *   coffee_run($subentity_id, $kind, $to) collect, write up, send, keep; returns the run row
+ *   coffee_run($subentity_id, $kind, $to, $channels)  collect, write up, send (email and/or Telegram), keep; returns the run row
  *   coffee_due_reports()                  the reports whose time has come today (scheduler)
  *   coffee_scope_admin_emails($id)        the scope's admins' addresses
  *   coffee_send_email($to, $subject, $text)  through Brevo's API; WHATENV=dev sends only to DEVEMAIL
+ *   coffee_send_telegram($token, $chat_id, $text)  Telegram Bot API sendMessage, split into parts (added 2026-10-29)
+ *   coffee_telegram_chats($token)         the chats that have recently messaged the bot, to find a chat ID
  */
 
 function coffee_sections(): array {
@@ -46,7 +48,8 @@ function coffee_default_config(int $subentity_id): object {
     }
     return (object) array('id' => 0, 'subentity_id' => $subentity_id, 'enabled' => 0, 'send_time' => '06:00', 'timezone' => 'America/New_York',
         'days' => 'mon,tue,wed,thu,fri', 'subject' => 'Your Daily Coffee Report', 'tone' => 'Friendly and brief, for volunteer leaders reading on a phone.',
-        'sections' => $sections, 'send_to_admins' => 1, 'extra_recipients' => '', 'last_sent_on' => null);
+        'sections' => $sections, 'send_to_admins' => 1, 'extra_recipients' => '', 'last_sent_on' => null,
+        'telegram_enabled' => 0, 'telegram_token_enc' => null, 'telegram_token_hint' => null, 'telegram_chat_id' => '');
 }
 
 function coffee_config(int $subentity_id): object {
@@ -360,7 +363,7 @@ function _coffee_connection(int $subentity_id) {
     return false;
 }
 
-function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = null): object {
+function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = null, array $channels = array('email', 'telegram')): object {
     $started = time();
     $config  = coffee_config($subentity_id);
     $sections = coffee_collect($config);
@@ -391,28 +394,43 @@ function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = 
     }
 
     $sent = 0;
-    if ($kind !== 'preview') {
-        $recipients = $to ?? array_merge($config->send_to_admins ? coffee_scope_admin_emails($subentity_id) : array(), _coffee_lines((string) $config->extra_recipients));
-        $recipients = array_values(array_unique(array_filter($recipients, function ($e) { return filter_var($e, FILTER_VALIDATE_EMAIL); })));
-        if (empty($recipients)) {
-            $status = 'failed';
-            $message = trim($message.' No recipients.');
-        } else {
-            $mail = coffee_send_email($recipients, (string) $config->subject, $report);
-            $sent = $mail['sent'];
-            if ($sent === 0) {
-                $status = 'failed';
-            }
-            if ($mail['message'] !== '') {
-                $message = trim($message.' '.$mail['message']);
+    $telegram_sent = 0;
+    if ($kind === 'preview') {
+        $status = 'preview';
+    } else {
+        $delivered = false;
+        $notes     = array();
+        if (in_array('email', $channels, true)) {
+            $recipients = $to ?? array_merge($config->send_to_admins ? coffee_scope_admin_emails($subentity_id) : array(), _coffee_lines((string) $config->extra_recipients));
+            $recipients = array_values(array_unique(array_filter($recipients, function ($e) { return filter_var($e, FILTER_VALIDATE_EMAIL); })));
+            if (empty($recipients)) {
+                $notes[] = 'Email: no recipients.';
+            } else {
+                $mail = coffee_send_email($recipients, (string) $config->subject, $report);
+                $sent = $mail['sent'];
+                $delivered = $delivered || $sent > 0;
+                if ($mail['message'] !== '') { $notes[] = $mail['message']; }
             }
         }
-    } else {
-        $status = 'preview';
+        if (in_array('telegram', $channels, true) && !empty($config->telegram_enabled)) { // sent independently of email
+            $token = vault_decrypt($config->telegram_token_enc ?? null);
+            if ($token === '' || trim((string) $config->telegram_chat_id) === '') {
+                $notes[] = 'Telegram: bot token or chat ID missing.';
+            } else {
+                $tg = coffee_send_telegram($token, (string) $config->telegram_chat_id, $report);
+                $telegram_sent = $tg['ok'] ? 1 : 0;
+                $delivered = $delivered || $tg['ok'];
+                $notes[] = 'Telegram: '.$tg['message'];
+            }
+        }
+        if (!$delivered) {
+            $status = 'failed';
+        }
+        $message = trim($message.' '.implode(' ', $notes));
     }
 
     $run = array('subentity_id' => $subentity_id, 'kind' => $kind, 'status' => $status, 'ai_used' => $ai_used, 'report_text' => $report,
-                 'sections_raw' => json_encode($sections), 'recipients' => $sent, 'message' => substr($message, 0, 255),
+                 'sections_raw' => json_encode($sections), 'recipients' => $sent, 'telegram_sent' => $telegram_sent, 'message' => substr($message, 0, 255),
                  'run_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'started_at' => $started, 'finished_at' => time());
     $model = new Model();
     $run['id'] = (int) $model->insert($run, 'coffee_runs');
@@ -470,6 +488,58 @@ function coffee_send_email(array $to, string $subject, string $text): array {
         }
     }
     return array('sent' => $sent, 'message' => trim($note.' '.$err));
+}
+
+function _coffee_telegram_api(string $token, string $method, array $params): array {
+    $ch = curl_init('https://api.telegram.org/bot'.$token.'/'.$method);
+    curl_setopt_array($ch, array(CURLOPT_RETURNTRANSFER => true, CURLOPT_POST => true, CURLOPT_TIMEOUT => 20, CURLOPT_POSTFIELDS => http_build_query($params)));
+    $body = curl_exec($ch);
+    $err  = curl_error($ch);
+    curl_close($ch);
+    $data = json_decode((string) $body, true);
+    if (!is_array($data)) {
+        return array('ok' => false, 'description' => $err ?: 'no answer from Telegram');
+    }
+    return $data;
+}
+
+function coffee_send_telegram(string $token, string $chat_id, string $text): array {
+    // Telegram allows 4,096 characters a message: split at a blank line, else a line break, else a space (as telegram_delivery.py)
+    $parts = array();
+    $text  = trim($text);
+    while ($text !== '') {
+        if (strlen($text) <= 3900) { $parts[] = $text; break; }
+        $cut = strrpos(substr($text, 0, 3900), "\n\n");
+        if ($cut === false || $cut < 1950) { $cut = strrpos(substr($text, 0, 3900), "\n"); }
+        if ($cut === false || $cut < 1950) { $cut = strrpos(substr($text, 0, 3900), ' '); }
+        if ($cut === false || $cut <= 0) { $cut = 3900; }
+        $parts[] = trim(substr($text, 0, $cut));
+        $text = trim(substr($text, $cut));
+    }
+    foreach ($parts as $i => $part) {
+        $r = _coffee_telegram_api($token, 'sendMessage', array('chat_id' => $chat_id, 'text' => $part, 'disable_web_page_preview' => 'true'));
+        if (empty($r['ok'])) {
+            return array('ok' => false, 'message' => 'not sent ('.substr((string) ($r['description'] ?? 'error'), 0, 120).')'.($i ? ' after '.$i.' of '.count($parts).' parts' : '').'.');
+        }
+    }
+    return array('ok' => true, 'message' => 'sent'.(count($parts) > 1 ? ' in '.count($parts).' parts' : '').'.');
+}
+
+function coffee_telegram_chats(string $token): array {
+    // the chats that have messaged the bot recently: id => name (Telegram keeps updates about a day)
+    $r = _coffee_telegram_api($token, 'getUpdates', array('limit' => 100));
+    if (empty($r['ok'])) {
+        throw new RuntimeException((string) ($r['description'] ?? 'Telegram refused the token'));
+    }
+    $chats = array();
+    foreach ((array) $r['result'] as $u) {
+        $chat = $u['message']['chat'] ?? $u['my_chat_member']['chat'] ?? $u['channel_post']['chat'] ?? null;
+        if ($chat) {
+            $name = $chat['title'] ?? trim(($chat['first_name'] ?? '').' '.($chat['last_name'] ?? ''));
+            $chats[(string) $chat['id']] = ($name ?: (string) $chat['id']).' ('.$chat['type'].')';
+        }
+    }
+    return $chats;
 }
 
 /*-------------------------------- schedule ---------------------------------*/

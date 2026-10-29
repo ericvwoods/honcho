@@ -24,7 +24,7 @@
                 <?php else: ?>
                 <div class="table-responsive">
                 <table class="table table-striped" style="font-size: 16px;">
-                    <thead><tr><th>When</th><th>Kind</th><th>Result</th><th>Write-up</th><th>Recipients</th><th>Notes</th><th></th></tr></thead>
+                    <thead><tr><th>When</th><th>Kind</th><th>Result</th><th>Write-up</th><th>Emails</th><th>Telegram</th><th>Notes</th><th></th></tr></thead>
                     <tbody>
                     <?php foreach($runs as $r): ?>
                     <tr>
@@ -33,6 +33,7 @@
                         <td style="color: <?= $r->status === 'failed' ? 'crimson' : SN_CLR ?>;"><?= out($status_labels[$r->status] ?? $r->status) ?></td>
                         <td><?= $r->ai_used ? 'AI' : 'Plain' ?></td>
                         <td><?= (int) $r->recipients ?></td>
+                        <td><?= !empty($r->telegram_sent) ? 'Sent' : '<span class="text-muted">&mdash;</span>' ?></td>
                         <td><small class="text-muted"><?= out((string) $r->message) ?></small></td>
                         <td><a class="btn btn-outline btn-primary btn-sm" href="<?= BASE_URL ?>ai/coffeerun/<?= (int) $r->id ?>" style="font-size: 15px;"><i class="fa fa-eye"></i> View</a></td>
                     </tr>

@@ -35,8 +35,12 @@
         _check_token(), _can_manage(), _audit()
   coffeepreview()                    POST: build today's report and show it; nothing is sent
         _check_token(), _can_manage(), coffee_run($id, 'preview')
-  coffeetest()                       POST: build it and send it to the person asking
-        _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', [$email]), _audit()
+  coffeetest()                       POST: build it and email it to the person asking
+        _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', [$email], ['email']), _audit()
+  coffeetelegramtest()               POST: build it and send it to the scope's Telegram chat
+        _check_token(), _can_manage(), coffee_run($id, 'test', null, ['telegram']), _audit()
+  coffeetelegramchats()              POST: list the chats that have messaged the saved bot, to find the chat ID
+        _check_token(), _can_manage(), coffee_telegram_chats()
   coffeearchive($subentity_id)       the scope's past runs
   coffeerun($run_id)                 one past run: the report and each section's raw data
   coffeecron($key)                   for the server's scheduler (no login): sends every report that is due;
@@ -407,6 +411,14 @@ class Ai extends Trongate {
     if($subject === '' || strlen($subject) > 150){
         $errors[] = 'The email subject is required (150 characters at most).';
     }
+    $tg_token = trim((string) ($_POST['telegram_token'] ?? '')); // not cleaned: the token's characters must stay as they are
+    $tg_chat  = trim((string) post('telegram_chat_id', true));
+    if($tg_token !== '' && !preg_match('/^\d{5,15}:[A-Za-z0-9_-]{30,50}$/', $tg_token)){
+        $errors[] = 'That doesn\'t look like a Telegram bot token (it looks like 123456789:ABC...). Copy it again from @BotFather.';
+    }
+    if($tg_chat !== '' && !preg_match('/^(-?\d{4,20}|@[A-Za-z][A-Za-z0-9_]{4,31})$/', $tg_chat)){
+        $errors[] = 'The Telegram chat ID is a number (groups start with -), or @channelname.';
+    }
     $extra = array();
     foreach(_coffee_lines((string) ($_POST['extra_recipients'] ?? '')) as $line){
         if(filter_var($line, FILTER_VALIDATE_EMAIL)){ $extra[] = $line; } else { $errors[] = 'Not an email address: '.out($line).'.'; }
@@ -435,7 +447,14 @@ class Ai extends Trongate {
     $record = array('enabled' => post('enabled') == 1 ? 1 : 0, 'send_time' => $time, 'timezone' => $tz, 'days' => implode(',', $days),
                     'subject' => $subject, 'tone' => substr(trim((string) post('tone', true)), 0, 500), 'sections' => json_encode($sections),
                     'send_to_admins' => post('send_to_admins') == 1 ? 1 : 0, 'extra_recipients' => implode("\n", $extra),
+                    'telegram_enabled' => post('telegram_enabled') == 1 ? 1 : 0, 'telegram_chat_id' => $tg_chat,
                     'updated_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time());
+    if($tg_token !== ''){
+        $record['telegram_token_enc']  = vault_encrypt($tg_token);
+        $record['telegram_token_hint'] = vault_hint($tg_token);
+    }elseif(post('telegram_remove') == 1){
+        $record['telegram_token_enc'] = NULL; $record['telegram_token_hint'] = NULL; $record['telegram_enabled'] = 0;
+    }
     $existing = $this->model->query_bind('SELECT id FROM coffee_reports WHERE subentity_id = :s', array('s' => $subentity_id), 'object');
     if(!empty($existing)){
         $this->model->update((int) $existing[0]->id, $record, 'coffee_reports');
@@ -446,7 +465,8 @@ class Ai extends Trongate {
         $this->model->insert($record, 'coffee_reports');
     }
     $on = implode(', ', array_map(function($s) use ($catalog){ return $catalog[$s['key']]['label']; }, array_filter($sections, function($s){ return $s['on']; })));
-    $this->_audit('SaveCoffeeReport', $subentity_id, ($record['enabled'] ? 'on' : 'off').', '.$time.' '.$tz.' '.$record['days'].'; sections: '.$on);
+    $this->_audit('SaveCoffeeReport', $subentity_id, ($record['enabled'] ? 'on' : 'off').', '.$time.' '.$tz.' '.$record['days'].'; sections: '.$on
+                  .'; Telegram '.($record['telegram_enabled'] ? 'on' : 'off').($tg_token !== '' ? ', new bot token ending '.$record['telegram_token_hint'] : '').(post('telegram_remove') == 1 && $tg_token === '' ? ', bot token removed' : ''));
 
     set_flashdata('Saved.'.($record['enabled'] ? '' : ' The report is switched off; switch it on to have it sent.'));
     $_SESSION['flashmsgcolor'] = 1;
@@ -488,11 +508,72 @@ class Ai extends Trongate {
         redirect($back);
     }
     set_time_limit(180);
-    $run = coffee_run($subentity_id, 'test', array($email));
+    $run = coffee_run($subentity_id, 'test', array($email), array('email'));
     $this->_audit('TestCoffeeReport', $subentity_id, $run->status.($run->message ? ': '.$run->message : ''));
     set_flashdata($run->recipients > 0 ? 'Test sent. '.$run->message : 'The test was not sent. '.$run->message);
     $_SESSION['flashmsgcolor'] = $run->recipients > 0 ? 1 : 0;
     redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------- function COFFEETELEGRAMTEST -------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeetelegramtest(){ // build it and send it to the scope's Telegram chat
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeesettings/'.$subentity_id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    $config = coffee_config($subentity_id);
+    if(empty($config->telegram_enabled) || empty($config->telegram_token_enc) || trim((string) $config->telegram_chat_id) === ''){
+        set_flashdata('Switch Telegram on and save a bot token and chat ID first.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back.'#telegram');
+    }
+    set_time_limit(180);
+    $run = coffee_run($subentity_id, 'test', null, array('telegram'));
+    $this->_audit('TestCoffeeTelegram', $subentity_id, $run->status.($run->message ? ': '.$run->message : ''));
+    set_flashdata($run->telegram_sent ? 'Telegram test sent. '.$run->message : 'The Telegram test was not sent. '.$run->message);
+    $_SESSION['flashmsgcolor'] = $run->telegram_sent ? 1 : 0;
+    redirect($back.'#telegram');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------- function COFFEETELEGRAMCHATS -------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeetelegramchats(){ // who has messaged the bot: shows chat IDs to copy
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeesettings/'.$subentity_id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    $config = coffee_config($subentity_id);
+    $token  = vault_decrypt($config->telegram_token_enc ?? null);
+    if($token === ''){
+        set_flashdata('Save the bot token first.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back.'#telegram');
+    }
+    try{
+        $chats = coffee_telegram_chats($token);
+        if(empty($chats)){
+            set_flashdata('No chats found. Send the bot a message (or add it to your group and post there), then click Find chat ID again.');
+            $_SESSION['flashmsgcolor'] = 0;
+        }else{
+            $list = array();
+            foreach($chats as $id => $name){ $list[] = $name.': '.$id; }
+            set_flashdata('Chats that messaged the bot - copy the number into Chat ID: '.implode('; ', $list));
+            $_SESSION['flashmsgcolor'] = 1;
+        }
+    }catch(Throwable $e){
+        set_flashdata('Telegram: '.substr($e->getMessage(), 0, 150));
+        $_SESSION['flashmsgcolor'] = 0;
+    }
+    redirect($back.'#telegram');
   }
 
 /*----------------------------------------------------------------------------*/
@@ -504,7 +585,7 @@ class Ai extends Trongate {
     if(!$this->_can_manage($subentity_id) && !$this->_can_view_all()){
         redirect('ai/coffee');
     }
-    $data['runs'] = $this->model->query_bind("SELECT id, kind, status, ai_used, recipients, message, started_at, finished_at FROM coffee_runs
+    $data['runs'] = $this->model->query_bind("SELECT id, kind, status, ai_used, recipients, telegram_sent, message, started_at, finished_at FROM coffee_runs
                                                WHERE subentity_id = :s AND kind != 'preview' ORDER BY id DESC LIMIT 60", array('s' => $subentity_id), 'object');
     $data['subentity_id'] = $subentity_id;
     $data['home_url']     = $this->_home_url();

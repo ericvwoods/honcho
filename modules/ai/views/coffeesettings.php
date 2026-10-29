@@ -75,6 +75,28 @@
                         </div>
                     </div>
 
+                    <div class="row" id="telegram">
+                        <div class="col-md-3"><h3 style="<?= $label_style ?>">Telegram</h3><small class="text-muted">Also send it to a Telegram chat. Optional.</small></div>
+                        <div class="col-md-9 form-group">
+                            <label style="font-weight: normal;"><input type="checkbox" name="telegram_enabled" value="1"<?= !empty($config->telegram_enabled) ? ' checked' : '' ?>> Send to Telegram too</label>
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px;">
+                                <div style="flex: 1 1 320px; min-width: 0;">
+                                    <label for="telegram_token" style="font-weight: normal; font-size: 15px;">Bot token</label>
+                                    <input type="password" class="form-control" name="telegram_token" id="telegram_token" autocomplete="new-password" spellcheck="false"
+                                           placeholder="<?= !empty($config->telegram_token_enc) ? 'Saved (ends in '.out((string) $config->telegram_token_hint).'). Leave blank to keep it.' : 'From @BotFather, e.g. 123456789:ABC...' ?>">
+                                </div>
+                                <div style="flex: 0 1 240px;">
+                                    <label for="telegram_chat_id" style="font-weight: normal; font-size: 15px;">Chat ID</label>
+                                    <input type="text" class="form-control" name="telegram_chat_id" id="telegram_chat_id" value="<?= out((string) ($config->telegram_chat_id ?? '')) ?>" placeholder="e.g. 123456789 or -100...">
+                                </div>
+                            </div>
+                            <?php if(!empty($config->telegram_token_enc)): ?>
+                            <label style="font-weight: normal; margin-top: 6px;"><input type="checkbox" name="telegram_remove" value="1"> Remove the saved bot token</label><br>
+                            <?php endif; ?>
+                            <small class="text-muted">Make a bot with <strong>@BotFather</strong> in Telegram and paste its token. Then message the bot (or add it to your admins' group and post there) and use <strong>Find chat ID</strong> below. The token is stored encrypted.</small>
+                        </div>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-3"><h3 style="<?= $label_style ?>">Email subject</h3></div>
                         <div class="col-md-9 form-group"><input type="text" class="form-control" name="subject" id="subject" maxlength="150" value="<?= out((string) $config->subject) ?>" required></div>
@@ -132,7 +154,17 @@
                             <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
                             <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-paper-plane"></i> Send me a test</button>
                         </form>
-                        <p class="text-muted" style="margin-top: 8px;">Preview shows today's report here and sends nothing. Both take up to a minute while the sections are collected<?= $ai ? ' and the AI writes it up' : '' ?>.</p>
+                        <?php if(!empty($config->telegram_token_enc)): ?>
+                        <form method="post" action="<?= BASE_URL ?>ai/coffeetelegramtest" style="display: inline;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
+                            <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-send"></i> Telegram test</button>
+                        </form>
+                        <form method="post" action="<?= BASE_URL ?>ai/coffeetelegramchats" style="display: inline;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
+                            <button type="submit" class="btn btn-outline btn-default" style="font-size: 18px;"><i class="fa fa-search"></i> Find chat ID</button>
+                        </form>
+                        <?php endif; ?>
+                        <p class="text-muted" style="margin-top: 8px;">Preview shows today's report here and sends nothing. Send me a test emails it to you; Telegram test sends it to the Telegram chat. Both take up to a minute while the sections are collected<?= $ai ? ' and the AI writes it up' : '' ?>.</p>
                         <?php if($preview): ?>
                         <div style="margin-top: 12px;">
                             <p><strong><?= $preview['ai'] ? 'Written by the AI' : 'Plain report (no AI)' ?></strong><?= $preview['message'] ? '<br><small class="text-muted">'.out($preview['message']).'</small>' : '' ?></p>

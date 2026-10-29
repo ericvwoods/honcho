@@ -35,8 +35,8 @@
         _check_token(), _can_manage(), _audit()
   coffeepreview()                    POST: build today's report and show it; nothing is sent
         _check_token(), _can_manage(), coffee_run($id, 'preview')
-  coffeetest()                       POST: build it and email it to the person asking
-        _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', [$email], ['email']), _audit()
+  coffeetest()                       POST: build it and email it to the person asking (no address: the report's extra addresses)
+        _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', $to, ['email']), _audit()
   coffeetelegramtest()               POST: build it and send it to the scope's Telegram chat
         _check_token(), _can_manage(), coffee_run($id, 'test', null, ['telegram']), _audit()
   coffeetelegramchats()              POST: list the chats that have messaged the saved bot, to find the chat ID
@@ -502,15 +502,17 @@ class Ai extends Trongate {
         redirect('ai/coffee');
     }
     $email = $this->_my_email();
-    if($email === ''){
-        set_flashdata('Your account has no email address to send the test to.');
+    $to    = $email !== '' ? array($email) : _coffee_lines((string) coffee_config($subentity_id)->extra_recipients); // no address of your own: the report's extra addresses
+    $note  = $email !== '' ? '' : 'Your account has no email address, so it went to the report\'s "More addresses". ';
+    if(empty($to)){
+        set_flashdata('Your account has no email address and the report has no "More addresses" to send the test to.');
         $_SESSION['flashmsgcolor'] = 0;
         redirect($back);
     }
     set_time_limit(180);
-    $run = coffee_run($subentity_id, 'test', array($email), array('email'));
+    $run = coffee_run($subentity_id, 'test', $to, array('email'));
     $this->_audit('TestCoffeeReport', $subentity_id, $run->status.($run->message ? ': '.$run->message : ''));
-    set_flashdata($run->recipients > 0 ? 'Test sent. '.$run->message : 'The test was not sent. '.$run->message);
+    set_flashdata($run->recipients > 0 ? 'Test sent. '.$note.$run->message : 'The test was not sent. '.$note.$run->message);
     $_SESSION['flashmsgcolor'] = $run->recipients > 0 ? 1 : 0;
     redirect($back);
   }

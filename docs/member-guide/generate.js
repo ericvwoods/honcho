@@ -1,5 +1,5 @@
 // ============================================================
-// generate.js — builds Honcho_Users_Guide.docx from guide.js
+// generate.js — builds Honcho_Member_Guide.docx from guide.js
 // ============================================================
 // Usage: node generate.js
 //
@@ -163,11 +163,11 @@ const children = [];
 
 // Title page content
 children.push(new Paragraph({
-  children: [new TextRun({ text: "Honcho User's Guide", bold: true, size: 56, font: FONT, color: '2C3E50' })],
+  children: [new TextRun({ text: "Honcho Member Guide", bold: true, size: 56, font: FONT, color: '2C3E50' })],
   spacing: { after: 200 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: 'How to use Honcho: the member portal, content, documents, projects and administration. Written for the Black Pilots of America deployment.', italics: true, size: 24, font: FONT, color: '666666' })],
+  children: [new TextRun({ text: 'How to use the member portal: logging in, your profile and card, rosters, the directory and the Document Library. Written for the Black Pilots of America deployment. Admins: see the Honcho Administrator\'s Guide.', italics: true, size: 24, font: FONT, color: '666666' })],
   spacing: { after: 100 },
 }));
 children.push(new Paragraph({
@@ -279,6 +279,6 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(buffer => {
-  fs.writeFileSync(path.join(__dirname, 'Honcho_Users_Guide.docx'), buffer);
-  console.log('Written: Honcho_Users_Guide.docx');
+  fs.writeFileSync(path.join(__dirname, 'Honcho_Member_Guide.docx'), buffer);
+  console.log('Written: Honcho_Member_Guide.docx');
 });

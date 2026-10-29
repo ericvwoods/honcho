@@ -82,7 +82,7 @@ const sections = [
 // ============================================================
 { tab: "Docs and Releases", blocks: [
   { type: 'ul', items: [
-    "**When code changes, its docs change in the same piece of work:** the module's chapter here, `helpdocs.php` for CCMPS, the Users' Guide for anything a user sees, and `CLAUDE.md` for a new rule.",
+    "**When code changes, its docs change in the same piece of work:** the module's chapter here, `helpdocs.php` for CCMPS, the **Member Guide** (`docs/member-guide`) for anything every member sees, the **Administrator's Guide** (`docs/admin-guide`) for admin screens and setup walkthroughs, and `CLAUDE.md` for a new rule.",
     "**`docs/todo.md`** is the list: add what's asked for \"later\", tick items off with the date and the commit.",
     "**Syntax-check after editing:** `php -l` on PHP files, `node --check` on the guide's chapter files (a stray quote once stopped the guide from building).",
     "**Commits** say what changed and why; never commit `.env` or key files (Google Wallet's key lives in `~/honcho-keys/`).",

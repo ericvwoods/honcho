@@ -1,4 +1,4 @@
-// chapters/more.js — Honcho User's Guide: content, library, projects, system admin, staff
+// chapters/more.js — Honcho Administrator's Guide: content, library, projects, system admin, staff (moved from the Users' Guide 2026-10-29)
 
 module.exports = {
 
@@ -82,21 +82,8 @@ content: [
 ],
 
 library: [
-  { tab: "Finding Documents", blocks: [
-    { type: 'p', text: "The Document Library stores BPA's documents: policies, minutes, forms and more. Open it from the **Doc Library** tile or menu item. The button at the top takes you back: **Home** when you came from the member home, **Dashboard** when you came from the EMS (admin) menu." },
-    { type: 'p', text: "The list shows the documents you're allowed to see. Members see approved documents at or below their access level, from **Public** up through levels such as Leaders, Staff, Board and CEO, and can open and download them. Chapter Admins also see all of their own chapter's documents and can manage them; Member System Admins and staff document admins see and manage everything. Who can do what is set on the **Security Groups** page." },
-    { type: 'h2', text: 'Filters' },
-    { type: 'p', text: 'Narrow the list with the filters above it and click the filter button. Each document is labeled three ways, which makes it easy to find:' },
-    { type: 'table', headers: ['Label', 'Example'], rows: [
-      ['**Organization**', 'Which organization or school the document belongs to'],
-      ['**Category**', 'What it is about'],
-      ['**Type**', 'What kind of document it is'],
-    ]},
-    { type: 'p', text: "You can also filter by chapter, file format, region, lead, access level, staff member, member and department." },
-    { type: 'h2', text: 'Opening a Document' },
-    { type: 'p', text: "Click a document to see its details. From there you can preview it in the browser or download it." },
-  ]},
   { tab: "Adding a Document", blocks: [
+    { type: 'p', text: "Finding, opening and downloading documents is the same for everyone: see the Document Library chapter of the Member Guide. Admins can also add documents and move them through the kanban board." },
     { type: 'p', text: 'If your role allows it, click the button to add a document:' },
     { type: 'ol', items: [
       'Choose whether this is a **record only** (no file, for example a note about a paper document) or **I will upload a file**.',
@@ -217,7 +204,7 @@ system: [
 
 staff: [
   { tab: "The Staff Portal", blocks: [
-    { type: 'p', text: "Employees use a separate staff login for the Honcho back office, not the member portal. After logging in they see a dashboard and a side menu with these sections: **Dashboard**, **DMS** (the Document Library), **PMS** (Projects), **CMS**, **Website CMS**, **People**, **Reports**, **System Configuration** and **Security**. Staff system admins also get **System Admin**, with **System Settings**, the **Auditlog** and **Security Groups** (described in Chapter 8)." },
+    { type: 'p', text: "Employees use a separate staff login for the Honcho back office, not the member portal. After logging in they see a dashboard and a side menu with these sections: **Dashboard**, **DMS** (the Document Library), **PMS** (Projects), **CMS**, **Website CMS**, **People**, **Reports**, **System Configuration** and **Security**. Staff system admins also get **System Admin**, with **System Settings**, the **Auditlog** and **Security Groups** (described in Chapter 6)." },
     { type: 'p', text: 'The menu also links to the lists that other screens choose from: **Address Types**, **Bulk Actions** and **Post Scopes**. Changing an entry in one of these lists changes the choices everyone sees.' },
     { type: 'p', text: 'Staff with access to member records can switch to the member pages and use **Back to honcho** in the side menu to return.' },
     { type: 'p', text: 'A detailed staff guide will follow as the staff portal is updated.' },

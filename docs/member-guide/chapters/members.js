@@ -1,4 +1,4 @@
-// chapters/members.js — Honcho User's Guide: for every member
+// chapters/members.js — Honcho Member Guide: for every member
 
 module.exports = [
 

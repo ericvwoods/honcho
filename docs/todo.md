@@ -69,7 +69,7 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 - [ ] **Reverse-engineer user stories with acceptance criteria for each module** (owner, 2026-10-27) and store them in PMS once its story pages are finished. PMS already has the tables: `pm_stories` (title, description, status, priority, points, accepted by/at) and `pm_story_criteria` (the acceptance criteria per story).
     - One PMS project per module: CCMPS (members), DMS, Security (RBAC and logins), Website (CMS), System Settings, Member Cards, PMS itself, Welcome; later the Student module and Events.
-    - Each story written from the role's side ("As a Chapter Admin, I can ... so that ..."), with testable criteria (Given / When / Then), drawn from the code, the Developer's and Users' Guides and the decisions in this list.
+    - Each story written from the role's side ("As a Chapter Admin, I can ... so that ..."), with testable criteria (Given / When / Then), drawn from the code, the Developer's, Member and Administrator's Guides and the decisions in this list.
     - Can be drafted before PMS is ready (a file per module, imported by a script later), and doubles as the **UAT test script**: worth having before UAT starts.
     - **The system project (owner, 2026-10-27):** every client gets a **pre-seeded project that represents the system itself** (its modules' stories and criteria), alongside the projects the client creates. Design notes:
         - Marked as the system project (e.g. a flag on `pm_projects`), seeded by a core migration; **core stories come with each core release**, the client's own (custom) stories are added to it per client (core-and-client model).
@@ -103,7 +103,7 @@ The Coffee Report is the Honcho AI module's daily brief (AI plan phase 1: https:
 - [ ] **Which connection a request uses** (built 2026-10-29: `ai_scope_for_session()`, `AI_CHAPTER_FALLBACK`, the monthly limit check and the `ai/usage` page; still to do: email warnings at 50/80/100%). National admins use National's; a Chapter Admin uses their chapter's if set; otherwise a National setting decides: fall back to National's, or plain numbers with no AI. Each scope's use and cost recorded separately in `ai_requests` and shown on a usage page, with warnings at 50/80/100% of the scope's limit (pricing plan: https://claude.ai/artifact/3kynSEzd98AwCh2fJDBmpV).
 - [x] **Coffee Report settings screen, per chapter (and one for National)** (built 2026-10-29, `ai/coffeesettings/{id}`). Choose the sections (from what the scripts provide), the order, the delivery time and time zone, the days, who receives it (the scope's admins by default, plus chosen members or addresses), email subject, and a short instruction for the AI's tone. **Preview** and **Send me a test** buttons. Chapter Admins edit their chapter's; System and Member Admins edit National's.
 - [x] **Coffee Report runner** (built 2026-10-29: `coffee_run()`, `ai/coffeecron`, archive `ai/coffeearchive`; still to do on servers: MAIL_FROM_EMAIL, COFFEE_CRON_KEY and the crontab line). Scheduled job: for each scope due, run its sections' scripts, pass the results to that scope's AI connection to assemble the report, and send it through Brevo; with no connection or at the limit, send the plain numbers. Keep each sent report (archive page per scope), log failures and email the scope's admins when a report can't be sent.
-- [ ] **Docs:** a Developer's Guide chapter (AI module, connections, vault, Coffee Report) and Users' Guide sections for National and Chapter Admins.
+- [x] **Docs:** Developer's Guide Honcho AI chapter; Administrator's Guide chapter 7, AI and the Daily Coffee Report, a step-by-step walkthrough (2026-10-29).
 - [x] ~~Hermes-run Coffee Report for clients~~: replaced by the above (2026-10-29). Eric's own Hermes Coffee Brief stays separate.
 
 ## Developer's Guide
@@ -146,7 +146,7 @@ Decided 2026-10-27: once this BPA instance is right, it becomes the blueprint fo
     - **Migrations:** core schema changes vs BPA data fixes (lifetime 2099, chapter states, BPA website content). Core migrations run for every client; client data scripts only for that client.
     - **Defaults in `config.php`** still name BPA (organization name, logo `bpalogo100x82.jpg`, `SUBENTITY_NATIONAL_ID` 99, BPA's Wallet issuer in `.env`). New clients start from neutral defaults and set theirs on System Settings.
     - **Aviation fields** (certificates, ratings, aircraft; `ccmps_aux`, `CCMPS_AUX_MODULE`) are BPA-specific: keep them as an optional module, off for clients that don't need them.
-    - **Phone app** wording ("BPA Member Portal", already on the list), the **Users' Guide** (written for BPA), website content.
+    - **Phone app** wording ("BPA Member Portal", already on the list), the **Member and Administrator's Guides** (written for BPA), website content.
     - **Per-client accounts:** Google Wallet issuer (and Apple later), Brevo, email, payments; and the **Inspinia licence** question.
 - [ ] **New-client checklist:** the Configuration chapter's New Client tab grows into the full runbook (droplet, `.env`, migrations, client configuration, System Settings, accounts).
 
@@ -208,7 +208,7 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 - [x] System > Subentities (Chapters) gives a 500 on every page: it reads/writes `system_subentities`, which doesn't exist. Rebuilt 2026-10-21 on `ccmps_subentities` (maintenance-table pattern, State and Active added). Still open: whether it gets the staff-only / Lite rule like Settings and the Auditlog.
 - [ ] **Revisit National HQ** (`ccmps_subentities` id 99, `SUBENTITY_NATIONAL_ID` in `config.php`): why is it in the chapter table? No members, events or posts use it (checked 2026-10-21). For now it is inactive, has no state, is hidden from the Chapters screen and never counted. Decide whether to keep it (and what for) or delete it.
 - [ ] James H. Green Chapter has no state (no member addresses to go on); fill it in on the Chapters screen.
-- [ ] Member home ATIS tile hidden 2026-10-16 (it downloaded doc 1 from the removed CMS library). Upload ATIS to DMS and put its id in the link in `ccmphome.php`, then re-add it to the Users' Guide.
+- [ ] Member home ATIS tile hidden 2026-10-16 (it downloaded doc 1 from the removed CMS library). Upload ATIS to DMS and put its id in the link in `ccmphome.php`, then re-add it to the Member Guide.
 
 - [ ] `Ccmps::currentroster()` (and any other method using the same `$this->login()` line) gives a 500 when the session has expired: `login()` doesn't exist. Redirect to `welcome/logout` instead (found 2026-10-22).
 - [x] Debug line numbers on buttons removed 2026-10-27: "128 Update", "137 Close", "141 Close" (`viewccmp.php`); "69Cancel", "80 Cancel", "92 Cancel", "103 Manage All" (`ccmpcrud.php`).

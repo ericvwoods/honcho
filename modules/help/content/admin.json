@@ -1169,7 +1169,7 @@
         ],
         [
          "**Sent to**",
-         "Tick to send it to the scope's admins (National: System and Member Admins; a chapter: its Chapter Admins). Add more addresses, one per line"
+         "Tick to send it to the scope's admins (National: System and Member Admins; a chapter: its Chapter Admins); the page names them. **Also send it to these addresses** always receive it, ticked or not: one per line. Each address gets one copy, even if it is also an admin's"
         ],
         [
          "**Telegram**",

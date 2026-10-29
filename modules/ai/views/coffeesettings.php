@@ -81,8 +81,9 @@
                                 <?= $with ? 'That is: '.out(implode(', ', array_map(function($a){ return $a['name'].' ('.$a['email'].')'; }, $with))).'.' : 'No admin has an email address yet.' ?>
                                 <?= $without ? '<br>Not included, no email address on their record: '.out(implode(', ', array_column($without, 'name'))).'.' : '' ?>
                             </div>
-                            <textarea class="form-control" name="extra_recipients" id="extra_recipients" rows="3" placeholder="More addresses, one per line"><?= out((string) $config->extra_recipients) ?></textarea>
-                            <small class="text-muted">Anyone else who should get it (not an admin): one email address per line. Each person gets their own copy. A test can go to everyone on this list as a dry run.</small>
+                            <label for="extra_recipients" style="display: block; margin-top: 6px;">Also send it to these addresses <span class="text-muted" style="font-weight: normal;">(always, whether or not the box above is ticked)</span></label>
+                            <textarea class="form-control" name="extra_recipients" id="extra_recipients" rows="3" placeholder="One email address per line"><?= out((string) $config->extra_recipients) ?></textarea>
+                            <small class="text-muted">For anyone else who should get it, such as board members without an admin role. One address per line; each person gets their own copy.</small>
                         </div>
                     </div>
 

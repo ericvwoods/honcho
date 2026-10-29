@@ -40,7 +40,7 @@ module.exports = [
   { type: 'table', headers: ['Setting', 'What to enter'], rows: [
     ['**Report**', '**Off** while you set it up; **On** when you want it sent every day'],
     ['**When**', 'The time, your time zone, and the days of the week'],
-    ['**Sent to**', "Tick to send it to the scope's admins (National: System and Member Admins; a chapter: its Chapter Admins). Add more addresses, one per line"],
+    ['**Sent to**', "Tick to send it to the scope's admins (National: System and Member Admins; a chapter: its Chapter Admins); the page names them. **Also send it to these addresses** always receive it, ticked or not: one per line. Each address gets one copy, even if it is also an admin's"],
     ['**Telegram**', 'Optional: see Step 4'],
     ['**Email subject**', 'For example "BPA Daily Coffee Report"'],
     ['**Tone**', 'How the AI should write, for example "Friendly and brief, for volunteer leaders reading on a phone". It never changes the facts'],

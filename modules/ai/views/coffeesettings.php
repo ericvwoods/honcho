@@ -152,13 +152,14 @@
                         </form>
                         <form method="post" action="<?= BASE_URL ?>ai/coffeetest" style="display: inline;">
                             <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
-                            <?php $list_count = ($config->send_to_admins ? $admins : 0) + count(_coffee_lines((string) $config->extra_recipients)); ?>
+                            <?php $list_count = count($list_recipients); ?>
                             <select class="form-control" name="test_to" id="test_to" aria-label="Send the test to" style="display: inline-block; width: auto; height: 38px; font-size: 16px; vertical-align: middle;">
                                 <option value="me"<?= $my_email !== '' ? ' selected' : ' disabled' ?>>To me<?= $my_email !== '' ? ' ('.out($my_email).')' : ' (your account has no email)' ?></option>
                                 <option value="list"<?= $my_email === '' ? ' selected' : '' ?>>To everyone on the "Sent to" list (<?= (int) $list_count ?>)</option>
                             </select>
                             <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-paper-plane"></i> Send a test</button>
                         </form>
+                        <p class="text-muted" style="margin: 6px 0 0; font-size: 14px;">The "Sent to" list (<?= (int) $list_count ?>, each address once): <?= $list_count ? out(implode(', ', $list_recipients)) : 'nobody yet' ?></p>
                         <?php if(!empty($config->telegram_token_enc)): ?>
                         <form method="post" action="<?= BASE_URL ?>ai/coffeetelegramtest" style="display: inline;">
                             <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">

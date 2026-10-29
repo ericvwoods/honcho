@@ -15,6 +15,7 @@
  *   coffee_collect($config)               [ [key, label, text, ok], ... ] for the enabled sections
  *   coffee_run($subentity_id, $kind, $to, $channels)  collect, write up, send (email and/or Telegram), keep; returns the run row
  *   coffee_due_reports()                  the reports whose time has come today (scheduler)
+ *   coffee_list_recipients($config)       the "Sent to" list as sent: admins (if ticked) + extra addresses, each once
  *   coffee_scope_admin_emails($id)        the scope's admins' addresses
  *   coffee_send_email($to, $subject, $text)  through Brevo's API; WHATENV=dev sends only to DEVEMAIL
  *   coffee_send_telegram($token, $chat_id, $text)  Telegram Bot API sendMessage, split into parts (added 2026-10-29)
@@ -401,7 +402,7 @@ function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = 
         $delivered = false;
         $notes     = array();
         if (in_array('email', $channels, true)) {
-            $recipients = $to ?? array_merge($config->send_to_admins ? coffee_scope_admin_emails($subentity_id) : array(), _coffee_lines((string) $config->extra_recipients));
+            $recipients = $to ?? coffee_list_recipients($config); // each address once, even if an admin is also an extra address
             $recipients = array_values(array_unique(array_filter($recipients, function ($e) { return filter_var($e, FILTER_VALIDATE_EMAIL); })));
             if (empty($recipients)) {
                 $notes[] = 'Email: no recipients.';
@@ -435,6 +436,18 @@ function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = 
     $model = new Model();
     $run['id'] = (int) $model->insert($run, 'coffee_runs');
     return (object) $run;
+}
+
+function coffee_list_recipients(object $config): array {
+    // the "Sent to" list as it will be sent: the scope's admins (if ticked) and the extra addresses, each address once
+    $all = array_merge($config->send_to_admins ? coffee_scope_admin_emails((int) $config->subentity_id) : array(), _coffee_lines((string) $config->extra_recipients));
+    $out = array();
+    foreach ($all as $e) {
+        if (filter_var($e, FILTER_VALIDATE_EMAIL) && !in_array(strtolower($e), array_map('strtolower', $out), true)) {
+            $out[] = $e;
+        }
+    }
+    return $out;
 }
 
 function coffee_scope_admin_emails(int $subentity_id): array {

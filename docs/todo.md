@@ -92,10 +92,19 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 - [ ] Voting: Student-module participants are never eligible voters (handled by the **Eligible voter rules** task below).
 - [ ] Then the CCMPS **Student Members** list (`manage/mosm`, `mcmm`) and the home-page student counts mean Q members only (`ccmp_type` 3), which the counts already use.
 
-## Daily Coffee Report (add-on)
+## Daily Coffee Report and AI connections (owner, 2026-10-29)
 
-- [ ] Answer the 8 questions in the [Daily Coffee Report plan](https://claude.ai/code/artifact/10a47ac5-0f45-4456-8550-1aedf286a9f1) (sections and options, skill vs scripts, AI vs plain data, who schedules, who delivers, Docker layout, Hermes profiles, who may use it).
-- [ ] Phase 1: prove the Hermes handoff by hand (`coffee-brief` reads a `<config>` block; one job created with curl via `POST /api/jobs`).
+The Coffee Report is the Honcho AI module's daily brief (AI plan phase 1: https://claude.ai/artifact/CNVNAd9y2V41kTnPu4Z3mt). Eric's existing Python scripts (written by another AI) gather the information; the AI only assembles it into the report. **National and each chapter have their own AI connection:** Member Admins and System Admins use National's; each Chapter Admin can enter their chapter's own.
+
+- [ ] **Eric: hand over the Coffee Report Python scripts** (copy them into the repo, e.g. `tools/coffee/`, or say where they live) with a sample of what each one outputs.
+- [ ] **Review the scripts and decide how they run**: keep them as Python called by Honcho's scheduler (needs Python on the server, so Dedicated and Honcho Cloud only), or port the data-gathering to PHP so it also runs on cPanel shared hosting. List each script's sources (Honcho database, outside websites, keys it needs) and what it returns. Recommendation to Eric before any porting.
+- [ ] **AI connections by scope (National and chapter).** One screen per scope: provider and credentials, a **Test connection** button, on/off, monthly limit. National's is set by System Admins and used by System Admins and Member Admins; a chapter's is set by that chapter's Chapter Admin and used by that chapter's admins. Accepted credentials: an Anthropic or OpenAI **API key**, or **Sign in with ChatGPT** once OpenAI approves Honcho. A Claude Pro/Max/Team **subscription can't be entered** (Anthropic allows those logins only in Claude.ai and Claude Code); chapters with Claude use the Honcho connector instead (AI plan phase 3). Security Groups functions such as `ai/manage_national`, `ai/manage_chapter`.
+- [ ] **Credential vault.** Encrypted storage for every AI key and token (encryption key in `.env`, never in the database or git); shown once when entered, then masked; replace, revoke, last used; every change in the Auditlog. Reused for other per-client secrets later.
+- [ ] **Which connection a request uses.** National admins use National's; a Chapter Admin uses their chapter's if set; otherwise a National setting decides: fall back to National's, or plain numbers with no AI. Each scope's use and cost recorded separately in `ai_requests` and shown on a usage page, with warnings at 50/80/100% of the scope's limit (pricing plan: https://claude.ai/artifact/3kynSEzd98AwCh2fJDBmpV).
+- [ ] **Coffee Report settings screen, per chapter (and one for National).** Choose the sections (from what the scripts provide), the order, the delivery time and time zone, the days, who receives it (the scope's admins by default, plus chosen members or addresses), email subject, and a short instruction for the AI's tone. **Preview** and **Send me a test** buttons. Chapter Admins edit their chapter's; System and Member Admins edit National's.
+- [ ] **Coffee Report runner.** Scheduled job: for each scope due, run its sections' scripts, pass the results to that scope's AI connection to assemble the report, and send it through Brevo; with no connection or at the limit, send the plain numbers. Keep each sent report (archive page per scope), log failures and email the scope's admins when a report can't be sent.
+- [ ] **Docs:** a Developer's Guide chapter (AI module, connections, vault, Coffee Report) and Users' Guide sections for National and Chapter Admins.
+- [x] ~~Hermes-run Coffee Report for clients~~: replaced by the above (2026-10-29). Eric's own Hermes Coffee Brief stays separate.
 
 ## Developer's Guide
 

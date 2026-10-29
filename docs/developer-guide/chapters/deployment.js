@@ -2,7 +2,8 @@
 // chapters/deployment.js — Deployment chapter of the Honcho Developer's Guide
 // ============================================================
 // Part III: Installation & Configuration. Started 2026-10-08 while
-// standing up BPA's first DigitalOcean droplet; the step list matches
+// standing up BPA's first DigitalOcean droplet (deployment tiers added
+// 2026-10-29); the step list matches
 // the DO-xx cards on the Honcho Dev Board. Update it as each step is done.
 // Same block format and inline markup as chapters/ccmps.js.
 // ============================================================
@@ -11,7 +12,21 @@ const sections = [
 
 // ============================================================
 { tab: "Hosting Model", blocks: [
-  { type: 'p', text: "Honcho is hosted on **DigitalOcean**. Each client gets **one droplet** that runs both its **production** and its **staging/UAT** copy of Honcho, plus Hermes (the AI agent) for that client. Small clients may later share a droplet under a shared domain; large clients get their own droplet and their own domain." },
+  { type: 'p', text: "Honcho comes in **three deployment tiers** (decided 2026-10-29; prices still to be set, see the Honcho Pricing and AI Billing plan). The AI module (morning brief, alerts, Ask EMS) is part of Honcho and calls the AI provider's API, so it runs on every tier. Hermes agents need a server of their own and are only on the Dedicated tier." },
+  { type: 'table', headers: ['', 'Dedicated', 'Honcho Cloud (honcho.online)', 'Self-hosted shared'], rows: [
+    ['Runs on', "The client's own DigitalOcean droplet", 'A shared honcho.online droplet, one subsite per client', "An ordinary cPanel shared host (the client's or ours)"],
+    ['Docker', 'Yes: Honcho, MariaDB, Caddy (+ Hermes)', 'Yes: one Honcho container per client, one MariaDB with a database each, Caddy routing the subdomains', 'No'],
+    ['Web address', "The client's own domain", '`<client>.honcho.online` or their own domain', "The client's own domain"],
+    ['Staging / UAT copy', 'Yes, on the same droplet', 'Optional, as a second subsite', 'No (or a second cPanel site by hand)'],
+    ['Honcho AI module', 'Yes, credits or bring-your-own-key', 'Yes, credits', 'Yes, with limits: chat answers must fit the host\'s request time limit (often 30-60 s)'],
+    ['Hermes agents', 'Yes (same droplet or a second one), reading Honcho through the MCP server', 'No', 'No'],
+    ['Custom work', 'Yes: client configuration in git, custom modules', 'Configuration only (settings, logo, wording, Member Fields)', 'Configuration only'],
+    ['Deploys and updates', 'Ours: git tag to staging, then production', 'Ours: all subsites updated together from one release', 'Copy files (SFTP or cPanel Git); SSH may be blocked'],
+    ['Backups', 'Nightly off-server (DO-18) + droplet backups', 'Nightly per database, off-server', "The host's backups, plus a nightly export we set up"],
+    ['HIPAA option', 'Yes: DigitalOcean BAA on covered products + an AI provider BAA', 'No', 'No (shared hosts generally won\'t sign a BAA)'],
+    ['Best for', 'Large or regulated clients; BPA', 'Small and mid-size organizations', 'Very small groups on a tight budget, or a client who must use their existing host'],
+  ]},
+  { type: 'p', text: "BPA runs on the **Dedicated** tier: one droplet with its **production** and **staging/UAT** copies of Honcho, and Hermes later if BPA takes the agents tier." },
 
   { type: 'h2', text: 'Two Environments on One Droplet' },
   { type: 'table', headers: ['Piece', 'Production', 'Staging / UAT'], rows: [

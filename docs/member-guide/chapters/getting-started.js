@@ -43,6 +43,8 @@ module.exports = [
     ['**EMS**', "Admin pages, shown only if you have an admin role (see the Administrator's Guide)"],
     ['**Logout**', 'Ends your session'],
   ]},
+  { type: 'h2', text: 'Help' },
+  { type: 'p', text: "This guide is also in Honcho: click **Help** in the side menu of the home page, or at the top of your profile pages. Use the search box to find a topic." },
   { type: 'h2', text: 'Text Size' },
   { type: 'p', text: "You can make tabs, section headings, labels, values and buttons larger or smaller. Open **My Profile**, click **Update**, go to the **Preferences** section and choose a size for each under **Display Size**, then save." },
 ]},

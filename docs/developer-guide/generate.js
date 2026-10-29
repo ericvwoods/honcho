@@ -282,3 +282,6 @@ Packer.toBuffer(doc).then(buffer => {
   fs.writeFileSync(path.join(__dirname, 'Honcho_Developers_Guide.docx'), buffer);
   console.log('Written: Honcho_Developers_Guide.docx');
 });
+
+// Web copy for Honcho's Help pages (same chapter files): modules/help/content/developer.json
+require('../export-web.js')(guide, { key: 'developer', title: "Honcho Developer's Guide", subtitle: "How Honcho is built, configured, deployed and maintained." });

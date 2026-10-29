@@ -254,7 +254,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             </div>
                     </li>
                     <li>
-                        <a href="<?= BASE_URL ?>welcome-ccmps/helpdocs"><i class="fa fa-book"></i> Developer Guide </a>
+                        <a href="<?= BASE_URL ?>help"><i class="fa fa-book"></i> Help &amp; Guides </a>
 
                     </li>
 
@@ -520,6 +520,17 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                     </div>
 
 <?php endif; ?>
+
+                    <div class="widget style1 gray-bg"> <!-- Help: the guides as web pages (2026-10-29) -->
+                        <div class="row vertical-align">
+                            <div class="col-2">
+                            <a href="<?= BASE_URL ?>help" style="color:Gray;">     <i class="fa fa-question-circle fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i>
+                            </div>
+                            <div class="col-10 text-right">
+                                  <h2 style="font-weight: bold; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:12pt"> Help</h2> </a>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="widget style1 gray-bg">
                         <div class="row vertical-align">

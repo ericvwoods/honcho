@@ -13,6 +13,7 @@
                 </div>
                 <div class="col-md-5" style="padding-top: 18px;">
                     <a class="btn btn-outline btn-primary" href="<?= BASE_URL ?>ai/connections" style="font-size: 18px;"><i class="fa fa-magic"></i> AI Connections</a>
+                    <a class="btn btn-outline btn-default" href="<?= BASE_URL ?>help/guide/admin/7" style="font-size: 18px;" title="Help: the Daily Coffee Report"><i class="fa fa-question-circle"></i></a>
                     <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= $home_url ?>" style="font-size: 18px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>

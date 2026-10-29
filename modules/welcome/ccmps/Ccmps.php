@@ -98,7 +98,7 @@
   function unlockacct()
   function delrecord()
   function undelrecord()
-  function helpdocs() // developer documentation / help section — system_admin only
+  function helpdocs() // now redirects to help/guide/developer (Help pages, 2026-10-29)
   function managefontsizes() // system_admin CRUD for all ccmps_settings display values (size + color)
   function savefontsizesettings() // saves all 15 ccmps_settings pixel values at once
   function permdelete() // permanent cascading delete: ccmps + ccmps_aux + ccmps_addresses
@@ -7095,10 +7095,9 @@ function modalchangepw() { //for changing your own system acct password. ccmps n
             return;
         }
 
-        $data['view_module'] = 'welcome/ccmps';
-        $data['view_file']   = 'helpdocs';
-
-        $this->templates->inspinia($this->_with_fontsize_style($data));
+        // Replaced 2026-10-29 by the Help pages: the Developer's Guide, CCMPS chapter, from the same
+        // chapter files as the Word guide (views/helpdocs.php is no longer kept in sync)
+        redirect('help/guide/developer/1');
     }
 
     function managefontsizes() { // system_admin CRUD for all ccmps_settings display values (tab/header/label/value/button x small/medium/large/color)

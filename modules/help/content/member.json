@@ -1,0 +1,533 @@
+{
+ "key": "member",
+ "title": "Honcho Member Guide",
+ "subtitle": "How to use the member portal.",
+ "generated": "2026-10-29",
+ "chapters": [
+  {
+   "num": 1,
+   "part": "Part I: Getting Started",
+   "title": "Getting Started",
+   "slug": "getting-started",
+   "sections": [
+    {
+     "tab": "Who This Guide Is For",
+     "slug": "who-this-guide-is-for",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Honcho is the system Black Pilots of America (BPA) uses to run its membership: member records, chapter rosters, the member home page, the document library and projects. This guide explains how to use each part, screen by screen."
+      },
+      {
+       "type": "p",
+       "text": "Honcho can be set up with different words for different organizations. In BPA's system a person is a **Member** and a local group is a **Chapter**, so that's what this guide says. Another organization may see \"Client\" and \"Branch\" in the same places."
+      },
+      {
+       "type": "p",
+       "text": "This guide is for **every member**: logging in, your profile and membership card, rosters and the directory, events and the Document Library."
+      },
+      {
+       "type": "alert",
+       "variant": "info",
+       "text": "**Admins:** if you run a chapter, manage members, edit the website or set up the system, the **Honcho Administrator's Guide** covers your admin pages step by step."
+      }
+     ]
+    },
+    {
+     "tab": "Logging In",
+     "slug": "logging-in",
+     "blocks": [
+      {
+       "type": "h2",
+       "text": "Member Portal Login"
+      },
+      {
+       "type": "ol",
+       "items": [
+        "Go to the BPA Member Portal address your chapter gave you.",
+        "Enter your **Username** (usually your email address) and your **Password**.",
+        "Tick **I am not a robot!** and click **Submit**.",
+        "On the next screen, **For Added Security Enter:** your **Member Number**, then click **Submit**."
+       ]
+      },
+      {
+       "type": "p",
+       "text": "Tick **Remember me** only on your own computer or phone."
+      },
+      {
+       "type": "p",
+       "text": "The first time you log in with an account an admin created for you, you'll be asked to choose a new password."
+      },
+      {
+       "type": "h2",
+       "text": "Creating an Account"
+      },
+      {
+       "type": "p",
+       "text": "If you're a member but have never logged in, click **Create an account** on the login page. Enter your email address as your username, choose a password, repeat it and submit."
+      },
+      {
+       "type": "h2",
+       "text": "Forgot Your Password?"
+      },
+      {
+       "type": "p",
+       "text": "Click **Forgot password?** on the login page, enter your email address and click **Send Reset Link**. If the address matches an account, a reset link is emailed to it; check your junk mail too. The link opens a page where you enter and repeat a new password."
+      },
+      {
+       "type": "alert",
+       "variant": "warning",
+       "text": "Password reset and the second login step are being rebuilt. Until that work is finished, if the reset email doesn't arrive, contact the System Administrator to reset your password. Later, the second step will send a one-time code to your phone or email in place of your member number."
+      },
+      {
+       "type": "h2",
+       "text": "Staying Logged In and Logging Out"
+      },
+      {
+       "type": "p",
+       "text": "If you leave the portal idle for a while you'll see **Your Session has expired - please login again.** Just log in again. When you're done, use **Logout** from the home page or the side menu, especially on a shared computer."
+      }
+     ]
+    },
+    {
+     "tab": "Finding Your Way Around",
+     "slug": "finding-your-way-around",
+     "blocks": [
+      {
+       "type": "h2",
+       "text": "The Home Page"
+      },
+      {
+       "type": "p",
+       "text": "After you log in you land on the member home page. Below the tiles, the organization's own page shows what its Content Admins have put there, such as a picture slider, announcements, Sunshine, the Bulletin Board, upcoming events, Careers and contact details; the menu bar above it jumps to each part. The tiles take you to everything else:"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Tile",
+        "What it opens"
+       ],
+       "rows": [
+        [
+         "**My Profile**",
+         "Your own member record (Chapter 2)"
+        ],
+        [
+         "**My Chapter Roster**",
+         "Your chapter's current members"
+        ],
+        [
+         "**National Directory**",
+         "Current members across all chapters"
+        ],
+        [
+         "**Chapters**",
+         "BPA's chapters and their details"
+        ],
+        [
+         "**Doc Library**",
+         "Shared documents you can read and download"
+        ],
+        [
+         "**Register Me**",
+         "Registration for the current event, when one is open"
+        ],
+        [
+         "**Sponsors**",
+         "BPA's sponsors"
+        ],
+        [
+         "**EMS**",
+         "Admin pages, shown only if you have an admin role (see the Administrator's Guide)"
+        ],
+        [
+         "**Logout**",
+         "Ends your session"
+        ]
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "Help"
+      },
+      {
+       "type": "p",
+       "text": "This guide is also in Honcho: click **Help** in the side menu of the home page, or at the top of your profile pages. Use the search box to find a topic."
+      },
+      {
+       "type": "h2",
+       "text": "Text Size"
+      },
+      {
+       "type": "p",
+       "text": "You can make tabs, section headings, labels, values and buttons larger or smaller. Open **My Profile**, click **Update**, go to the **Preferences** section and choose a size for each under **Display Size**, then save."
+      }
+     ]
+    },
+    {
+     "tab": "The Mobile App",
+     "slug": "the-mobile-app",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "The **BPA Member Portal** app works in your phone's web browser and can be added to your home screen like an app."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Screen",
+        "What you can do"
+       ],
+       "rows": [
+        [
+         "**Sign in**",
+         "Log in with the same username and password as the website"
+        ],
+        [
+         "**Home**",
+         "The member home page"
+        ],
+        [
+         "**My Profile**",
+         "See and update your contact details, addresses, emergency contact, preferences, pilot certificates and ratings, and aircraft; tap **Save changes**"
+        ],
+        [
+         "**My Chapter**",
+         "Your chapter's roster"
+        ],
+        [
+         "**Directory**",
+         "The national directory"
+        ],
+        [
+         "**Change password**",
+         "Choose a new password"
+        ]
+       ]
+      },
+      {
+       "type": "p",
+       "text": "Admin pages aren't in the app. Use the website on a computer for those."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 2,
+   "part": "Part II: Using the Member Portal",
+   "title": "For Every Member",
+   "slug": "for-every-member",
+   "sections": [
+    {
+     "tab": "My Profile",
+     "slug": "my-profile",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Click **My Profile** on the home page to see your member record. It opens read-only, organized in tabs. Click **Update** to change it."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Tab",
+        "What's in it"
+       ],
+       "rows": [
+        [
+         "**Contact Information**",
+         "Your name, email addresses, phone numbers and emergency contact"
+        ],
+        [
+         "**Addresses**",
+         "Mailing, physical, billing and shipping addresses"
+        ],
+        [
+         "**Membership**",
+         "Your member number, member type, chapter, status and current year"
+        ],
+        [
+         "**Certificates & Ratings**",
+         "Highest certificate, certificate number, ratings and total time"
+        ],
+        [
+         "**Aircraft**",
+         "Aircraft you own or rent, one row each"
+        ],
+        [
+         "**Roles & Permissions**",
+         "Admin roles you hold, if any"
+        ],
+        [
+         "**Preferences**",
+         "Language, contact preferences and text size"
+        ],
+        [
+         "**Account**",
+         "Your login details"
+        ]
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "Updating Your Profile"
+      },
+      {
+       "type": "ol",
+       "items": [
+        "Click **Update** on your profile.",
+        "Open a section by clicking its heading, and change what you need.",
+        "Click **Save Changes**. **Cancel** leaves without saving."
+       ]
+      },
+      {
+       "type": "p",
+       "text": "Some fields are greyed out. Those are set by admins (for example your status, member type or chapter). If one of them is wrong, contact your Chapter Admin."
+      },
+      {
+       "type": "h2",
+       "text": "Your Aircraft"
+      },
+      {
+       "type": "p",
+       "text": "In the **Aircraft** section each aircraft has its own row. Change a row to edit it, fill in a blank row to add one, or tick its delete box to remove it, then save."
+      },
+      {
+       "type": "h2",
+       "text": "Text Size"
+      },
+      {
+       "type": "p",
+       "text": "Click **Font** in the top bar (next to Change Password) to choose how large text appears for you: tabs, headings, labels, values and buttons, each Small, Medium or Large. Click **Save** and the page reloads with the new sizes. The same choices are under **Preferences** on your profile."
+      },
+      {
+       "type": "h2",
+       "text": "Contact Preferences"
+      },
+      {
+       "type": "p",
+       "text": "Under **Preferences**:"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Do Not Call**: you prefer not to be phoned.",
+        "**Email Opt Out**: you prefer not to receive email.",
+        "**Directory Opt Out**: you won't appear in the National Directory.",
+        "**Mail Notices**: you want notices by post."
+       ]
+      }
+     ]
+    },
+    {
+     "tab": "Your Membership Card",
+     "slug": "your-membership-card",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Click **My Card** in the side menu (or the **Card** tab in the phone app) to see your digital membership card: your name, member number, chapter, member type, the year your membership runs to, and a QR code."
+      },
+      {
+       "type": "p",
+       "text": "Show the QR code at the door of BPA events and meetings. A volunteer scans it and the system checks, at that moment, that your membership is current. The code contains no personal information."
+      },
+      {
+       "type": "p",
+       "text": "In the phone app the card also opens without signal, as long as you've opened it once before with signal."
+      },
+      {
+       "type": "h2",
+       "text": "Lost Your Phone?"
+      },
+      {
+       "type": "p",
+       "text": "Open My Card on another device, tick **I understand the old card stops working** and click **Cancel and issue a new card**. The QR code on the lost phone stops working at once. Your Chapter Admin or a Member Admin can do this for you too."
+      },
+      {
+       "type": "alert",
+       "variant": "info",
+       "text": "Coming soon: **Add to Google Wallet**, so the card sits in your phone's wallet. Apple Wallet will follow."
+      }
+     ]
+    },
+    {
+     "tab": "Membership Status",
+     "slug": "membership-status",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Your status shows on the **Membership** tab. It's worked out from your dues and records:"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Status",
+        "Meaning"
+       ],
+       "rows": [
+        [
+         "**Current**",
+         "In good financial standing"
+        ],
+        [
+         "**Past Due**",
+         "Dues unpaid, but still in the grace period"
+        ],
+        [
+         "**Pending**",
+         "Your credentials or dues payment haven't been checked yet"
+        ],
+        [
+         "**Expired**",
+         "Dues unpaid and the grace period is over"
+        ]
+       ]
+      },
+      {
+       "type": "p",
+       "text": "**Lifetime members** have the year **2099** on their Membership tab and are always Current."
+      },
+      {
+       "type": "p",
+       "text": "If your status looks wrong after paying, contact your Chapter Admin or the membership officer."
+      }
+     ]
+    },
+    {
+     "tab": "Rosters and the Directory",
+     "slug": "rosters-and-the-directory",
+     "blocks": [
+      {
+       "type": "table",
+       "headers": [
+        "Page",
+        "Who is listed"
+       ],
+       "rows": [
+        [
+         "**My Chapter Roster**",
+         "Current members of your chapter. The number on the tile is how many there are."
+        ],
+        [
+         "**National Directory**",
+         "Current members in every chapter, except anyone who chose Directory Opt Out."
+        ],
+        [
+         "**Chapters**",
+         "BPA's chapters and their details."
+        ]
+       ]
+      },
+      {
+       "type": "p",
+       "text": "Use the search box above a list to find someone by name. Click a column heading to sort by it."
+      },
+      {
+       "type": "alert",
+       "variant": "info",
+       "text": "Rosters and the directory are for members only. Please don't share members' details outside BPA."
+      }
+     ]
+    },
+    {
+     "tab": "Library, News and Events",
+     "slug": "library-news-and-events",
+     "blocks": [
+      {
+       "type": "table",
+       "headers": [
+        "Tile",
+        "What to do there"
+       ],
+       "rows": [
+        [
+         "**Doc Library**",
+         "Browse, preview and download documents shared with members. You'll only see documents you're allowed to see."
+        ],
+        [
+         "**Register Me**",
+         "Register for the current event when registration is open. If it isn't, the tile does nothing."
+        ],
+        [
+         "**Sponsors**",
+         "See BPA's sponsors."
+        ],
+        [
+         "**My Sticky Notes**",
+         "Post a short note on the home page's Bulletin Board, and change or delete the notes you posted. You can also use **Post a Sticky Note** under the Bulletin Board."
+        ]
+       ]
+      },
+      {
+       "type": "p",
+       "text": "**Sticky notes:** your note goes up as soon as you save it, for all members or just your chapter (you choose). A Chapter Admin or Content Admin may take a note off the board; your **My Sticky Notes** list then says **Waiting for approval** or **Disapproved**. If you change a disapproved note and save it, it goes back to them for approval."
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "num": 3,
+   "part": "Part II: Using the Member Portal",
+   "title": "Document Library",
+   "slug": "document-library",
+   "sections": [
+    {
+     "tab": "Finding Documents",
+     "slug": "finding-documents",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "The Document Library stores BPA's documents: policies, minutes, forms and more. Open it from the **Doc Library** tile or menu item. The button at the top takes you back: **Home** when you came from the member home, **Dashboard** when you came from the EMS (admin) menu."
+      },
+      {
+       "type": "p",
+       "text": "The list shows the documents you're allowed to see. Members see approved documents at or below their access level, from **Public** up through levels such as Leaders, Staff, Board and CEO, and can open and download them. Chapter Admins also see all of their own chapter's documents and can manage them; Member System Admins and staff document admins see and manage everything. Who can do what is set on the **Security Groups** page."
+      },
+      {
+       "type": "h2",
+       "text": "Filters"
+      },
+      {
+       "type": "p",
+       "text": "Narrow the list with the filters above it and click the filter button. Each document is labeled three ways, which makes it easy to find:"
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Label",
+        "Example"
+       ],
+       "rows": [
+        [
+         "**Organization**",
+         "Which organization or school the document belongs to"
+        ],
+        [
+         "**Category**",
+         "What it is about"
+        ],
+        [
+         "**Type**",
+         "What kind of document it is"
+        ]
+       ]
+      },
+      {
+       "type": "p",
+       "text": "You can also filter by chapter, file format, region, lead, access level, staff member, member and department."
+      },
+      {
+       "type": "h2",
+       "text": "Opening a Document"
+      },
+      {
+       "type": "p",
+       "text": "Click a document to see its details. From there you can preview it in the browser or download it."
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

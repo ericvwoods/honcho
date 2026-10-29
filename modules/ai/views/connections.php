@@ -22,6 +22,7 @@
                 </div>
                 <div class="col-md-5" style="padding-top: 18px;">
                     <a class="btn btn-outline btn-primary" href="<?= BASE_URL ?>ai/usage" style="font-size: 20px;"><i class="fa fa-bar-chart"></i> Usage</a>
+                    <a class="btn btn-outline btn-default" href="<?= BASE_URL ?>help/guide/admin/7#step-1-connect-the-ai" style="font-size: 20px;" title="Help: connecting the AI"><i class="fa fa-question-circle"></i></a>
                     <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= $home_url ?>" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>

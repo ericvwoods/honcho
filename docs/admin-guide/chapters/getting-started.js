@@ -30,6 +30,8 @@ module.exports = [
     "**Member Home** goes back to the member home page.",
     "Pages have a **Close** button that returns to where you came from.",
   ]},
+  { type: 'h2', text: 'This Guide in Honcho' },
+  { type: 'p', text: "Click **Help** (side menu of the home page, top bar of profile pages, or **System Admin > Help & Guides**) to read this guide, the Member Guide and, for System Admins, the Developer's Guide, with a search box. Admin screens such as the Coffee Report settings have a **Help** or **?** button that opens the matching section." },
 ]},
 
 ];

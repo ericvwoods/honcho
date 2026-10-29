@@ -69,6 +69,12 @@
                      <span class="m-r-sm text-muted welcome-message"><strong><i class="fa fa-key"></i>Change Password </strong></span>
                 </a>
             </li>
+            <li>
+                   <br>
+                <a href="<?= BASE_URL ?>help"> <!-- Help: the Member, Administrator's and Developer's Guides as web pages (2026-10-29) -->
+                     <span class="m-r-sm text-muted welcome-message"><strong><i class="fa fa-question-circle"></i> Help </strong></span>
+                </a>
+            </li>
             <?php if(!empty($_SESSION['ccmp_logged_in'])): ?> <!-- Font: the member's own Small/Medium/Large choices (2026-10-27) -->
             <li>
                    <br>

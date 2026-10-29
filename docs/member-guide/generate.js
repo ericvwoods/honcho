@@ -282,3 +282,6 @@ Packer.toBuffer(doc).then(buffer => {
   fs.writeFileSync(path.join(__dirname, 'Honcho_Member_Guide.docx'), buffer);
   console.log('Written: Honcho_Member_Guide.docx');
 });
+
+// Web copy for Honcho's Help pages (same chapter files): modules/help/content/member.json
+require('../export-web.js')(guide, { key: 'member', title: "Honcho Member Guide", subtitle: "How to use the member portal." });

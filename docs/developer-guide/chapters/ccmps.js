@@ -1,9 +1,9 @@
 // ============================================================
 // chapters/ccmps.js — CCMPS chapter of the Honcho Developer's Guide
 // ============================================================
-// This is the "keep in sync" source of truth for the Word version.
-// When modules/welcome/ccmps/views/helpdocs.php changes, update the
-// matching section here, then re-run generate.js. Text uses a
+// The source of truth for the CCMPS chapter, in the Word guide and on the
+// Help pages (modules/help; the old views/helpdocs.php page was retired
+// 2026-10-29). Edit here, then re-run generate.js. Text uses a
 // lightweight inline markup:
 //   **bold**   `code`   _italic_
 // Block types: h2, h3, p, ul, ol, table, alert, code

@@ -282,3 +282,6 @@ Packer.toBuffer(doc).then(buffer => {
   fs.writeFileSync(path.join(__dirname, 'Honcho_Administrators_Guide.docx'), buffer);
   console.log('Written: Honcho_Administrators_Guide.docx');
 });
+
+// Web copy for Honcho's Help pages (same chapter files): modules/help/content/admin.json
+require('../export-web.js')(guide, { key: 'admin', title: "Honcho Administrator's Guide", subtitle: "Step-by-step setup and everyday tasks for admins." });

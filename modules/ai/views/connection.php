@@ -18,6 +18,7 @@
                 </div>
                 <div class="col-md-4" style="padding-top: 18px;">
                     <a class="btn btn-outline btn-default" href="<?= BASE_URL ?>help/guide/admin/7#step-1-connect-the-ai" style="font-size: 20px;" title="Help: connecting the AI"><i class="fa fa-question-circle"></i> Help</a>
+                    <button type="submit" form="connectionform" class="btn btn-outline btn-primary" style="font-size: 20px;"><i class="fa fa-save"></i> Save</button> <!-- submits the form below (moved up 2026-10-29) -->
                     <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>ai/connections" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>
@@ -34,7 +35,7 @@
                   <?= flashdata('<div style="font-weight: bold; font-size: 20px; color: crimson;">', '</div>'); set_flashdata(''); ?>
                 <?php endif; ?>
 
-                <form method="post" action="<?= BASE_URL ?>ai/connectionsubmit" autocomplete="off">
+                <form method="post" action="<?= BASE_URL ?>ai/connectionsubmit" autocomplete="off" id="connectionform">
                     <input type="hidden" name="token" value="<?= $token ?>">
                     <input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
 
@@ -90,12 +91,6 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-6">
-                            <button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-save"></i> Save</button>
-                        </div>
-                    </div>
                 </form>
 
                 <?php if($has_key): ?>

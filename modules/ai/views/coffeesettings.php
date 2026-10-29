@@ -133,7 +133,24 @@
                                     <label style="margin: 0; font-size: 17px;"><input type="checkbox" name="section_on[<?= $s['key'] ?>]" value="1"<?= $s['on'] ? ' checked' : '' ?>> <?= out($c['label']) ?></label>
                                 </div>
                                 <small class="text-muted"><?= out($c['help']) ?></small>
-                                <?php foreach($c['options'] as $name => $opt): $value = (string) ($s['options'][$name] ?? $opt[1]); $id = 'opt_'.$s['key'].'_'.$name; ?>
+                                <?php $group = null; foreach($c['options'] as $name => $opt): $value = (string) ($s['options'][$name] ?? $opt[1]); $id = 'opt_'.$s['key'].'_'.$name; $type = $opt[2] ?? ''; ?>
+                                <?php if(($opt[3] ?? null) !== $group): $group = $opt[3] ?? null; ?>
+                                <?php if($group !== null): ?><div style="margin-top: 10px; font-weight: bold; font-size: 15px;"><?= out($group) ?></div><?php endif; ?>
+                                <?php endif; ?>
+                                <?php if($type === 'check'): // a league: one checkbox (Sports, 2026-10-29) ?>
+                                <label style="display: inline-block; margin: 4px 16px 0 0; font-weight: normal; font-size: 15px;">
+                                    <input type="checkbox" name="<?= $id ?>" id="<?= $id ?>" value="1"<?= $value === '1' ? ' checked' : '' ?>> <?= out($opt[0]) ?></label>
+                                <?php continue; endif; ?>
+                                <?php if($type === 'board'): // a golf tour: off or a leaderboard size ?>
+                                <div style="display: flex; align-items: center; gap: 10px; margin-top: 4px;">
+                                    <label for="<?= $id ?>" style="font-weight: normal; font-size: 15px; margin: 0; min-width: 180px;"><?= out($opt[0]) ?></label>
+                                    <select class="form-control" name="<?= $id ?>" id="<?= $id ?>" style="max-width: 200px;">
+                                        <?php foreach(array('off' => 'Off', '10' => 'Top 10', '25' => 'Top 25', 'full' => 'Full leaderboard') as $v => $l): ?>
+                                        <option value="<?= $v ?>"<?= $value === (string) $v ? ' selected' : '' ?>><?= $l ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <?php continue; endif; ?>
                                 <div style="margin-top: 8px;">
                                     <label for="<?= $id ?>" style="font-weight: normal; font-size: 15px;"><?= out($opt[0]) ?></label>
                                     <?php if(strpos($opt[0], 'one per line') !== false): ?>

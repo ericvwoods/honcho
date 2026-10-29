@@ -32,6 +32,19 @@ function coffee_sections(): array {
         'weather'    => array('label' => 'Weather', 'help' => 'Today\'s forecast for each location (wttr.in).', 'options' => array('locations' => array('Locations, one per line (City, ST)', ''))),
         'news'       => array('label' => 'News', 'help' => 'Recent headlines for each search topic (Google News).', 'options' => array('topics' => array('Search topics, one per line', "Black Pilots of America\naviation careers diversity"), 'hours' => array('Look back (hours)', '36'), 'max' => array('Most headlines', '8'))),
         'youtube'    => array('label' => 'YouTube channels', 'help' => 'New videos from chosen channels (public channel feeds).', 'options' => array('channels' => array('Channels, one per line: Name | channel ID', ''), 'hours' => array('Look back (hours)', '30'))),
+        // Sports (owner, 2026-10-29): ESPN's public scoreboard feeds, no key. Options: [label, default, type, group]
+        'sports'     => array('label' => 'Sports', 'help' => 'Yesterday\'s results and today\'s games for the leagues you tick; golf leaderboards (ESPN scoreboards).', 'options' => array(
+            'nfl'  => array('NFL', '0', 'check', 'Leagues'),
+            'mlb'  => array('MLB', '0', 'check', 'Leagues'),
+            'nba'  => array('NBA', '0', 'check', 'Leagues'),
+            'wnba' => array('WNBA', '0', 'check', 'Leagues'),
+            'mls'  => array('MLS (Major League Soccer)', '0', 'check', 'Leagues'),
+            'nwsl' => array('NWSL (women\'s soccer)', '0', 'check', 'Leagues'),
+            'pga'       => array('PGA Tour', 'off', 'board', 'Golf'),
+            'lpga'      => array('LPGA Tour', 'off', 'board', 'Golf'),
+            'dp'        => array('DP World Tour', 'off', 'board', 'Golf'),
+            'champions' => array('PGA Tour Champions', 'off', 'board', 'Golf'),
+        )),
     );
 }
 
@@ -109,7 +122,7 @@ function coffee_collect(object $config): array {
         }
         $label = $catalog[$s['key']]['label'];
         try {
-            $text = call_user_func('_coffee_section_'.$s['key'], (int) $config->subentity_id, (array) $s['options']);
+            $text = call_user_func('_coffee_section_'.$s['key'], (int) $config->subentity_id, (array) $s['options'] + array('_tz' => (string) ($config->timezone ?? 'America/New_York')));
             $out[] = array('key' => $s['key'], 'label' => $label, 'text' => trim($text), 'ok' => true);
         } catch (Throwable $e) {
             $out[] = array('key' => $s['key'], 'label' => $label, 'text' => 'Section unavailable: '.substr($e->getMessage(), 0, 200), 'ok' => false);
@@ -296,6 +309,72 @@ function _coffee_section_youtube(int $subentity_id, array $options): string {
         }
     }
     return empty($lines) ? 'No new videos.' : implode("\n", $lines);
+}
+
+function _coffee_section_sports(int $subentity_id, array $options): string {
+    // ESPN's public scoreboards (site.api.espn.com, no key; unofficial, so a feed can change without notice)
+    try { $tz = new DateTimeZone((string) ($options['_tz'] ?? 'America/New_York')); } catch (Throwable $e) { $tz = new DateTimeZone('America/New_York'); }
+    $today     = new DateTime('now', $tz);
+    $yesterday = (clone $today)->modify('-1 day');
+    $leagues = array('nfl' => array('NFL', 'football/nfl'), 'mlb' => array('MLB', 'baseball/mlb'), 'nba' => array('NBA', 'basketball/nba'),
+                     'wnba' => array('WNBA', 'basketball/wnba'), 'mls' => array('MLS', 'soccer/usa.1'), 'nwsl' => array('NWSL', 'soccer/usa.nwsl'));
+    $tours   = array('pga' => array('PGA Tour', 'golf/pga'), 'lpga' => array('LPGA Tour', 'golf/lpga'), 'dp' => array('DP World Tour', 'golf/eur'),
+                     'champions' => array('PGA Tour Champions', 'golf/champions-tour'));
+    $feed = function (string $path, string $date = '') {
+        return json_decode(_coffee_http_get('https://site.api.espn.com/apis/site/v2/sports/'.$path.'/scoreboard'.($date !== '' ? '?dates='.$date : '')), true) ?: array();
+    };
+    $lines = array();
+    foreach ($leagues as $key => $l) {
+        if (empty($options[$key])) { continue; }
+        try {
+            $results = array();
+            foreach ((array) ($feed($l[1], $yesterday->format('Ymd'))['events'] ?? array()) as $e) {
+                if (($e['status']['type']['state'] ?? '') !== 'post') { continue; }
+                $t = array();
+                foreach ((array) ($e['competitions'][0]['competitors'] ?? array()) as $c) { $t[$c['homeAway']] = $c['team']['abbreviation'].' '.($c['score'] ?? ''); }
+                $results[] = ($t['away'] ?? '?').', '.($t['home'] ?? '?').' ('.($e['status']['type']['shortDetail'] ?? 'Final').')';
+            }
+            $games = array();
+            foreach ((array) ($feed($l[1], $today->format('Ymd'))['events'] ?? array()) as $e) {
+                $when = (new DateTime((string) $e['date']))->setTimezone($tz)->format('g:ia');
+                $games[] = ($e['shortName'] ?? $e['name'] ?? '').' '.$when;
+            }
+            $lines[] = $l[0].(empty($results) && empty($games) ? ': no games yesterday or today.' : '');
+            if ($results) { $lines[] = '  Yesterday: '.implode('; ', array_slice($results, 0, 16)); }
+            if ($games)   { $lines[] = '  Today: '.implode('; ', array_slice($games, 0, 16)); }
+        } catch (Throwable $e) {
+            $lines[] = $l[0].': unavailable';
+        }
+    }
+    foreach ($tours as $key => $t) {
+        $size = (string) ($options[$key] ?? 'off');
+        if (!in_array($size, array('10', '25', 'full'), true)) { continue; }
+        try {
+            $e = ($feed($t[1])['events'] ?? array())[0] ?? null;
+            if (!$e) { $lines[] = $t[0].': no event this week.'; continue; }
+            $c      = $e['competitions'][0] ?? array();
+            $state  = $e['status']['type']['description'] ?? '';
+            $round  = (int) ($c['status']['period'] ?? 0);
+            $players = (array) ($c['competitors'] ?? array());
+            usort($players, function ($a, $b) { return ((int) ($a['order'] ?? 999)) <=> ((int) ($b['order'] ?? 999)); });
+            $lines[] = $t[0].': '.($e['name'] ?? '').($round ? ', round '.$round : '').($state ? ' ('.$state.')' : '');
+            if (empty($players)) { $lines[] = '  Leaderboard not posted yet.'; continue; }
+            $limit = $size === 'full' ? count($players) : (int) $size;
+            $pos = 0; $prev = null; $shown = 0;
+            foreach ($players as $i => $p) {
+                $score = (string) ($p['score'] ?? '');
+                if ($score !== $prev) { $pos = $i + 1; }
+                $tie   = ($score === $prev) || ($score === (string) ($players[$i + 1]['score'] ?? null));
+                $prev  = $score;
+                if ($pos > $limit) { break; } // keeps everyone tied at the cut-off place
+                $lines[] = '  '.($tie ? 'T' : '').$pos.' '.($p['athlete']['displayName'] ?? '?').' '.($score === 'E' ? 'E' : $score);
+                $shown++;
+            }
+        } catch (Throwable $e) {
+            $lines[] = $t[0].': unavailable';
+        }
+    }
+    return empty($lines) ? 'No leagues or tours chosen.' : implode("\n", $lines);
 }
 
 function _coffee_lines(string $text): array {

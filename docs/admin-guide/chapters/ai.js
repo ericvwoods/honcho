@@ -55,6 +55,7 @@ module.exports = [
     ['**Weather**', "Today's forecast for each place", 'Locations, one per line, e.g. "Chicago, IL"'],
     ['**News**', 'Recent headlines for each search topic, duplicates removed', 'Topics, one per line; hours to look back; most headlines'],
     ['**YouTube channels**', 'New videos from chosen channels', 'One per line: "Name | channel ID" (the ID starts with UC); hours to look back'],
+    ['**Sports**', "Yesterday's results and today's games for the leagues you tick (NFL, MLB, NBA, WNBA, MLS, NWSL), and golf leaderboards (PGA Tour, LPGA Tour, DP World Tour, PGA Tour Champions)", 'Tick leagues; for each golf tour choose Off, Top 10, Top 25 or Full leaderboard. Top 10 includes everyone tied at 10th, as on the tours\' own leaderboards'],
   ]},
   { type: 'p', text: "A YouTube channel ID: open the channel on youtube.com, choose **About** (or **Share channel**) and copy the channel ID, which starts with **UC**." },
 ]},

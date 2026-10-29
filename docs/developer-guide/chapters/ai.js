@@ -30,6 +30,7 @@ const sections = [
     ['Weather (`weather`)', 'wttr.in JSON, as `weather.py`', 'locations'],
     ['News (`news`)', 'Google News RSS per topic, junk filter and similar-title dedupe, as `ai_news.py`', 'topics, hours, most headlines'],
     ['YouTube (`youtube`)', 'public channel feeds `youtube.com/feeds/videos.xml` (no API key)', 'Name | channel ID lines, hours'],
+    ['Sports (`sports`, 2026-10-29)', "ESPN's public scoreboards `site.api.espn.com/apis/site/v2/sports/<sport>/<league>/scoreboard[?dates=YYYYMMDD]`: yesterday's finals and today's games (times in the report's time zone); golf: this week's event, round, leaderboard from `competitors` by `order`, ties marked T and kept at the cut-off. No key, but unofficial: a feed can change without notice, and commercial use isn't covered by any published terms", 'leagues `nfl` `mlb` `nba` `wnba` `mls` `nwsl` (1/0); tours `pga` `lpga` `dp` `champions` (off, 10, 25, full). Option definitions carry a type (`check`, `board`) and a group heading for the settings form'],
   ]},
   { type: 'ul', items: [
     "**Adding a section:** add it to `coffee_sections()` and write `_coffee_section_<key>($subentity_id, $options)` returning plain text; throw on failure. Existing reports get it at the end, switched off.",

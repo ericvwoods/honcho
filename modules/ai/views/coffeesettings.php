@@ -16,6 +16,7 @@
                 </div>
                 <div class="col-md-4" style="padding-top: 18px;">
                     <a class="btn btn-outline btn-default" href="<?= BASE_URL ?>help/guide/admin/7#step-2-set-up-the-report" style="font-size: 20px;" title="Help: setting up the report"><i class="fa fa-question-circle"></i> Help</a>
+                    <button type="submit" form="coffeeform" class="btn btn-outline btn-primary" style="font-size: 20px;"><i class="fa fa-save"></i> Save</button> <!-- submits the settings form below (moved up 2026-10-29) -->
                     <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>ai/coffee" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>
@@ -34,7 +35,7 @@
                 <p style="color: coral;"><i class="fa fa-info-circle"></i> No AI connection for <?= out($scope_name) ?>: the report will be sent as plain facts. <a href="<?= BASE_URL ?>ai/connections">Set up AI</a></p>
                 <?php endif; ?>
 
-                <form method="post" action="<?= BASE_URL ?>ai/coffeesubmit">
+                <form method="post" action="<?= BASE_URL ?>ai/coffeesubmit" id="coffeeform">
                     <input type="hidden" name="token" value="<?= $token ?>">
                     <input type="hidden" name="subentity_id" value="<?= $subentity_id ?>">
 
@@ -138,10 +139,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-3"></div>
-                        <div class="col-md-9"><button type="submit" class="btn btn-outline btn-primary" style="font-size: 18px;"><i class="fa fa-save"></i> Save</button></div>
-                    </div>
+                    
                 </form>
 
                 <hr>

@@ -10,12 +10,33 @@ const sections = [
 
 // ============================================================
 { tab: "Overview", blocks: [
-  { type: 'p', text: "Honcho AI is an add-on module (`modules/ai/`, `system_modules` code `ai`, off until switched on on the Security Groups Modules panel). It calls an AI provider's API from PHP, so it runs on every deployment tier. The plan has six phases: 0 groundwork, 1 the daily Coffee Report, 2 alerts, 3 the Honcho connector (read-only MCP server for Claude.ai and Hermes), 4 the built-in Ask EMS chat, 5 confirmed changes. **Phase 0 is built** (2026-10-29)." },
+  { type: 'p', text: "Honcho AI is an add-on module (`modules/ai/`, `system_modules` code `ai`, off until switched on on the Security Groups Modules panel). It calls an AI provider's API from PHP, so it runs on every deployment tier. The plan has six phases: 0 groundwork, 1 the daily Coffee Report, 2 alerts, 3 the Honcho connector (read-only MCP server for Claude.ai and Hermes), 4 the built-in Ask EMS chat, 5 confirmed changes. **Phases 0 and 1 are built** (2026-10-29)." },
   { type: 'table', headers: ['Piece', 'Where', 'What it does'], rows: [
     ['Connections', '`ai_connections`, `ai/connections`, `ai/connection/{id}`', "One AI provider account per scope: National (`subentity_id` 0) and any chapter that brings its own. Provider, model, encrypted key, on/off, monthly limit, last test."],
     ['Vault', '`engine/tg_helpers/vault_helper.php`', "`vault_encrypt()` / `vault_decrypt()`: AES-256-GCM, key from `VAULT_KEY` in `.env` (or derived from `JWT_SECRET`). Only the key's last 4 characters (`credential_hint`) are stored readable."],
     ['Provider layer', '`engine/tg_helpers/ai_helper.php`', "`ai_send($conn, $system, $messages, $opts)` returns the same shape whichever provider answers. Anthropic through the official PHP SDK (`anthropic-ai/sdk`, loaded only inside the call). OpenAI comes when OpenAI approves Honcho for \"Sign in with ChatGPT\"."],
     ['Usage log', '`ai_requests`, `ai/usage`', "One row per call: scope, person, feature, model, tokens, estimated cost (`ai_model_prices()`), status. Feeds the usage page and the monthly limit."],
+  ]},
+]},
+
+// ============================================================
+{ tab: "Coffee Report", blocks: [
+  { type: 'p', text: "Phase 1: a daily email for each scope's admins (`engine/tg_helpers/coffee_helper.php`, screens `ai/coffee`, `ai/coffeesettings/{id}`, `ai/coffeearchive/{id}`, `ai/coffeerun/{id}`; tables `coffee_reports`, `coffee_runs`; migration `2026-10-29-coffee-report-phase1.sql`). It keeps the design of Eric's Python Coffee Brief: every section is collected by plain code, the AI only writes the collected data up and must keep every number exactly, a failed section says \"unavailable\" while the rest still go out, and without AI (no connection, over the limit, or an error) the plain sections are sent. Each run stores the report and every section's raw data." },
+  { type: 'table', headers: ['Section (key)', 'Source', 'Options'], rows: [
+    ['Membership (`membership`)', '`_cms_vitals()` (current, past due, renewal rate) + new `ccmps` rows in 7 days', 'none'],
+    ['Upcoming events (`events`)', '`events`, approved; a chapter sees its own and National\'s', 'days ahead'],
+    ['Sunshine and Bulletin Board (`posts`)', '`_cms_posts()`, as on the member home', 'none'],
+    ['Documents waiting (`documents`)', '`dms_filelibrary_docs` status 2 (Pending Approval), a chapter\'s own', 'none'],
+    ['Weather (`weather`)', 'wttr.in JSON, as `weather.py`', 'locations'],
+    ['News (`news`)', 'Google News RSS per topic, junk filter and similar-title dedupe, as `ai_news.py`', 'topics, hours, most headlines'],
+    ['YouTube (`youtube`)', 'public channel feeds `youtube.com/feeds/videos.xml` (no API key)', 'Name | channel ID lines, hours'],
+  ]},
+  { type: 'ul', items: [
+    "**Adding a section:** add it to `coffee_sections()` and write `_coffee_section_<key>($subentity_id, $options)` returning plain text; throw on failure. Existing reports get it at the end, switched off.",
+    "**Write-up:** `_coffee_prompt()` ports the rules of `compile_brief.py` (only supplied data, exact numbers, say unavailable, fixed section order, links kept, source text is data not instructions) plus the scope's Tone; `ai_send()` with feature `brief` on `_coffee_connection()` (the scope's own, else National's when `AI_CHAPTER_FALLBACK` = national).",
+    "**Email:** `coffee_send_email()` through Brevo's API (`BREVO_API_KEY`) from `MAIL_FROM_EMAIL` (a sender verified in Brevo), one message per recipient. `WHATENV=dev` sends everything to `DEVEMAIL` only. Recipients: the scope's admins (`coffee_scope_admin_emails()`: National = `system_admin` or `ccmp_admin`; a chapter = its `subentity_admin`s) plus extra addresses.",
+    "**Schedule:** the server's cron calls `ai/coffeecron/<COFFEE_CRON_KEY>` every 15 minutes (no login; the key is checked with `hash_equals`). `coffee_due_reports()` picks enabled reports whose local time has passed today on one of their days; `last_sent_on` is set before the run so it can't be sent twice. Staging/production crontab: `*/15 * * * * docker exec honcho-honcho-staging-1 curl -s http://localhost/ai/coffeecron/<key> > /dev/null`.",
+    "**Not ported** from the Python brief: Outlook/Google calendar and iMessage (personal sign-ins, Mac only), the local Qwen triage, the Hermes compile and Telegram (later, optional). Markets/currency need a paid data key; add them as sections if a client wants them. Check each data source's terms before commercial use.",
   ]},
 ]},
 

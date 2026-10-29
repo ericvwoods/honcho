@@ -180,6 +180,7 @@
                         <li><a class="submenu" href="<?= BASE_URL ?>system-rbac/manage"><i class="fa fa-lock"></i> Security Groups</a></li>
                         <?php if(rbac_module_enabled('ai') && rbac_allowed('ai', 'manage_national')): ?> <!-- Honcho AI (2026-10-29) -->
                         <li><a class="submenu" href="<?= BASE_URL ?>ai/connections"><i class="fa fa-magic"></i> AI Connections</a></li>
+                        <li><a class="submenu" href="<?= BASE_URL ?>ai/coffee"><i class="fa fa-coffee"></i> Coffee Report</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>

@@ -132,6 +132,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                 <li>    <a href="<?= BASE_URL ?>dms-dmslibrary/manage/dmslibadmin"><i class="fa fa-file-text-o"></i>  Doc Library <span class="fa arrow"></span></a> </li>
                 <?php if(rbac_module_enabled('ai') && rbac_allowed('ai', 'manage_chapter')): ?> <!-- the chapter's own AI connection (2026-10-29) -->
                 <li><a href="<?= BASE_URL ?>ai/connections"><i class="fa fa-magic"></i> <?= CCMPSSUBENTITY ?> AI</a></li>
+                <li><a href="<?= BASE_URL ?>ai/coffee"><i class="fa fa-coffee"></i> Coffee Report</a></li>
                 <?php endif; ?>
 
                 <!--    <li><a href="#"><i class="fa fa-list"></i> <?= CCMPSSUBENTITY ?> Info</a></li>  -->
@@ -218,6 +219,7 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                     </li>
 <?php if(rbac_module_enabled('ai') && (rbac_allowed('ai', 'manage_national') || rbac_allowed('ai', 'view_usage'))): ?> <!-- Honcho AI connections and usage (2026-10-29) -->
                     <li><a href="<?= BASE_URL ?>ai/connections"><i class="fa fa-magic"></i> AI Connections</a></li>
+                    <li><a href="<?= BASE_URL ?>ai/coffee"><i class="fa fa-coffee"></i> Coffee Report</a></li>
 <?php endif; ?>
              <!--   <li>
                     <a href="<?= BASE_URL ?>blogs-asks/blog/no1"><i class="fa fa-question"></i> <span class="nav-label"> Ask the Devs (<?= $_SESSION['need_response'] ?>)</span></a>

@@ -26,6 +26,23 @@
         _check_token(), _can_manage(), _audit()
   usage($month)                      requests, tokens and estimated cost by scope and feature
         _scope_name(), _chapters()
+  Phase 1, the Daily Coffee Report (coffee_helper.php), edited by the same people as the scope's connection:
+  coffee()                           National's and the chapters' reports: on/off, time, last run
+        _can_manage(), _can_view_all(), _scope_name(), _chapters()
+  coffeesettings($subentity_id)      the settings form: sections and options, days, time, recipients, tone
+        _can_manage(), coffee_config(), coffee_sections()
+  coffeesubmit()                     POST: save the settings
+        _check_token(), _can_manage(), _audit()
+  coffeepreview()                    POST: build today's report and show it; nothing is sent
+        _check_token(), _can_manage(), coffee_run($id, 'preview')
+  coffeetest()                       POST: build it and send it to the person asking
+        _check_token(), _can_manage(), _my_email(), coffee_run($id, 'test', [$email]), _audit()
+  coffeearchive($subentity_id)       the scope's past runs
+  coffeerun($run_id)                 one past run: the report and each section's raw data
+  coffeecron($key)                   for the server's scheduler (no login): sends every report that is due;
+                                     $key must equal COFFEE_CRON_KEY in .env
+        coffee_due_reports(), coffee_run($id, 'scheduled')
+  _my_email()
   _can_manage($subentity_id)
   _can_view_all()
   _scope_name($subentity_id)
@@ -42,6 +59,9 @@ class Ai extends Trongate {
         parent::__construct($module_name);
         if(strcasecmp(segment(1), 'ai') !== 0){
             return; // used by another module, not visited as a page
+        }
+        if(strcasecmp(segment(2), 'coffeecron') === 0){
+            return; // the scheduler has no login; coffeecron() checks its own key
         }
 
         if(empty($_SESSION['trongatetoken'])){ // not logged in
@@ -287,6 +307,264 @@ class Ai extends Trongate {
   }
 
 /*----------------------------------------------------------------------------*/
+/*---------------------------- function COFFEE -------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffee(){ // the Daily Coffee Reports this person may see
+
+    $all = $this->_can_view_all();
+    $own = (int) ($_SESSION['ccmps_subentity'] ?? 0);
+    if(!$all && !$this->_can_manage($own)){
+        set_flashdata('You are not authorized to set up the Coffee Report.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($this->_home_url());
+    }
+
+    $scopes = $all ? array(0 => $this->_scope_name(0)) + $this->_chapters() : array($own => $this->_scope_name($own));
+    $saved  = array();
+    foreach((array) $this->model->query("SELECT * FROM coffee_reports", 'object') as $r){
+        $saved[(int) $r->subentity_id] = $r;
+    }
+    $last = array();
+    foreach((array) $this->model->query("SELECT r.* FROM coffee_runs r JOIN (SELECT subentity_id, MAX(id) AS id FROM coffee_runs WHERE kind != 'preview' GROUP BY subentity_id) x ON x.id = r.id", 'object') as $r){
+        $last[(int) $r->subentity_id] = $r;
+    }
+    $rows = array();
+    foreach($scopes as $subentity_id => $name){
+        $subentity_id = (int) $subentity_id;
+        if($subentity_id > 0 && $all && !isset($saved[$subentity_id]) && !$this->_can_manage($subentity_id)){
+            continue; // chapters that haven't set one up aren't listed for National
+        }
+        $rows[] = (object) array('subentity_id' => $subentity_id, 'name' => $name, 'report' => $saved[$subentity_id] ?? null,
+                                 'last' => $last[$subentity_id] ?? null, 'can_manage' => $this->_can_manage($subentity_id),
+                                 'ai' => (bool) _coffee_connection($subentity_id));
+    }
+
+    $data['rows']        = $rows;
+    $data['home_url']    = $this->_home_url();
+    $data['bc1']         = $all ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']         = 'Coffee Report';
+    $data['header']      = 'Daily Coffee Report';
+    $data['view_module'] = 'ai';
+    $data['view_file']   = 'coffee';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function COFFEESETTINGS ---------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeesettings($subentity_id = NULL){
+
+    $subentity_id = (int) ($subentity_id ?? segment(3));
+    if(!$this->_can_manage($subentity_id)){
+        set_flashdata('You are not authorized to set up that Coffee Report.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect('ai/coffee');
+    }
+
+    $data['subentity_id'] = $subentity_id;
+    $data['scope_name']   = $this->_scope_name($subentity_id);
+    $data['config']       = coffee_config($subentity_id);
+    $data['catalog']      = coffee_sections();
+    $data['ai']           = (bool) _coffee_connection($subentity_id);
+    $data['admins']       = count(coffee_scope_admin_emails($subentity_id));
+    $data['preview']      = $_SESSION['coffee_preview'] ?? null; // set by coffeepreview(), shown once
+    unset($_SESSION['coffee_preview']);
+    $data['token']        = $this->_token();
+    $data['home_url']     = $this->_home_url();
+    $data['bc1']          = $subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']          = 'Coffee Report';
+    $data['header']       = 'Coffee Report: '.$data['scope_name'];
+    $data['view_module']  = 'ai';
+    $data['view_file']    = 'coffeesettings';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- function COFFEESUBMIT ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeesubmit(){
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeesettings/'.$subentity_id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+
+    $catalog = coffee_sections();
+    $errors  = array();
+
+    $time = (string) post('send_time', true);
+    if(!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time)){
+        $errors[] = 'Choose a send time.';
+    }
+    $tz = (string) post('timezone', true);
+    if(!in_array($tz, DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'US'), true) && $tz !== 'UTC'){
+        $errors[] = 'Choose a time zone from the list.';
+    }
+    $days = array_values(array_intersect(array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'), (array) ($_POST['days'] ?? array())));
+    $subject = trim((string) post('subject', true));
+    if($subject === '' || strlen($subject) > 150){
+        $errors[] = 'The email subject is required (150 characters at most).';
+    }
+    $extra = array();
+    foreach(_coffee_lines((string) ($_POST['extra_recipients'] ?? '')) as $line){
+        if(filter_var($line, FILTER_VALIDATE_EMAIL)){ $extra[] = $line; } else { $errors[] = 'Not an email address: '.out($line).'.'; }
+    }
+
+    // sections in the order given by their position boxes
+    $order = (array) ($_POST['section_order'] ?? array());
+    $sections = array();
+    foreach($catalog as $key => $section){
+        $options = array();
+        foreach($section['options'] as $name => $option){
+            $options[$name] = substr(trim((string) ($_POST['opt_'.$key.'_'.$name] ?? '')), 0, 2000);
+        }
+        $sections[] = array('key' => $key, 'on' => !empty($_POST['section_on'][$key]), 'options' => $options, 'pos' => (int) ($order[$key] ?? 99));
+    }
+    usort($sections, function($a, $b){ return $a['pos'] <=> $b['pos']; });
+    foreach($sections as &$sec){ unset($sec['pos']); }
+    unset($sec);
+
+    if(!empty($errors)){
+        set_flashdata(implode(' ', $errors));
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back);
+    }
+
+    $record = array('enabled' => post('enabled') == 1 ? 1 : 0, 'send_time' => $time, 'timezone' => $tz, 'days' => implode(',', $days),
+                    'subject' => $subject, 'tone' => substr(trim((string) post('tone', true)), 0, 500), 'sections' => json_encode($sections),
+                    'send_to_admins' => post('send_to_admins') == 1 ? 1 : 0, 'extra_recipients' => implode("\n", $extra),
+                    'updated_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time());
+    $existing = $this->model->query_bind('SELECT id FROM coffee_reports WHERE subentity_id = :s', array('s' => $subentity_id), 'object');
+    if(!empty($existing)){
+        $this->model->update((int) $existing[0]->id, $record, 'coffee_reports');
+    }else{
+        $record['subentity_id'] = $subentity_id;
+        $record['created_by'] = $record['updated_by'];
+        $record['created_at'] = time();
+        $this->model->insert($record, 'coffee_reports');
+    }
+    $on = implode(', ', array_map(function($s) use ($catalog){ return $catalog[$s['key']]['label']; }, array_filter($sections, function($s){ return $s['on']; })));
+    $this->_audit('SaveCoffeeReport', $subentity_id, ($record['enabled'] ? 'on' : 'off').', '.$time.' '.$tz.' '.$record['days'].'; sections: '.$on);
+
+    set_flashdata('Saved.'.($record['enabled'] ? '' : ' The report is switched off; switch it on to have it sent.'));
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- function COFFEEPREVIEW ---------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeepreview(){ // today's report, shown on the settings page; nothing is sent
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeesettings/'.$subentity_id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    set_time_limit(180);
+    $run = coffee_run($subentity_id, 'preview');
+    $_SESSION['coffee_preview'] = array('text' => $run->report_text, 'ai' => $run->ai_used, 'message' => $run->message);
+    redirect($back.'#preview');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function COFFEETEST ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeetest(){ // build it and email it to the person asking
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeesettings/'.$subentity_id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    $email = $this->_my_email();
+    if($email === ''){
+        set_flashdata('Your account has no email address to send the test to.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back);
+    }
+    set_time_limit(180);
+    $run = coffee_run($subentity_id, 'test', array($email));
+    $this->_audit('TestCoffeeReport', $subentity_id, $run->status.($run->message ? ': '.$run->message : ''));
+    set_flashdata($run->recipients > 0 ? 'Test sent. '.$run->message : 'The test was not sent. '.$run->message);
+    $_SESSION['flashmsgcolor'] = $run->recipients > 0 ? 1 : 0;
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function COFFEEARCHIVE ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeearchive($subentity_id = NULL){
+
+    $subentity_id = (int) ($subentity_id ?? segment(3));
+    if(!$this->_can_manage($subentity_id) && !$this->_can_view_all()){
+        redirect('ai/coffee');
+    }
+    $data['runs'] = $this->model->query_bind("SELECT id, kind, status, ai_used, recipients, message, started_at, finished_at FROM coffee_runs
+                                               WHERE subentity_id = :s AND kind != 'preview' ORDER BY id DESC LIMIT 60", array('s' => $subentity_id), 'object');
+    $data['subentity_id'] = $subentity_id;
+    $data['home_url']     = $this->_home_url();
+    $data['bc1']          = $subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']          = 'Coffee Report';
+    $data['header']       = 'Sent Coffee Reports: '.$this->_scope_name($subentity_id);
+    $data['view_module']  = 'ai';
+    $data['view_file']    = 'coffeearchive';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function COFFEERUN -----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeerun($run_id = NULL){
+
+    $run = $this->model->get_where((int) ($run_id ?? segment(3)), 'coffee_runs');
+    if(!$run || (!$this->_can_manage((int) $run->subentity_id) && !$this->_can_view_all())){
+        redirect('ai/coffee');
+    }
+    $data['run']          = $run;
+    $data['sections']     = json_decode((string) $run->sections_raw, true) ?: array();
+    $data['home_url']     = $this->_home_url();
+    $data['bc1']          = (int) $run->subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']          = 'Coffee Report';
+    $data['header']       = 'Coffee Report of '.date('M j, Y g:ia', (int) $run->started_at);
+    $data['view_module']  = 'ai';
+    $data['view_file']    = 'coffeerun';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function COFFEECRON ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeecron($key = NULL){ // called by the server's scheduler every 15 minutes; no login
+
+    $expected = (string) env('COFFEE_CRON_KEY', '');
+    $key      = (string) ($key ?? segment(3));
+    header('Content-Type: text/plain; charset=utf-8');
+    if($expected === '' || strlen($expected) < 24 || !hash_equals($expected, $key)){
+        http_response_code(403);
+        echo "Forbidden\n";
+        return;
+    }
+    if(!rbac_module_enabled('ai')){
+        echo "AI module off\n";
+        return;
+    }
+    set_time_limit(900);
+    $due = coffee_due_reports();
+    foreach($due as $report){
+        // mark first, so a slow run can't be started twice by the next call
+        $this->model->update((int) $report->id, array('last_sent_on' => $report->local_date), 'coffee_reports');
+        $run = coffee_run((int) $report->subentity_id, 'scheduled');
+        echo $this->_scope_name((int) $report->subentity_id).': '.$run->status.', '.$run->recipients." sent\n";
+    }
+    echo count($due)." report(s) due\n";
+  }
+
+/*----------------------------------------------------------------------------*/
 /*------------------------------- helpers ------------------------------------*/
 /*----------------------------------------------------------------------------*/
     function _can_manage($subentity_id){ // National: ai/manage_national; a chapter: its own Chapter Admins
@@ -318,6 +596,18 @@ class Ai extends Trongate {
             }
         }
         return $chapters;
+    }
+
+    function _my_email(){ // the person asking: their member record's address (staff: their staff account's)
+        if(!empty($_SESSION['ccmp_rec_id'])){
+            $row = $this->model->get_where((int) $_SESSION['ccmp_rec_id'], 'ccmps');
+            return $row ? trim((string) $row->email_address) : '';
+        }
+        if(!empty($_SESSION['honcho_user_rec_id'])){
+            $row = $this->model->get_where((int) $_SESSION['honcho_user_rec_id'], 'honcho_user_accounts');
+            return $row ? trim((string) ($row->email ?? $row->email_address ?? '')) : '';
+        }
+        return '';
     }
 
     function _token(){ // ties the forms to this session

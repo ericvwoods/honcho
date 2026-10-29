@@ -450,6 +450,20 @@ function coffee_list_recipients(object $config): array {
     return $out;
 }
 
+function coffee_scope_admins(int $subentity_id): array {
+    // the scope's admins by name, with their email address ('' if none), for the settings page
+    $model = new Model();
+    $where = $subentity_id === 0 ? '(system_admin = 1 OR ccmp_admin = 1)' : 'subentity_admin = 1 AND subentity = :s';
+    $rows  = $model->query_bind("SELECT first_name, last_name, email_address FROM ccmps WHERE $where
+                                   AND COALESCE(deceased,0) != 1 AND COALESCE(soft_deleted,0) != 1 AND COALESCE(locked,0) != 1
+                                 ORDER BY last_name, first_name", $subentity_id === 0 ? array() : array('s' => $subentity_id), 'object');
+    $out = array();
+    foreach ((array) $rows as $r) {
+        $out[] = array('name' => trim($r->first_name.' '.$r->last_name), 'email' => trim((string) $r->email_address));
+    }
+    return $out;
+}
+
 function coffee_scope_admin_emails(int $subentity_id): array {
     $model = new Model();
     if ($subentity_id === 0) {

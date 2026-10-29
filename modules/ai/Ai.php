@@ -371,6 +371,7 @@ class Ai extends Trongate {
     $data['catalog']      = coffee_sections();
     $data['ai']           = (bool) _coffee_connection($subentity_id);
     $data['admins']       = count(coffee_scope_admin_emails($subentity_id));
+    $data['admin_list']   = coffee_scope_admins($subentity_id); // by name, for the "Sent to" line
     $data['my_email']     = $this->_my_email(); // for the test's "To me" choice
     $data['list_recipients'] = coffee_list_recipients($data['config']); // the "Sent to" list as it will be sent, each address once
     $data['preview']      = $_SESSION['coffee_preview'] ?? null; // set by coffeepreview(), shown once

@@ -72,7 +72,15 @@
                         <div class="col-md-3"><h3 style="<?= $label_style ?>">Sent to</h3></div>
                         <div class="col-md-9 form-group">
                             <label style="font-weight: normal;"><input type="checkbox" name="send_to_admins" value="1"<?= $config->send_to_admins ? ' checked' : '' ?>>
-                                <?= out($scope_name) ?>'s admins (<?= $admins ?> with an email address: <?= $subentity_id === 0 ? 'System and '.CCMP.' Admins' : SUBENTITY.' Admins' ?>)</label>
+                                Send it to <?= out($scope_name) ?>'s admins (<?= $subentity_id === 0 ? 'System and '.CCMP.' Admins' : SUBENTITY.' Admins' ?>)</label>
+                            <?php
+                              $with    = array_filter($admin_list, function($a){ return $a['email'] !== ''; });
+                              $without = array_filter($admin_list, function($a){ return $a['email'] === ''; });
+                            ?>
+                            <div class="text-muted" style="font-size: 14px; margin: -4px 0 8px 20px;">
+                                <?= $with ? 'That is: '.out(implode(', ', array_map(function($a){ return $a['name'].' ('.$a['email'].')'; }, $with))).'.' : 'No admin has an email address yet.' ?>
+                                <?= $without ? '<br>Not included, no email address on their record: '.out(implode(', ', array_column($without, 'name'))).'.' : '' ?>
+                            </div>
                             <textarea class="form-control" name="extra_recipients" id="extra_recipients" rows="3" placeholder="More addresses, one per line"><?= out((string) $config->extra_recipients) ?></textarea>
                             <small class="text-muted">Anyone else who should get it (not an admin): one email address per line. Each person gets their own copy. A test can go to everyone on this list as a dry run.</small>
                         </div>

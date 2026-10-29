@@ -44,6 +44,7 @@ chapterAdmins: [
       ['**Sunshine**, **Bulletin Board**, **Careers**', "Post illnesses and passings, sticky notes and job postings for all members or just your chapter, and approve your chapter members' sticky notes (see Chapter Posts)"],
       ['**Doc Library**', "Your chapter's documents in the Document Library (Chapter 6): add and edit them, move them on the kanban board, approve, hide or delete them, and manage comments. You can only change your own chapter's documents, and anything you add is saved to your chapter."],
       ['**Export Members**', "Download your chapter's members as a spreadsheet"],
+      ['**Chapter AI**', "When the AI module is switched on: your chapter's own AI provider account, if it wants one (API key, model, monthly limit, Test connection). Your chapter pays that provider directly. Without one, your chapter uses National's AI or none, as National decides"],
     ]},
   ]},
   { tab: "Managing Chapter Members", blocks: memberList.concat([

@@ -117,6 +117,8 @@ require_once 'tg_helpers/utilities_helper.php';
 require_once 'tg_helpers/rbac_helper.php'; // rbac_allowed() / rbac_require() / rbac_person()
 require_once 'tg_helpers/card_helper.php'; // member cards: card_for_member() / card_code() / card_lookup()
 require_once 'tg_helpers/wallet_helper.php'; // Google Wallet for member cards: gwallet_save_url()
+require_once 'tg_helpers/vault_helper.php'; // encrypted secrets in the database: vault_encrypt() / vault_decrypt()
+require_once 'tg_helpers/ai_helper.php'; // Honcho AI: connections by scope, ai_send(), usage log
 require_once 'tg_helpers/cms_helper.php';  // cms_page(): Website content for the member home / public site
 
 /* --------------------------------------------------------------

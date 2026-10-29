@@ -22,6 +22,7 @@ const guide = [
 
   { part: 'Part II: Add-ons', chapters: [
     { title: 'PMS (Project Management)',     sections: require('./chapters/pms.js') },
+    { title: 'Honcho AI',                    sections: require('./chapters/ai.js') },
     // Planned: Participants — branded per client from a system_settings
     // row (e.g. "Student" for BPA); members who join programs but rarely
     // renew, kept out of the ccmps table. Seeded from ccmps_type = 4.

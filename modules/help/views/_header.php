@@ -11,7 +11,7 @@
                     <form class="help-search" method="get" action="<?= BASE_URL ?>help/search" role="search">
                         <input type="search" class="form-control" name="q" id="help_q" value="<?= out($q ?? '') ?>" placeholder="Search the guides" aria-label="Search the guides">
                         <button type="submit" class="btn btn-outline btn-primary"><i class="fa fa-search"></i></button>
-                        <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= $home_url ?>" style="color: coral; white-space: nowrap;"><i class="fa fa-times-circle"></i> Close</a>
+                        <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= $close_url ?>" style="color: coral; white-space: nowrap;"><i class="fa fa-times-circle"></i> Close</a>
                     </form>
                 </div>
             </div>

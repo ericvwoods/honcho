@@ -18,7 +18,7 @@ module.exports = [
     ['HELP-05', 'Search across the guides a person may read.', 'Built 29 Oct 2026'],
     ['HELP-06', 'Help text follows the member\'s chosen text size.', 'Built 29 Oct 2026'],
     ['HELP-07', 'Admin screens link straight to the section that explains them (for example the AI connection and Coffee Report settings pages).', 'Built 29 Oct 2026 (more screens as they are worked on)'],
-    ['HELP-08', 'Close returns to the page the person came from.', '**Not built:** Close goes to the home page (breaks the Close rule; small fix)'],
+    ['HELP-08', 'Close returns to the page the person came from.', 'Built 30 Oct 2026 (until then Close went to the home page)'],
     ['HELP-09', 'When a feature changes, its guide chapters and these requirements are updated in the same piece of work, and the guides rebuilt.', 'Built (working rule since Oct 2026)'],
   ]},
 ]},
@@ -29,10 +29,6 @@ module.exports = [
     "This requirements book is **not** a Help page: it holds pricing and business plans and stays private.",
     "Guides use the organization's words (Member, Chapter) as BPA has them; another organization's guides would be rebuilt with its words.",
   ]},
-]},
-
-{ tab: "Known Problems", blocks: [
-  { type: 'ul', items: [ "Close goes to the home page instead of back to where the person came from (HELP-08)." ] },
 ]},
 
 { tab: "Decisions", blocks: [

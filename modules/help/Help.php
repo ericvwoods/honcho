@@ -29,6 +29,7 @@
   _plain($blocks)                   text only, for search
   _font_px()                        the member's Values text size (Font pop-up)
   _home_url()
+  _return_url($home)                the page the person came from, kept while they stay in Help
 */
 
 class Help extends Trongate {
@@ -61,6 +62,7 @@ class Help extends Trongate {
     $data['q']           = '';
     $data['font_px']     = $this->_font_px();
     $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($data['home_url']); // Close goes back where they came from
     $data['bc1']         = 'Help';
     $data['bc2']         = 'Guides';
     $data['header']      = 'Help';
@@ -105,6 +107,7 @@ class Help extends Trongate {
     $data['q']           = '';
     $data['font_px']     = $this->_font_px();
     $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($data['home_url']); // Close goes back where they came from
     $data['bc1']         = 'Help';
     $data['bc2']         = $g->title;
     $data['header']      = $g->title;
@@ -149,6 +152,7 @@ class Help extends Trongate {
     $data['q']           = $q;
     $data['font_px']     = $this->_font_px();
     $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($data['home_url']); // Close goes back where they came from
     $data['bc1']         = 'Help';
     $data['bc2']         = 'Search';
     $data['header']      = 'Help: search';
@@ -258,5 +262,20 @@ class Help extends Trongate {
 
     function _home_url(){
         return !empty($_SESSION['honcho_logged_in']) ? 'honcho/index' : 'welcome-ccmps/ccmphome';
+    }
+
+    function _return_url($home){ // the page the person came from, kept while they move between Help pages
+        $from = (string) ($_GET['return'] ?? '');
+        if($from === '' && strpos((string) ($_SERVER['HTTP_REFERER'] ?? ''), BASE_URL) === 0){
+            $from = substr($_SERVER['HTTP_REFERER'], strlen(BASE_URL));
+        }
+        $from = (string) strtok($from, '?#');
+
+        if(strcasecmp((string) strtok($from, '/'), 'help') === 0){
+            return $_SESSION['help_return'] ?? $home; // moving within Help: keep the original page
+        }
+        // only a page of this site: module/method/args, no scheme, dots or double slashes
+        $_SESSION['help_return'] = preg_match('#^[a-z][a-z0-9_-]*(/[A-Za-z0-9_-]+)*$#', $from) ? $from : $home;
+        return $_SESSION['help_return'];
     }
 }

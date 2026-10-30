@@ -252,7 +252,7 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
 
 ## Small fixes
 
-- [ ] Help pages: **Close** goes to the home page; make it return to where the person came from (copy `Cards::_return_url()`), requirement HELP-08 (found 2026-10-30).
+- [x] Help pages: **Close** went to the home page; now returns to where the person came from (`Help::_return_url()`, copied from `Cards`), requirement HELP-08 (2026-10-30, Mac only).
 
 - [ ] `ccmps_aux.ccmp_id` has a foreign key to the old `ccmps_org` table, not `ccmps`, so a member created since that copy was made can't get an aux row (2 such members on the Mac, including the `portaladmin` account added 2026-10-27). Point the key at `ccmps`, add the missing rows, then decide whether `ccmps_org` can go.
 

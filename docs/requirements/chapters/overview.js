@@ -14,7 +14,7 @@ module.exports = [
     ['**Changed**', 'Built differently from the plan, with the reason'],
     ['**Not working** / **Not built**', 'Exists but broken, or expected but missing'],
   ]},
-  { type: 'p', text: "Every Core chapter was checked against the code on 30 Oct 2026, not copied from the plans. The last part is the **project to-do list**, rebuilt from `docs/todo.md` every time the book is made. The book is the master copy: when a feature changes, its chapter is updated and the book rebuilt (`node generate.js` in `docs/requirements`), and the new `Honcho_Requirements.docx` is copied to Downloads." },
+  { type: 'p', text: "Every Core chapter and the AI chapter were checked against the code on 30 Oct 2026, not copied from the plans. The last part is the **project to-do list**, rebuilt from `docs/todo.md` every time the book is made. The book is the master copy: when a feature changes, its chapter is updated and the book rebuilt (`node generate.js` in `docs/requirements`), and the new `Honcho_Requirements.docx` is copied to Downloads." },
   { type: 'alert', variant: 'warning', text: "**Private:** this book holds pricing and business plans. It lives in `docs/requirements`, which is never deployed to a server, and is not one of the Help pages. Share it only on purpose." },
 ]},
 
@@ -28,7 +28,7 @@ module.exports = [
     ['7', '**Document Library**', 'DOC', 'Built; replacing a file and moving to Approved on the board are broken'],
     ['8', '**Member Home and Website**', 'WEB', 'Built; public website ready but off for BPA; Event Module planned'],
     ['9', '**Help and Guides**', 'HELP', 'Built'],
-    ['10', '**Honcho AI Assistant**', 'AI', 'Phases 0 and 1 built (Coffee Report); still in plan form'],
+    ['10', '**Honcho AI and the Coffee Report**', 'AI', 'Connections and Coffee Report built on the Mac, not deployed; alerts, connector, chat and changes planned; two-tier split awaiting sign-off'],
     ['11', '**Payments, Financial and Store**', 'PAY', 'Decided 30 Oct; nothing built; still in plan form'],
     ['12', '**Scheduler**', 'SCHED', 'Decided 30 Oct; nothing built; still in plan form'],
     ['13', '**Pricing and AI Billing**', 'PRICE', 'Options written; decisions not made; plan form'],

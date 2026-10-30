@@ -31,13 +31,7 @@ const guide = [
   ]},
 
   { part: 'Part III: Add-ons and Coming Modules', chapters: [
-    { title: 'Honcho AI Assistant',              sections: require('./chapters/ai.js'),                  // 10 (plan form)
-      status: [
-        "**Status:** phases 0 and 1 built 2026-10-29 on the Mac, not yet deployed: AI connections by scope (National and each chapter), the credential vault, usage and limits, and the Daily Coffee Report (email and Telegram, plus a Sports section). The two-tier recommendation is awaiting sign-off.",
-        "**Online copy:** https://claude.ai/artifact/CNVNAd9y2V41kTnPu4Z3mt",
-        "**Changed since the plan:** phase 1 became the Daily Coffee Report, ported from Eric's Python design; the AI only writes it up and a plain report goes out without it. Keys are kept encrypted per scope rather than one key in the server file; the permission names are manage_national, manage_chapter, use_ai and view_usage. Still open: email warnings at 50/80/100% of a limit, the OpenAI provider (waiting on OpenAI's approval), and the local-model connection type.",
-        "**Not yet in requirements form:** this chapter is the original plan; it will be rewritten as numbered requirements (AI-01 onward).",
-      ] },
+    { title: 'Honcho AI and the Coffee Report', sections: require('./chapters/ai.js') },                // 10 AI
     { title: 'Payments, Financial and Store',    sections: require('./chapters/financial-store.js'),     // 11 (plan form)
       status: [
         "**Status:** decisions made 2026-10-30 (below). Nothing built yet; F0, the payment base, is next. Money work comes before the Scheduler.",

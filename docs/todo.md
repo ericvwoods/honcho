@@ -152,7 +152,8 @@ Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financi
 ## Requirements book (`docs/requirements`, started 2026-10-30)
 
 - [x] Format approved with the Member Cards chapter; Core chapters written and checked against the code (2026-10-30): Signing In, Permissions, Member Records, Cards, Settings, Document Library, Member Home and Website, Help.
-- [ ] Convert to requirements form: Honcho AI (AI-), Payments/Financial/Store (PAY-), Scheduler (SCHED-), Pricing (PRICE-).
+- [x] Honcho AI converted (AI-01 to AI-27, 2026-10-30).
+- [ ] Convert to requirements form: Payments/Financial/Store (PAY-), Scheduler (SCHED-), Pricing (PRICE-).
 - [ ] Add chapters: Projects (PMS, built), the staff back office (Honcho), the phone app; later Event Module, Participants (Student), Reporting, Emulation as they're planned.
 
 ## Developer's Guide

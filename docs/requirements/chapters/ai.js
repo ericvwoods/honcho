@@ -1,4 +1,4 @@
-// chapters/ai.js.js — plan chapter for the Honcho Planning Book (docs/plans).
+// chapters/ai.js — Honcho Requirements, still in plan form (to be converted to the requirements format).
 // Converted 2026-10-30 from the online plan page: Honcho AI Assistant Plan (https://claude.ai/artifact/CNVNAd9y2V41kTnPu4Z3mt)
 // From now on this file is the master copy: change the plan here, rebuild with `node generate.js`,
 // and republish the online page if it is still in use.

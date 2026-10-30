@@ -1,4 +1,4 @@
-// chapters/financial-store.js.js — plan chapter for the Honcho Planning Book (docs/plans).
+// chapters/financial-store.js — Honcho Requirements, still in plan form (to be converted to the requirements format).
 // Converted 2026-10-30 from the online plan page: Honcho Financial and Store (https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR)
 // From now on this file is the master copy: change the plan here, rebuild with `node generate.js`,
 // and republish the online page if it is still in use.

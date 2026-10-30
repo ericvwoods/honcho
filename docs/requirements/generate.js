@@ -1,5 +1,5 @@
 // ============================================================
-// generate.js — builds Honcho_Planning_Book.docx from guide.js (copied from the
+// generate.js — builds Honcho_Requirements.docx from guide.js (copied from the
 // Administrator's Guide generator 2026-10-30; adds plan Status sections and the
 // to-do list chapter read from ../todo.md)
 // ============================================================
@@ -197,11 +197,11 @@ const children = [];
 
 // Title page content
 children.push(new Paragraph({
-  children: [new TextRun({ text: "Honcho Planning Book", bold: true, size: 56, font: FONT, color: '2C3E50' })],
+  children: [new TextRun({ text: "Honcho Requirements", bold: true, size: 56, font: FONT, color: '2C3E50' })],
   spacing: { after: 200 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: 'Every Honcho plan in one place: pricing, the AI assistant, member cards, payments and the store, the Scheduler, and the project to-do list. Private: not for distribution.', italics: true, size: 24, font: FONT, color: '666666' })],
+  children: [new TextRun({ text: 'What Honcho does and will do: each feature as numbered requirements, marked Built, Planned or Changed, with the decisions behind them, plus the project to-do list. Private: not for distribution.', italics: true, size: 24, font: FONT, color: '666666' })],
   spacing: { after: 100 },
 }));
 children.push(new Paragraph({
@@ -315,8 +315,8 @@ const doc = new Document({
 });
 
 Packer.toBuffer(doc).then(buffer => {
-  fs.writeFileSync(path.join(__dirname, 'Honcho_Planning_Book.docx'), buffer);
-  console.log('Written: Honcho_Planning_Book.docx');
+  fs.writeFileSync(path.join(__dirname, 'Honcho_Requirements.docx'), buffer);
+  console.log('Written: Honcho_Requirements.docx');
 });
 
 // No web copy: this book is private (pricing and business plans), so it is not a Help page.

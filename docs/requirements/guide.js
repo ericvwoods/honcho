@@ -1,7 +1,9 @@
 // ============================================================
-// guide.js — table of contents for the Honcho Planning Book
+// guide.js — table of contents for Honcho Requirements (was the Planning Book)
 // ============================================================
-// Every plan in one downloadable document (created 2026-10-30). Each plan
+// Every plan in one downloadable document (created 2026-10-30), being rewritten
+// chapter by chapter as high-level requirements: numbered, each Built / Planned /
+// Changed, checked against the code. Converted so far: Digital Membership Cards. Each plan
 // chapter starts with a Status section written here (status: blocks), then
 // the plan itself from chapters/<plan>.js. The last part is built from
 // docs/todo.md at build time (todo: true). Build with:
@@ -31,12 +33,7 @@ const guide = [
         "**Online copy:** https://claude.ai/artifact/CNVNAd9y2V41kTnPu4Z3mt",
         "**Changed since the plan:** phase 1 became the Daily Coffee Report, ported from Eric's Python design; the AI only writes it up and a plain report goes out without it. Still open: email warnings at 50/80/100% of a limit, the OpenAI provider (waiting on OpenAI's approval), and the local-model connection type.",
       ] },
-    { title: 'Digital Membership Cards',         sections: require('./chapters/member-cards.js'),         // 4
-      status: [
-        "**Status:** decisions made 2026-10-26 (the plan's recommendations; Google Wallet now, Apple Wallet and event registration later). Phase 1 built: My Card page, phone app Card tab, cancel and reissue.",
-        "**Online copy:** https://claude.ai/artifact/3QVrXXRpZryjkkj21NLftc",
-        "**Next:** phase 2 door check-in, then the Google Wallet button (Eric creates the issuer account first). Only 14 of 1,725 members have a photo, which weakens the photo check at the door.",
-      ] },
+    { title: 'Digital Membership Cards',         sections: require('./chapters/member-cards.js') },       // 4 (requirements format, 2026-10-30)
     { title: 'Payments, Financial and Store',    sections: require('./chapters/financial-store.js'),      // 5
       status: [
         "**Status:** decisions made 2026-10-30 (below). Nothing built yet; F0, the payment base, is next. Money work comes before the Scheduler.",

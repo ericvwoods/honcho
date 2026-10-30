@@ -105,6 +105,7 @@
                                 <li>Open <a href="https://t.me/<?= out($bot['username']) ?>?start=<?= out($code) ?>" target="_blank" rel="noopener">t.me/<?= out($bot['username']) ?></a> on the phone or computer where you use Telegram, and press <strong>Start</strong>.</li>
                                 <li>Come back here and click <strong>I pressed Start</strong>.</li>
                             </ol>
+                            <p class="text-muted" style="font-size: 14px;">Use this link: finding the bot by searching in Telegram won't link your report, because the link carries your code.</p>
                             <form method="post" action="<?= BASE_URL ?>ai/mycoffeetelegram" style="display: inline;">
                                 <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="action" value="check">
                                 <button type="submit" class="btn btn-outline btn-primary" style="font-size: 16px;"><i class="fa fa-check"></i> I pressed Start</button>

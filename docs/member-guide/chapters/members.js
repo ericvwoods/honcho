@@ -45,7 +45,7 @@ module.exports = [
 ]},
 
 { tab: "My Coffee Report", blocks: [
-  { type: 'p', text: "If your organization offers it, **My Coffee Report** in the side menu sets up a short email each morning, just for you: bulletins from National and your chapter first, then the sections you choose." },
+  { type: 'p', text: "If BPA offers it, **My Coffee Report** in the side menu sets up a short message each morning, just for you: bulletins from National and your chapter first, then the sections you choose. It comes by email, and by Telegram too if you like." },
   { type: 'table', headers: ['Section', 'What you get'], rows: [
     ['**Membership**', "How many members are Current nationwide and in your chapter"],
     ['**Upcoming events**', "National's and your chapter's events in the days ahead"],
@@ -55,16 +55,39 @@ module.exports = [
     ['**News**', 'Recent headlines for the topics you list'],
     ['**Sports**', "Yesterday's results and today's games for the leagues you tick; golf leaderboards"],
   ]},
+
+  { type: 'h2', text: 'Getting It Working' },
   { type: 'ol', items: [
-    "Choose **On: send it**, the time, your time zone and the days.",
-    "Tick the sections you want and fill in their boxes. The numbers set the order.",
-    "Click **Save**, then **Preview** to see today's report, or **Email it to me now**.",
+    "**Make sure your membership is Current.** The report is for Current members. Your status is on the Membership tab of your profile; if it isn't Current you can still set the report up, but it can't be switched on until it is.",
+    "**Check your email address.** The report goes to the email address on your profile (shown under **Sent to**). If it's missing or wrong, update your profile first.",
+    "Open **My Coffee Report** and choose **On: send it**, the time, your time zone and the days you want it.",
+    "Tick the sections you want and fill in their boxes (for example your city for Weather). The numbers set the order.",
+    "Click **Save**.",
+    "Click **Preview** to see today's report on the page, or **Email it to me now** to get a copy straight away. If the email doesn't arrive within a few minutes, look in your junk or spam folder and mark it as not junk.",
   ]},
-  { type: 'ul', items: [
-    "It goes to the email address on your profile.",
-    "**Telegram:** click **Link my Telegram**, open the link, press **Start** in Telegram, then come back and click **I pressed Start**. Tick **Send it to my Telegram too** and save. **Unlink Telegram** stops it.",
-    "It's for **Current** members. If your membership isn't Current, you can set it up, but it can't be switched on until it is.",
-    "**Recently sent** lists your last reports; click one to read it again.",
+  { type: 'p', text: "From then on it arrives at your chosen time on your chosen days. **Recently sent** on the page lists your last reports; click one to read it again." },
+
+  { type: 'h2', text: 'Getting It in Telegram Too' },
+  { type: 'p', text: "Telegram is a free messaging app. To get your report there as well, you need the Telegram app on your phone (or Telegram on your computer), signed in." },
+  { type: 'ol', items: [
+    "On My Coffee Report, click **Link my Telegram**. A link to BPA's Telegram bot, **@BPAPilotsCoffeeBot**, appears.",
+    "Open that link **on the phone or computer where you use Telegram** (tap it on your phone, or click it on your computer). Telegram opens a chat with the bot.",
+    "Tap **Start** at the bottom of that chat. This is the step that lets the bot message you: a bot can't send anything until you press Start.",
+    "Come back to My Coffee Report and click **I pressed Start**. You'll see \"Telegram linked\", and the bot sends you a short message to confirm.",
+    "Tick **Send it to my Telegram too** and click **Save**.",
+  ]},
+  { type: 'alert', variant: 'warning', text: "Use the link from the page. Finding the bot by searching for it in Telegram and pressing Start won't link your report, because the link carries a code that tells BPA it's you." },
+  { type: 'p', text: "To stop Telegram, untick **Send it to my Telegram too** and save, or click **Unlink Telegram**." },
+
+  { type: 'h2', text: "If It Doesn't Work" },
+  { type: 'table', headers: ['What you see', 'What to do'], rows: [
+    ['**My Coffee Report** isn\'t in the menu', "BPA hasn't switched member reports on yet"],
+    ['"The Coffee Report is for Current members"', 'Your membership isn\'t Current. Renew, or ask your Chapter Admin if you think your status is wrong'],
+    ['"Add an email address to your profile first"', 'Add your email address on your profile, then come back'],
+    ['The email never arrives', 'Check junk or spam; check the address under **Sent to**; check the report is **On** and today is ticked'],
+    ['The Telegram link doesn\'t open the bot', 'Open it on the device where Telegram is installed; on a computer without the Telegram app, install it or open web.telegram.org first'],
+    ['"Not found yet" after **I pressed Start**', 'Make sure you opened the link from the page (not a search) and tapped **Start**; wait a few seconds and click **I pressed Start** again. If it still isn\'t found, click **New link** and repeat'],
+    ['Telegram stopped arriving', 'If you blocked or deleted the bot, open the link again and press Start, or click **Link my Telegram** again'],
   ]},
 ]},
 

@@ -1282,21 +1282,63 @@
      "blocks": [
       {
        "type": "p",
-       "text": "The report can also go to Telegram: to several people, each getting their own copy, and/or to a group with the admins in it. Email and Telegram are sent separately, so if one fails the other still arrives."
+       "text": "The report can also go to Telegram: to several people, each getting their own copy, and/or to a group with the admins in it. Email and Telegram are sent separately, so if one fails the other still arrives. BPA's bot is **@BPAPilotsCoffeeBot**; National's report holds its token, and members' own reports use the same bot."
+      },
+      {
+       "type": "h2",
+       "text": "Making a Bot (once, by a System Admin)"
       },
       {
        "type": "ol",
        "items": [
-        "In Telegram, open **@BotFather**, send **/newbot**, choose a name and a username ending in \"bot\". BotFather replies with a **token** like 123456789:ABC....",
-        "Each person who should get it opens the bot in Telegram (search for its username) and presses **Start**; bots can't message anyone first. For a group: add the bot to the group and post any message there.",
-        "In the report's settings, tick **Send to Telegram too**, paste the **bot token**, and click **Save**.",
-        "Click **Find chat ID**. Honcho lists the chats that have messaged the bot; copy each number (groups start with -) into **Chat IDs**, one per line, and **Save** again. A person's chat ID is the same for every bot, so it doesn't change if you switch to a new bot (they press Start on the new one).",
-        "Click **Telegram test**. The report should arrive in the chat."
+        "In Telegram, open **@BotFather** and send **/newbot**.",
+        "Give it a **name** (what people see, for example \"BPA Coffee Report\") and a **username** ending in \"bot\" (permanent, for example BPAPilotsCoffeeBot).",
+        "BotFather replies with the bot's **token** (123456789:ABC...) and its link (t.me/<username>). Keep the token private.",
+        "Optional, in @BotFather: **/setuserpic** for the logo, **/setdescription** for the text people see before pressing Start.",
+        "Turn on **Two-Step Verification** in your Telegram settings (Privacy and Security): whoever controls the account that made the bot controls the bot."
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "Opening the Bot and Pressing Start"
+      },
+      {
+       "type": "p",
+       "text": "A bot can't message anyone first. Everyone who should receive the report opens the bot once and taps **Start**. A new bot doesn't appear in anyone's chat list until they open it:"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Easiest:** tap the link **t.me/<bot username>** (for BPA, t.me/BPAPilotsCoffeeBot), from BotFather's message or sent to them by email or text. It opens the chat with the bot.",
+        "Or open **https://t.me/<bot username>** in a browser, which offers to open Telegram.",
+        "Or search for **@<bot username>** in Telegram's search bar; a brand-new bot can take a while to appear in search."
        ]
       },
       {
        "type": "p",
-       "text": "Long reports arrive as two or three messages. The token is stored encrypted; tick **Remove the saved bot token** and save to delete it. iMessage isn't available: it only works from an Apple computer, not a web server."
+       "text": "The chat opens with a **Start** button at the bottom: tap it. The bot then stays in their chat list."
+      },
+      {
+       "type": "h2",
+       "text": "Setting Up the Report"
+      },
+      {
+       "type": "ol",
+       "items": [
+        "In the report's settings, paste the **bot token** (only once; it's kept encrypted) and click **Save**.",
+        "Click **Find chat ID**. Honcho lists the chats that have messaged the bot. Copy each number into **Chat IDs**, one per line (a group's number starts with -).",
+        "Tick **Send to Telegram too** and click **Save**.",
+        "Click **Telegram test**. The report should arrive in every chat on the list."
+       ]
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**A person's chat ID is the same for every bot.** If you switch to a new bot, keep the chat IDs; each person only presses Start on the new bot.",
+        "**A group:** add the bot to the group, post any message there, then Find chat ID shows the group's number.",
+        "Long reports arrive as two or three messages. Tick **Remove the saved bot token** and save to delete the token.",
+        "iMessage isn't available: it only works from an Apple computer, not a web server."
+       ]
       }
      ]
     },
@@ -1377,7 +1419,7 @@
         "**Switch it on for the organization:** **System Settings > Features & Policy > Members can get their own Coffee Report**. Members then see **My Coffee Report** in their menu. The AI module must be on.",
         "**Only Current members** can switch theirs on; anyone else sees why not. A member who stops being Current simply stops receiving it.",
         "**Membership numbers for members** are the totals of Current members nationwide and in their chapter.",
-        "**Telegram:** members link their own Telegram to the organization's bot, which is the bot saved on **National's** Coffee Report (Step 4). Set that up first, and consider giving the bot the organization's name.",
+        "**Telegram:** members link their own Telegram to the organization's bot, the bot saved on **National's** Coffee Report (Step 4; BPA's is @BPAPilotsCoffeeBot), from a link on their My Coffee Report page. The Member Guide walks them through it.",
         "**Email volume:** every member report is one email a day. Brevo's free plan sends 300 a day; if many members switch it on, the Brevo plan must be sized to match.",
         "The Coffee Report page shows how many members have theirs switched on."
        ]
@@ -1420,12 +1462,16 @@
          "Usually an unverified sender: check the sender in Brevo"
         ],
         [
-         "\"Telegram: not sent (Unauthorized)\"",
-         "The bot token is wrong: copy it again from @BotFather"
+         "\"Telegram: ... (Unauthorized)\"",
+         "The bot token is wrong or was replaced: copy it again from @BotFather and paste it in Bot token"
         ],
         [
-         "\"Telegram: not sent (chat not found)\"",
-         "Wrong chat ID, or nobody has messaged the bot: post in the chat and use Find chat ID"
+         "\"Telegram: sent to 1 of 2 chats. Not sent: 123456789 (... chat not found)\"",
+         "That person hasn't pressed **Start** on the bot (or the number is wrong). Send them the bot's t.me link; once they tap Start, Telegram test again"
+        ],
+        [
+         "\"Telegram: ... (Forbidden: bot was blocked by the user)\"",
+         "That person blocked the bot: they open the bot, unblock it and press Start"
         ],
         [
          "\"... unavailable\" in one section",

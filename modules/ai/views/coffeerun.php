@@ -11,7 +11,7 @@
                     <span style="color:<?= CCMPS_CCMP_NAME_CLR ?>; font-size: <?= CCMPS_CCMP_FNT_SZ ?>;"><?= out($header) ?></span>
                 </div>
                 <div class="col-md-4" style="padding-top: 18px;">
-                    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?>ai/coffeearchive/<?= (int) $run->subentity_id ?>" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
+                    <a class="btn btn-outline btn-warning" href="<?= BASE_URL ?><?= (int) $run->ccmp_id > 0 ? 'ai/mycoffee' : 'ai/coffeearchive/'.(int) $run->subentity_id ?>" style="font-size: 20px; color: coral;"><i class="fa fa-times-circle"></i> Close</a>
                 </div>
             </div>
         </div>

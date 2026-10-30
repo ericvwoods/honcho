@@ -2987,6 +2987,44 @@
      ]
     },
     {
+     "tab": "Bulletins and Member Reports",
+     "slug": "bulletins-and-member-reports",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Added 2026-10-30 (`2026-10-30-coffee-bulletins-member-reports.sql`)."
+      },
+      {
+       "type": "h2",
+       "text": "Bulletins"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "`coffee_bulletins`: `subentity_id` (0 = National), `title`, `body`, `link_url`, `audience` (`all` | `admins` | `members`), `show_from` / `show_until` (dates, inclusive, blank = open), `active`. Screens `ai/coffeebulletins/<scope>`, `ai/coffeebulletin/<scope>/<id>`, `coffeebulletinsubmit`, `coffeebulletindelete` (two clicks); `_can_manage()` as for the scope's report; Auditlog `SaveCoffeeBulletin` / `DeleteCoffeeBulletin`.",
+        "`coffee_bulletins_for($subentity_id, $audience, $date)`: National's plus the chapter's, by the report's local date. `_coffee_bulletin_text()` prints them; `coffee_run()` and `coffee_member_run()` put `_coffee_header()` + bulletins **above** the body, so the AI never sees or rewrites them. The prompt now tells the AI not to write a title. The bulletins are also kept as the first entry of the run's `sections_raw`."
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "Member Coffee Reports"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "`coffee_member_reports`: one row per member (`ccmp_id` unique): `enabled`, `send_time`, `timezone`, `days`, `sections` (JSON), `telegram_enabled`, `telegram_chat_id`, `telegram_link_code`, `last_sent_on`. `coffee_runs.ccmp_id` marks a member's run (0 = admin report); admin lists filter `ccmp_id = 0`.",
+        "Switched on by the `COFFEE_MEMBER_REPORTS` setting (Features & Policy) with the `ai` module on. Pages `ai/mycoffee`, `mycoffeesubmit`, `mycoffeepreview`, `mycoffeetest`, `mycoffeetelegram` (link / check / unlink), guarded by `_member_feature()` (member login + setting). Member menu: My Coffee Report under My Card (`sidemenu.php`).",
+        "`coffee_member_sections()`: membership, events, posts, weather, markets, news, sports (no documents, no YouTube; YouTube and personal calendars are planned paid extras). `coffee_member_config()` sets `->member = true` and `->subentity_id` = the member's chapter; `coffee_collect()` passes `_member`, and `_coffee_section_membership()` then returns Current totals nationwide and in the chapter (status = 1).",
+        "`coffee_member_eligible()`: Current (status 1), not locked, deceased or deleted, valid email. Enforced on save (stays off) and on every run (a scheduled run for someone not eligible is logged as `skipped`).",
+        "Always plain facts (no AI). Email to the member's `email_address` through `coffee_send_email()` (so `WHATENV=dev` still redirects).",
+        "**Telegram:** one organization bot, the token saved on National's report (`coffee_org_bot()`, which also reads the bot's username with `getMe`). Linking: a random code, a `t.me/<bot>?start=<code>` link; `coffee_member_telegram_find()` looks for `/start <code>` in `getUpdates` and saves the chat id, then confirms in Telegram.",
+        "**Scheduler:** `coffeecron` sends due member reports after the admin reports, at most 100 a call (`coffee_due_member_reports(100)`); the rest go 15 minutes later. `_coffee_http_get()` keeps each downloaded address for the rest of the run, so members sharing weather places, tickers or leagues cost one download each.",
+        "**Email volume:** one email per member per day; size the Brevo plan to the number switched on (the free plan is 300 a day)."
+       ]
+      }
+     ]
+    },
+    {
      "tab": "Scopes and Permissions",
      "slug": "scopes-and-permissions",
      "blocks": [

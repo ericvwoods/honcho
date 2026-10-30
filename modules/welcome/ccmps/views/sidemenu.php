@@ -389,6 +389,19 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                         </div>
                     </div>
 
+                    <?php if(!empty($_SESSION['ccmp_logged_in']) && rbac_module_enabled('ai') && (int) setting('COFFEE_MEMBER_REPORTS', 0) === 1): ?>
+                    <div class="widget style1 gray-bg"> <!-- the member's own Daily Coffee Report (ai/mycoffee, 2026-10-30) -->
+                        <div class="row vertical-align">
+                            <div class="col-2">
+                            <a href="<?= BASE_URL ?>ai/mycoffee">     <i class="fa fa-coffee fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i></a>
+                            </div>
+                            <div class="col-10 text-right">
+                                <a href="<?= BASE_URL ?>ai/mycoffee" style="font-family: 'Open Sans', helvetica, arial, sans-serif; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> My Coffee Report</a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
 
 
                     <div class="widget style1 gray-bg">

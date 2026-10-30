@@ -44,6 +44,30 @@ module.exports = [
   { type: 'alert', variant: 'info', text: "Coming soon: **Add to Google Wallet**, so the card sits in your phone's wallet. Apple Wallet will follow." },
 ]},
 
+{ tab: "My Coffee Report", blocks: [
+  { type: 'p', text: "If your organization offers it, **My Coffee Report** in the side menu sets up a short email each morning, just for you: bulletins from National and your chapter first, then the sections you choose." },
+  { type: 'table', headers: ['Section', 'What you get'], rows: [
+    ['**Membership**', "How many members are Current nationwide and in your chapter"],
+    ['**Upcoming events**', "National's and your chapter's events in the days ahead"],
+    ['**Sunshine and Bulletin Board**', 'Posts showing today on the member home'],
+    ['**Weather**', 'Today\'s forecast for the places you list, one per line (City, ST)'],
+    ['**Markets**', 'Yesterday\'s closing prices for the ticker symbols you list (for example AAPL, or ^GSPC for the S&P 500), and exchange rates'],
+    ['**News**', 'Recent headlines for the topics you list'],
+    ['**Sports**', "Yesterday's results and today's games for the leagues you tick; golf leaderboards"],
+  ]},
+  { type: 'ol', items: [
+    "Choose **On: send it**, the time, your time zone and the days.",
+    "Tick the sections you want and fill in their boxes. The numbers set the order.",
+    "Click **Save**, then **Preview** to see today's report, or **Email it to me now**.",
+  ]},
+  { type: 'ul', items: [
+    "It goes to the email address on your profile.",
+    "**Telegram:** click **Link my Telegram**, open the link, press **Start** in Telegram, then come back and click **I pressed Start**. Tick **Send it to my Telegram too** and save. **Unlink Telegram** stops it.",
+    "It's for **Current** members. If your membership isn't Current, you can set it up, but it can't be switched on until it is.",
+    "**Recently sent** lists your last reports; click one to read it again.",
+  ]},
+]},
+
 { tab: "Membership Status", blocks: [
   { type: 'p', text: "Your status shows on the **Membership** tab. It's worked out from your dues and records:" },
   { type: 'table', headers: ['Status', 'Meaning'], rows: [

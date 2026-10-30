@@ -45,8 +45,26 @@
   coffeerun($run_id)                 one past run: the report and each section's raw data
   coffeecron($key)                   for the server's scheduler (no login): sends every report that is due;
                                      $key must equal COFFEE_CRON_KEY in .env
-        coffee_due_reports(), coffee_run($id, 'scheduled')
+        coffee_due_reports(), coffee_run($id, 'scheduled'), coffee_due_member_reports(), coffee_member_run($ccmp_id, 'scheduled')
+  Bulletins (2026-10-30), printed at the top of the reports; edited by the same people as the scope's report:
+  coffeebulletins($subentity_id)     the scope's bulletins
+        _can_manage(), _scope_name()
+  coffeebulletin($subentity_id, $id) the form: new (id 0) or one bulletin
+        _can_manage()
+  coffeebulletinsubmit()             POST: save; coffeebulletindelete() POST: delete
+        _check_token(), _can_manage(), _audit()
+  Member Coffee Reports (2026-10-30): a Current member's own plain report (COFFEE_MEMBER_REPORTS setting):
+  mycoffee()                         the member's settings page
+        _member_feature(), coffee_member_config(), coffee_member_eligible(), coffee_org_bot()
+  mycoffeesubmit()                   POST: save (on only while eligible)
+        _check_token(), _member_feature(), _member_report_id(), _audit()
+  mycoffeepreview(), mycoffeetest()  POST: show today's report / email it to the member
+        _check_token(), _member_feature(), coffee_member_run()
+  mycoffeetelegram()                 POST: link (a code for the organization's bot), check (find the chat), unlink
+        _check_token(), _member_feature(), _member_report_id(), coffee_member_telegram_find()
   _my_email()
+  _member_feature()                  member login + the module + the COFFEE_MEMBER_REPORTS setting, or back home
+  _member_report_id($ccmp_id)        the member's coffee_member_reports row id (made with the defaults when missing)
   _can_manage($subentity_id)
   _can_view_all()
   _scope_name($subentity_id)
@@ -329,7 +347,7 @@ class Ai extends Trongate {
         $saved[(int) $r->subentity_id] = $r;
     }
     $last = array();
-    foreach((array) $this->model->query("SELECT r.* FROM coffee_runs r JOIN (SELECT subentity_id, MAX(id) AS id FROM coffee_runs WHERE kind != 'preview' GROUP BY subentity_id) x ON x.id = r.id", 'object') as $r){
+    foreach((array) $this->model->query("SELECT r.* FROM coffee_runs r JOIN (SELECT subentity_id, MAX(id) AS id FROM coffee_runs WHERE kind != 'preview' AND ccmp_id = 0 GROUP BY subentity_id) x ON x.id = r.id", 'object') as $r){
         $last[(int) $r->subentity_id] = $r;
     }
     $rows = array();
@@ -344,6 +362,7 @@ class Ai extends Trongate {
     }
 
     $data['rows']        = $rows;
+    $data['member_reports'] = $all ? (int) ($this->model->query('SELECT COUNT(*) AS n FROM coffee_member_reports WHERE enabled = 1', 'object')[0]->n ?? 0) : null;
     $data['home_url']    = $this->_home_url();
     $data['bc1']         = $all ? 'System Admin' : SUBENTITY.' Admin';
     $data['bc2']         = 'Coffee Report';
@@ -596,7 +615,7 @@ class Ai extends Trongate {
         redirect('ai/coffee');
     }
     $data['runs'] = $this->model->query_bind("SELECT id, kind, status, ai_used, recipients, telegram_sent, message, started_at, finished_at FROM coffee_runs
-                                               WHERE subentity_id = :s AND kind != 'preview' ORDER BY id DESC LIMIT 60", array('s' => $subentity_id), 'object');
+                                               WHERE subentity_id = :s AND ccmp_id = 0 AND kind != 'preview' ORDER BY id DESC LIMIT 60", array('s' => $subentity_id), 'object');
     $data['subentity_id'] = $subentity_id;
     $data['home_url']     = $this->_home_url();
     $data['bc1']          = $subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
@@ -613,10 +632,12 @@ class Ai extends Trongate {
   function coffeerun($run_id = NULL){
 
     $run = $this->model->get_where((int) ($run_id ?? segment(3)), 'coffee_runs');
-    if(!$run || (!$this->_can_manage((int) $run->subentity_id) && !$this->_can_view_all())){
-        redirect('ai/coffee');
+    $own = $run && (int) $run->ccmp_id > 0 && (int) $run->ccmp_id === (int) ($_SESSION['ccmp_rec_id'] ?? 0); // a member's own report
+    if(!$run || (!$own && ((int) $run->ccmp_id > 0 || (!$this->_can_manage((int) $run->subentity_id) && !$this->_can_view_all())))){
+        redirect($own || !empty($_SESSION['ccmp_logged_in']) ? $this->_home_url() : 'ai/coffee');
     }
     $data['run']          = $run;
+    $data['title_kind']   = $own ? 'member' : 'admin';
     $data['sections']     = json_decode((string) $run->sections_raw, true) ?: array();
     $data['home_url']     = $this->_home_url();
     $data['bc1']          = (int) $run->subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
@@ -653,11 +674,310 @@ class Ai extends Trongate {
         echo $this->_scope_name((int) $report->subentity_id).': '.$run->status.', '.$run->recipients." sent\n";
     }
     echo count($due)." report(s) due\n";
+    if((int) setting('COFFEE_MEMBER_REPORTS', 0) === 1){ // members' own reports, at most 100 a call; the rest next time
+        $members = coffee_due_member_reports(100);
+        $sent = 0;
+        foreach($members as $report){
+            $this->model->update((int) $report->id, array('last_sent_on' => $report->local_date), 'coffee_member_reports');
+            $run = coffee_member_run((int) $report->ccmp_id, 'scheduled');
+            $sent += $run->recipients;
+        }
+        echo count($members)." member report(s) due, ".$sent." emailed\n";
+    }
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function COFFEEBULLETINS --------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeebulletins($subentity_id = NULL){ // a scope's bulletins (2026-10-30)
+
+    $subentity_id = (int) ($subentity_id ?? segment(3));
+    if(!$this->_can_manage($subentity_id)){
+        set_flashdata('You are not authorized to post bulletins there.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect('ai/coffee');
+    }
+    $data['bulletins']    = $this->model->query_bind("SELECT * FROM coffee_bulletins WHERE subentity_id = :s
+                                                       ORDER BY active DESC, COALESCE(show_until, '9999-12-31') DESC, id DESC", array('s' => $subentity_id), 'object');
+    $data['subentity_id'] = $subentity_id;
+    $data['scope_name']   = $this->_scope_name($subentity_id);
+    $data['token']        = $this->_token();
+    $data['home_url']     = $this->_home_url();
+    $data['bc1']          = $subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']          = 'Coffee Report Bulletins';
+    $data['header']       = 'Bulletins: '.$data['scope_name'];
+    $data['view_module']  = 'ai';
+    $data['view_file']    = 'coffeebulletins';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- function COFFEEBULLETIN --------------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeebulletin($subentity_id = NULL, $id = NULL){ // the form: a new bulletin (id 0) or one to change
+
+    $subentity_id = (int) ($subentity_id ?? segment(3));
+    $id           = (int) ($id ?? segment(4));
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    $bulletin = $id ? $this->model->get_where($id, 'coffee_bulletins') : false;
+    if($id && (!$bulletin || (int) $bulletin->subentity_id !== $subentity_id)){
+        redirect('ai/coffeebulletins/'.$subentity_id);
+    }
+    $data['bulletin']     = $bulletin ?: (object) array('id' => 0, 'title' => '', 'body' => '', 'link_url' => '', 'audience' => 'all',
+                                                        'show_from' => date('Y-m-d'), 'show_until' => '', 'active' => 1);
+    $data['subentity_id'] = $subentity_id;
+    $data['scope_name']   = $this->_scope_name($subentity_id);
+    $data['token']        = $this->_token();
+    $data['home_url']     = $this->_home_url();
+    $data['bc1']          = $subentity_id === 0 ? 'System Admin' : SUBENTITY.' Admin';
+    $data['bc2']          = 'Coffee Report Bulletins';
+    $data['header']       = ($id ? 'Change' : 'New').' Bulletin: '.$data['scope_name'];
+    $data['view_module']  = 'ai';
+    $data['view_file']    = 'coffeebulletin';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------- function COFFEEBULLETINSUBMIT -----------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeebulletinsubmit(){
+
+    $subentity_id = (int) post('subentity_id');
+    $id           = (int) post('id');
+    $back = 'ai/coffeebulletin/'.$subentity_id.'/'.$id;
+    $this->_check_token($back);
+    if(!$this->_can_manage($subentity_id)){
+        redirect('ai/coffee');
+    }
+    if($id){
+        $existing = $this->model->get_where($id, 'coffee_bulletins');
+        if(!$existing || (int) $existing->subentity_id !== $subentity_id){
+            redirect('ai/coffeebulletins/'.$subentity_id);
+        }
+    }
+    $errors = array();
+    $title  = trim((string) post('title', true));
+    $body   = trim((string) post('body', true));
+    $link   = trim((string) post('link_url', true));
+    $audience = (string) post('audience', true);
+    $from   = trim((string) post('show_from', true));
+    $until  = trim((string) post('show_until', true));
+    if($title === '' || strlen($title) > 150){ $errors[] = 'A title is required (150 characters at most).'; }
+    if(strlen($body) > 2000){ $errors[] = 'The message can be 2,000 characters at most.'; }
+    if($link !== '' && !preg_match('#^https?://[^\s]+$#i', $link)){ $errors[] = 'The link must be a full web address starting with https://.'; }
+    if(!in_array($audience, array('all', 'admins', 'members'), true)){ $errors[] = 'Choose who sees it.'; }
+    foreach(array('Show from' => $from, 'Show until' => $until) as $label => $date){
+        if($date !== '' && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)){ $errors[] = $label.' must be a date.'; }
+    }
+    if($from !== '' && $until !== '' && $until < $from){ $errors[] = 'Show until must be on or after Show from.'; }
+    if(!empty($errors)){
+        set_flashdata(implode(' ', $errors));
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back);
+    }
+    $record = array('title' => $title, 'body' => $body, 'link_url' => $link, 'audience' => $audience,
+                    'show_from' => $from === '' ? NULL : $from, 'show_until' => $until === '' ? NULL : $until,
+                    'active' => post('active') == 1 ? 1 : 0, 'updated_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time());
+    if($id){
+        $this->model->update($id, $record, 'coffee_bulletins');
+    }else{
+        $record['subentity_id'] = $subentity_id;
+        $record['created_by']   = $record['updated_by'];
+        $record['created_at']   = time();
+        $id = (int) $this->model->insert($record, 'coffee_bulletins');
+    }
+    $this->_audit('SaveCoffeeBulletin', $subentity_id, 'bulletin '.$id.': '.$title.' ('.$audience.', '.($from ?: 'now').' to '.($until ?: 'no end').($record['active'] ? '' : ', hidden').')');
+    set_flashdata('Bulletin saved.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('ai/coffeebulletins/'.$subentity_id);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------- function COFFEEBULLETINDELETE -----------------------*/
+/*----------------------------------------------------------------------------*/
+  function coffeebulletindelete(){
+
+    $subentity_id = (int) post('subentity_id');
+    $back = 'ai/coffeebulletins/'.$subentity_id;
+    $this->_check_token($back);
+    $bulletin = $this->model->get_where((int) post('id'), 'coffee_bulletins');
+    if(!$this->_can_manage($subentity_id) || !$bulletin || (int) $bulletin->subentity_id !== $subentity_id){
+        redirect($back);
+    }
+    $this->model->query_bind('DELETE FROM coffee_bulletins WHERE id = :id', array('id' => (int) $bulletin->id));
+    $this->_audit('DeleteCoffeeBulletin', $subentity_id, 'bulletin '.(int) $bulletin->id.': '.$bulletin->title);
+    set_flashdata('Bulletin deleted.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------------- function MYCOFFEE -----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mycoffee(){ // a member's own Coffee Report (2026-10-30)
+
+    $this->_member_feature();
+    $ccmp_id = (int) $_SESSION['ccmp_rec_id'];
+    $member  = $this->model->get_where($ccmp_id, 'ccmps');
+    list($eligible, $reason) = coffee_member_eligible($member);
+
+    $data['config']      = coffee_member_config($ccmp_id);
+    $data['catalog']     = coffee_sections();
+    $data['catalog']['membership']['help'] = 'Current '.strtolower(CCMPS).' nationwide and in your '.strtolower(SUBENTITY).'.'; // the member version
+    $data['eligible']    = $eligible;
+    $data['reason']      = $reason;
+    $data['email']       = trim((string) ($member->email_address ?? ''));
+    $data['bot']         = coffee_org_bot();
+    $data['runs']        = $this->model->query_bind("SELECT id, kind, status, recipients, telegram_sent, message, started_at FROM coffee_runs
+                                                      WHERE ccmp_id = :m AND kind != 'preview' ORDER BY id DESC LIMIT 10", array('m' => $ccmp_id), 'object');
+    $data['preview']     = $_SESSION['mycoffee_preview'] ?? null;
+    unset($_SESSION['mycoffee_preview']);
+    $data['token']       = $this->_token();
+    $data['home_url']    = $this->_home_url();
+    $data['title_kind']  = 'member'; // BPA Member Portal in the top bar
+    $data['bc1']         = 'My '.CCMP;
+    $data['bc2']         = 'My Coffee Report';
+    $data['header']      = 'My Daily Coffee Report';
+    $data['view_module'] = 'ai';
+    $data['view_file']   = 'mycoffee';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- function MYCOFFEESUBMIT --------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mycoffeesubmit(){
+
+    $back = 'ai/mycoffee';
+    $this->_check_token($back);
+    $this->_member_feature();
+    $ccmp_id = (int) $_SESSION['ccmp_rec_id'];
+    list($eligible, $reason) = coffee_member_eligible($this->model->get_where($ccmp_id, 'ccmps'));
+
+    $errors = array();
+    $time = (string) post('send_time', true);
+    if(!preg_match('/^([01]\d|2[0-3]):[0-5]\d$/', $time)){ $errors[] = 'Choose a send time.'; }
+    $tz = (string) post('timezone', true);
+    if(!in_array($tz, DateTimeZone::listIdentifiers(DateTimeZone::PER_COUNTRY, 'US'), true) && $tz !== 'UTC'){ $errors[] = 'Choose a time zone from the list.'; }
+    $days = array_values(array_intersect(array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'), (array) ($_POST['days'] ?? array())));
+    if(!empty($errors)){
+        set_flashdata(implode(' ', $errors));
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back);
+    }
+
+    $catalog  = coffee_sections();
+    $order    = (array) ($_POST['section_order'] ?? array());
+    $sections = array();
+    foreach(coffee_member_sections() as $key){
+        $options = array();
+        foreach($catalog[$key]['options'] as $name => $option){
+            $options[$name] = substr(trim((string) ($_POST['opt_'.$key.'_'.$name] ?? '')), 0, 2000);
+        }
+        $sections[] = array('key' => $key, 'on' => !empty($_POST['section_on'][$key]), 'options' => $options, 'pos' => (int) ($order[$key] ?? 99));
+    }
+    usort($sections, function($a, $b){ return $a['pos'] <=> $b['pos']; });
+    foreach($sections as &$sec){ unset($sec['pos']); }
+    unset($sec);
+
+    $id = $this->_member_report_id($ccmp_id);
+    $current = $this->model->get_where($id, 'coffee_member_reports');
+    $enabled = post('enabled') == 1 && $eligible ? 1 : 0;
+    $this->model->update($id, array('enabled' => $enabled, 'send_time' => $time, 'timezone' => $tz, 'days' => implode(',', $days),
+        'sections' => json_encode($sections), 'telegram_enabled' => post('telegram_enabled') == 1 && trim((string) $current->telegram_chat_id) !== '' ? 1 : 0,
+        'updated_at' => time()), 'coffee_member_reports');
+    $on = implode(', ', array_map(function($s) use ($catalog){ return $catalog[$s['key']]['label']; }, array_filter($sections, function($s){ return $s['on']; })));
+    $this->_audit('SaveMyCoffeeReport', (int) ($_SESSION['ccmps_subentity'] ?? 0), 'member '.$ccmp_id.': '.($enabled ? 'on' : 'off').', '.$time.' '.$tz.'; '.$on);
+
+    if(post('enabled') == 1 && !$eligible){
+        set_flashdata('Saved, but your report stays off: '.$reason);
+        $_SESSION['flashmsgcolor'] = 0;
+    }else{
+        set_flashdata('Saved.'.($enabled ? '' : ' Your report is off; switch it on to have it sent.'));
+        $_SESSION['flashmsgcolor'] = 1;
+    }
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function MYCOFFEEPREVIEW --------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mycoffeepreview(){ // today's report on the page; nothing is sent
+
+    $this->_check_token('ai/mycoffee');
+    $this->_member_feature();
+    set_time_limit(180);
+    $run = coffee_member_run((int) $_SESSION['ccmp_rec_id'], 'preview');
+    $_SESSION['mycoffee_preview'] = array('text' => $run->report_text, 'message' => $run->message);
+    redirect('ai/mycoffee#preview');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function MYCOFFEETEST ---------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mycoffeetest(){ // email today's report to the member now
+
+    $this->_check_token('ai/mycoffee');
+    $this->_member_feature();
+    set_time_limit(180);
+    $run = coffee_member_run((int) $_SESSION['ccmp_rec_id'], 'test', array('email'));
+    set_flashdata($run->recipients > 0 ? 'Sent to your email. '.$run->message : 'Not sent. '.$run->message);
+    $_SESSION['flashmsgcolor'] = $run->recipients > 0 ? 1 : 0;
+    redirect('ai/mycoffee#preview');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function MYCOFFEETELEGRAM -------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mycoffeetelegram(){ // link: a code to send the bot; check: find the chat once Start is pressed; unlink
+
+    $back = 'ai/mycoffee#telegram';
+    $this->_check_token($back);
+    $this->_member_feature();
+    $ccmp_id = (int) $_SESSION['ccmp_rec_id'];
+    $id      = $this->_member_report_id($ccmp_id);
+    $action  = (string) post('action');
+    if($action === 'link'){
+        $this->model->update($id, array('telegram_link_code' => bin2hex(random_bytes(6)), 'updated_at' => time()), 'coffee_member_reports');
+        set_flashdata('Open the Telegram link below and press Start, then come back and click "I pressed Start".');
+        $_SESSION['flashmsgcolor'] = 1;
+    }elseif($action === 'check'){
+        $found = coffee_member_telegram_find($ccmp_id);
+        set_flashdata($found ? 'Telegram linked. You\'ll get a message there to confirm.' : 'Not found yet. Open the link, press Start in Telegram, wait a few seconds and try again.');
+        $_SESSION['flashmsgcolor'] = $found ? 1 : 0;
+        if($found){ $this->_audit('LinkMyCoffeeTelegram', (int) ($_SESSION['ccmps_subentity'] ?? 0), 'member '.$ccmp_id); }
+    }elseif($action === 'unlink'){
+        $this->model->update($id, array('telegram_chat_id' => '', 'telegram_enabled' => 0, 'telegram_link_code' => '', 'updated_at' => time()), 'coffee_member_reports');
+        $this->_audit('UnlinkMyCoffeeTelegram', (int) ($_SESSION['ccmps_subentity'] ?? 0), 'member '.$ccmp_id);
+        set_flashdata('Telegram unlinked.');
+        $_SESSION['flashmsgcolor'] = 1;
+    }
+    redirect($back);
   }
 
 /*----------------------------------------------------------------------------*/
 /*------------------------------- helpers ------------------------------------*/
 /*----------------------------------------------------------------------------*/
+    function _member_feature(){ // member Coffee Reports: a member login, and the organization has switched them on
+        if(empty($_SESSION['ccmp_logged_in']) || empty($_SESSION['ccmp_rec_id']) || (int) setting('COFFEE_MEMBER_REPORTS', 0) !== 1){
+            set_flashdata('The '.CCMP.' Coffee Report isn\'t available.');
+            $_SESSION['flashmsgcolor'] = 0;
+            redirect($this->_home_url());
+        }
+    }
+
+    function _member_report_id($ccmp_id){ // the member's row, made with the defaults the first time
+        $rows = $this->model->query_bind('SELECT id FROM coffee_member_reports WHERE ccmp_id = :m', array('m' => (int) $ccmp_id), 'object');
+        if(!empty($rows)){
+            return (int) $rows[0]->id;
+        }
+        $d = coffee_member_default_config((int) $ccmp_id);
+        return (int) $this->model->insert(array('ccmp_id' => (int) $ccmp_id, 'enabled' => 0, 'send_time' => $d->send_time, 'timezone' => $d->timezone,
+            'days' => $d->days, 'sections' => json_encode($d->sections), 'created_at' => time(), 'updated_at' => time()), 'coffee_member_reports');
+    }
+
     function _can_manage($subentity_id){ // National: ai/manage_national; a chapter: its own Chapter Admins
         if((int) $subentity_id === 0){
             return rbac_allowed('ai', 'manage_national');

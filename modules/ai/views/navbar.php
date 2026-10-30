@@ -21,7 +21,7 @@
           <div class="col-md-4">
               <br>
             <ul class="nav navbar-top-links navbar-left">
-                <li><span class="m-r"><?= title_bar_name('admin') ?></span></li>
+                <li><span class="m-r"><?= title_bar_name($title_kind ?? 'admin') ?></span></li>
             </ul>
           </div>  <!-- col 4 -->
                 <div class="col-md-3">

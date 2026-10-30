@@ -28,7 +28,12 @@
                 <?php endif; ?>
 
                 <p style="color: #676a6c;">A short email each morning for the admins: membership, events, posts, documents, plus weather, news and video sections you choose.
-                   The AI writes it up from the collected facts; without AI, the plain facts are sent.</p>
+                   The AI writes it up from the collected facts; without AI, the plain facts are sent. <strong>Bulletins</strong> you post are printed word for word at the top.</p>
+                <?php if($member_reports !== null): ?>
+                <p style="color: #676a6c;"><?= CCMPS ?>' own Coffee Reports: <?= (int) setting('COFFEE_MEMBER_REPORTS', 0) === 1
+                    ? '<strong>available</strong> (My Coffee Report in the '.strtolower(CCMP).' menu); '.(int) $member_reports.' switched on.'
+                    : 'switched off (System Settings, Features &amp; Policy).' ?></p>
+                <?php endif; ?>
 
                 <div class="table-responsive">
                 <table class="table table-striped" style="font-size: 16px;">
@@ -47,6 +52,7 @@
                         <td style="white-space: nowrap;">
                             <?php if($row->can_manage): ?>
                             <a class="btn btn-outline btn-primary btn-sm" href="<?= BASE_URL ?>ai/coffeesettings/<?= $row->subentity_id ?>" style="font-size: 15px;"><i class="fa fa-pencil"></i> <?= $r ? 'Settings' : 'Set up' ?></a>
+                            <a class="btn btn-outline btn-primary btn-sm" href="<?= BASE_URL ?>ai/coffeebulletins/<?= $row->subentity_id ?>" style="font-size: 15px;"><i class="fa fa-bullhorn"></i> Bulletins</a>
                             <?php endif; ?>
                             <?php if($row->last): ?>
                             <a class="btn btn-outline btn-default btn-sm" href="<?= BASE_URL ?>ai/coffeearchive/<?= $row->subentity_id ?>" style="font-size: 15px;"><i class="fa fa-archive"></i> Sent</a>

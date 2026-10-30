@@ -93,6 +93,33 @@ module.exports = [
   { type: 'p', text: "**Sent** (on the Coffee Report page) lists every report sent: when, whether the AI wrote it, how many emails went out, whether Telegram worked, and any notes. **View** shows the report and, underneath, exactly what each section collected, so you can check the facts." },
 ]},
 
+{ tab: "Bulletins", blocks: [
+  { type: 'p', text: "A **bulletin** is a short notice printed word for word at the top of the Coffee Reports, right under the title, for as long as you choose. The AI never rewrites it." },
+  { type: 'ol', items: [
+    "Open **EMS > System Admin > Coffee Report** (Chapter Admins: **EMS > Chapter Admin > Coffee Report**) and click **Bulletins** on your report's row.",
+    "Click **Add**. Give it a **title**, a short **message** and, if you like, a **link** (a full address starting with https://).",
+    "Choose where it goes: **every report** (admins and members), **admins' reports only**, or **members' own reports only**.",
+    "Set **Shows from** and **until** (both optional: blank means now, and no end), and click **Save**.",
+  ]},
+  { type: 'table', headers: ['Posted by', 'Appears on'], rows: [
+    ['**National** (System Admins)', "National's report, every chapter's admin report and every member's own report (as chosen)"],
+    ['**A chapter** (its Chapter Admins)', "That chapter's admin report and its members' own reports (as chosen)"],
+  ]},
+  { type: 'p', text: "The list shows whether each bulletin is **Showing** today, **Starts later**, has **Ended** or is **Hidden**. Untick **Shown** to take one down without deleting it; **Delete** asks for a second click." },
+]},
+
+{ tab: "Members' Own Reports", blocks: [
+  { type: 'p', text: "Members can also get their own Daily Coffee Report: bulletins first, then the sections they choose (membership numbers, events, Sunshine and Bulletin Board, weather, markets, news and sports). It is plain facts, without AI, sent to the member's own email address and, if they link it, their Telegram." },
+  { type: 'ul', items: [
+    "**Switch it on for the organization:** **System Settings > Features & Policy > Members can get their own Coffee Report**. Members then see **My Coffee Report** in their menu. The AI module must be on.",
+    "**Only Current members** can switch theirs on; anyone else sees why not. A member who stops being Current simply stops receiving it.",
+    "**Membership numbers for members** are the totals of Current members nationwide and in their chapter.",
+    "**Telegram:** members link their own Telegram to the organization's bot, which is the bot saved on **National's** Coffee Report (Step 4). Set that up first, and consider giving the bot the organization's name.",
+    "**Email volume:** every member report is one email a day. Brevo's free plan sends 300 a day; if many members switch it on, the Brevo plan must be sized to match.",
+    "The Coffee Report page shows how many members have theirs switched on.",
+  ]},
+]},
+
 { tab: "If Something Goes Wrong", blocks: [
   { type: 'table', headers: ['What you see', 'What to do'], rows: [
     ['"No AI connection ... plain facts"', 'Fine if intended. To have the AI write it, do Step 1'],

@@ -44,7 +44,7 @@ module.exports = [
 
   { type: 'h2', text: 'Features, Policies and Fields' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
-    ['SET-15', '**Features & Policy:** whether the front address shows the public website or the login; whether members may post sticky notes; minimum password length; new members must change their password; what chapters without their own AI connection get.', 'Built 22 Oct 2026 (AI setting 29 Oct)'],
+    ['SET-15', '**Features & Policy:** whether the front address shows the public website or the login; whether members may post sticky notes; minimum password length; new members must change their password; what chapters without their own AI connection get; whether members can have their own Coffee Report.', 'Built 22 Oct 2026 (AI setting 29 Oct, member Coffee Reports 30 Oct)'],
     ['SET-16', '**Financial:** current membership year, grace period, open dues payment year, new member dues proration (see Member Records).', 'Built 22 Oct 2026'],
     ['SET-17', '**Member Fields:** switch member-record fields the organization doesn\'t use off and on (see Member Records, MEM-06).', 'Built 27 Oct 2026'],
     ['SET-18', '**Document Library:** the library\'s chapter word, its three tag names, and the kanban column titles and which columns show (see Document Library).', 'Built 22 Oct 2026'],

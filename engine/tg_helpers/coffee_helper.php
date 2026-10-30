@@ -20,6 +20,7 @@
  *   coffee_send_email($to, $subject, $text)  through Brevo's API; WHATENV=dev sends only to DEVEMAIL
  *   coffee_send_telegram($token, $chat_id, $text)  Telegram Bot API sendMessage, split into parts (added 2026-10-29)
  *   coffee_telegram_chats($token)         the chats that have recently messaged the bot, to find a chat ID
+ *   coffee_chat_ids($text)                the report's Telegram chat IDs, one per line (2026-10-30: a list, each gets a copy)
  *
  * Bulletins (2026-10-30): coffee_bulletins table, printed word for word at the top of every report.
  *   coffee_bulletins_for($subentity_id, $audience, $date)  the bulletins showing on a report that day
@@ -653,13 +654,19 @@ function coffee_run(int $subentity_id, string $kind = 'scheduled', ?array $to = 
         }
         if (in_array('telegram', $channels, true) && !empty($config->telegram_enabled)) { // sent independently of email
             $token = vault_decrypt($config->telegram_token_enc ?? null);
-            if ($token === '' || trim((string) $config->telegram_chat_id) === '') {
+            $chats = coffee_chat_ids((string) $config->telegram_chat_id);
+            if ($token === '' || empty($chats)) {
                 $notes[] = 'Telegram: bot token or chat ID missing.';
             } else {
-                $tg = coffee_send_telegram($token, (string) $config->telegram_chat_id, $report);
-                $telegram_sent = $tg['ok'] ? 1 : 0;
-                $delivered = $delivered || $tg['ok'];
-                $notes[] = 'Telegram: '.$tg['message'];
+                $ok = 0;
+                $errors = array();
+                foreach ($chats as $chat) { // each chat its own copy; one failing doesn't stop the others
+                    $tg = coffee_send_telegram($token, $chat, $report);
+                    if ($tg['ok']) { $ok++; } else { $errors[] = $chat.' '.preg_replace('/^not sent \((.*)\)\.?$/', '($1)', $tg['message']); }
+                }
+                $telegram_sent = $ok > 0 ? 1 : 0;
+                $delivered = $delivered || $ok > 0;
+                $notes[] = 'Telegram: sent to '.$ok.' of '.count($chats).' chat'.(count($chats) > 1 ? 's' : '').'.'.($errors ? ' Not sent: '.implode('; ', $errors) : '');
             }
         }
         if (!$delivered) {
@@ -788,6 +795,11 @@ function coffee_send_telegram(string $token, string $chat_id, string $text): arr
         }
     }
     return array('ok' => true, 'message' => 'sent'.(count($parts) > 1 ? ' in '.count($parts).' parts' : '').'.');
+}
+
+function coffee_chat_ids(string $text): array {
+    // the report's Telegram chats: one ID per line (commas and spaces also separate), each once
+    return array_values(array_unique(array_filter(preg_split('/[\s,;]+/', trim($text)), 'strlen')));
 }
 
 function coffee_telegram_chats(string $token): array {

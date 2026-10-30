@@ -97,15 +97,15 @@
                                     <input type="password" class="form-control" name="telegram_token" id="telegram_token" autocomplete="new-password" spellcheck="false"
                                            placeholder="<?= !empty($config->telegram_token_enc) ? 'Saved (ends in '.out((string) $config->telegram_token_hint).'). Leave blank to keep it.' : 'From @BotFather, e.g. 123456789:ABC...' ?>">
                                 </div>
-                                <div style="flex: 0 1 240px;">
-                                    <label for="telegram_chat_id" style="font-weight: normal; font-size: 15px;">Chat ID</label>
-                                    <input type="text" class="form-control" name="telegram_chat_id" id="telegram_chat_id" value="<?= out((string) ($config->telegram_chat_id ?? '')) ?>" placeholder="e.g. 123456789 or -100...">
+                                <div style="flex: 0 1 260px;">
+                                    <label for="telegram_chat_id" style="font-weight: normal; font-size: 15px;">Chat IDs, one per line</label>
+                                    <textarea class="form-control" name="telegram_chat_id" id="telegram_chat_id" rows="3" placeholder="e.g. 123456789&#10;or a group: -100..."><?= out((string) ($config->telegram_chat_id ?? '')) ?></textarea>
                                 </div>
                             </div>
                             <?php if(!empty($config->telegram_token_enc)): ?>
                             <label style="font-weight: normal; margin-top: 6px;"><input type="checkbox" name="telegram_remove" value="1"> Remove the saved bot token</label><br>
                             <?php endif; ?>
-                            <small class="text-muted">Make a bot with <strong>@BotFather</strong> in Telegram and paste its token. Then message the bot (or add it to your admins' group and post there) and use <strong>Find chat ID</strong> below. The token is stored encrypted.</small>
+                            <small class="text-muted">Make a bot with <strong>@BotFather</strong> in Telegram and paste its token. Each person on the list presses <strong>Start</strong> on the bot once (bots can't message anyone first); <strong>Find chat ID</strong> below then shows their number. Each person gets their own copy. A group's ID (starting with -) works too: add the bot to the group and post there. The token is stored encrypted.</small>
                         </div>
                     </div>
 

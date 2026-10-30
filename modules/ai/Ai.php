@@ -434,13 +434,17 @@ class Ai extends Trongate {
         $errors[] = 'The email subject is required (150 characters at most).';
     }
     $tg_token = trim((string) ($_POST['telegram_token'] ?? '')); // not cleaned: the token's characters must stay as they are
-    $tg_chat  = trim((string) post('telegram_chat_id', true));
+    $tg_chats = coffee_chat_ids((string) post('telegram_chat_id', true)); // a list, one per line (2026-10-30)
     if($tg_token !== '' && !preg_match('/^\d{5,15}:[A-Za-z0-9_-]{30,50}$/', $tg_token)){
         $errors[] = 'That doesn\'t look like a Telegram bot token (it looks like 123456789:ABC...). Copy it again from @BotFather.';
     }
-    if($tg_chat !== '' && !preg_match('/^(-?\d{4,20}|@[A-Za-z][A-Za-z0-9_]{4,31})$/', $tg_chat)){
-        $errors[] = 'The Telegram chat ID is a number (groups start with -), or @channelname.';
+    foreach($tg_chats as $chat){
+        if(!preg_match('/^(-?\d{4,20}|@[A-Za-z][A-Za-z0-9_]{4,31})$/', $chat)){
+            $errors[] = 'Not a Telegram chat ID: '.out($chat).'. A chat ID is a number (groups start with -), or @channelname.';
+        }
     }
+    if(count($tg_chats) > 50){ $errors[] = 'At most 50 Telegram chats.'; }
+    $tg_chat = implode("\n", $tg_chats);
     $extra = array();
     foreach(_coffee_lines((string) ($_POST['extra_recipients'] ?? '')) as $line){
         if(filter_var($line, FILTER_VALIDATE_EMAIL)){ $extra[] = $line; } else { $errors[] = 'Not an email address: '.out($line).'.'; }
@@ -556,8 +560,8 @@ class Ai extends Trongate {
         redirect('ai/coffee');
     }
     $config = coffee_config($subentity_id);
-    if(empty($config->telegram_enabled) || empty($config->telegram_token_enc) || trim((string) $config->telegram_chat_id) === ''){
-        set_flashdata('Switch Telegram on and save a bot token and chat ID first.');
+    if(empty($config->telegram_enabled) || empty($config->telegram_token_enc) || empty(coffee_chat_ids((string) $config->telegram_chat_id))){
+        set_flashdata('Switch Telegram on and save a bot token and at least one chat ID first.');
         $_SESSION['flashmsgcolor'] = 0;
         redirect($back.'#telegram');
     }
@@ -595,7 +599,7 @@ class Ai extends Trongate {
         }else{
             $list = array();
             foreach($chats as $id => $name){ $list[] = $name.': '.$id; }
-            set_flashdata('Chats that messaged the bot - copy the number into Chat ID: '.implode('; ', $list));
+            set_flashdata('Chats that messaged the bot - copy each number into Chat IDs, one per line: '.implode('; ', $list));
             $_SESSION['flashmsgcolor'] = 1;
         }
     }catch(Throwable $e){

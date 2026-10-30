@@ -71,12 +71,12 @@ module.exports = [
 ]},
 
 { tab: "Step 4: Telegram (Optional)", blocks: [
-  { type: 'p', text: "The report can also go to a Telegram chat: one person, or a group with the admins in it. Email and Telegram are sent separately, so if one fails the other still arrives." },
+  { type: 'p', text: "The report can also go to Telegram: to several people, each getting their own copy, and/or to a group with the admins in it. Email and Telegram are sent separately, so if one fails the other still arrives." },
   { type: 'ol', items: [
     "In Telegram, open **@BotFather**, send **/newbot**, choose a name and a username ending in \"bot\". BotFather replies with a **token** like 123456789:ABC....",
-    "For a group: add the new bot to your admins' group. For yourself: open the bot and press **Start**. Then post any message (in the group or to the bot).",
+    "Each person who should get it opens the bot in Telegram (search for its username) and presses **Start**; bots can't message anyone first. For a group: add the bot to the group and post any message there.",
     "In the report's settings, tick **Send to Telegram too**, paste the **bot token**, and click **Save**.",
-    "Click **Find chat ID**. Honcho lists the chats that have messaged the bot; copy the number (groups start with -) into **Chat ID** and **Save** again.",
+    "Click **Find chat ID**. Honcho lists the chats that have messaged the bot; copy each number (groups start with -) into **Chat IDs**, one per line, and **Save** again. A person's chat ID is the same for every bot, so it doesn't change if you switch to a new bot (they press Start on the new one).",
     "Click **Telegram test**. The report should arrive in the chat.",
   ]},
   { type: 'p', text: "Long reports arrive as two or three messages. The token is stored encrypted; tick **Remove the saved bot token** and save to delete it. iMessage isn't available: it only works from an Apple computer, not a web server." },

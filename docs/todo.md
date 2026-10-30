@@ -107,6 +107,19 @@ The Coffee Report is the Honcho AI module's daily brief (AI plan phase 1: https:
 - [x] **Docs:** Developer's Guide Honcho AI chapter; Administrator's Guide chapter 7, AI and the Daily Coffee Report, a step-by-step walkthrough (2026-10-29).
 - [x] ~~Hermes-run Coffee Report for clients~~: replaced by the above (2026-10-29). Eric's own Hermes Coffee Brief stays separate.
 
+## Scheduler (add-on; plan approved 2026-10-30)
+
+Books a customer, an asset and a performer into one time slot (student + aircraft + instructor; patient + exam room + doctor; or customer + asset with no performer), with a conflict check across all of them. Plan: https://claude.ai/artifact/GyZQrdzfn2B197iL6GvRvD
+
+**Decisions (owner, 2026-10-30):** an **add-on** (`system_modules` `sched`, RBAC like PMS). **Staff book first** (phase 1), members from phase 2. **Performers may or may not have a login**: a performer with a login sees and manages only their own schedule (e.g. a freelance instructor who isn't a member); one without a login (e.g. a visiting examiner) is booked by staff and gets email and a calendar invite. **Chapters can own assets** (`subentity_id`). **Billing waits for the financial module.** The menu name ("Scheduler") and the three role names (customer / asset / performer, singular and plural) are System Settings rows; a **Use performers** switch. Build the day board ourselves (CSS grid + plain JS): FullCalendar's resource view needs a paid license per client.
+
+- [ ] **Phase 0, foundations:** migration (`sched_locations`, `sched_resource_types`, `sched_resources`, `sched_activity_types`, `sched_hours`, `sched_blocks`, `sched_reservations`, `sched_reservation_resources`), RBAC module and functions (view_board, book_self, book_others, manage_resources, manage_settings, view_reports), Scheduler settings tab; setup screens in the maintenance-table pattern (locations, resource types, resources with photos, activity types, hours).
+- [ ] **Phase 1, staff booking:** day board (a column per asset and performer, unavailable shading, filters, date picker, Today); reservation form with live conflict check and a locked transaction on Save; blocks (time off, closures); asset catalog and performer directory; performer-only logins.
+- [ ] **Phase 2, members book themselves:** My Reservations and New Reservation on the member home; Find a Time; confirmation, change and reminder emails (Brevo, cron like the Coffee Report).
+- [ ] **Phase 3, operations:** week and month views; repeating bookings; check-out and check-in (Hobbs/tach or any meter); no-shows; reports and Excel export. Billing hooks when the financial module is built.
+- [ ] **Phase 4, rules and reach:** qualifications (asset checkout, current medical or flight review) feeding home-page expiry alerts; iCal feed; phone app screen; Coffee Report "Today's schedule" section; Telegram/SMS reminders.
+- [ ] **Docs:** Developer's Guide chapter (Part II Add-ons) and an Administrator's Guide chapter, built with each phase.
+
 ## Developer's Guide
 
 - [x] **Conventions chapter** (Part III, `chapters/conventions.js`, 2026-10-27): where things go, database, security, screens, code style, docs and releases. Keep it current when a pattern is agreed.

@@ -1,0 +1,322 @@
+// ============================================================
+// generate.js — builds Honcho_Planning_Book.docx from guide.js (copied from the
+// Administrator's Guide generator 2026-10-30; adds plan Status sections and the
+// to-do list chapter read from ../todo.md)
+// ============================================================
+// Usage: node generate.js
+//
+// Heading levels: Part = title page, Chapter = Heading 1,
+// tab = Heading 2, block h2 = Heading 3, block h3 = Heading 4.
+// ============================================================
+
+const fs = require('fs');
+const {
+  Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell,
+  WidthType, BorderStyle, ShadingType, AlignmentType, PageOrientation,
+  LevelFormat, convertInchesToTwip
+} = require('docx');
+const path = require('path');
+
+const guide = require('./guide.js');
+
+// ---- docs/todo.md -> sections (one per "## " heading) ----
+// Checkboxes become ☐ / ☑, indented bullets stay under their item, markdown
+// links become "text (url)" and ~~struck~~ text loses its tildes.
+function todoSections() {
+  const md = fs.readFileSync(path.join(__dirname, '..', 'todo.md'), 'utf8');
+  const clean = t => t.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '$1 ($2)').replace(/~~([^~]+)~~/g, '$1');
+  const sections = [];
+  let sec = null, list = null;
+  for (const raw of md.split('\n')) {
+    const line = raw.replace(/\s+$/, '');
+    if (/^# /.test(line)) continue;
+    const h = line.match(/^##\s+(.*)/);
+    if (h) { sec = { tab: clean(h[1]), blocks: [] }; sections.push(sec); list = null; continue; }
+    if (!sec) continue;
+    if (!line.trim()) { list = null; continue; }
+    const h3 = line.match(/^###+\s+(.*)/);
+    if (h3) { sec.blocks.push({ type: 'h3', text: clean(h3[1]) }); list = null; continue; }
+    const item = line.match(/^(\s*)[-*]\s+(.*)/);
+    if (item) {
+      let text = clean(item[2]).replace(/^\[ \]\s*/, '\u2610 ').replace(/^\[x\]\s*/i, '\u2611 ');
+      if (item[1].length >= 2) text = '\u2003\u2013 ' + text;
+      if (!list) { list = { type: 'ul', items: [] }; sec.blocks.push(list); }
+      list.items.push(text);
+      continue;
+    }
+    if (list && /^\s{2,}\S/.test(line)) { list.items[list.items.length - 1] += ' ' + clean(line.trim()); continue; }
+    list = null;
+    sec.blocks.push({ type: 'p', text: clean(line.trim()) });
+  }
+  return sections;
+}
+
+const FONT = 'Calibri';
+const MONO = 'Consolas';
+
+// ---- Inline markup parser: **bold**  `code`  _italic_ ----
+// Italic delimiters require a non-word-character (or string boundary) on
+// the outside of each underscore, so genuine emphasis like "_for_" matches
+// but snake_case identifiers like "activate_code" never do.
+function parseRuns(text, baseOpts = {}) {
+  const runs = [];
+  const tokens = text.split(/(\*\*[^*]+\*\*|`[^`]+`|(?<![\w`])_[^_]+_(?![\w`]))/g);
+  for (const tok of tokens) {
+    if (!tok) continue;
+    if (tok.startsWith('**') && tok.endsWith('**')) {
+      runs.push(new TextRun({ text: tok.slice(2, -2), bold: true, font: FONT, ...baseOpts }));
+    } else if (tok.startsWith('`') && tok.endsWith('`')) {
+      runs.push(new TextRun({ text: tok.slice(1, -1), font: MONO, size: 20, color: 'B02020', ...baseOpts }));
+    } else if (tok.startsWith('_') && tok.endsWith('_')) {
+      runs.push(new TextRun({ text: tok.slice(1, -1), italics: true, font: FONT, ...baseOpts }));
+    } else {
+      runs.push(new TextRun({ text: tok, font: FONT, ...baseOpts }));
+    }
+  }
+  return runs;
+}
+
+function para(text, opts = {}) {
+  return new Paragraph({ children: parseRuns(text), spacing: { after: 160 }, ...opts });
+}
+
+function heading2(text) { // block h2 -> Word Heading 3
+  return new Paragraph({
+    text,
+    heading: HeadingLevel.HEADING_3,
+    spacing: { before: 320, after: 160 },
+  });
+}
+
+function heading3(text) { // block h3 -> Word Heading 4
+  return new Paragraph({
+    children: parseRuns(text),
+    heading: HeadingLevel.HEADING_4,
+    spacing: { before: 240, after: 120 },
+  });
+}
+
+function bulletList(items, ordered = false) {
+  return items.map((item, i) => new Paragraph({
+    children: parseRuns(item),
+    numbering: { reference: ordered ? 'ordered-list' : 'bullet-list', level: 0 },
+    spacing: { after: 100 },
+  }));
+}
+
+function alertBox(text, variant) {
+  const bg = variant === 'warning' ? 'FCF1DC' : 'D9EDF7';
+  const border = variant === 'warning' ? 'E8A33D' : '5BC0DE';
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 4, color: border },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: border },
+      left: { style: BorderStyle.SINGLE, size: 4, color: border },
+      right: { style: BorderStyle.SINGLE, size: 4, color: border },
+    },
+    rows: [
+      new TableRow({
+        children: [
+          new TableCell({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            shading: { type: ShadingType.CLEAR, fill: bg },
+            margins: { top: 160, bottom: 160, left: 200, right: 200 },
+            children: [new Paragraph({ children: parseRuns(text), spacing: { after: 0 } })],
+          }),
+        ],
+      }),
+    ],
+  });
+}
+
+function codeBlock(text) {
+  const lines = text.split('\n');
+  return new Table({
+    width: { size: 100, type: WidthType.PERCENTAGE },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 4, color: 'CCCCCC' },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: 'CCCCCC' },
+      left: { style: BorderStyle.SINGLE, size: 4, color: 'CCCCCC' },
+      right: { style: BorderStyle.SINGLE, size: 4, color: 'CCCCCC' },
+    },
+    rows: [
+      new TableRow({
+        children: [
+          new TableCell({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            shading: { type: ShadingType.CLEAR, fill: 'F5F5F5' },
+            margins: { top: 160, bottom: 160, left: 200, right: 200 },
+            children: lines.map(line => new Paragraph({
+              children: [new TextRun({ text: line || ' ', font: MONO, size: 19 })],
+              spacing: { after: 0 },
+            })),
+          }),
+        ],
+      }),
+    ],
+  });
+}
+
+function dataTable(headers, rows) {
+  const colWidthTotal = 9360; // DXA, fits within a US Letter page with 1" margins
+  const colWidth = Math.floor(colWidthTotal / headers.length);
+  const colWidths = headers.map(() => colWidth);
+
+  const headerRow = new TableRow({
+    tableHeader: true,
+    children: headers.map((h, i) => new TableCell({
+      width: { size: colWidths[i], type: WidthType.DXA },
+      shading: { type: ShadingType.CLEAR, fill: '2C3E50' },
+      margins: { top: 100, bottom: 100, left: 120, right: 120 },
+      children: [new Paragraph({
+        children: [new TextRun({ text: h, bold: true, color: 'FFFFFF', font: FONT, size: 20 })],
+        spacing: { after: 0 },
+      })],
+    })),
+  });
+
+  const bodyRows = rows.map((rowCells, rIdx) => new TableRow({
+    children: rowCells.map((cell, i) => new TableCell({
+      width: { size: colWidths[i], type: WidthType.DXA },
+      shading: { type: ShadingType.CLEAR, fill: rIdx % 2 === 0 ? 'FFFFFF' : 'F7F9FA' },
+      margins: { top: 100, bottom: 100, left: 120, right: 120 },
+      children: [new Paragraph({ children: parseRuns(cell, { size: 19 }), spacing: { after: 0 } })],
+    })),
+  }));
+
+  return new Table({
+    width: { size: colWidthTotal, type: WidthType.DXA },
+    columnWidths: colWidths,
+    rows: [headerRow, ...bodyRows],
+  });
+}
+
+// ---- Build the document body ----
+const children = [];
+
+// Title page content
+children.push(new Paragraph({
+  children: [new TextRun({ text: "Honcho Planning Book", bold: true, size: 56, font: FONT, color: '2C3E50' })],
+  spacing: { after: 200 },
+}));
+children.push(new Paragraph({
+  children: [new TextRun({ text: 'Every Honcho plan in one place: pricing, the AI assistant, member cards, payments and the store, the Scheduler, and the project to-do list. Private: not for distribution.', italics: true, size: 24, font: FONT, color: '666666' })],
+  spacing: { after: 100 },
+}));
+children.push(new Paragraph({
+  children: [new TextRun({ text: `Generated ${new Date().toISOString().slice(0, 10)}`, size: 20, font: FONT, color: '999999' })],
+  spacing: { after: 600 },
+}));
+
+let chapterNum = 0;
+
+guide.forEach(part => {
+  // Part title page
+  children.push(new Paragraph({
+    children: [new TextRun({ text: part.part, bold: true, size: 48, font: FONT, color: '2C3E50' })],
+    pageBreakBefore: true,
+    spacing: { before: 2400, after: 600 },
+  }));
+
+  part.chapters.forEach(chapter => {
+  chapterNum++;
+  children.push(new Paragraph({
+    text: `Chapter ${chapterNum}: ${chapter.title}`,
+    heading: HeadingLevel.HEADING_1,
+    pageBreakBefore: true,
+    spacing: { before: 0, after: 300 },
+  }));
+
+  let sections = chapter.todo ? todoSections() : chapter.sections;
+  if (chapter.status) sections = [{ tab: 'Status', blocks: chapter.status.map(t => ({ type: 'p', text: t })) }, ...sections];
+  sections.forEach((section, sIdx) => {
+  children.push(new Paragraph({
+    text: section.tab,
+    heading: HeadingLevel.HEADING_2,
+    spacing: { before: sIdx === 0 ? 0 : 500, after: 240 },
+    border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: '2C3E50', space: 8 } },
+  }));
+
+  section.blocks.forEach(block => {
+    switch (block.type) {
+      case 'h2':
+        children.push(heading2(block.text));
+        break;
+      case 'h3':
+        children.push(heading3(block.text));
+        break;
+      case 'p':
+        children.push(para(block.text));
+        break;
+      case 'ul':
+        children.push(...bulletList(block.items, false));
+        children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
+        break;
+      case 'ol':
+        children.push(...bulletList(block.items, true));
+        children.push(new Paragraph({ text: '', spacing: { after: 120 } }));
+        break;
+      case 'alert':
+        children.push(alertBox(block.text, block.variant));
+        children.push(new Paragraph({ text: '', spacing: { after: 200 } }));
+        break;
+      case 'code':
+        children.push(codeBlock(block.text));
+        children.push(new Paragraph({ text: '', spacing: { after: 200 } }));
+        break;
+      case 'table':
+        children.push(dataTable(block.headers, block.rows));
+        children.push(new Paragraph({ text: '', spacing: { after: 240 } }));
+        break;
+    }
+  });
+  });
+  });
+});
+
+const doc = new Document({
+  numbering: {
+    config: [
+      {
+        reference: 'bullet-list',
+        levels: [{ level: 0, format: LevelFormat.BULLET, text: '\u2022', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 460, hanging: 260 } } } }],
+      },
+      {
+        reference: 'ordered-list',
+        levels: [{ level: 0, format: LevelFormat.DECIMAL, text: '%1.', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 460, hanging: 260 } } } }],
+      },
+    ],
+  },
+  styles: {
+    default: {
+      document: { run: { font: FONT, size: 22 } },
+    },
+    paragraphStyles: [
+      { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+        run: { size: 40, bold: true, color: '2C3E50', font: FONT } },
+      { id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+        run: { size: 32, bold: true, color: '2C3E50', font: FONT } },
+      { id: 'Heading3', name: 'Heading 3', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+        run: { size: 26, bold: true, color: '1AB394', font: FONT } },
+      { id: 'Heading4', name: 'Heading 4', basedOn: 'Normal', next: 'Normal', quickFormat: true,
+        run: { size: 23, bold: true, color: '444444', font: FONT } },
+    ],
+  },
+  sections: [{
+    properties: {
+      page: {
+        size: { width: 12240, height: 15840 }, // US Letter, DXA
+        margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 },
+      },
+    },
+    children,
+  }],
+});
+
+Packer.toBuffer(doc).then(buffer => {
+  fs.writeFileSync(path.join(__dirname, 'Honcho_Planning_Book.docx'), buffer);
+  console.log('Written: Honcho_Planning_Book.docx');
+});
+
+// No web copy: this book is private (pricing and business plans), so it is not a Help page.

@@ -122,6 +122,15 @@ Books a customer, an asset and a performer into one time slot (student + aircraf
 - [ ] **Phase 6, rules and reach:** qualifications (asset checkout, current medical or flight review) feeding home-page expiry alerts; iCal feed; phone app screen; Coffee Report "Today's schedule" section; Telegram/SMS reminders.
 - [ ] **Docs:** Developer's Guide chapter (Part II Add-ons) and an Administrator's Guide chapter, built with each phase.
 
+## Financial module (planned; owner, 2026-10-30)
+
+Not designed yet. What it has to take over, as it stands:
+
+- [ ] **Accounts and billing:** customer account balances and Add Funds; charging Scheduler bookings (flight time from check-in, instructor time, rentals); invoices and payment records (builds on `ccmps_financial_transactions` and the Financial settings tab).
+- [ ] **Partnership statements to invoices:** the Scheduler Cost sharing sub-module (phase 5) says what each partner owes; this module invoices it and records payments.
+- [ ] **Event registration payments** into the host's account (National or the host chapter); see the Events item above.
+- [ ] **Point of Sale, the final part** (owner, 2026-10-30): taking payments in person, with several options. The options are still to be listed and decided: for example card readers (Stripe Terminal, Square, Clover), tap to pay on a phone, card on file, and cash or check recorded by staff. Plan it when the module is designed.
+
 ## Developer's Guide
 
 - [x] **Conventions chapter** (Part III, `chapters/conventions.js`, 2026-10-27): where things go, database, security, screens, code style, docs and releases. Keep it current when a pattern is agreed.

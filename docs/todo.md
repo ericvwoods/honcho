@@ -122,20 +122,32 @@ Books a customer, an asset and a performer into one time slot (student + aircraf
 - [ ] **Phase 6, rules and reach:** qualifications (asset checkout, current medical or flight review) feeding home-page expiry alerts; iCal feed; phone app screen; Coffee Report "Today's schedule" section; Telegram/SMS reminders.
 - [ ] **Docs:** Developer's Guide chapter (Part II Add-ons) and an Administrator's Guide chapter, built with each phase.
 
-## Financial and Store modules (plan drafted 2026-10-30, awaiting decisions)
+## Payments, Financial and Store (plan approved 2026-10-30; money work comes before the Scheduler)
 
-Plan: https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR. **Financial** (add-on): dues with automatic renewal (yearly, or monthly for flying clubs), invoices for flight schools and clubs (lines from Scheduler check-ins, card on file, prepaid balance, monthly statements, partnership cost-share invoices), accounts, reports and accounting export, chapters paid into their own accounts, and **Point of Sale last** (options comparison first). **Store** (add-on): branded merchandise (hats, T-shirts) with options and stock, cart, checkout, orders with shipping/pickup and tracking, receipt PDFs. A store order is an invoice paid at once, so both share one payments/receipts base. Recommended provider Stripe (Checkout, Billing, Connect, Terminal, Tax) behind one `payment_helper.php`, keys in the vault, webhooks mark things paid. Dues *status* stays in Core. Existing: `ccmps_financial_transactions` (empty locally), `honcho_financial`, `ccmps.paypal_txn_id`, Financial settings tab and admins group, unused `store` layout.
+Plan: https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR
 
-- [ ] **Decisions:** Stripe first (PayPal later?); Financial and Store as add-ons; one National account first or chapters' own from the start; stocked merchandise vs print on demand; sales tax (Stripe Tax vs entered rates; ask BPA's accountant); order of work vs the Scheduler.
-- [ ] **F0 Payment base:** Stripe connection screen (vault, test mode), webhook with `fin_provider_events`; `fin_items`, `fin_accounts`, `fin_invoices`/`_lines`, `fin_payments`; PDF receipt/invoice template.
-- [ ] **F1 Dues online:** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report.
-- [ ] **S1 Store:** `store_products`/`_variants`, cart, checkout, `store_orders`/`_lines`, emails, receipts, Store Admins group.
-- [ ] **F2 Automatic renewal:** `fin_subscriptions`, card update page, failed-card emails, grace period.
-- [ ] **F3 Invoicing and accounts:** Scheduler check-in invoices, card on file, prepaid balance (Add Funds), monthly statements, cost-share invoices, overdue booking block, QuickBooks-style export.
-- [ ] **F4 Chapters get paid:** Stripe Connect for event registration and chapter dues.
-- [ ] **S2 Store extras:** shipping by weight, event pickup, sales tax, store reports, optional print on demand.
-- [ ] **F5 Point of Sale** (owner, 2026-10-30, the final part): options comparison (Stripe Terminal, Tap to Pay, Square, cash/check), then counter sales.
-- [ ] Legacy ETL: dues history into the new tables.
+**Decisions (owner, 2026-10-30):**
+- **PayPal first**, because it does recurring payments: Checkout buttons (PayPal account or card), Subscriptions for automatic renewal, Vault for card on file. Called through PayPal's REST API from one `payment_helper.php`, since PayPal has no official PHP subscriptions SDK; Stripe or Square can be added later as other providers. Client ID and secret in the vault; a verified webhook marks things paid.
+- **Where things go:** dues payments and auto-renewal in **Core** (every member organization needs them). Accounts, invoices, card on file, statements, expenses and POS are the **Financial add-on**. **Store** is an add-on.
+- **National's PayPal account to start**; chapters' own accounts and chapter stores (chapter-logo merchandise) later.
+- Merchandise stocked first, print on demand later. **Sales tax at rates entered in Honcho.**
+- **Expense receipts** (parts, supplies, etc.) are uploaded with the expense entry and filed behind the scenes in the Document Library (Receipts, by asset and year, access limited), through a shared `dms_file_upload()` helper that other modules reuse.
+
+Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financial`, `ccmps.paypal_txn_id`, Financial settings tab and Financial Admins group, unused `store` layout.
+
+- [ ] **F0 Payment base (Core):** PayPal connection screen (vault, sandbox first), verified webhook + `fin_provider_events`; `fin_items`, `fin_invoices`/`_lines`, `fin_payments`; PDF receipt template.
+- [ ] **F1 Dues online (Core):** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report.
+- [ ] **F2 Automatic renewal (Core):** first check in the sandbox: card-only subscribers without a PayPal account, changing the dues amount on existing subscriptions, fees vs the legacy site. Then subscription plans per dues type, `fin_subscriptions`, reminders, failed-payment emails, grace period.
+- [ ] **S1 Store, National (add-on):** `store_products`/`_variants`, cart, PayPal checkout, entered tax rates, `store_orders`/`_lines`, emails, receipts, Store Admins group.
+- [ ] **F3 Invoicing, accounts and expenses (Financial add-on):** `fin_accounts`, invoices, card on file, prepaid balance, monthly statements, accounting export; `fin_expenses` with receipt upload to the Document Library (`dms_file_upload()`); later the Scheduler's check-in invoices and cost-share invoices.
+- [ ] **F4 Chapters get paid:** chapters connect their own PayPal accounts for events and chapter dues; **chapter stores** for chapter-logo merchandise.
+- [ ] **S2 Store extras:** shipping by weight, event pickup, store reports, print on demand.
+- [ ] **F5 Point of Sale** (the final part): compare PayPal's in-person options with a second provider, then counter sales.
+- [ ] Legacy ETL: dues history (and `paypal_txn_id`) into the new tables.
+
+## Reporting module (owner, 2026-10-30)
+
+- [ ] **Gather the requirements** with Eric before any design: who uses reports (members, chapter/national admins, staff, partners); which reports each module needs (membership, dues, financial, store, Scheduler utilization and maintenance, DMS, events); on-screen vs Excel/PDF vs emailed on a schedule; saved and shared reports (like Flight Schedule Pro's Saved Items); filters and scope limits (a Chapter Admin sees only their chapter); whether users build their own. Then write a plan.
 
 ## Developer's Guide
 

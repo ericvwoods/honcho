@@ -2953,6 +2953,10 @@
          "locations"
         ],
         [
+         "Markets (`markets`, 2026-10-30)",
+         "Eric's markets.py and currency.py, rebuilt on free sources. **Tickers:** Yahoo Finance's spark feed, one request for every symbol (`query1.finance.yahoo.com/v7/finance/spark?symbols=...&range=5d&interval=1d`, no key, unofficial); bars dated today in the exchange's time zone are dropped, so it always reports the last completed close and its change. **Oil and rates:** FRED's official API (`api.stlouisfed.org/fred/series/observations`, series DCOILWTICO, DPRIME, MORTGAGE30US) with the free `FRED_API_KEY` from `.env`; without a key those lines say so. FRED's website CSV refuses scripted downloads, so it isn't used. **Exchange rates:** open.er-api.com (no key; its terms ask for the credit line the report prints). Up to 30 tickers and 20 currencies; unknown ones say not found."
+        ],
+        [
          "News (`news`)",
          "Google News RSS per topic, junk filter and similar-title dedupe, as `ai_news.py`",
          "topics, hours, most headlines"
@@ -2961,10 +2965,6 @@
          "YouTube (`youtube`)",
          "public channel feeds `youtube.com/feeds/videos.xml` (no API key)",
          "Name | channel ID lines, hours"
-        ],
-        [
-         "Markets (`markets`, 2026-10-30)",
-         "Eric's markets.py and currency.py, rebuilt on free sources. **Tickers:** Yahoo Finance's spark feed, one request for every symbol (`query1.finance.yahoo.com/v7/finance/spark?symbols=...&range=5d&interval=1d`, no key, unofficial); bars dated today in the exchange's time zone are dropped, so it always reports the last completed close and its change. **Oil and rates:** FRED's official API (`api.stlouisfed.org/fred/series/observations`, series DCOILWTICO, DPRIME, MORTGAGE30US) with the free `FRED_API_KEY` from `.env`; without a key those lines say so. FRED's website CSV refuses scripted downloads, so it isn't used. **Exchange rates:** open.er-api.com (no key; its terms ask for the credit line the report prints). Up to 30 tickers and 20 currencies; unknown ones say not found."
         ],
         [
          "Sports (`sports`, 2026-10-29)",

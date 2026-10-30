@@ -30,9 +30,7 @@ function coffee_sections(): array {
         'posts'      => array('label' => 'Sunshine and Bulletin Board', 'help' => 'Posts showing today on the member home.', 'options' => array()),
         'documents'  => array('label' => 'Documents waiting for approval', 'help' => 'Document Library items in Pending Approval.', 'options' => array()),
         'weather'    => array('label' => 'Weather', 'help' => 'Today\'s forecast for each location (wttr.in).', 'options' => array('locations' => array('Locations, one per line (City, ST)', ''))),
-        'news'       => array('label' => 'News', 'help' => 'Recent headlines for each search topic (Google News).', 'options' => array('topics' => array('Search topics, one per line', "Black Pilots of America\naviation careers diversity"), 'hours' => array('Look back (hours)', '36'), 'max' => array('Most headlines', '8'))),
-        'youtube'    => array('label' => 'YouTube channels', 'help' => 'New videos from chosen channels (public channel feeds).', 'options' => array('channels' => array('Channels, one per line: Name | channel ID', ''), 'hours' => array('Look back (hours)', '30'))),
-        // Markets (owner, 2026-10-30; Eric's markets.py + currency.py, free sources, no keys). Options: [label, default, type, group]
+        // Markets (owner, 2026-10-30; after Weather, before News; Eric's markets.py + currency.py, free sources, no keys). Options: [label, default, type, group]
         'markets'    => array('label' => 'Markets', 'help' => 'The previous trading day\'s close and change for your ticker symbols (Yahoo Finance), oil and interest rates (FRED; needs a free FRED API key on the server), and exchange rates.', 'options' => array(
             'tickers'  => array('Ticker symbols, one per line: stocks and funds (AAPL), indices (^GSPC S&P 500, ^DJI Dow, ^IXIC Nasdaq), crypto (BTC-USD), gold (GC=F), oil (CL=F)', "^GSPC\n^DJI\n^IXIC\nBTC-USD\nGC=F"),
             'wti'      => array('WTI crude oil (spot)', '0', 'check', 'Oil and rates (FRED, needs FRED_API_KEY)'),
@@ -40,6 +38,8 @@ function coffee_sections(): array {
             'mortgage' => array('30-year fixed mortgage rate', '0', 'check', 'Oil and rates (FRED, needs FRED_API_KEY)'),
             'fx'       => array('Exchange rates from US dollars, one currency code per line (EUR, GBP, GTQ...)', ''),
         )),
+        'news'       => array('label' => 'News', 'help' => 'Recent headlines for each search topic (Google News).', 'options' => array('topics' => array('Search topics, one per line', "Black Pilots of America\naviation careers diversity"), 'hours' => array('Look back (hours)', '36'), 'max' => array('Most headlines', '8'))),
+        'youtube'    => array('label' => 'YouTube channels', 'help' => 'New videos from chosen channels (public channel feeds).', 'options' => array('channels' => array('Channels, one per line: Name | channel ID', ''), 'hours' => array('Look back (hours)', '30'))),
         // Sports (owner, 2026-10-29): ESPN's public scoreboard feeds, no key. Options: [label, default, type, group]
         'sports'     => array('label' => 'Sports', 'help' => 'Yesterday\'s results and today\'s games for the leagues you tick; golf leaderboards (ESPN scoreboards).', 'options' => array(
             'nfl'  => array('NFL', '0', 'check', 'Leagues'),

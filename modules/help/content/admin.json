@@ -1227,6 +1227,11 @@
          "Locations, one per line, e.g. \"Chicago, IL\""
         ],
         [
+         "**Markets**",
+         "The previous trading day's close and change for each ticker symbol you list (stocks and funds such as AAPL, indices ^GSPC S&P 500, ^DJI Dow, ^IXIC Nasdaq, Bitcoin BTC-USD, gold GC=F, oil CL=F); WTI crude, the Prime Rate and the 30-year mortgage rate; exchange rates from US dollars",
+         "Ticker symbols, one per line; tick oil and rates (these need a free FRED API key on the server, set by whoever looks after it); currency codes, one per line (EUR, GTQ)"
+        ],
+        [
          "**News**",
          "Recent headlines for each search topic, duplicates removed",
          "Topics, one per line; hours to look back; most headlines"
@@ -1235,11 +1240,6 @@
          "**YouTube channels**",
          "New videos from chosen channels",
          "One per line: \"Name | channel ID\" (the ID starts with UC); hours to look back"
-        ],
-        [
-         "**Markets**",
-         "The previous trading day's close and change for each ticker symbol you list (stocks and funds such as AAPL, indices ^GSPC S&P 500, ^DJI Dow, ^IXIC Nasdaq, Bitcoin BTC-USD, gold GC=F, oil CL=F); WTI crude, the Prime Rate and the 30-year mortgage rate; exchange rates from US dollars",
-         "Ticker symbols, one per line; tick oil and rates (these need a free FRED API key on the server, set by whoever looks after it); currency codes, one per line (EUR, GTQ)"
         ],
         [
          "**Sports**",

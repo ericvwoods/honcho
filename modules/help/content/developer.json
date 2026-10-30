@@ -2963,6 +2963,10 @@
          "Name | channel ID lines, hours"
         ],
         [
+         "Markets (`markets`, 2026-10-30)",
+         "Eric's markets.py and currency.py, rebuilt on free sources. **Tickers:** Yahoo Finance's spark feed, one request for every symbol (`query1.finance.yahoo.com/v7/finance/spark?symbols=...&range=5d&interval=1d`, no key, unofficial); bars dated today in the exchange's time zone are dropped, so it always reports the last completed close and its change. **Oil and rates:** FRED's official API (`api.stlouisfed.org/fred/series/observations`, series DCOILWTICO, DPRIME, MORTGAGE30US) with the free `FRED_API_KEY` from `.env`; without a key those lines say so. FRED's website CSV refuses scripted downloads, so it isn't used. **Exchange rates:** open.er-api.com (no key; its terms ask for the credit line the report prints). Up to 30 tickers and 20 currencies; unknown ones say not found."
+        ],
+        [
          "Sports (`sports`, 2026-10-29)",
          "ESPN's public scoreboards `site.api.espn.com/apis/site/v2/sports/<sport>/<league>/scoreboard[?dates=YYYYMMDD]`: yesterday's finals and today's games (times in the report's time zone); golf: this week's event, round, leaderboard from `competitors` by `order`, ties marked T and kept at the cut-off. No key, but unofficial: a feed can change without notice, and commercial use isn't covered by any published terms",
          "leagues `nfl` `mlb` `nba` `wnba` `mls` `nwsl` (1/0); tours `pga` `lpga` `dp` `champions` (off, 10, 25, full). Option definitions carry a type (`check`, `board`) and a group heading for the settings form"
@@ -2977,7 +2981,7 @@
         "**Email:** `coffee_send_email()` through Brevo's API (`BREVO_API_KEY`) from `MAIL_FROM_EMAIL` (a sender verified in Brevo), one message per recipient. `WHATENV=dev` sends everything to `DEVEMAIL` only. Recipients: the scope's admins (`coffee_scope_admin_emails()`: National = `system_admin` or `ccmp_admin`; a chapter = its `subentity_admin`s) plus extra addresses.",
         "**Telegram** (added 2026-10-29, migration `2026-10-29-coffee-telegram.sql`): each scope can also send its report to a Telegram chat (one person, or a group of its admins). Bot token stored encrypted (`telegram_token_enc`, `vault_encrypt()`), chat ID plain. `coffee_send_telegram()` splits at 3,900 characters on a blank line, line break or space, like `telegram_delivery.py`; `coffee_telegram_chats()` (the **Find chat ID** button) lists who has messaged the bot through `getUpdates`. Email and Telegram are sent independently; a run counts as delivered if either worked (`coffee_runs.telegram_sent`). **iMessage isn't possible** from a server: it needs the Messages app on a Mac. SMS (through Brevo, once its US registration is approved) is the server-side alternative.",
         "**Schedule:** the server's cron calls `ai/coffeecron/<COFFEE_CRON_KEY>` every 15 minutes (no login; the key is checked with `hash_equals`). `coffee_due_reports()` picks enabled reports whose local time has passed today on one of their days; `last_sent_on` is set before the run so it can't be sent twice. Staging/production crontab: `*/15 * * * * docker exec honcho-honcho-staging-1 curl -s http://localhost/ai/coffeecron/<key> > /dev/null`.",
-        "**Not ported** from the Python brief: Outlook/Google calendar and iMessage (personal sign-ins, Mac only), the local Qwen triage, the Hermes compile and Telegram (later, optional). Markets/currency need a paid data key; add them as sections if a client wants them. Check each data source's terms before commercial use."
+        "**Not ported** from the Python brief: Outlook/Google calendar and iMessage (personal sign-ins, Mac only), the local Qwen triage and the Hermes compile. Telegram was added on 29 Oct and Markets (with currency) on 30 Oct 2026 on free sources instead of the paid FMP key. Check each data source's terms before commercial use."
        ]
       }
      ]
@@ -4108,7 +4112,7 @@
        "rows": [
         [
          "From .env",
-         "`BASE_URL`, `WHATENV`, `JWT_SECRET`, `HONCHO_MODULE`, `BREVO_*`, `SYNC_BREVO`, `SMTP_*` (database settings are in `config/database.php`)"
+         "`BASE_URL`, `WHATENV`, `JWT_SECRET`, `HONCHO_MODULE`, `BREVO_*`, `SYNC_BREVO`, `SMTP_*`, and for the AI module `VAULT_KEY`, `MAIL_FROM_EMAIL`, `MAIL_FROM_NAME`, `COFFEE_CRON_KEY`, `FRED_API_KEY` (database settings are in `config/database.php`)"
         ],
         [
          "Engine & routing",

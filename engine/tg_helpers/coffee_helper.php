@@ -32,6 +32,14 @@ function coffee_sections(): array {
         'weather'    => array('label' => 'Weather', 'help' => 'Today\'s forecast for each location (wttr.in).', 'options' => array('locations' => array('Locations, one per line (City, ST)', ''))),
         'news'       => array('label' => 'News', 'help' => 'Recent headlines for each search topic (Google News).', 'options' => array('topics' => array('Search topics, one per line', "Black Pilots of America\naviation careers diversity"), 'hours' => array('Look back (hours)', '36'), 'max' => array('Most headlines', '8'))),
         'youtube'    => array('label' => 'YouTube channels', 'help' => 'New videos from chosen channels (public channel feeds).', 'options' => array('channels' => array('Channels, one per line: Name | channel ID', ''), 'hours' => array('Look back (hours)', '30'))),
+        // Markets (owner, 2026-10-30; Eric's markets.py + currency.py, free sources, no keys). Options: [label, default, type, group]
+        'markets'    => array('label' => 'Markets', 'help' => 'The previous trading day\'s close and change for your ticker symbols (Yahoo Finance), oil and interest rates (FRED; needs a free FRED API key on the server), and exchange rates.', 'options' => array(
+            'tickers'  => array('Ticker symbols, one per line: stocks and funds (AAPL), indices (^GSPC S&P 500, ^DJI Dow, ^IXIC Nasdaq), crypto (BTC-USD), gold (GC=F), oil (CL=F)', "^GSPC\n^DJI\n^IXIC\nBTC-USD\nGC=F"),
+            'wti'      => array('WTI crude oil (spot)', '0', 'check', 'Oil and rates (FRED, needs FRED_API_KEY)'),
+            'prime'    => array('U.S. Prime Rate', '0', 'check', 'Oil and rates (FRED, needs FRED_API_KEY)'),
+            'mortgage' => array('30-year fixed mortgage rate', '0', 'check', 'Oil and rates (FRED, needs FRED_API_KEY)'),
+            'fx'       => array('Exchange rates from US dollars, one currency code per line (EUR, GBP, GTQ...)', ''),
+        )),
         // Sports (owner, 2026-10-29): ESPN's public scoreboard feeds, no key. Options: [label, default, type, group]
         'sports'     => array('label' => 'Sports', 'help' => 'Yesterday\'s results and today\'s games for the leagues you tick; golf leaderboards (ESPN scoreboards).', 'options' => array(
             'nfl'  => array('NFL', '0', 'check', 'Leagues'),
@@ -309,6 +317,98 @@ function _coffee_section_youtube(int $subentity_id, array $options): string {
         }
     }
     return empty($lines) ? 'No new videos.' : implode("\n", $lines);
+}
+
+function _coffee_section_markets(int $subentity_id, array $options): string {
+    // Previous close only: today's bar (still trading, or a crypto day not yet over) is dropped.
+    // Yahoo Finance's spark feed (one request for every ticker, no key; unofficial), FRED's official API (free key, FRED_API_KEY),
+    // open.er-api.com (no key; its terms ask for the credit line below).
+    $lines = array();
+    $symbols = array();
+    foreach (preg_split('/[\s,]+/', strtoupper((string) ($options['tickers'] ?? ''))) as $sym) {
+        if (preg_match('/^[\^A-Z0-9.=\-]{1,15}$/', $sym) && !in_array($sym, $symbols, true)) {
+            $symbols[] = $sym;
+        }
+    }
+    $symbols = array_slice($symbols, 0, 30);
+    if ($symbols) {
+        try {
+            $data = json_decode(_coffee_http_get('https://query1.finance.yahoo.com/v7/finance/spark?symbols='.implode(',', array_map('rawurlencode', $symbols)).'&range=5d&interval=1d'), true) ?: array();
+            $found = array();
+            foreach ((array) ($data['spark']['result'] ?? array()) as $r) {
+                $found[strtoupper((string) ($r['symbol'] ?? ''))] = $r['response'][0] ?? null;
+            }
+            foreach ($symbols as $sym) {
+                $r = $found[$sym] ?? null;
+                if (!$r || empty($r['timestamp'])) { $lines[] = $sym.': not found'; continue; }
+                try { $tz = new DateTimeZone((string) ($r['meta']['exchangeTimezoneName'] ?? 'America/New_York')); } catch (Throwable $e) { $tz = new DateTimeZone('America/New_York'); }
+                $today  = (new DateTime('now', $tz))->format('Y-m-d');
+                $closes = array();
+                foreach ($r['timestamp'] as $i => $ts) {
+                    $close = $r['indicators']['quote'][0]['close'][$i] ?? null;
+                    $day   = (new DateTime('@'.(int) $ts))->setTimezone($tz);
+                    if ($close !== null && $day->format('Y-m-d') < $today) {
+                        $closes[] = array($day, (float) $close);
+                    }
+                }
+                if (!$closes) { $lines[] = $sym.': no close yet'; continue; }
+                [$day, $close] = end($closes);
+                $prev  = count($closes) > 1 ? $closes[count($closes) - 2][1] : null;
+                $name  = trim((string) ($r['meta']['shortName'] ?? $r['meta']['longName'] ?? ''));
+                $dp    = $close < 1 ? 4 : 2;
+                $line  = ($name !== '' && strcasecmp($name, $sym) !== 0 ? $name.' ('.$sym.')' : $sym).': '.number_format($close, $dp);
+                if ($prev) {
+                    $chg   = $close - $prev;
+                    $line .= ', '.($chg > 0 ? 'up ' : ($chg < 0 ? 'down ' : 'unchanged ')).($chg != 0 ? number_format(abs($chg), $dp).' ('.sprintf('%+.2f', $chg / $prev * 100).'%)' : '');
+                }
+                $lines[] = rtrim($line).' at the '.$day->format('D M j').' close';
+            }
+        } catch (Throwable $e) {
+            $lines[] = 'Stock prices: unavailable';
+        }
+    }
+
+    $fred = array('wti' => array('DCOILWTICO', 'WTI crude oil', '$%s a barrel', 2), 'prime' => array('DPRIME', 'U.S. Prime Rate', '%s%%', 2),
+                  'mortgage' => array('MORTGAGE30US', '30-year fixed mortgage (weekly average)', '%s%%', 2));
+    $fred_key = (string) env('FRED_API_KEY', '');
+    foreach ($fred as $key => $f) {
+        if (empty($options[$key])) { continue; }
+        if ($fred_key === '') { $lines[] = $f[1].': needs a free FRED API key (FRED_API_KEY on the server)'; continue; }
+        try {
+            $rows = array();
+            $obs  = json_decode(_coffee_http_get('https://api.stlouisfed.org/fred/series/observations?series_id='.$f[0].'&api_key='.rawurlencode($fred_key)
+                                                 .'&file_type=json&observation_start='.date('Y-m-d', strtotime('-45 days'))), true) ?: array();
+            foreach ((array) ($obs['observations'] ?? array()) as $o) {
+                if (is_numeric($o['value'] ?? '')) { $rows[] = array((string) $o['date'], (float) $o['value']); }
+            }
+            if (!$rows) { $lines[] = $f[1].': no recent value'; continue; }
+            [$date, $value] = end($rows);
+            $line = $f[1].': '.sprintf($f[2], number_format($value, $f[3]));
+            if ($key === 'wti' && count($rows) > 1) {
+                $chg   = $value - $rows[count($rows) - 2][1];
+                $line .= $chg != 0 ? ', '.($chg > 0 ? 'up ' : 'down ').number_format(abs($chg), 2) : ', unchanged';
+            }
+            $lines[] = $line.' (as of '.date('M j', strtotime($date)).')';
+        } catch (Throwable $e) {
+            $lines[] = $f[1].': unavailable';
+        }
+    }
+
+    $codes = array_slice(array_values(array_unique(array_filter(preg_split('/[\s,]+/', strtoupper((string) ($options['fx'] ?? ''))), function ($c) { return preg_match('/^[A-Z]{3}$/', $c); }))), 0, 20);
+    if ($codes) {
+        try {
+            $fx = json_decode(_coffee_http_get('https://open.er-api.com/v6/latest/USD'), true) ?: array();
+            $when = !empty($fx['time_last_update_unix']) ? ' (as of '.date('M j', (int) $fx['time_last_update_unix']).'; rates by exchangerate-api.com)' : '';
+            $parts = array();
+            foreach ($codes as $c) {
+                $parts[] = isset($fx['rates'][$c]) ? number_format((float) $fx['rates'][$c], $fx['rates'][$c] < 10 ? 4 : 2).' '.$c : $c.' not found';
+            }
+            $lines[] = '1 US dollar = '.implode('; ', $parts).$when;
+        } catch (Throwable $e) {
+            $lines[] = 'Exchange rates: unavailable';
+        }
+    }
+    return $lines ? implode("\n", $lines) : 'No tickers, rates or currencies chosen.';
 }
 
 function _coffee_section_sports(int $subentity_id, array $options): string {

@@ -93,7 +93,7 @@ const sections = [
 { tab: "config.php", blocks: [
   { type: 'p', text: "What stays in `config/config.php` after the Settings plan (2026-10-25: 124 constants; 60 unused ones and three duplicate definitions were deleted):" },
   { type: 'table', headers: ['Group', 'Constants'], rows: [
-    ['From .env', '`BASE_URL`, `WHATENV`, `JWT_SECRET`, `HONCHO_MODULE`, `BREVO_*`, `SYNC_BREVO`, `SMTP_*` (database settings are in `config/database.php`)'],
+    ['From .env', '`BASE_URL`, `WHATENV`, `JWT_SECRET`, `HONCHO_MODULE`, `BREVO_*`, `SYNC_BREVO`, `SMTP_*`, and for the AI module `VAULT_KEY`, `MAIL_FROM_EMAIL`, `MAIL_FROM_NAME`, `COFFEE_CRON_KEY`, `FRED_API_KEY` (database settings are in `config/database.php`)'],
     ['Engine & routing', '`APPPATH`, `ADMINTHEME`, `DEFAULT_MODULE`, `DEFAULT_CONTROLLER`, `DEFAULT_METHOD`, `ERROR_404`, `REQUEST_TYPE`, `MODULE_ASSETS_TRIGGER`, `ENV` (keep `prod`: `dev` redirects to trongate_control), `DEBUGGING`, `VERSION_RELEASE`'],
     ['Structure', '`CCMPS_AUX_MODULE`, `CCMPS_ADDR_TABLE`, `CCMP_SECOND_FACTOR_FIELD_NAME`, `SYSTEM_SECOND_FACTOR_FIELD_NAME`, `SUBENTITY_NATIONAL_ID`, `CCMP_LIFETIME_YEAR`, `DEFAULT_CCMP_USER_LEVEL`, `DMS_FL_SAVE_BAK`, `AUDITLOGGER`'],
     ['Account behaviour', '`DEFAULT_CCMP_PASSWORD` (to be replaced: to-do), `DEFAULT_USRNMEQEMAIL`, `HONCHO_DEFAULT_USRNMEQEMAIL`, `SKIP_CHG_DEFAULT_USERNAME`, `SKIP_NEW_ACCT_CONFIRMATION`, `USERS_IDNUM_REQ`, `WELCOME_BYPASS_2ND_FACTOR`'],

@@ -136,7 +136,7 @@ Plan: https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR
 Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financial`, `ccmps.paypal_txn_id`, Financial settings tab and Financial Admins group, unused `store` layout.
 
 - [ ] **F0 Payment base (Core):** PayPal connection screen (vault, sandbox first), verified webhook + `fin_provider_events`; `fin_items`, `fin_invoices`/`_lines`, `fin_payments`; PDF receipt template.
-- [ ] **F1 Dues online (Core):** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report.
+- [ ] **F1 Dues online (Core):** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report. **Must include National recording dues received** (found 2026-10-30, requirement MEM-21): renewing a member already creates a National dues record (`ccmps_financial_transactions`, MEM-20), but nothing ever sets `rec_by_national` / clears the balance, so renewed members stay Pending.
 - [ ] **F2 Automatic renewal (Core):** first check in the sandbox: card-only subscribers without a PayPal account, changing the dues amount on existing subscriptions, fees vs the legacy site. Then subscription plans per dues type, `fin_subscriptions`, reminders, failed-payment emails, grace period.
 - [ ] **S1 Store, National (add-on):** `store_products`/`_variants`, cart, PayPal checkout, entered tax rates, `store_orders`/`_lines`, emails, receipts, Store Admins group.
 - [ ] **F3 Invoicing, accounts and expenses (Financial add-on):** `fin_accounts`, invoices, card on file, prepaid balance, monthly statements, accounting export; `fin_expenses` with receipt upload to the Document Library (`dms_file_upload()`); later the Scheduler's check-in invoices and cost-share invoices.
@@ -148,6 +148,12 @@ Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financi
 ## Reporting module (owner, 2026-10-30)
 
 - [ ] **Gather the requirements** with Eric before any design: who uses reports (members, chapter/national admins, staff, partners); which reports each module needs (membership, dues, financial, store, Scheduler utilization and maintenance, DMS, events); on-screen vs Excel/PDF vs emailed on a schedule; saved and shared reports (like Flight Schedule Pro's Saved Items); filters and scope limits (a Chapter Admin sees only their chapter); whether users build their own. Then write a plan.
+
+## Requirements book (`docs/requirements`, started 2026-10-30)
+
+- [x] Format approved with the Member Cards chapter; Core chapters written and checked against the code (2026-10-30): Signing In, Permissions, Member Records, Cards, Settings, Document Library, Member Home and Website, Help.
+- [ ] Convert to requirements form: Honcho AI (AI-), Payments/Financial/Store (PAY-), Scheduler (SCHED-), Pricing (PRICE-).
+- [ ] Add chapters: Projects (PMS, built), the staff back office (Honcho), the phone app; later Event Module, Participants (Student), Reporting, Emulation as they're planned.
 
 ## Developer's Guide
 
@@ -245,6 +251,8 @@ Keep Inspinia for now; don't hand-write a copy of it. Move gradually to plain Bo
     - A list or export of eligible voters for elections.
 
 ## Small fixes
+
+- [ ] Help pages: **Close** goes to the home page; make it return to where the person came from (copy `Cards::_return_url()`), requirement HELP-08 (found 2026-10-30).
 
 - [ ] `ccmps_aux.ccmp_id` has a foreign key to the old `ccmps_org` table, not `ccmps`, so a member created since that copy was made can't get an aux row (2 such members on the Mac, including the `portaladmin` account added 2026-10-27). Point the key at `ccmps`, add the missing rows, then decide whether `ccmps_org` can go.
 

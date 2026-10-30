@@ -2,7 +2,7 @@
  "key": "member",
  "title": "Honcho Member Guide",
  "subtitle": "How to use the member portal.",
- "generated": "2026-10-29",
+ "generated": "2026-10-30",
  "chapters": [
   {
    "num": 1,
@@ -60,11 +60,11 @@
       },
       {
        "type": "h2",
-       "text": "Creating an Account"
+       "text": "Getting an Account"
       },
       {
        "type": "p",
-       "text": "If you're a member but have never logged in, click **Create an account** on the login page. Enter your email address as your username, choose a password, repeat it and submit."
+       "text": "Your login is created for you by your Chapter Admin or the membership office; you can't create one yourself on the login page. If you're a member and have never logged in, ask your Chapter Admin for your username and starting password."
       },
       {
        "type": "h2",

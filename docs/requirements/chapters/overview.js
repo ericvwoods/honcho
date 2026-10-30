@@ -6,22 +6,35 @@ module.exports = [
 
 { tab: "How to Use This Book", blocks: [
   { type: 'p', text: "This book says what Honcho does and what it will do, feature by feature: Honcho's high-level requirements. The **user stories** with acceptance criteria will live in the Project Management module and name the requirement they deliver; **how to use** each feature is in the Member and Administrator's Guides; **how it works inside** is in the Developer's Guide." },
-  { type: 'p', text: "Each feature is a chapter in the same shape: **Purpose** (what and who for), **Requirements** (numbered, such as CARD-08, each marked **Built**, **In progress**, **Planned** or **Changed** with a date), **Business Rules**, **Decisions** (dated), **Not Included** and **Related Documents**. Requirement numbers never change or get reused, so user stories and test results can always point to them." },
-  { type: 'alert', variant: 'info', text: "**Being converted (started 30 Oct 2026):** chapters are rewritten one at a time from the original plans, checked against the code. Done: **Digital Membership Cards** (Chapter 4). Still in the old plan form: Pricing, the AI Assistant, Payments and Store, the Scheduler. Core features that never had a plan (logins, member records, permissions, settings, the Document Library, the Website, Help) will be added as new chapters." },
-  { type: 'p', text: "The last part is the **project to-do list**, rebuilt from `docs/todo.md` every time the book is made. The book is the master copy: when a feature changes, its chapter is updated and the book rebuilt (`node generate.js` in `docs/requirements`), and the new `Honcho_Requirements.docx` is copied to Downloads." },
-  { type: 'alert', variant: 'warning', text: "**Private:** this book holds pricing and business plans. It lives in `docs/plans`, which is never deployed to a server, and is not one of the Help pages. Share it only on purpose." },
+  { type: 'p', text: "Each feature chapter has the same shape: **Purpose** (what and who for), **Requirements** (numbered, such as CARD-08), **Business Rules**, **Known Problems**, **Decisions** (dated) and **Related Documents**. Requirement numbers never change or get reused, so user stories and test results can always point to them." },
+  { type: 'table', headers: ['Status', 'Means'], rows: [
+    ['**Built**', 'Working, with the date it was built ("before Oct 2026" = part of the original system). Deployed to staging unless the chapter says otherwise'],
+    ['**In progress**', 'Built but not working yet (for example, waiting on an outside account)'],
+    ['**Planned**', 'Agreed, not built'],
+    ['**Changed**', 'Built differently from the plan, with the reason'],
+    ['**Not working** / **Not built**', 'Exists but broken, or expected but missing'],
+  ]},
+  { type: 'p', text: "Every Core chapter was checked against the code on 30 Oct 2026, not copied from the plans. The last part is the **project to-do list**, rebuilt from `docs/todo.md` every time the book is made. The book is the master copy: when a feature changes, its chapter is updated and the book rebuilt (`node generate.js` in `docs/requirements`), and the new `Honcho_Requirements.docx` is copied to Downloads." },
+  { type: 'alert', variant: 'warning', text: "**Private:** this book holds pricing and business plans. It lives in `docs/requirements`, which is never deployed to a server, and is not one of the Help pages. Share it only on purpose." },
 ]},
 
-{ tab: "Plans at a Glance", blocks: [
-  { type: 'table', headers: ['Chapter', 'Plan', 'Status (30 Oct 2026)', 'To-do section'], rows: [
-    ['2', '**Pricing and AI Billing**', 'Options written; decisions not yet made', 'Core product and client configurations'],
-    ['3', '**Honcho AI Assistant**', 'Phases 0 and 1 (AI connections, Daily Coffee Report) built on the Mac, not deployed; tier plan awaiting sign-off', 'Daily Coffee Report and AI connections'],
-    ['4', '**Digital Membership Cards**', 'Requirements format. My Card built; Google Wallet built but waiting on Google; door check-in next', 'Digital membership cards'],
-    ['5', '**Payments, Financial and Store**', 'Decisions made 30 Oct; nothing built; F0 (payment base) is next', 'Payments, Financial and Store'],
-    ['6', '**Scheduler**', 'Decisions made 30 Oct; nothing built; starts after the money work', 'Scheduler'],
-    ['7', '**Project To-Do List**', 'Everything else: security, logins, RBAC, Settings, CMS, legacy data load, Participants, Reporting module and more', 'All'],
+{ tab: "Chapters at a Glance", blocks: [
+  { type: 'table', headers: ['Ch.', 'Feature', 'Prefix', 'Where it stands (30 Oct 2026)'], rows: [
+    ['2', '**Signing In and Accounts**', 'LOGIN', 'Built; Forgot password broken (rebuild planned); real two-step codes and "view as a member" planned'],
+    ['3', '**Permissions and Security Groups**', 'PERM', 'Built and used by Projects, the Library, the Website, Settings and AI; older member-record checks still to convert'],
+    ['4', '**Member Records**', 'MEM', 'Built; recording dues received by National not built, so renewals stay Pending; Student module and voter rules planned'],
+    ['5', '**Digital Membership Cards**', 'CARD', 'Card built; Google Wallet waiting on Google; door check-in next'],
+    ['6', '**System Settings and Branding**', 'SET', 'Built; colors still typed into screens move to the scheme gradually'],
+    ['7', '**Document Library**', 'DOC', 'Built; replacing a file and moving to Approved on the board are broken'],
+    ['8', '**Member Home and Website**', 'WEB', 'Built; public website ready but off for BPA; Event Module planned'],
+    ['9', '**Help and Guides**', 'HELP', 'Built'],
+    ['10', '**Honcho AI Assistant**', 'AI', 'Phases 0 and 1 built (Coffee Report); still in plan form'],
+    ['11', '**Payments, Financial and Store**', 'PAY', 'Decided 30 Oct; nothing built; still in plan form'],
+    ['12', '**Scheduler**', 'SCHED', 'Decided 30 Oct; nothing built; still in plan form'],
+    ['13', '**Pricing and AI Billing**', 'PRICE', 'Options written; decisions not made; plan form'],
+    ['14', '**Project To-Do List**', '', 'Everything else, from `docs/todo.md`'],
   ]},
-  { type: 'p', text: "Plans that were carried out step by step in the to-do list rather than written as separate pages (RBAC, Settings, the Website, the theme, the legacy data load) are in Chapter 7." },
+  { type: 'p', text: "**Still to add:** Projects (the PMS add-on, built), the staff back office (Honcho), the phone app, and later the Event Module, Participants (Student), Reporting and Emulation chapters as they are planned." },
 ]},
 
 { tab: "Order of Work", blocks: [

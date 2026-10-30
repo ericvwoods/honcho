@@ -104,7 +104,7 @@ module.exports = [
   { type: 'table', headers: ['Document', 'Where'], rows: [
     ['Member Guide', 'Chapter 2, For Every Member: Your Membership Card'],
     ["Developer's Guide", 'CCMPS chapter: Member Cards (`card_helper.php`, `wallet_helper.php`, `welcome-cards`, the phone API)'],
-    ['To-do list', 'Digital membership cards (Chapter 7 of this book)'],
+    ['To-do list', 'Digital membership cards (the last chapter of this book)'],
     ['Original plan, 26 Oct 2026', 'https://claude.ai/artifact/3QVrXXRpZryjkkj21NLftc'],
   ]},
 ]},

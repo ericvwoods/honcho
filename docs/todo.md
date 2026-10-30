@@ -122,14 +122,20 @@ Books a customer, an asset and a performer into one time slot (student + aircraf
 - [ ] **Phase 6, rules and reach:** qualifications (asset checkout, current medical or flight review) feeding home-page expiry alerts; iCal feed; phone app screen; Coffee Report "Today's schedule" section; Telegram/SMS reminders.
 - [ ] **Docs:** Developer's Guide chapter (Part II Add-ons) and an Administrator's Guide chapter, built with each phase.
 
-## Financial module (planned; owner, 2026-10-30)
+## Financial and Store modules (plan drafted 2026-10-30, awaiting decisions)
 
-Not designed yet. What it has to take over, as it stands:
+Plan: https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR. **Financial** (add-on): dues with automatic renewal (yearly, or monthly for flying clubs), invoices for flight schools and clubs (lines from Scheduler check-ins, card on file, prepaid balance, monthly statements, partnership cost-share invoices), accounts, reports and accounting export, chapters paid into their own accounts, and **Point of Sale last** (options comparison first). **Store** (add-on): branded merchandise (hats, T-shirts) with options and stock, cart, checkout, orders with shipping/pickup and tracking, receipt PDFs. A store order is an invoice paid at once, so both share one payments/receipts base. Recommended provider Stripe (Checkout, Billing, Connect, Terminal, Tax) behind one `payment_helper.php`, keys in the vault, webhooks mark things paid. Dues *status* stays in Core. Existing: `ccmps_financial_transactions` (empty locally), `honcho_financial`, `ccmps.paypal_txn_id`, Financial settings tab and admins group, unused `store` layout.
 
-- [ ] **Accounts and billing:** customer account balances and Add Funds; charging Scheduler bookings (flight time from check-in, instructor time, rentals); invoices and payment records (builds on `ccmps_financial_transactions` and the Financial settings tab).
-- [ ] **Partnership statements to invoices:** the Scheduler Cost sharing sub-module (phase 5) says what each partner owes; this module invoices it and records payments.
-- [ ] **Event registration payments** into the host's account (National or the host chapter); see the Events item above.
-- [ ] **Point of Sale, the final part** (owner, 2026-10-30): taking payments in person, with several options. The options are still to be listed and decided: for example card readers (Stripe Terminal, Square, Clover), tap to pay on a phone, card on file, and cash or check recorded by staff. Plan it when the module is designed.
+- [ ] **Decisions:** Stripe first (PayPal later?); Financial and Store as add-ons; one National account first or chapters' own from the start; stocked merchandise vs print on demand; sales tax (Stripe Tax vs entered rates; ask BPA's accountant); order of work vs the Scheduler.
+- [ ] **F0 Payment base:** Stripe connection screen (vault, test mode), webhook with `fin_provider_events`; `fin_items`, `fin_accounts`, `fin_invoices`/`_lines`, `fin_payments`; PDF receipt/invoice template.
+- [ ] **F1 Dues online:** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report.
+- [ ] **S1 Store:** `store_products`/`_variants`, cart, checkout, `store_orders`/`_lines`, emails, receipts, Store Admins group.
+- [ ] **F2 Automatic renewal:** `fin_subscriptions`, card update page, failed-card emails, grace period.
+- [ ] **F3 Invoicing and accounts:** Scheduler check-in invoices, card on file, prepaid balance (Add Funds), monthly statements, cost-share invoices, overdue booking block, QuickBooks-style export.
+- [ ] **F4 Chapters get paid:** Stripe Connect for event registration and chapter dues.
+- [ ] **S2 Store extras:** shipping by weight, event pickup, sales tax, store reports, optional print on demand.
+- [ ] **F5 Point of Sale** (owner, 2026-10-30, the final part): options comparison (Stripe Terminal, Tap to Pay, Square, cash/check), then counter sales.
+- [ ] Legacy ETL: dues history into the new tables.
 
 ## Developer's Guide
 

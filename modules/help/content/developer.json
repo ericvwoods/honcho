@@ -2,7 +2,7 @@
  "key": "developer",
  "title": "Honcho Developer's Guide",
  "subtitle": "How Honcho is built, configured, deployed and maintained.",
- "generated": "2026-10-29",
+ "generated": "2026-10-30",
  "chapters": [
   {
    "num": 1,
@@ -3671,7 +3671,7 @@
         ],
         [
          "`~/stack/staging.env`",
-         "Honcho's settings for staging (`BASE_URL`, `WHATENV=dev` so email goes only to the test address, `JWT_SECRET`, Brevo). The `DB_*` settings come from the compose file"
+         "Honcho's settings for staging (`BASE_URL`, `WHATENV`, `JWT_SECRET`, Brevo, `MAIL_FROM_EMAIL` / `MAIL_FROM_NAME`, `COFFEE_CRON_KEY`). The `DB_*` settings come from the compose file. **`WHATENV=prod` since 2026-10-30**, so the Coffee Report reaches its real list (today only the Coffee Report reads `WHATENV`; check before any other module starts emailing on staging). The droplet's crontab runs `docker exec honcho-honcho-staging-1 curl -s http://localhost/ai/coffeecron/<COFFEE_CRON_KEY>` every 15 minutes"
         ],
         [
          "`~/stack/Caddyfile`",

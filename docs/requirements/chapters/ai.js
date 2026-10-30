@@ -18,7 +18,7 @@ module.exports = [
 ]},
 
 { tab: "Requirements", blocks: [
-  { type: 'p', text: "Everything marked Built is on the Mac only (built 29-30 Oct 2026), not yet deployed to staging." },
+  { type: 'p', text: "Everything marked Built was built 29-30 Oct 2026 and deployed to staging on 30 Oct 2026 (Help-linked guides and Sports included)." },
 
   { type: 'h2', text: 'AI Connections' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
@@ -49,7 +49,7 @@ module.exports = [
     ['AI-17', 'Optionally also to a **Telegram** chat (one person or a group): bot token stored encrypted, chat ID, a **Find chat ID** helper; email and Telegram are sent separately, so one failing doesn\'t stop the other; long reports arrive in parts.', 'Built 29 Oct 2026'],
     ['AI-18', '**Preview** (shows today\'s report, sends nothing), **Send a test** to me or to everyone on the list, **Telegram test**.', 'Built 29 Oct 2026'],
     ['AI-19', "**Sent** list: every run with time, whether the AI wrote it, emails sent, Telegram result and notes; **View** shows the report and exactly what each section collected.", 'Built 29 Oct 2026'],
-    ['AI-20', "The server checks every 15 minutes and sends each report once on each ticked day at its time. The check is protected by a secret key.", 'Built 29 Oct 2026 (Mac). Staging needs the key, the mail sender settings and the scheduler line'],
+    ['AI-20', "The server checks every 15 minutes and sends each report once on each ticked day at its time. The check is protected by a secret key.", 'Built 29 Oct 2026; running on staging since 30 Oct 2026 (first scheduled report sent that day)'],
     ['AI-21', 'Emails come from a sender address verified with Brevo (the organization\'s own domain); a test server sends everything to the developer only.', 'Built 29 Oct 2026; BPA\'s domain verified with Brevo 29 Oct'],
     ['AI-22', 'Each admin gets a morning brief tailored to their role and chapter.', '**Changed:** replaced by one Coffee Report per scope (AI-13), built from Eric\'s Python Coffee Brief design (decided 29 Oct 2026)'],
     ['AI-23', 'A "Today\'s schedule" section from the Scheduler, and a "Yesterday\'s payments and new orders" section from Payments.', 'Planned (with those modules)'],
@@ -78,7 +78,8 @@ module.exports = [
 
 { tab: "Known Problems", blocks: [
   { type: 'ul', items: [
-    "Not deployed yet; until an Anthropic API key is entered, reports go out as plain facts.",
+    "Until an Anthropic API key is entered (on staging and the Mac), reports go out as plain facts.",
+    "National's Telegram delivery on staging is off until the bot token is pasted on the staging settings page (a token encrypted on one server can't be read on another).",
     "The sports results come from ESPN's free but unofficial feeds: they can change without notice (that section then says \"unavailable\"), and their terms for commercial use aren't published. Review before selling Sports to clients.",
   ]},
 ]},

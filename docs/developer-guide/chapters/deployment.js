@@ -154,7 +154,7 @@ const sections = [
   { type: 'table', headers: ['Where', 'What'], rows: [
     ['`~/honcho`', 'Git clone of the repo (read-only deploy key `~/.ssh/honcho_deploy`, added in GitHub under Settings → Deploy keys)'],
     ['`~/stack/.env`', 'Compose settings: `COMPOSE_FILE` (points at the repo\'s compose file), `STACK_DIR`, `DATA_DIR`, `MARIADB_ROOT_PASSWORD`, `STAGING_DB_PASSWORD`. Template: `deploy/stack.env.example`'],
-    ['`~/stack/staging.env`', 'Honcho\'s settings for staging (`BASE_URL`, `WHATENV=dev` so email goes only to the test address, `JWT_SECRET`, Brevo). The `DB_*` settings come from the compose file'],
+    ['`~/stack/staging.env`', 'Honcho\'s settings for staging (`BASE_URL`, `WHATENV`, `JWT_SECRET`, Brevo, `MAIL_FROM_EMAIL` / `MAIL_FROM_NAME`, `COFFEE_CRON_KEY`). The `DB_*` settings come from the compose file. **`WHATENV=prod` since 2026-10-30**, so the Coffee Report reaches its real list (today only the Coffee Report reads `WHATENV`; check before any other module starts emailing on staging). The droplet\'s crontab runs `docker exec honcho-honcho-staging-1 curl -s http://localhost/ai/coffeecron/<COFFEE_CRON_KEY>` every 15 minutes'],
     ['`~/stack/Caddyfile`', 'Web addresses and the staging lock. Template: `deploy/Caddyfile.example`'],
     ['`~/stack/uat-login.txt`', 'The staging basic-auth username and password'],
     ['`/srv/honcho/mariadb`', 'Database files'],

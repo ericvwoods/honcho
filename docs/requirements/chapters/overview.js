@@ -28,7 +28,7 @@ module.exports = [
     ['7', '**Document Library**', 'DOC', 'Built; replacing a file and moving to Approved on the board are broken'],
     ['8', '**Member Home and Website**', 'WEB', 'Built; public website ready but off for BPA; Event Module planned'],
     ['9', '**Help and Guides**', 'HELP', 'Built'],
-    ['10', '**Honcho AI and the Coffee Report**', 'AI', 'Connections and Coffee Report built on the Mac, not deployed; alerts, connector, chat and changes planned; two-tier split awaiting sign-off'],
+    ['10', '**Honcho AI and the Coffee Report**', 'AI', 'Connections and Coffee Report built and on staging (daily report running); alerts, connector, chat and changes planned; two-tier split awaiting sign-off'],
     ['11', '**Payments, Financial and Store**', 'PAY', 'Decided 30 Oct; nothing built; still in plan form'],
     ['12', '**Scheduler**', 'SCHED', 'Decided 30 Oct; nothing built; still in plan form'],
     ['13', '**Pricing and AI Billing**', 'PRICE', 'Options written; decisions not made; plan form'],
@@ -40,7 +40,7 @@ module.exports = [
 { tab: "Order of Work", blocks: [
   { type: 'p', text: "What has been agreed so far, in order:" },
   { type: 'ol', items: [
-    "**Deploy what's waiting** to staging (everything since the last deploy: AI phases 0 and 1, Help pages, guides, side menu and library fixes), with its migrations and settings. Always asked first.",
+    "**Deploy what's waiting:** done 30 Oct 2026 (AI phases 0 and 1, the Coffee Report with its scheduler, Help pages, guides, side menu and library fixes).",
     "**Money first** (decided 30 Oct): payment base, dues online and automatic renewal (Core), then the National store.",
     "**Invoicing, accounts and expenses** (Financial add-on), built alongside the **Scheduler**'s first phases, which need it for flight-time invoices.",
     "**Chapters' own accounts and stores**, then the Scheduler's maintenance and cost-sharing phases, then **Point of Sale** last.",

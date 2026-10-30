@@ -173,7 +173,7 @@ Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financi
 - [ ] **Per-user preferences table** (core): `system_user_preferences` (login id = `trongate_users.id`, preference key, value) instead of columns on `ccmps` (`tab_setting` ... `button_setting`, `fontsize`, `mfontsize`, `language`) and on `honcho_user_accounts` (`fontsize`, `tfontsize`). One store for members and staff; new preferences need no table change; the Font pop-up then works for staff too; member reloads (ETL) don't touch preferences. Do before the ETL (requested 2026-10-27).
 - [ ] Chapters still to write: Welcome, Participants. (Configuration written 2026-10-25.) "Deploying on DigitalOcean" started 2026-10-08 (`chapters/deployment.js`); keep it updated as each DO-xx step is done.
 - [ ] CCMPS Testing tab describes `lib/CcmpsPermissions.php` and `run_integration_tests.sh`, which aren't in the project.
-- [ ] Delete the old `CCMPS_Developer_Documentation.docx` (superseded).
+- [x] Deleted the old `CCMPS_Developer_Documentation.docx` (superseded by the Honcho Developer's Guide), 2026-10-30.
 - [ ] Install Node.js on this Mac so the guide can be rebuilt without a temporary copy.
 - [x] Rebuilt both guides 2026-10-25 (temporary Node 20 + docx 9 in the session's scratch folder); fixed two unescaped quotes in `chapters/cms.js` that had stopped the Developer's Guide from building. Run `node --check chapters/*.js` after editing a chapter.
 

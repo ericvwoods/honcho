@@ -78,7 +78,7 @@ module.exports = [
     ['FIN-26', "**Billing plans:** annual, quarterly or monthly; a quarterly or monthly plan splits a charge into dated installments, and a member whose installments are up to date counts as paid. Recorded by hand in phase 1; charged automatically with Payments.", 'Planned (phase 1; automatic with Payments)'],
     ['FIN-27', "**Corrections:** **Void** (a mistake) and **Waive** (with a reason), Financial Admins only, logged, though BPA has no refund or waiver policy today.", 'Planned (phase 1)'],
     ['FIN-28', "**Permissions** as separate functions: record chapter dues (Chapter Admins), settle National invoices and dues settings (Financial Admins), so a chapter treasurer role can be added later as a group with no code change.", 'Planned (phase 1)'],
-    ['FIN-29', "**Retire the Family member type:** Family members become **Regular** if they hold a pilot or mechanic certificate, otherwise **Associate**; then the type is switched off.", 'Planned (phase 1)'],
+    ['FIN-29', "**Retire the Family member type:** Family members become **Regular** if they hold a pilot or mechanic certificate (Sport, Recreational, Private, Commercial, ATP, A&P, Drone Pilot or Military, including the military pilot tick; not Student or Grandfathered), otherwise **Associate**; then the type is switched off. On the test data all 34 become Associate.", 'Planned (phase 1)'],
   ]},
 
   { type: 'h2', text: 'Invoicing and Accounts (add-on)' },

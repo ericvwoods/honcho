@@ -31,6 +31,16 @@ module.exports = [
     "**Exceptions.** **Lifetime** and **Honorary** members are always Current. The **Family** membership is being removed. There is no refund or waiver policy today.",
     "**Still to define:** which receipts and reports are needed.",
   ]},
+  { type: 'h2', text: 'Clarifications (owner, 31 Oct 2026)' },
+  { type: 'ul', items: [
+    "**Chapter dues paid is what triggers National's invoice,** so National can't be paid before the chapter.",
+    "**Installments:** a member paying monthly or quarterly who is up to date counts as **Current**.",
+    "**Family members** become **Regular** if they hold any pilot or mechanic certificate, otherwise **Associate**.",
+    "**Proration:** National and each chapter have their **own proration schedule**; each chooses which member types are prorated (BPA National: Regular only). Proration is for **new members only**, never for renewals, even late ones.",
+    "**Chapter at Large** (a special chapter): no chapter dues today but may have them later; its dues are **billed by and paid to National**. All member types are available in it unless a Financial Admin switches some off.",
+    "**The National invoice** is emailed to the member as soon as their chapter dues are recorded, ideally with a **PayPal link carrying the amount**, to speed payment.",
+    "**Year label:** dues due September 30, 2026 are for membership year **2027**.",
+  ]},
 ]},
 
 { tab: "What Exists Today", blocks: [
@@ -46,15 +56,29 @@ module.exports = [
 { tab: "Requirements", blocks: [
   { type: 'h2', text: 'Dues (Core, first)' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
-    ['FIN-01', '**Dues types and amounts** per member type, with National dues (as today) and optionally chapter dues collected together; amounts changed by Financial Admins, effective for a chosen dues year.', 'Planned (phase 1)'],
-    ['FIN-02', "**Record a dues payment** taken by cash, check or other means: who paid, amount, method, check number or reference, date, who recorded it. Chapter Admins for their chapter's members; Financial Admins for anyone. The payment goes into the Payments module's payment record (PAY-07), so all money is in one place.", 'Planned (phase 1)'],
-    ['FIN-03', '**National records dues received** (from a chapter or a member): one at a time or by a batch for a chapter remittance, which clears the dues record and makes the member Current. Replaces MEM-21.', 'Planned (phase 1)'],
-    ['FIN-04', "**Dues report:** by chapter and year: paid, pending National's receipt, past due, expired; totals collected; exports to Excel.", 'Planned (phase 1)'],
-    ['FIN-05', '**Reminders:** emails to members whose dues are coming due or past due, at times the Financial Admins choose; a list of who was reminded.', 'Planned (phase 1)'],
-    ['FIN-06', "**Receipts:** every dues payment gets a numbered receipt, emailed to the member and kept on their record (printable).", 'Planned (phase 1)'],
-    ['FIN-07', "**Member's dues history** on their profile: years paid, amounts, receipts.", 'Planned (phase 1)'],
-    ['FIN-08', 'Paying dues **online**, and **automatic renewal**, through the Payments module (PAY-10, PAY-11).', 'Planned (with Payments)'],
-    ['FIN-09', "The temporary rule that leaves members paid through 2026 at their current status (Member Records) is removed after one full renewal cycle on Honcho.", 'Planned (after the 2027 cycle)'],
+    ['FIN-01', '**Dues amounts:** National dues by member type (as today); **chapter dues** set by each chapter (0 = none), by its Chapter Admin; changes take effect for a chosen membership year.', 'Planned (phase 1)'],
+    ['FIN-02', "**Record chapter dues** (a button replacing \"edit Current Year\"): amount, method (cash, check, other), check number or reference, date. Honcho records the payment (in Payments\' payment record, PAY-07), marks the chapter charge paid, **raises the National invoice** and updates Current Year. A chapter with no dues gets **Renew** instead. Changing Current Year by hand still works and runs the same steps.", 'Planned (phase 1)'],
+    ['FIN-03', "**Settle National invoices:** the Financial Admin's list of open National invoices by chapter and year; **Mark paid** one at a time or as a batch, with method and reference; the member becomes Current. Replaces MEM-21.", 'Planned (phase 1)'],
+    ['FIN-04', '**Dues report** by chapter and membership year: Current, Pending, Past Due and Expired counts and dollars; open National invoices; Excel export.', 'Planned (phase 1)'],
+    ['FIN-05', "**Reminders** by email before the due date and while Past Due, on dates the Financial Admin sets; a list of who was reminded.", 'Planned (phase 1)'],
+    ['FIN-06', "**Receipts:** every dues payment gets a numbered receipt, emailed and printable. Other receipts and reports to be defined with the owner.", 'Planned (phase 1)'],
+    ['FIN-07', "**Member's dues history** on their profile: years, amounts, payments, receipts, open invoices.", 'Planned (phase 1)'],
+    ['FIN-08', "**Pay online:** the National invoice email carries a **Pay now** link (PayPal, amount filled in) that marks the invoice paid by itself; and automatic renewal (PAY-10, PAY-11).", 'Planned (with Payments)'],
+    ['FIN-09', "The temporary rule that leaves members paid through 2026 at their current status (Member Records) is removed once the new dues records cover everyone.", 'Planned (phase 1, with the data load)'],
+  ]},
+
+  { type: 'h2', text: 'Dues: Settings, Charges and Status' },
+  { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
+    ['FIN-20', "**Due date** (month and day; BPA September 30) and the membership year it pays for (paid by Sep 30, 2026 = 2027), as settings, so other organizations can differ.", 'Planned (phase 1)'],
+    ['FIN-21', "**Grace period, two modes:** **Manual** (BPA's flag: on until a Financial Admin turns it off) or **Calendar** (a grace end date). With grace on, an unpaid member becomes Past Due after the due date; with it off or ended, Expired.", 'Planned (phase 1)'],
+    ['FIN-22', "**Two charges per member per membership year:** the **chapter charge** and the **National charge** (the National invoice), each with amount, any proration, balance and billing plan. The existing National dues records are carried over.", 'Planned (phase 1)'],
+    ['FIN-23', "**Status calculated automatically every night** and after every dues change, so the due date and a calendar grace end take effect by themselves: **Current** (both paid, or chapter dues are 0 and National paid), **Pending** (chapter paid, National not), **Past Due**, **Expired**. Lifetime and Honorary are always Current.", 'Planned (phase 1)'],
+    ['FIN-24', "**Proration schedules:** National and each chapter have their own schedule (a factor by join month) and choose which member types it applies to. **New members only**, never renewals.", 'Planned (phase 1)'],
+    ['FIN-25', "**Chapter at Large:** its chapter dues (none today) are billed by and paid to **National**, so the Financial Admin records them; every member type is available in it unless a Financial Admin switches some off.", 'Planned (phase 1)'],
+    ['FIN-26', "**Billing plans:** annual, quarterly or monthly; a quarterly or monthly plan splits a charge into dated installments, and a member whose installments are up to date counts as paid. Recorded by hand in phase 1; charged automatically with Payments.", 'Planned (phase 1; automatic with Payments)'],
+    ['FIN-27', "**Corrections:** **Void** (a mistake) and **Waive** (with a reason), Financial Admins only, logged, though BPA has no refund or waiver policy today.", 'Planned (phase 1)'],
+    ['FIN-28', "**Permissions** as separate functions: record chapter dues (Chapter Admins), settle National invoices and dues settings (Financial Admins), so a chapter treasurer role can be added later as a group with no code change.", 'Planned (phase 1)'],
+    ['FIN-29', "**Retire the Family member type:** Family members become **Regular** if they hold a pilot or mechanic certificate, otherwise **Associate**; then the type is switched off.", 'Planned (phase 1)'],
   ]},
 
   { type: 'h2', text: 'Invoicing and Accounts (add-on)' },
@@ -87,6 +111,7 @@ module.exports = [
     ['30 Oct 2026', 'Expense receipts are filed in the Document Library behind the scenes.'],
     ['31 Oct 2026', 'Financial (what is owed) and Payments (how money moves) are separate modules.'],
     ['31 Oct 2026', '**Dues first**, then Payments.'],
+    ['31 Oct 2026', 'Concept of operations and clarifications recorded above; design FIN-20 to FIN-29 drafted for approval.'],
   ]},
 ]},
 

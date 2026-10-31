@@ -21,6 +21,7 @@
         _get_font_sizes()
         _get_a_single_record($recid)  anchor1
         _convert_to_user_friendly($data)  anchor3
+        _family_names($recid)
   manage()
         _check_function_permissions($ccmpsfunction)
         _get_font_sizes()
@@ -28,11 +29,13 @@
   updateccmp($retrying)
         _get_a_single_record($recid) anchor1
         _convert_null_integers_to_zeros($data) anchor4
+        _member_form_lists($data, $recid)
   createccmp($retrying)
         _get_font_sizes()
-        _create_dropdowns()1975
+        _member_form_lists($data, 0)
   ccmpsubmit()
         $this->validation_helper
+        _family_member_problem($family_id, $recid, $chapter_id)
         _ccmps_fetch_data_from_post() anchor2
         _addr_simple_fetch_data_from_post()
         recalcstatus($recid)
@@ -713,6 +716,7 @@ if(strlen($_SESSION['trongatetoken']) > 0){
   $data['recid']        = $recid;
   $data['view_module']  = 'welcome/ccmps';
   $data['view_file']    = 'viewccmp'; // genuine read-only view, not the edit form
+  $data = array_merge($data, $this->_family_names((int) $recid)); // Family Member / Family of (2026-10-31)
  //print_r($data->recid); die();
 
  /*
@@ -1101,74 +1105,7 @@ json($_SESSION); die();
 /*------------------------ Populate Dropdowns  -------------------------------*/
 
 $data= (array)$data;
-
-    // genders
-    $data['genders'] = $this->model->get('id','ref_genders');
-
-    // languages
-    $data['languages'] = $this->model->get('id','ref_languages');
-
-        // regions
-    $data['regions'] = $this->model->get('id','ref_region_codes');
-
-    // subentitys
-    $data['subentities'] = $this->model->get('id','ccmps_subentities');
-
-    // subentity roles — renamed to match ccmpcrudcontact.php's expected variable name
-    $data['ccmpsubentityroles'] = $this->model->get('id','ccmps_subentity_roles');
-
-    // national roles — renamed to match ccmpcrudcontact.php's expected variable name
-    $data['national_offices'] = $this->model->get('id','ref_national_offices');
-
-    // states — renamed to match ccmpcrudcontact.php's expected variable name
-    $data['states'] = $this->model->get('id','ref_states');
-
-    // counties — renamed to match ccmpcrudcontact.php's expected variable name
-    $data['counties'] = $this->model->get('id','ref_counties');
-
-    // countries — renamed to match ccmpcrudcontact.php's expected variable name
-    $data['countries'] = $this->model->get('id','ref_countries');
-
-    // lead sources — was missing entirely; ccmpcrudcontact.php needs this
-    $data['leadsources'] = $this->model->get('id','ref_leadsource');
-
-    // salutations — was missing entirely; ccmpcrudcontact.php needs this
-    $data['salutations'] = $this->model->get('id','ref_salutations');
-
-    // Header display only (ccmpcrud.php shows salutation + name at the
-    // top) — deliberately a SEPARATE key from $data['salutation'], which
-    // must stay the raw id for the dropdown in ccmpcrudcontact.php to
-    // correctly match/select the right option. Overwriting the raw
-    // value here would silently break that dropdown instead.
-    $data['salutation_display'] = '';
-    if (!empty($data['salutation'])) {
-        foreach ($data['salutations'] as $sal_row) {
-            if ((string) $sal_row->id === (string) $data['salutation']) {
-                $data['salutation_display'] = $sal_row->title;
-                break;
-            }
-        }
-    }
-
-    // membership types
-    $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
-
-    // Font-size element dropdowns (Preferences tab) — each pre-filtered to
-    // its own type from the same ccmps_settings table. Was previously
-    // missing entirely here, leaving the 5 dropdowns iterating over
-    // undefined variables (empty/broken) — this is the actual fix.
-    $all_ccmps_settings_for_dropdowns = $this->model->get('id', 'ccmps_settings');
-    $data['tab_settings']    = [];
-    $data['header_settings'] = [];
-    $data['label_settings']  = [];
-    $data['value_settings']  = [];
-    $data['button_settings'] = [];
-    foreach ($all_ccmps_settings_for_dropdowns as $ccmps_setting_row) {
-        $target_key = $ccmps_setting_row->type . '_settings';
-        if (array_key_exists($target_key, $data)) {
-            $data[$target_key][] = $ccmps_setting_row;
-        }
-    }
+    $data = $this->_member_form_lists($data, (int) $recid); // every dropdown on the form, shared with createccmp (2026-10-31)
 
     // Financial Acct Types
     // $data['accttypes'] = $this->model->get('id','ccmps_financial_types');
@@ -1290,8 +1227,6 @@ function createccmp($retrying = 'no'){ // Adding - may be first time or with val
 
 //print_r($who_creating_from_btn); die();
 
-echo(2169);
-// print_r($_SESSION['ccmpmode']); die();
 
  switch($_SESSION['ccmpmode']) {
 //  switch($_SESSION['actionmode']){
@@ -1458,53 +1393,12 @@ echo(2169);
 
 /*------------------ Populate Dropdowns  ---------------------*/
 
-        // membership types
-        $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
-
-        // salutations — was missing entirely here too (createccmp renders
-        // the same form as updateccmp for brand-new records), leaving the
-        // Salutation dropdown with no options at all.
-        $data['salutations'] = $this->model->get('id','ref_salutations');
-        $data['salutation_display'] = '';
-        if (!empty($data['salutation'])) {
-            foreach ($data['salutations'] as $sal_row) {
-                if ((string) $sal_row->id === (string) $data['salutation']) {
-                    $data['salutation_display'] = $sal_row->title;
-                    break;
-                }
-            }
+        // Chapter Admins add members to their own chapter (ccmpsubmit enforces it), so start the form there
+        if (in_array($_SESSION['ccmpmode'], array('momc', 'mosc')) && !empty($chptnum) && $retrying != 'yes') {
+            $data['subentity'] = $chptnum;
         }
-
-        // Font-size element dropdowns (Preferences tab) — same fix as
-        // updateccmp(), needed here too since createccmp() renders the
-        // same form for brand-new records.
-        $all_ccmps_settings_for_dropdowns = $this->model->get('id', 'ccmps_settings');
-        $data['tab_settings']    = [];
-        $data['header_settings'] = [];
-        $data['label_settings']  = [];
-        $data['value_settings']  = [];
-        $data['button_settings'] = [];
-        foreach ($all_ccmps_settings_for_dropdowns as $ccmps_setting_row) {
-            $target_key = $ccmps_setting_row->type . '_settings';
-            if (array_key_exists($target_key, $data)) {
-                $data[$target_key][] = $ccmps_setting_row;
-            }
-        }
-
-        // subentitys
-        $data['subentitys'] = $this->model->get('id','ccmps_subentities');
-
-        // subentity roles
-        $data['subentityroles'] = $this->model->get('id','ccmps_subentity_roles');
-
-        // national roles
-        $data['nationalroles'] = $this->model->get('id','ref_national_offices');
-
-        // states
-        $data['state_codes'] = $this->model->get('id','ref_states');
-
-        // genders
-        $data['genders'] = $this->model->get('id','ref_genders'); // was 'genders', which doesn't exist (2026-10-27)
+        // every dropdown on the form, shared with updateccmp; the old names here (subentitys, state_codes...) didn't match the form (2026-10-31)
+        $data = $this->_member_form_lists($data, 0);
 
         // Financial Acct Types
   //      $data['accttypes'] = $this->model->get('id','ccmps_financial_types');
@@ -1517,8 +1411,6 @@ echo(2169);
      // CCMP Single Page CRUD
 
         $data['view_file']     = 'ccmpcrud'; // use all-in-one crud form for creating
-echo(2366);
-// print_r($_SESSION['ccmpmode']); die();
  switch($_SESSION['ccmpmode']) { //
 //  switch($_SESSION['actionmode']){
   case 'momc': // managing your subentity records
@@ -1550,15 +1442,6 @@ echo(2366);
 
   break;
 }
-  echo(2328);
-  echo('<br>');
-  echo('$data');
-  echo('<br>');
-  json($data);
-  echo('$_SESSION');
-  echo('<br>');
-  json($_SESSION);
-  // die();
 
           // template is the default location (templates/views/cool_mobi) using old engine, new engine uses public/themes/cool_mobi/black
           $this->templates->inspinia($this->_with_fontsize_style($data));
@@ -1616,7 +1499,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         'emergency_contact', 'emergency_phone', 'emergency_email',
         'employer', 'title', 'department', 'reports_to',
         'ccmp_number', 'ccmp_type', 'subentity', 'subentity_role', 'current_year', 'region',
-        'national_officer', 'language', 'leadsource', 'notes',
+        'national_officer', 'language', 'leadsource', 'notes', 'family_member_id',
         'activate_code', 'reset_code',
         'tab_setting', 'header_setting', 'label_setting', 'value_setting', 'button_setting'
     ];
@@ -1731,7 +1614,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
     if (!$is_admin) {
         $broader_admin_only_text = [
             'ccmp_number', 'ccmp_type', 'subentity', 'subentity_role', 'current_year', 'region',
-            'national_officer', 'leadsource', 'notes'
+            'national_officer', 'leadsource', 'notes', 'family_member_id'
         ];
         $broader_admin_only_bool = [
             'student', 'eligible_voter', 'hall_of_fame', 'deceased'
@@ -1759,6 +1642,10 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         if (array_key_exists($ccmps_int_field, $ccmps_data) && $ccmps_data[$ccmps_int_field] === '') {
             $ccmps_data[$ccmps_int_field] = 0;
         }
+    }
+
+    if (array_key_exists('family_member_id', $ccmps_data)) { // none = NULL, not 0 (it points at a member)
+        $ccmps_data['family_member_id'] = ((int) $ccmps_data['family_member_id'] > 0) ? (int) $ccmps_data['family_member_id'] : null;
     }
 
     // dob comes in from the <input type="date"> as a "YYYY-MM-DD" string,
@@ -1875,6 +1762,17 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
                 $random_string .= $characters[mt_rand(0, strlen($characters) - 1)];
             }
             $ccmps_data['username'] = $random_string;
+        }
+    }
+
+    // Family member: one other living member of the same chapter (2026-10-31)
+    if ($result == 1 && !empty($ccmps_data['family_member_id'])) {
+        $chapter_id = array_key_exists('subentity', $ccmps_data) ? $ccmps_data['subentity'] : ($this->model->get_where($recid, 'ccmps')->subentity ?? null);
+        $family_msg = $this->_family_member_problem((int) $ccmps_data['family_member_id'], (int) $recid, (int) $chapter_id);
+        if ($family_msg !== '') {
+            $result = 0;
+            set_flashdata($family_msg);
+            $_SESSION['flashmsgcolor'] = 0;
         }
     }
 
@@ -7671,6 +7569,92 @@ $usrpic = $usrrecobj->picture;
         return !empty($_SESSION['honcho_sysadmin']) || !empty($_SESSION['honcho_ccmps_admin'])
             || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_all_modules'])
             || !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_ccmp_admin']) || !empty($_SESSION['ccmps_admin']);
+    }
+
+    function _member_form_lists($data, $recid) { // every dropdown on the member create/update form (ccmpcrudcontact.php), one place for both screens (2026-10-31)
+        $data['genders']            = $this->model->get('id', 'ref_genders');
+        $data['languages']          = $this->model->get('id', 'ref_languages');
+        $data['regions']            = $this->model->get('id', 'ref_region_codes');
+        $data['subentities']        = $this->model->get('id', 'ccmps_subentities');
+        $data['ccmpsubentityroles'] = $this->model->get('id', 'ccmps_subentity_roles');
+        $data['national_offices']   = $this->model->get('id', 'ref_national_offices');
+        $data['states']             = $this->model->get('id', 'ref_states');
+        $data['counties']           = $this->model->get('id', 'ref_counties');
+        $data['countries']          = $this->model->get('id', 'ref_countries');
+        $data['leadsources']        = $this->model->get('id', 'ref_leadsource');
+        $data['salutations']        = $this->model->get('id', 'ref_salutations');
+        $data['ccmptypes']          = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
+
+        // Header display only (ccmpcrud.php shows salutation + name at the top); $data['salutation'] stays the raw id for the dropdown
+        $data['salutation_display'] = '';
+        if (!empty($data['salutation'])) {
+            foreach ($data['salutations'] as $sal_row) {
+                if ((string) $sal_row->id === (string) $data['salutation']) {
+                    $data['salutation_display'] = $sal_row->title;
+                    break;
+                }
+            }
+        }
+
+        // Font-size element dropdowns (Preferences tab), each its own type from ccmps_settings
+        foreach (array('tab', 'header', 'label', 'value', 'button') as $type) {
+            $data[$type.'_settings'] = array();
+        }
+        foreach ($this->model->get('id', 'ccmps_settings') as $ccmps_setting_row) {
+            $target_key = $ccmps_setting_row->type . '_settings';
+            if (array_key_exists($target_key, $data)) {
+                $data[$target_key][] = $ccmps_setting_row;
+            }
+        }
+
+        // Family Member: living members, not this one; the form shows only the chosen chapter's (data-filter = chapter id).
+        // A Chapter Admin without wider rights gets their own chapter's only. The member already linked is kept in the list.
+        $national = !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['ccmps_ccmp_admin']) || !empty($_SESSION['ccmps_admin'])
+                 || !empty($_SESSION['honcho_sysadmin']) || !empty($_SESSION['honcho_ccmps_admin'])
+                 || !empty($_SESSION['honcho_ccmps_module_all']) || !empty($_SESSION['honcho_all_modules']);
+        $params = array('me' => (int) $recid, 'cur' => (int) ($data['family_member_id'] ?? 0));
+        $where  = '';
+        if (!$national) {
+            $where = ' AND subentity = :chapter';
+            $params['chapter'] = (int) ($_SESSION['ccmps_subentity'] ?? 0);
+        }
+        $data['family_members'] = $this->model->query_bind("SELECT id, subentity,
+                CONCAT(last_name, ', ', first_name, IF(COALESCE(ccmp_number, '') <> '', CONCAT(' (', ccmp_number, ')'), '')) AS name
+            FROM ccmps
+            WHERE id <> :me AND ((COALESCE(deceased, 0) = 0 AND COALESCE(soft_deleted, 0) = 0".$where.") OR id = :cur)
+            ORDER BY last_name, first_name", $params, 'object') ?: array();
+
+        return $data;
+    }
+
+    function _family_member_problem($family_id, $recid, $chapter_id) { // '' = fine; otherwise why the Family Member can't be saved (2026-10-31)
+        if ($family_id === $recid) {
+            return 'A '.strtolower(CCMP).' can\'t be their own Family Member.';
+        }
+        $family = $this->model->get_where($family_id, 'ccmps');
+        if (!$family) {
+            return 'The Family Member chosen no longer exists.';
+        }
+        if ((int) $family->subentity !== $chapter_id) {
+            return 'The Family Member must be a '.strtolower(CCMP).' of the same '.strtolower(SUBENTITY).'. Choose again after changing the '.strtolower(SUBENTITY).'.';
+        }
+        $current = $recid > 0 ? (int) ($this->model->get_where($recid, 'ccmps')->family_member_id ?? 0) : 0;
+        if ($family_id !== $current && (!empty($family->deceased) || !empty($family->soft_deleted))) {
+            return 'The Family Member must be a living '.strtolower(CCMP).' who hasn\'t been deleted.';
+        }
+        return '';
+    }
+
+    function _family_names($recid) { // Family Member (whom this member chose) and Family of (who chose this member), for the view page
+        $rows = $this->model->query_bind("SELECT f.id, CONCAT(f.first_name, ' ', f.last_name) AS name
+            FROM ccmps m JOIN ccmps f ON f.id = m.family_member_id WHERE m.id = :id", array('id' => $recid), 'object');
+        $of = $this->model->query_bind("SELECT CONCAT(first_name, ' ', last_name) AS name FROM ccmps
+            WHERE family_member_id = :id AND COALESCE(soft_deleted, 0) = 0 ORDER BY last_name, first_name", array('id' => $recid), 'object');
+        $names = array();
+        foreach ($of ?: array() as $row) {
+            $names[] = $row->name;
+        }
+        return array('family_member_name' => $rows[0]->name ?? '', 'family_of_names' => implode(', ', $names));
     }
 
     function _member_access($recid, $action) {

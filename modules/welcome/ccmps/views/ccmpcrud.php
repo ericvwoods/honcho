@@ -1,6 +1,7 @@
 <?php
 
   include('navbar.php');
+  echo flashdata('<div class="alert alert-warning" style="margin: 10px 15px; font-weight: bold;">', '</div>') ?? ''; // e.g. why a save was refused (these pages showed no messages before, 2026-10-31)
 
 ?>
 

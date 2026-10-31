@@ -21,6 +21,8 @@ const memberList = [
     ['**Undelete**', 'Brings deleted members back, with their status worked out again'],
   ]},
   { type: 'p', text: "**Lock**, **Unlock**, **Approve User Acct**, **Approve CCMPS** and **Archive** also appear in the list but don't do anything yet." },
+  { type: 'h3', text: 'Family Members' },
+  { type: 'p', text: "To record that two members are related, open one of them with **Update Record** and, in **Membership**, choose the other from **Family Member**. The list shows only members of the chapter chosen above it, so pick the chapter first. Choose one person; leave it blank for none. Their record then shows **Family of** with this member's name. Honcho won't save a family member from another chapter, the member themselves, or a deceased or deleted member. Members see the link on their record but can't change it." },
   { type: 'h3', text: 'Locking a Member' },
   { type: 'p', text: "To stop a member logging in without deleting them, open them with **Update Record**, tick **Locked** in **Roles & Permissions** and save (System Admins only). When they try to log in they see \"Your account has been locked. Please contact your Chapter Administrator.\" Untick **Locked** to let them back in." },
   { type: 'h3', text: 'Marking a Member Deceased' },

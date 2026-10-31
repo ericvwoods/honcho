@@ -1,5 +1,6 @@
 <?php
   include('navbar.php');
+  echo flashdata('<div class="alert alert-warning" style="margin: 10px 15px; font-weight: bold;">', '</div>') ?? ''; // e.g. why a save was refused (these pages showed no messages before, 2026-10-31)
 
   // Same permission model as ccmpcrudcontact.php — kept in sync deliberately.
   $is_admin = !empty($_SESSION['ccmps_subentity_admin']) || !empty($_SESSION['ccmps_ccmp_admin']) || !empty($_SESSION['ccmps_system_admin']) || !empty($_SESSION['system_admin']);
@@ -293,6 +294,8 @@
         vf_row('Member Type', 'ccmp_type', $data);
         vf_row(SUBENTITY, 'subentity', $data);
         vf_row(SUBENTITY.' Role', 'subentity_role', $data);
+        vf_row('Family Member', 'family_member_name', $data); // the member this one chose (2026-10-31)
+        if (!empty($data['family_of_names'])) { vf_row('Family of', 'family_of_names', $data); } // members who chose this one
         vf_row('Current Year', 'current_year', $data);
         vf_row('Region', 'region', $data);
         vf_row('National Officer', 'national_officer', $data);

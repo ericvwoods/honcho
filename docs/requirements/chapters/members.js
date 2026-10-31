@@ -67,6 +67,8 @@ module.exports = [
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
     ['MEM-26', '**Participants (Student) module:** S members (type 4) move to their own module, branded "Student" for BPA, and don\'t vote; Q members (type 3) stay in member records and vote.', 'Planned (decided 27 Oct 2026). No seeding by default; for BPA perhaps from S members, not decided'],
     ['MEM-27', '**Eligible voter rules:** whether a member may vote is worked out from their type and status, wherever status is recalculated; the Eligible Voter box becomes display-only.', 'Planned (later)'],
+    ['MEM-30', '**Family member:** an admin links a member to one other member of the same chapter who is family, chosen from a list of that chapter\'s members on the create and update screens (Membership section); the other member\'s record shows **Family of**. Not the member themselves, nor a deceased or deleted member; members see it but can\'t change it. Links for migrated members are set by hand after the legacy data load.', 'Built 31 Oct 2026 (Mac)'],
+    ['MEM-31', '**Who is related to whom** report (Reporting module): family links by chapter, both directions.', 'Planned (Reporting module)'],
     ['MEM-28', 'Aviation-specific fields (certificates, ratings, chapter role, member number) move to their own table, switched on only for organizations that use them.', 'In progress (the code still reads some of them from the main record)'],
   ]},
 ]},
@@ -96,6 +98,7 @@ module.exports = [
     ['27 Oct 2026', 'One access rule for member records (MEM-10).'],
     ['27 Oct 2026', 'Fields are hidden with Member Fields switches, never commented out (MEM-06).'],
     ['27 Oct 2026', 'Q members stay and vote; S members go to the Student module and don\'t vote (MEM-26).'],
+    ['31 Oct 2026', 'Family is a link between two members of the same chapter, one per member, set by admins (MEM-30), instead of the retired Family member type; who belongs to whom is decided by hand after the data migration; a report of it comes with the Reporting module (MEM-31).'],
   ]},
 ]},
 

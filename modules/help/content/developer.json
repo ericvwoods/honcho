@@ -166,6 +166,10 @@
        "text": "Of everything in the full database dump, only the tables below are actually referenced by this module's code. Tables prefixed `cms_` belong to a separate content-management module and aren't used here at all. Tables prefixed `dms_` and `honcho_` are separate modules entirely (document library and superuser administration, respectively) — conceptually related in places, but not queried directly by any file in this module."
       },
       {
+       "type": "p",
+       "text": "**Form dropdowns and family links (2026-10-31):** `updateccmp()` and `createccmp()` get every list for `ccmpcrudcontact.php` from `_member_form_lists($data, $recid)`, so the two screens can't drift apart again (the create screen's Chapter, Role, Region, National Officer, State and Country lists were empty because its list names didn't match the form). That includes `family_members`: living members (a Chapter Admin gets their own chapter's), each option tagged `data-filter=\"<chapter id>\"`; the form's script shows only the chosen chapter's. `ccmpsubmit()` checks the link again with `_family_member_problem()` (same chapter, not themselves, living and not deleted) and `viewccmp()` shows Family Member / Family of from `_family_names()`. The view and update pages now print flash messages, so a refused save says why."
+      },
+      {
        "type": "h2",
        "text": "Core Tables"
       },
@@ -201,7 +205,7 @@
         ],
         [
          "Membership",
-         "`ccmp_number`, `ccmp_type`, `subentity`, `subentity_role`, `current_year`, `region`, `national_officer`, `eligible_voter`; `student` (a flag only, shown next to Minor since 2026-10-27; not the Student member type); `leadsource` hidden since 2026-10-27, values kept",
+         "`ccmp_number`, `ccmp_type`, `subentity`, `subentity_role`, `family_member_id` (another member's `ccmps.id`, same chapter, NULL = none; 2026-10-31), `current_year`, `region`, `national_officer`, `eligible_voter`; `student` (a flag only, shown next to Minor since 2026-10-27; not the Student member type); `leadsource` hidden since 2026-10-27, values kept",
          "`system_admin`, `subentity_admin`, or `ccmp_admin` — never the member themselves"
         ],
         [

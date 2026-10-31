@@ -309,8 +309,9 @@ $can_grant_chapter_admin = $is_system_admin
     <?php
         cf_text('Member Number', 'ccmp_number', $data, 'text', $locked);
         cf_select('Member Type', 'ccmp_type', $data, $ccmptypes, 'id', 'ccmp_type', 'description', $locked);
-        cf_select(SUBENTITY, 'subentity', $data, $subentities, 'id', 'description', null, $locked);
+        cf_select(SUBENTITY, 'subentity', $data, $subentities, 'id', 'description', null, $locked.' id="subentity" data-family-target="family_member_id"');
         cf_select(SUBENTITY.' Role', 'subentity_role', $data, $ccmpsubentityroles, 'id', 'title', null, $locked);
+        cf_select('Family Member', 'family_member_id', $data, $family_members ?? array(), 'id', 'name', null, $locked.' id="family_member_id"', 'subentity'); // one member of the same chapter who is family (2026-10-31)
         cf_text('Current Year', 'current_year', $data, 'number', $locked);
         cf_select('Region', 'region', $data, $regions, 'id', 'description', null, $locked);
         cf_select('National Officer', 'national_officer', $data, $national_offices, 'id', 'description', null, $locked);
@@ -539,6 +540,26 @@ function initFaqAccordionAndCountyFilter() {
         stateSelect.addEventListener('change', filterCounties);
         filterCounties(); // run once on load so it's correctly filtered for the existing saved state
     });
+
+    // Same idea for Family Member: only members of the chosen chapter are offered
+    // (each option's data-filter is that member's chapter id). Changing the chapter
+    // clears a family member from another chapter; ccmpsubmit() checks it again.
+    var chapterSelect = document.querySelector('.form-control[data-family-target]');
+    var familySelect = chapterSelect ? document.getElementById(chapterSelect.getAttribute('data-family-target')) : null;
+    if (familySelect) {
+        var filterFamily = function() {
+            familySelect.querySelectorAll('option').forEach(function(option) {
+                if (!option.value) return;
+                option.hidden = option.getAttribute('data-filter') !== chapterSelect.value;
+            });
+            var current = familySelect.options[familySelect.selectedIndex];
+            if (current && current.value && current.hidden) {
+                familySelect.value = '';
+            }
+        };
+        chapterSelect.addEventListener('change', filterFamily);
+        filterFamily();
+    }
 }
 
 // DOMContentLoaded only fires once, and won't fire again if the browser

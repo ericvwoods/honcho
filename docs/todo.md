@@ -164,6 +164,8 @@ Existing pieces: `ccmps_financial_transactions` (the National dues record renewa
 
 - [ ] **Gather the requirements** with Eric before any design: who uses reports (members, chapter/national admins, staff, partners); which reports each module needs (membership, dues, financial, store, Scheduler utilization and maintenance, DMS, events); on-screen vs Excel/PDF vs emailed on a schedule; saved and shared reports (like Flight Schedule Pro's Saved Items); filters and scope limits (a Chapter Admin sees only their chapter); whether users build their own. Then write a plan.
 
+- [ ] **Who is related to whom** report (owner, 2026-10-31; requirements MEM-31): the family links (`ccmps.family_member_id`, MEM-30) by chapter, both directions.
+
 ## Requirements book (`docs/requirements`, started 2026-10-30)
 
 - [x] Format approved with the Member Cards chapter; Core chapters written and checked against the code (2026-10-30): Signing In, Permissions, Member Records, Cards, Settings, Document Library, Member Home and Website, Help.
@@ -240,6 +242,7 @@ The data on the Mac and staging is old test data. The real data comes from the l
 - [ ] Check `trongate_users` shape against the real data (see the RBAC item about member creation).
 - [ ] Photos: only 14 of 1,725 test members have one; see what the legacy site holds.
 - [ ] Map the legacy dues and status fields to `current_year` / `status` / `ccmps_financial_transactions`, and lifetime members to 2099.
+- [ ] **Family links** (owner, 2026-10-31): after the load, set each member's Family Member by hand (Update Record > Membership); the ETL leaves `family_member_id` empty. Run `2026-10-31-family-member.sql` on staging and production first.
 - [ ] Plan the ETL itself (field mapping from the legacy structure) once SSH or FTP access to the legacy host works.
 
 ## Settings (plan approved 2026-10-22)

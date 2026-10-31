@@ -1620,6 +1620,9 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         'activate_code', 'reset_code',
         'tab_setting', 'header_setting', 'label_setting', 'value_setting', 'button_setting'
     ];
+    if (viewas_active()) { // View as a Member: the member's login name and email can't be changed (LOGIN-25)
+        $ccmps_text_fields = array_values(array_diff($ccmps_text_fields, array('email_address', 'username', 'activate_code', 'reset_code')));
+    }
 
     $ccmps_bool_fields = [
         'minor', 'student', 'active_duty', 'former_military', 'eligible_voter', 'deceased',
@@ -6717,7 +6720,8 @@ function savefontsizes() {
 
 // *************************  function MODALCHANGEPW ************************ //
 
-function modalchangepw() { //for changing your own system acct password. ccmps not passed because separate code in Welcome to change own ccmps password
+function modalchangepw() {
+    viewas_block('changing the password', 'welcome-ccmps/ccmphome'); //for changing your own system acct password. ccmps not passed because separate code in Welcome to change own ccmps password
 
 
     // Get the input values

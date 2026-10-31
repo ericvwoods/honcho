@@ -153,6 +153,18 @@ const sections = [
 ]},
 
 // ============================================================
+{ tab: "View as a Member", blocks: [
+  { type: 'p', text: "Built 2026-10-31 (requirements LOGIN-20 to LOGIN-29; migration `2026-10-31-view-as-member.sql`: function `system/view_as_member` for System Admins, Member System Admins, Member Admins and Chapter Admins)." },
+  { type: 'ul', items: [
+    "**Shared setup:** `member_session_setup($usr_obj)` in `engine/tg_helpers/session_helper.php` sets everything a member login puts in the session (what `Welcome::authenticate()` and `successfullogin()` set for a member, the Security Groups flags, `login_settings_to_session()`, member mode). `Welcome::successfullogin()` now calls it, so the login and View as can't drift apart. Any new member session value goes in the helper.",
+    "**The swap** (`modules/viewas/Viewas.php`): `start()` copies the whole `$_SESSION` into `$_SESSION['viewas']['stash']` with who the admin is, regenerates the session id, empties the session, runs `member_session_setup()` and issues the member a session token (`trongate_tokens->_generate_token()`). `stop()` (`viewas/stop?k=<key>`) restores the stash exactly. `Welcome::logout()` goes to `stop()` first while viewing.",
+    "**Rules:** `viewas_can($target)`: needs `system/view_as_member`; never a System Admin; only System Admins for a member with any admin role or Security Group beyond DMS Users; Chapter Admins only their own chapter; not deceased or deleted; not while already viewing.",
+    "**Blocks:** `viewas_block($what, $back)` in `Welcome::getchangepassword()` / `changepassword()`, `Ccmps::modalchangepw()`, `Cards::reissue()`; `Ccmps::ccmpsubmit()` drops `email_address`, `username`, `activate_code`, `reset_code` from its whitelist. Add a block to anything else that must not be done for a member (payments, voting).",
+    "**Bar:** `modules/templates/views/inspinia.php`, right after `<body>`, when `viewas_active()`. Pages on other templates don't show it.",
+    "**Auditlog:** `Auditlogger::logevent()` rewrites `str1` from `UN: <member>` to `UN: <admin> as <member>` while viewing; `ViewAsStart` / `ViewAsStop` record each use.",
+  ]},
+]},
+
 { tab: "Login Hardening", blocks: [
   { type: 'p', text: "Fixes made to both logins (member `welcome`, staff `honcho`) on 2026-10-22, ahead of go-live." },
   { type: 'h2', text: 'Second Factor' },

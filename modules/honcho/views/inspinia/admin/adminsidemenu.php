@@ -171,6 +171,9 @@
             <?php if(!is_system_admin() && rbac_allowed('system', 'edit_financial_settings')): ?> <!-- staff in Financial Admins: only the Financial tab of System Settings -->
                 <li><a href="<?= BASE_URL ?>system-settings/manage/financial"><i class="fa fa-usd"></i> <span class="nav-label">Financial Settings</span></a></li>
             <?php endif; ?>
+            <?php if(rbac_allowed('system', 'view_as_member')): ?> <!-- View as a Member (2026-10-31) -->
+                <li><a href="<?= BASE_URL ?>viewas"><i class="fa fa-user-secret"></i> <span class="nav-label">View as a <?= CCMP ?></span></a></li>
+            <?php endif; ?>
             <?php if(dues_engine_on() && (rbac_allowed('fin', 'settle_national_dues') || rbac_allowed('fin', 'manage_dues_settings'))): ?> <!-- Dues (fin, 2026-10-31) -->
                 <li> <a href="#"><i class="fa fa-money"></i><span class="nav-label"> Dues </span><span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level collapse">

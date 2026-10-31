@@ -135,6 +135,12 @@
                         <i class="fa fa-usd"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Dues</span>
                     </a>
                     <?php endif; ?>
+                    <?php if(viewas_can($dues_member)[0]): if(empty($_SESSION['viewas_token'])){ $_SESSION['viewas_token'] = bin2hex(random_bytes(16)); } ?> <!-- View as a Member (2026-10-31) -->
+                    <form method="post" action="<?= BASE_URL ?>viewas/start" style="display: inline;">
+                        <input type="hidden" name="token" value="<?= $_SESSION['viewas_token'] ?>"><input type="hidden" name="ccmp_id" value="<?= (int) $recid ?>"><input type="hidden" name="return" value="welcome-ccmps/viewccmp/<?= (int) $recid ?>/1">
+                        <button type="submit" class="btn btn-outline btn-primary" style="padding: 8px 12px;"><i class="fa fa-user-secret"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> View as</span></button>
+                    </form>
+                    <?php endif; ?>
 
                 <?php if($_SESSION['ccmpmode'] == 'ccmp'): ?> <!-  coming from sidemenu of ccmphome page -->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/ccmphome">

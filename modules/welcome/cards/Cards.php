@@ -73,6 +73,7 @@ class Cards extends Trongate {
 /*---------------------------- function REISSUE ------------------------------*/
 /*----------------------------------------------------------------------------*/
   function reissue(){ // POST from the card page: the old QR code stops working at once
+    viewas_block('reissuing the card', 'welcome-cards/mycard');
 
     $this->_check_function_permissions('mycard');
 

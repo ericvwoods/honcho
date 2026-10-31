@@ -35,6 +35,9 @@ class Auditlogger extends Trongate {
   }
     function logevent ($type, $action, $func, $str1 = NULL, $str2 = NULL, $str3 = NULL, $str4 = NULL, $str5 = NULL, $str6 = NULL){
 //echo(29); die();
+        if (function_exists('viewas_active') && viewas_active() && is_string($str1) && strpos($str1, 'UN:') === 0) { // View as a Member (LOGIN-26)
+            $str1 = 'UN: '.$_SESSION['viewas']['admin_username'].' as '.trim(substr($str1, 3));
+        }
         $logdata['type']       = $type; 
         $logdata['action']     = $action;
         $logdata['func']       = $func;

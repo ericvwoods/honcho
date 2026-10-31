@@ -133,6 +133,54 @@
        "text": "Click **Help** (side menu of the home page, top bar of profile pages, or **System Admin > Help & Guides**) to read this guide, the Member Guide and, for System Admins, the Developer's Guide, with a search box. Admin screens such as the Coffee Report settings have a **Help** or **?** button that opens the matching section."
       }
      ]
+    },
+    {
+     "tab": "View as a Member",
+     "slug": "view-as-a-member",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "See Honcho exactly as a member sees it, and act for them, without their password: to check what they see, help them with their profile, or register them for something."
+      },
+      {
+       "type": "ol",
+       "items": [
+        "Open the member's record and click **View as**, or choose **View as a Member** in the EMS menu and search by name, member number or email.",
+        "Honcho opens the member home as that member. A red bar across the top of every page says who you're viewing as.",
+        "Click **Return to my account** in the bar (or **Logout**) to go straight back to your own account, where you were. No logging out and in again."
+       ]
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Who",
+        "Can view as"
+       ],
+       "rows": [
+        [
+         "**System Admins**",
+         "Any member, including members with admin roles; never another System Admin"
+        ],
+        [
+         "**Member Admins**",
+         "Any member without an admin role"
+        ],
+        [
+         "**Chapter Admins**",
+         "Members of their own chapter without an admin role"
+        ]
+       ]
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Not available while viewing as a member:** changing their password, their login name or their email address, and reissuing their card (and, later, paying or voting for them).",
+        "**Everything is logged:** starting, returning, and every change you make meanwhile appears in the Auditlog as \"you as the member\". The member isn't notified.",
+        "A **locked** member can be viewed as (you'll see a warning); deceased and deleted members can't.",
+        "One member at a time. To look at two accounts side by side, use a second browser or a private window signed in separately."
+       ]
+      }
+     ]
     }
    ]
   },

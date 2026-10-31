@@ -162,6 +162,9 @@ class Welcome extends Trongate {
 // ************************************************************************** //
 
     function logout() {
+    if (viewas_active()) { // View as a Member: Logout ends the viewing first (LOGIN-22)
+        redirect('viewas/stop?k='.$_SESSION['viewas']['key']);
+    }
 
     $ccmpactdata['last_logout'] = time();
     $ccmprecid = $_SESSION['ccmp_rec_id'];
@@ -523,52 +526,7 @@ json($_SESSION); die();
         case ('ccmps'):
  //         echo(450); die();
             // Set user id, username, etc.
-            $_SESSION['tg_user_id']           = $usr_obj->trongate_user_id;
-            $_SESSION['approved']             = $usr_obj->approved;
- //           $_SESSION['email_verified']       = $usr_obj->email_verified;
-            $_SESSION['status']               = $usr_obj->status;
-            $_SESSION['locked']               = $usr_obj->locked;
-            $_SESSION['inactive']             = $usr_obj->inactive;
-            $_SESSION['last_login']           = $usr_obj->last_login;
-            $_SESSION['picture']              = $usr_obj->picture;
-
-            // Font-size preference (tab/header/label/value/button) needs
-            // no session handling — read fresh from ccmps directly in
-            // inspinia.php on every page load.
-            $_SESSION['language']             = $usr_obj->language; // manage page
-
-            // Module specific
-            $_SESSION['ccmps_subentity']       = $usr_obj->subentity;
-            $_SESSION['ccmps_subentity_role']  = $usr_obj->subentity_role;  // used to set menu
-            //
-            // Set the frontend authorizations (super users ccmps, etc.)
-            // get superuser rights — ccmps_ prefix means "scoped to this
-            // module only"; an unprefixed equivalent (set separately by
-            // the honcho module, once built) means enterprise-wide.
-         //   $_SESSION['security_group']        = $usr_obj->security_group;
-  //          $_SESSION['ccmps_lib_access']      = $usr_obj->libacclevel;
-            $_SESSION['ccmps_subentity_admin'] = $usr_obj->subentity_admin;
-            $_SESSION['ccmps_student_admin']   = $usr_obj->student_admin;
-            $_SESSION['ccmps_ccmp_admin']      = $usr_obj->ccmp_admin;
-  //          $_SESSION['ccmps_cms_admin']       = $usr_obj->cms_admin; // cms_admin not a confirmed real column on ccmps — left disabled
-            $_SESSION['ccmps_system_admin']    = $usr_obj->system_admin;
-            rbac_member_session_flags((int) $usr_obj->id); // RBAC step 5: the four roles come from Security Groups (columns above are the fallback)
-
-            $_SESSION['honcho_national_officer'] = $usr_obj->national_officer;
-
- // field dont exist           $_SESSION['id_type']      = $usr_obj->id_type;
-
-//echo(524);
-//json($_SESSION); die();
-            // get subentity data
-            $subentityid                = $usr_obj->subentity;
-            $subentityobj               = $this->model->get_where($subentityid,'ccmps_subentities');
-            // What Chapter/Branch does user belong to
-            $_SESSION['subentity_name'] = $subentityobj->description;
-            $_SESSION['subentity_title'] = $subentityobj->title;
-
-            // get flag to determine if should go to change password page after login
-            $_SESSION['force_pw_chg']  = $usr_obj->force_pw_chg;
+            member_session_setup($usr_obj); // session_helper.php: shared with View as a Member, so both set a member up the same way (2026-10-31)
 //echo(536);
 //json($_SESSION); die();
             // Using the trongate user id go get the trongate user object and extract the level (assigned as 2 if self-registration account creation)
@@ -614,13 +572,7 @@ json($_SESSION); die();
     // Settings; moved there from ccmps_financial_settings 2026-10-22), read by
     // title with setting(). Both legacy session variable names are still
     // populated (with the same value) since other parts of the app read one or the other.
-    $system_current_year_val = intval(setting('system_current_year', 0));
-    $grace_period_val        = intval(setting('grace_period', 0));
-
-    $_SESSION['system_current_year'] = $system_current_year_val;
-    $_SESSION['system_grace_period'] = $grace_period_val;
-    $_SESSION['ccmps_current_year']  = $system_current_year_val;
-    $_SESSION['ccmps_grace_period']  = $grace_period_val;
+    login_settings_to_session(); // session_helper.php
 
 /* The "new content since last login" flags (new_notice, new_bulletin, new_activity, new_sunshine) were
    removed 2026-10-20 with the old CMS tables they read; nothing live showed them. */
@@ -982,6 +934,7 @@ print_r($remember); die();
 // ************************************************************************** //
 
     function getchangepassword() {
+    viewas_block('changing the password', 'welcome-ccmps/ccmphome');
 
       $view = "/security/changepassword"; // must have leading / in some hosting environments
       $this->view($view); // dont pass $data cause doesnt exist here and causes 500 error
@@ -993,6 +946,7 @@ print_r($remember); die();
 // ************************************************************************** //
 
     function changepassword() {
+    viewas_block('changing the password', 'welcome-ccmps/ccmphome');
 
     // Get the input values
     $un   = $_SESSION['ccmp_username'];

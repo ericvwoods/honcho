@@ -120,6 +120,7 @@ require_once 'tg_helpers/wallet_helper.php'; // Google Wallet for member cards: 
 require_once 'tg_helpers/vault_helper.php'; // encrypted secrets in the database: vault_encrypt() / vault_decrypt()
 require_once 'tg_helpers/ai_helper.php'; // Honcho AI: connections by scope, ai_send(), usage log
 require_once 'tg_helpers/coffee_helper.php'; // Daily Coffee Report: collectors, write-up, Brevo email, schedule
+require_once 'tg_helpers/session_helper.php'; // member session setup shared by the login and View as a Member
 require_once 'tg_helpers/dues_helper.php'; // dues status engine: membership year, grace period, dues_recalc_member()
 require_once 'tg_helpers/cms_helper.php';  // cms_page(): Website content for the member home / public site
 

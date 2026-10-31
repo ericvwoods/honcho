@@ -314,6 +314,12 @@ if (!empty($_SESSION['mobile_app_view'])) {
 <!-- <body class="gray-bg"> -->
     <!-- <body class="skin-1"> -->
     <body class="light-skin">
+<?php if (function_exists('viewas_active') && viewas_active()): $va = $_SESSION['viewas']; ?> <!-- View as a Member (2026-10-31): on every page until Return -->
+<div role="status" style="position: sticky; top: 0; z-index: 3000; background: #b3261e; color: #fff; padding: 8px 16px; font-size: 16px; display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: center;">
+    <span><i class="fa fa-user-secret"></i> Viewing as <strong><?= out($va['member_name']) ?></strong><?= $va['chapter'] !== '' ? ' ('.out($va['chapter']).')' : '' ?>. You are <?= out($va['admin_name'] !== '' ? $va['admin_name'] : $va['admin_username']) ?>; everything you do is logged.</span>
+    <a href="<?= BASE_URL ?>viewas/stop?k=<?= out($va['key']) ?>" style="background: #fff; color: #b3261e; font-weight: bold; padding: 4px 12px; border-radius: 4px;">Return to my account</a>
+</div>
+<?php endif; ?>
 
 <?php if (!empty($_SESSION['mobile_app_view'])): ?>
 <a href="<?= BASE_URL ?>welcome/logout/compccmp" id="mobile-view-signout">Sign Out</a>

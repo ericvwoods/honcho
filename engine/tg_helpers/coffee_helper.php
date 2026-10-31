@@ -13,6 +13,8 @@
  *   coffee_default_config($subentity_id)  a new scope's settings
  *   coffee_config($subentity_id)          the saved settings (or the defaults), sections decoded
  *   coffee_collect($config)               [ [key, label, text, ok], ... ] for the enabled sections
+ *   _coffee_add_new_sections($s, $d)      catalog sections a saved report doesn't have yet: at the end, off, or ('added_on') on, in catalog place
+ *   _coffee_section_birthdays()           today's birthdays (2026-10-31): Current/Pending/Past Due, dob or else the Birthday text
  *   coffee_run($subentity_id, $kind, $to, $channels)  collect, write up, send (email and/or Telegram), keep; returns the run row
  *   coffee_due_reports()                  the reports whose time has come today (scheduler)
  *   coffee_list_recipients($config)       the "Sent to" list as sent: admins (if ticked) + extra addresses, each once
@@ -40,6 +42,8 @@ function coffee_sections(): array {
     // options: name => [label, default]; text options are one item per line
     return array(
         'membership' => array('label' => 'Membership', 'help' => 'Current members, past due, renewal rate; new members this week.', 'options' => array()),
+        // Birthdays (owner, 2026-10-31): second section; 'added_on' = switched on, right after Membership, in reports saved before it existed
+        'birthdays'  => array('label' => 'Birthdays today', 'help' => 'Current, Pending and Past Due members whose birthday is today (Date of Birth, or Birthday when there is no Date of Birth). Names only, no ages. In a member\'s own report: their chapter only, leaving out members who opted out of the directory.', 'options' => array(), 'added_on' => true),
         'events'     => array('label' => 'Upcoming events', 'help' => 'Approved calendar events coming up.', 'options' => array('days' => array('Days ahead', '14'))),
         'posts'      => array('label' => 'Sunshine and Bulletin Board', 'help' => 'Posts showing today on the member home.', 'options' => array()),
         'documents'  => array('label' => 'Documents waiting for approval', 'help' => 'Document Library items in Pending Approval.', 'options' => array()),
@@ -80,7 +84,7 @@ function coffee_default_config(int $subentity_id): object {
         if ($key === 'weather') {
             $options['locations'] = _coffee_scope_location($subentity_id);
         }
-        $sections[] = array('key' => $key, 'on' => in_array($key, array('membership', 'events', 'posts', 'weather'), true), 'options' => $options);
+        $sections[] = array('key' => $key, 'on' => in_array($key, array('membership', 'birthdays', 'events', 'posts', 'weather'), true), 'options' => $options);
     }
     return (object) array('id' => 0, 'subentity_id' => $subentity_id, 'enabled' => 0, 'send_time' => '06:00', 'timezone' => 'America/New_York',
         'days' => 'mon,tue,wed,thu,fri', 'subject' => 'Your Daily Coffee Report', 'tone' => 'Friendly and brief, for volunteer leaders reading on a phone.',
@@ -103,15 +107,30 @@ function coffee_config(int $subentity_id): object {
             $sections[] = array('key' => $s['key'], 'on' => !empty($s['on']), 'options' => (array) ($s['options'] ?? array()));
         }
     }
-    $have = array_column($sections, 'key');
-    foreach (coffee_default_config($subentity_id)->sections as $s) { // new sections appear at the end, off
-        if (!in_array($s['key'], $have, true)) {
-            $s['on'] = false;
-            $sections[] = $s;
-        }
-    }
-    $config->sections = $sections;
+    $config->sections = _coffee_add_new_sections($sections, coffee_default_config($subentity_id)->sections);
     return $config;
+}
+
+function _coffee_add_new_sections(array $sections, array $defaults): array {
+    // sections added to the catalog after a report was saved: at the end, off; or, when the catalog marks them
+    // 'added_on', switched on and placed right after the section before them in the catalog (Birthdays, 2026-10-31)
+    $catalog = coffee_sections();
+    $prev    = null;
+    foreach ($defaults as $s) {
+        $have = array_column($sections, 'key');
+        if (!in_array($s['key'], $have, true)) {
+            if (!empty($catalog[$s['key']]['added_on'])) {
+                $s['on'] = true;
+                $at = ($prev !== null && ($i = array_search($prev, $have, true)) !== false) ? $i + 1 : 0;
+                array_splice($sections, $at, 0, array($s));
+            } else {
+                $s['on'] = false;
+                $sections[] = $s;
+            }
+        }
+        $prev = $s['key'];
+    }
+    return $sections;
 }
 
 function _coffee_scope_name(int $subentity_id): string {
@@ -181,6 +200,54 @@ function _coffee_section_membership(int $subentity_id, array $options): string {
     $rows = $model->query_bind("SELECT COUNT(*) AS n FROM ccmps WHERE $where", $params, 'object');
     $lines[] = 'New member records in the last 7 days: '.(int) ($rows[0]->n ?? 0);
     return implode("\n", $lines);
+}
+
+function _coffee_birth_month_day($row): ?array {
+    // [month, day] from the Date of Birth (dob, a timestamp), or else the Birthday text (MM/DD/YYYY, MM/DD or YYYY-MM-DD)
+    if (!empty($row->dob)) {
+        return array((int) date('n', (int) $row->dob), (int) date('j', (int) $row->dob));
+    }
+    $text = trim((string) $row->birthday);
+    if (preg_match('#^(\d{1,2})[/-](\d{1,2})(?:[/-]\d{2,4})?$#', $text, $m)) {
+        list($month, $day) = array((int) $m[1], (int) $m[2]);
+    } elseif (preg_match('#^\d{4}-(\d{1,2})-(\d{1,2})$#', $text, $m)) {
+        list($month, $day) = array((int) $m[1], (int) $m[2]);
+    } else {
+        return null;
+    }
+    return ($month >= 1 && $month <= 12 && $day >= 1 && $day <= 31) ? array($month, $day) : null;
+}
+
+function _coffee_section_birthdays(int $subentity_id, array $options): string {
+    // Current, Pending and Past Due members whose birthday is today in the report's time zone; 29 February counts on the 28th in other years
+    $today  = new DateTime('now', new DateTimeZone((string) ($options['_tz'] ?? '') ?: 'America/New_York'));
+    $month  = (int) $today->format('n');
+    $day    = (int) $today->format('j');
+    $feb28  = ($month === 2 && $day === 28 && $today->format('L') !== '1');
+    $member = !empty($options['_member']);
+    $where  = "c.status IN (1, 2, 3) AND COALESCE(c.deceased, 0) != 1 AND COALESCE(c.soft_deleted, 0) != 1
+               AND (COALESCE(c.dob, 0) != 0 OR COALESCE(c.birthday, '') != '')";
+    $params = array();
+    if ($subentity_id > 0 || $member) { // a member's own report: their chapter only
+        $where .= ' AND c.subentity = :s';
+        $params['s'] = $subentity_id;
+    }
+    if ($member) { // and only members who appear in the directory
+        $where .= ' AND COALESCE(c.directoryoptout, 0) != 1';
+    }
+    $model = new Model();
+    $rows  = $model->query_bind("SELECT c.first_name, c.last_name, c.dob, c.birthday, s.description, s.chapter_title
+                                 FROM ccmps c LEFT JOIN ccmps_subentities s ON s.id = c.subentity
+                                 WHERE $where ORDER BY c.last_name, c.first_name", $params, 'object') ?: array();
+    $lines = array();
+    foreach ($rows as $row) {
+        $md = _coffee_birth_month_day($row);
+        if ($md && (($md[0] === $month && $md[1] === $day) || ($feb28 && $md[0] === 2 && $md[1] === 29))) {
+            $chapter = (string) ($row->description !== '' && $row->description !== null ? $row->description : $row->chapter_title);
+            $lines[] = trim($row->first_name.' '.$row->last_name).(($subentity_id === 0 && !$member && $chapter !== '') ? ' ('.$chapter.')' : '');
+        }
+    }
+    return $lines ? implode("\n", $lines) : 'No birthdays today.';
 }
 
 function _coffee_section_events(int $subentity_id, array $options): string {
@@ -845,7 +912,7 @@ function coffee_due_reports(): array {
 
 function coffee_member_sections(): array {
     // what a member may put in their own report: no Documents (admin work) and no YouTube (a paid extra, later)
-    return array('membership', 'events', 'posts', 'weather', 'markets', 'news', 'sports');
+    return array('membership', 'birthdays', 'events', 'posts', 'weather', 'markets', 'news', 'sports');
 }
 
 function _coffee_member(int $ccmp_id) {
@@ -866,7 +933,7 @@ function coffee_member_default_config(int $ccmp_id, $member = null): object {
         if ($key === 'weather') {
             $options['locations'] = _coffee_scope_location($chapter);
         }
-        $sections[] = array('key' => $key, 'on' => in_array($key, array('membership', 'events', 'posts', 'weather'), true), 'options' => $options);
+        $sections[] = array('key' => $key, 'on' => in_array($key, array('membership', 'birthdays', 'events', 'posts', 'weather'), true), 'options' => $options);
     }
     return (object) array('id' => 0, 'ccmp_id' => $ccmp_id, 'enabled' => 0, 'send_time' => '06:00', 'timezone' => 'America/New_York',
         'days' => 'mon,tue,wed,thu,fri', 'sections' => $sections, 'telegram_enabled' => 0, 'telegram_chat_id' => '', 'telegram_link_code' => '',
@@ -889,14 +956,7 @@ function coffee_member_config(int $ccmp_id): object {
             $sections[] = array('key' => $s['key'], 'on' => !empty($s['on']), 'options' => (array) ($s['options'] ?? array()));
         }
     }
-    $have = array_column($sections, 'key');
-    foreach ($default->sections as $s) { // new sections appear at the end, off
-        if (!in_array($s['key'], $have, true)) {
-            $s['on'] = false;
-            $sections[] = $s;
-        }
-    }
-    $config->sections     = $sections;
+    $config->sections     = _coffee_add_new_sections($sections, $default->sections);
     $config->member       = true;
     $config->subentity_id = $default->subentity_id; // always the member's current chapter
     $config->subject      = $default->subject;

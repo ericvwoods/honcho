@@ -48,6 +48,7 @@ module.exports = [
   { type: 'p', text: "If BPA offers it, **My Coffee Report** in the side menu sets up a short message each morning, just for you: bulletins from National and your chapter first, then the sections you choose. It comes by email, and by Telegram too if you like." },
   { type: 'table', headers: ['Section', 'What you get'], rows: [
     ['**Membership**', "How many members are Current nationwide and in your chapter"],
+    ['**Birthdays today**', "Members of your chapter whose birthday is today (names only). Members who chose not to be listed in the directory are left out"],
     ['**Upcoming events**', "National's and your chapter's events in the days ahead"],
     ['**Sunshine and Bulletin Board**', 'Posts showing today on the member home'],
     ['**Weather**', 'Today\'s forecast for the places you list, one per line (City, ST)'],

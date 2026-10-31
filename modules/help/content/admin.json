@@ -1017,7 +1017,7 @@
         ],
         [
          "**Coffee Report**",
-         "When the AI module is switched on: a short daily email for National's admins with membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and weather, news and YouTube sections you choose. Pick the days, time, recipients and tone, and optionally a Telegram chat to send it to as well (make a bot with @BotFather, paste its token, message the bot, then use **Find chat ID**); **Preview** shows today's report without sending, **Send a test** emails it to you or to everyone on the list, and **Sent** lists every report sent with the facts it was written from. With an AI connection the AI writes it up; without one the plain facts are sent"
+         "When the AI module is switched on: a short daily email for National's admins with membership numbers, upcoming events,National's admins with membership numbers, today's birthdays, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and weather, news and YouTube sections you choose. Pick the days, time, recipients and tone, and optionally a Telegram chat to send it to as well (make a bot with @BotFather, paste its token, message the bot, then use **Find chat ID**); **Preview** shows today's report without sending, **Send a test** emails it to you or to everyone on the list, and **Sent** lists every report sent with the facts it was written from. With an AI connection the AI writes it up; without one the plain facts are sent"
         ],
         [
          "**AI Connections**",
@@ -1342,7 +1342,7 @@
      "blocks": [
       {
        "type": "p",
-       "text": "The **Daily Coffee Report** is a short morning email for admins: membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weather, news and YouTube sections you choose. It can also go to a Telegram chat."
+       "text": "The **Daily Coffee Report** is a short morning email for admins: membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weathermembership numbers, today's birthdays, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weather, news and YouTube sections you choose. It can also go to a Telegram chat."
       },
       {
        "type": "p",
@@ -1476,6 +1476,11 @@
         [
          "**Membership**",
          "Current members, past due, renewal rate; new members in the last 7 days",
+         "none"
+        ],
+        [
+         "**Birthdays today**",
+         "Current, Pending and Past Due members whose birthday is today (a chapter: its own; National: everyone, with their chapter). Names only, no ages. It uses the Date of Birth on the member's record, or the Birthday field when there is no Date of Birth. Switched on, second, in every report",
          "none"
         ],
         [
@@ -1683,7 +1688,7 @@
      "blocks": [
       {
        "type": "p",
-       "text": "Members can also get their own Daily Coffee Report: bulletins first, then the sections they choose (membership numbers, events, Sunshine and Bulletin Board, weather, markets, news and sports). It is plain facts, without AI, sent to the member's own email address and, if they link it, their Telegram."
+       "text": "Members can also get their own Daily Coffee Report: bulletins first, then the sections they choose (membership numbers, events, Sunshine and Bulletin Board, weather, markets, news and sports)(membership numbers, birthdays in their chapter, events, Sunshine and Bulletin Board, weather, markets, news and sports). It is plain facts, without AI, sent to the member's own email address and, if they link it, their Telegram."
       },
       {
        "type": "ul",

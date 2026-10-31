@@ -5,7 +5,7 @@
 module.exports = [
 
 { tab: "What It Does", blocks: [
-  { type: 'p', text: "The **Daily Coffee Report** is a short morning email for admins: membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weather, news and YouTube sections you choose. It can also go to a Telegram chat." },
+  { type: 'p', text: "The **Daily Coffee Report** is a short morning email for admins: membership numbers, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weathermembership numbers, today's birthdays, upcoming events, Sunshine and Bulletin Board posts, documents waiting for approval, and any weather, news and YouTube sections you choose. It can also go to a Telegram chat." },
   { type: 'p', text: "Honcho collects every fact itself. If you connect an AI, the AI turns those facts into a friendly, easy-to-read report; it is told to use only the facts it is given and to keep every number exactly. Without AI, or if the AI is unavailable that day, the plain facts are sent instead, so the report always goes out." },
   { type: 'table', headers: ['Who', 'Sets up', 'Gets'], rows: [
     ['**System Admins**', "National's AI connection and National's Coffee Report", "National's report"],
@@ -49,6 +49,7 @@ module.exports = [
   { type: 'h2', text: 'The Sections' },
   { type: 'table', headers: ['Section', 'What it shows', 'Options'], rows: [
     ['**Membership**', 'Current members, past due, renewal rate; new members in the last 7 days', 'none'],
+    ['**Birthdays today**', "Current, Pending and Past Due members whose birthday is today (a chapter: its own; National: everyone, with their chapter). Names only, no ages. It uses the Date of Birth on the member's record, or the Birthday field when there is no Date of Birth. Switched on, second, in every report", 'none'],
     ['**Upcoming events**', "Approved calendar events (a chapter sees its own and National's)", 'Days ahead'],
     ['**Sunshine and Bulletin Board**', 'Posts showing today on the member home', 'none'],
     ['**Documents waiting for approval**', "Document Library items in Pending Approval (a chapter: its own)", 'none'],
@@ -130,7 +131,7 @@ module.exports = [
 ]},
 
 { tab: "Members' Own Reports", blocks: [
-  { type: 'p', text: "Members can also get their own Daily Coffee Report: bulletins first, then the sections they choose (membership numbers, events, Sunshine and Bulletin Board, weather, markets, news and sports). It is plain facts, without AI, sent to the member's own email address and, if they link it, their Telegram." },
+  { type: 'p', text: "Members can also get their own Daily Coffee Report: bulletins first, then the sections they choose (membership numbers, events, Sunshine and Bulletin Board, weather, markets, news and sports)(membership numbers, birthdays in their chapter, events, Sunshine and Bulletin Board, weather, markets, news and sports). It is plain facts, without AI, sent to the member's own email address and, if they link it, their Telegram." },
   { type: 'ul', items: [
     "**Switch it on for the organization:** **System Settings > Features & Policy > Members can get their own Coffee Report**. Members then see **My Coffee Report** in their menu. The AI module must be on.",
     "**Only Current members** can switch theirs on; anyone else sees why not. A member who stops being Current simply stops receiving it.",

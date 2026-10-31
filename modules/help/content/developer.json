@@ -3283,6 +3283,11 @@
          "none"
         ],
         [
+         "Birthdays today (`birthdays`, 2026-10-31)",
+         "`ccmps` status 1/2/3, not deceased or deleted: month and day of `dob`, or, when `dob` is empty, of the `birthday` text (MM/DD/YYYY, MM/DD or YYYY-MM-DD; `_coffee_birth_month_day()`), in the report's time zone; 29 Feb counts on 28 Feb in other years. Names only; National adds the chapter. Member reports: their chapter, `directoryoptout` left out. Catalog flag `added_on`: `_coffee_add_new_sections()` puts it on, after Membership, in reports saved before it existed",
+         "none"
+        ],
+        [
          "Upcoming events (`events`)",
          "`events`, approved; a chapter sees its own and National's",
          "days ahead"

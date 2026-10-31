@@ -94,6 +94,9 @@ Code walkthroughs are tracked separately in `code-walkthrough-list.md`.
 
 ## Daily Coffee Report and AI connections (owner, 2026-10-29)
 
+- [x] **Birthdays today** section (owner, 2026-10-31; requirements AI-40): second on every report; Current, Pending and Past Due members; names only.
+- [ ] **One birth date field:** `ccmps.dob` (date picker, a timestamp) is empty for every member on the test data, while `ccmps.birthday` (free text, MM/DD/YYYY) is filled for 948. Decide which to keep; the legacy load (ETL) should fill `dob` from whatever the legacy site holds, and the Birthdays section can then drop its fallback to `birthday`.
+
 The Coffee Report is the Honcho AI module's daily brief (AI plan phase 1: https://claude.ai/artifact/CNVNAd9y2V41kTnPu4Z3mt). Eric's existing Python scripts (written by another AI) gather the information; the AI only assembles it into the report. **National and each chapter have their own AI connection:** Member Admins and System Admins use National's; each Chapter Admin can enter their chapter's own.
 
 - [x] **Eric: hand over the Coffee Report Python scripts** (received 2026-10-29) (copy them into the repo, e.g. `tools/coffee/`, or say where they live) with a sample of what each one outputs.

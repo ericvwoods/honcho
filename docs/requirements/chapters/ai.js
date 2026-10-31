@@ -67,12 +67,13 @@ module.exports = [
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
     ['AI-31', "Each member can have their own Daily Coffee Report (**My Coffee Report** in the member menu): on/off, time, time zone, days, and their own sections and options. The organization switches the feature on in System Settings.", 'Built 30 Oct 2026'],
     ['AI-32', "Only **Current** members can switch it on or receive it; anyone else is told why. A scheduled report for a member who is no longer eligible isn't sent and is logged.", 'Built 30 Oct 2026. Current depends on Status, which the Payments and Financial work will drive'],
-    ['AI-33', "Member sections: Membership, Upcoming events, Sunshine and Bulletin Board, Weather, Markets, News, Sports. No Documents waiting for approval (admin work) and no YouTube.", 'Built 30 Oct 2026'],
+    ['AI-33', "Member sections: Membership, Upcoming events,Member sections: Membership, Birthdays today (31 Oct 2026), Upcoming events, Sunshine and Bulletin Board, Weather, Markets, News, Sports. No Documents waiting for approval (admin work) and no YouTube.", 'Built 30 Oct 2026'],
     ['AI-34', "A member's Membership section shows the totals of Current members nationwide and in their chapter. Further statistics to be decided.", 'Built 30 Oct 2026 (more planned)'],
     ['AI-35', 'Members\' reports are plain facts (no AI), with the bulletins first.', 'Built 30 Oct 2026 (decided: AI for members may come later)'],
     ['AI-36', "Sent to the member's own email address, and optionally to their Telegram, linked to the organization's bot (the bot on National's report) by pressing Start on a link.", 'Built 30 Oct 2026'],
     ['AI-37', 'Preview, Email it to me now, and a list of recently sent reports the member can open again.', 'Built 30 Oct 2026'],
     ['AI-38', '**Paid extra for members:** YouTube channels in their own report.', 'Planned (owner, 30 Oct 2026); price and billing with the Financial module'],
+    ['AI-40', "**Birthdays today** section, second after Membership in every report (switched on in reports saved before it): Current, Pending and Past Due members whose birthday is today in the report's time zone, from the Date of Birth or, when that is empty, the Birthday field; names only, no ages; National lists everyone with their chapter, a chapter its own. In a member's own report: their chapter, without members who opted out of the directory.", 'Built 31 Oct 2026 (Mac)'],
     ['AI-39', "**Paid extra for members:** their personal calendar (Google or Outlook) in their own report.", 'Planned (owner, 30 Oct 2026); price and billing with the Financial module'],
   ]},
 
@@ -118,6 +119,7 @@ module.exports = [
     ['30 Oct 2026', 'Bulletins from National and chapters, at the top of every report (AI-28, AI-29).'],
     ['30 Oct 2026', 'A separate BPA Telegram bot, @BPAPilotsCoffeeBot, for National\'s report and members\' reports; Telegram chats as a list, each getting its own copy (AI-17).'],
     ['30 Oct 2026', "Members' own reports: plain facts, email plus Telegram, Current members only, no YouTube; YouTube and calendars become paid extras (AI-31 to AI-39)."],
+    ['31 Oct 2026', "Birthdays section second on the reports, for Current, Pending and Past Due members, from the Date of Birth (owner). The Date of Birth is empty on the test data, so the Birthday field is used when it is; names only; members' reports respect Directory Opt Out (AI-40)."],
     ['Open', 'Standard AI in Honcho plus Hermes as a premium Dedicated tier (the two-tier proposal).'],
     ['Open', "Is the standard AI included or paid, and does Honcho Lite get it? Which roles get reports at BPA by default? Confirm the never-sent data list and whether members are told admins use AI. The first tools for the connector and for changes."],
   ]},

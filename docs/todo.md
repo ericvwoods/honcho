@@ -207,6 +207,17 @@ Existing pieces: `ccmps_financial_transactions` (the National dues record renewa
     - Who hosts (owner's notes, 2026-10-21): **Operation Skyhook** and the **Summer Flight Academy** are national events. The **General Membership Meeting** and the **National Board Meeting** rotate between chapters, and the registration money goes **directly to the host chapter**.
     - So an event needs a host (National or a chapter, `events.subentity_id`), and registration must take payment into the host's account: the host chapter's payment-acceptance details (payment account / processor settings, payee, contact) need a home, probably on the Chapters screen (`ccmps_subentities`, next to `financial_email` / `financial_contact`), with National's own details for national events. Keep payment secrets out of the database in plain text.
 
+## Ownership and intellectual property (owner, 2026-10-31) - before offering Honcho to another organization
+General information only; confirm with an intellectual-property attorney.
+- [ ] **Written agreement with BPA on ownership:** Eric (or his company) owns Honcho; BPA has a license to use it (free or permanent, as agreed). Most important item: as BPA's head technologist, BPA could otherwise claim it.
+- [ ] Consider holding Honcho in a company (e.g. an LLC) instead of personally; then change `HONCHO_COPYRIGHT` (config.php), `LICENSE` and the guides' title pages to the company's name.
+- [ ] **Inspinia theme license:** find the WrapBootstrap receipt and check which license was bought; the standard one generally covers one end product, so several paying clients may need the extended license.
+- [ ] **Trademark search for "Honcho"** (USPTO Trademark Search; classes 9 software and 42 SaaS) before building branding on the name; use ™ until registered, ® only after.
+- [ ] **Register the copyright** (US Copyright Office, about $45-65) once the core is stable; redacted source deposit; describe the human authorship (design, decisions, selection and arrangement, written code) and disclaim purely AI-generated portions.
+- [ ] Client license agreement template: client owns its data and configuration, gets a license to Honcho; confidentiality agreements for anyone who works on the code.
+- [x] Copyright notice and proprietary `LICENSE` file (2026-10-31): `LICENSE` at the root, `HONCHO_COPYRIGHT` in config.php shown under every Inspinia page ("Powered by Honcho ..."), notice on the four guides' title pages.
+- Patents: not pursued (software business methods are generally not patent-eligible after *Alice*, 2014, and most features have prior art), unless an attorney finds something truly new.
+
 ## Core product and client configurations (hybrid SaaS / custom) - after BPA is perfected
 
 Decided 2026-10-27: once this BPA instance is right, it becomes the blueprint for the **Honcho core**. Each new client gets **its own configuration in Git**, and its own **staging and production** (one droplet per client, as planned for BPA). Core improvements flow to every client; client-specific work stays with that client.

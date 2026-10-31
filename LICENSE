@@ -1,0 +1,19 @@
+Honcho
+Copyright (c) 2026 Eric Woods. All rights reserved.
+
+This software and its documentation (the "Software") are proprietary and
+confidential. No part of the Software may be copied, modified, distributed,
+sublicensed, sold, or used, in whole or in part, except under a written
+license agreement with the copyright holder.
+
+Organizations using Honcho under such an agreement own their own data and
+their own configuration (names, wording, colors, logos and settings). The
+Software itself remains the property of the copyright holder.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, EXCEPT AS STATED IN A WRITTEN LICENSE AGREEMENT.
+
+Third-party components keep their own licenses and are not covered by this
+notice: the Trongate framework (MIT), the libraries in vendor/ (MIT, BSD,
+Apache-2.0; PHPMailer and HTML Purifier under LGPL-2.1), and the Inspinia
+theme in public/themes/inspinia/ (commercial license from WrapBootstrap).

@@ -205,7 +205,7 @@ children.push(new Paragraph({
   spacing: { after: 100 },
 }));
 children.push(new Paragraph({
-  children: [new TextRun({ text: `Generated ${new Date().toISOString().slice(0, 10)}`, size: 20, font: FONT, color: '999999' })],
+  children: [new TextRun({ text: `Generated ${new Date().toISOString().slice(0, 10)}. © 2026 Eric Woods. All rights reserved. Honcho is proprietary software.`, size: 20, font: FONT, color: '999999' })],
   spacing: { after: 600 },
 }));
 

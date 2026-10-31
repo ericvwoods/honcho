@@ -346,6 +346,7 @@ if (!empty($_SESSION['mobile_app_view'])) {
     <main><?= Template::display($data) ?></main>
 
  </div> <!-- wrapper -->
+ <div style="text-align:center; color:#999; font-size:11px; padding:8px 0 12px;">Powered by Honcho <?= HONCHO_COPYRIGHT ?></div>
 
 <!-- js from layout  -->
 

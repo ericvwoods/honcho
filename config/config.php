@@ -40,6 +40,7 @@ define('VERSION_RELEASE', '1.0');
 
 // Organization Specific
 define('SITENAME', setting('SITENAME', 'Black Pilots of America')); // honcho
+define('HONCHO_COPYRIGHT', '© 2026 Eric Woods. Honcho is proprietary software; see LICENSE.'); // the product's owner, not the organization's name (2026-10-31)
 define('SITENAME2', setting('SITENAME2', 'Enterprise Management System')); // CORE, MVP
 define('SITENAME3', setting('SITENAME3', 'Enterprise Mgmt System')); // honcho/views/inspinia/login
 define('SITENAME4', setting('SITENAME4', 'Member Portal')); // welcome/views/security/login

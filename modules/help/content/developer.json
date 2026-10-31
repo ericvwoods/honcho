@@ -2556,8 +2556,8 @@
         ],
         [
          "3",
-         "Record chapter dues / Renew (raises and emails the National invoice)",
-         "Planned"
+         "Record chapter dues / Renew (raises and emails the National invoice), bulk, Reverse",
+         "Built 2026-10-31 (Mac)"
         ],
         [
          "4",
@@ -2673,6 +2673,50 @@
         "**Switch:** `DUES_STATUS_ENGINE` (Financial tab, default off; migration `2026-10-31-dues-step2-engine.sql`). When on, `Ccmps::recalcstatus()` calls `dues_recalc_member()` and `recalc_all_member_statuses()` calls `dues_roll_year()` + `dues_recalc_all()`; when off, the old rule (with its 2026 cutover guard) runs. Both methods now refuse being opened from the address bar (`_internal_only()`).",
         "**Nightly:** `fin/nightly/<CRON_KEY>` (`modules/fin/Fin.php`; `CRON_KEY` in `.env`, else `COFFEE_CRON_KEY`) moves `system_current_year` on to the year in force and recalculates everyone; logged as `DuesNightly` when anything changed. Servers need a daily crontab line, e.g. `5 0 * * * docker exec honcho-honcho-staging-1 curl -s http://localhost/fin/nightly/<key>`.",
         "**Dry run:** `dues_recalc_all(false)` returns the counts and every member whose status would change, without writing; run it before switching the engine on anywhere. On the Mac (31 Oct 2026) it moved the year 2026 to 2027 and changed 421 statuses (377 Current to Past Due: paid through 2026, 2027 dues due Sep 30, 2026; 43 deceased or deleted to None; 1 Honorary to Current)."
+       ]
+      }
+     ]
+    },
+    {
+     "tab": "Recording Chapter Dues",
+     "slug": "recording-chapter-dues",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Dues step 3 (migration `2026-10-31-dues-step3-chapter-dues.sql`: `dues_attention`, bulk actions 10 Undelete and 11 Chapter Dues Paid, `DUES_PAY_INSTRUCTIONS`)."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Function (dues_helper.php)",
+        "Does"
+       ],
+       "rows": [
+        [
+         "`dues_record_chapter($ccmp_id, $year, $opts)`",
+         "Chapter charge paid (chapter dues × the chapter's proration factor for a new member), a `pay_payments` row (receipt `R000123`; `received_by` 0 for the Chapter at Large) unless the amount is 0 or method `none`, the National charge (member type's dues × National's factor for a new member; invoice `N2027-000123`), Current Year raised, status recalculated, `dues_send_invoice()`"
+        ],
+        [
+         "`dues_reverse_chapter($ccmp_id, $year, $reason)`",
+         "Payments marked `reversed`, chapter charge reopened; an open National charge is voided and the member emailed; a paid one goes to `dues_attention` and the Financial Admins are emailed (`dues_financial_admin_emails()`); Current Year back one year"
+        ],
+        [
+         "`dues_can_record($m)`",
+         "`fin/record_chapter_dues` and either `fin/settle_national_dues` (anyone) or Chapter Admin of the member's chapter, unless that chapter's dues are collected by National"
+        ],
+        [
+         "`dues_open_year()`",
+         "The year renewals are recorded for: `current_dues_pmt_year`"
+        ]
+       ]
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Pages** (`modules/fin/Fin.php`): `memberdues/<id>` (history, Record or Renew, Reverse with two clicks), `recorddues`, `reversedues`, `bulkchapterdues` and `bulkchapterduessubmit` (the ticked ids come from `Ccmps::bulkaction()` in `$_SESSION['fin_bulk_ids']`; results shown on the page). All POSTs carry `fin_token`. Close returns to where the person came from.",
+        "**Member record:** a Dues button on `viewccmp.php` when `dues_can_record()`. `Ccmps::ccmpsubmit()` with the engine on: raising Current Year to the open year calls `dues_record_chapter()` after the save (a new member's record too, with `new_member`); lowering it calls `dues_reverse_chapter()`; the old `ccmps_financial_transactions` insert is skipped. Without the right to record dues, the Current Year change is refused with a message.",
+        "**Bulk actions:** 2 (Current Year) and 11 (Chapter Dues Paid) redirect to `fin/bulkchapterdues` when the engine is on; 10 Undelete now works; 8 Delete recalculates status.",
+        "**Emails** go through `coffee_send_email()` (Brevo) with the tag `dues`."
        ]
       }
      ]

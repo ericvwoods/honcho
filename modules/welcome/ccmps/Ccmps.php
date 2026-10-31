@@ -921,7 +921,9 @@ function manage() { // subentity/system admin management list — view, edit, bu
         $data['tabbed'] = true;
     }
 
-    $data['bulk_actions'] = $this->model->get('id', 'ccmps_bulk_actions'); // bulk actions on ccmps records - subentities_bulk_actions is reserved for a future subentity-management page
+    $data['bulk_actions'] = array_values(array_filter((array) $this->model->get('id', 'ccmps_bulk_actions'), function($a){ // bulk actions on ccmps records
+        return (int) $a->id !== 11 || (dues_engine_on() && rbac_allowed('fin', 'record_chapter_dues')); // Chapter Dues Paid: only with the dues engine and the right
+    }));
     $data['statuses'] = $this->model->get('id', 'ccmps_status');
     $data['bc1'] = 'Manage';
     $data['bc2'] = ucwords(str_replace('_', ' ', $_SESSION['ccmpmode']));
@@ -1908,6 +1910,15 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         $resolved_ccmp_type_id = 1; // Regular — matches createccmp()'s own default
     }
 
+    // Dues engine on (dues step 3, 2026-10-31): Current Year changes go through the dues steps after the save:
+    // raising it to the open dues year records the chapter dues (and raises the National invoice); lowering it
+    // reverses them. Who may: dues_can_record(). The old rules below still apply when the engine is off.
+    $dues_engine        = dues_engine_on();
+    $dues_posted_year   = array_key_exists('current_year', $ccmps_data) ? (int) $ccmps_data['current_year'] : null;
+    $dues_record_year   = 0;
+    $dues_reverse_year  = 0;
+    $dues_note          = '';
+
     if (array_key_exists('current_year', $ccmps_data)) {
 
         $posted_current_year = (int) $ccmps_data['current_year'];
@@ -1949,6 +1960,28 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
         // current_year wasn't part of this submission at all — still make
         // sure a brand-new member gets the correct default.
         $ccmps_data['current_year'] = $current_dues_pmt_year;
+    }
+
+    if ($dues_engine && ($dues_posted_year === null || $dues_posted_year < CCMP_LIFETIME_YEAR)) {
+        $dues_who = $is_new_member ? (object) array('subentity' => (int) ($ccmps_data['subentity'] ?? 0)) : $prior_ccmp;
+        $dues_ok  = dues_can_record($dues_who);
+        if ($is_new_member) { // a new member's record means their chapter dues were received (as before), if this person may record them
+            $ccmps_data['current_year'] = 0;
+            if ($dues_ok) { $dues_record_year = $current_dues_pmt_year; }
+            else { $dues_note = ' Dues not recorded: ask someone who records '.strtolower(SUBENTITY).' dues to do it.'; }
+        } elseif ($dues_posted_year !== null && $prior_ccmp && $dues_posted_year !== (int) $prior_ccmp->current_year) {
+            $prior_year = (int) $prior_ccmp->current_year;
+            $ccmps_data['current_year'] = $prior_year; // the dues steps set it
+            if ($prior_year >= CCMP_LIFETIME_YEAR) {
+                $ccmps_data['current_year'] = $dues_posted_year; // no longer lifetime: just the year, no dues steps
+            } elseif (!$dues_ok) {
+                $dues_note = ' Current Year not changed: '.strtolower(SUBENTITY).' dues are recorded with the Dues button by someone allowed to.';
+            } elseif ($dues_posted_year > $prior_year && $dues_posted_year === $current_dues_pmt_year) {
+                $dues_record_year = $current_dues_pmt_year;
+            } elseif ($dues_posted_year < $prior_year && $prior_year < CCMP_LIFETIME_YEAR) {
+                $dues_reverse_year = $prior_year;
+            }
+        }
     }
 
     // -----------------------------------------------------------------------
@@ -2007,7 +2040,7 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
 
     $saved_current_year = (int) ($ccmps_data['current_year'] ?? 0);
 
-    if ($saved_current_year > 0 && $saved_current_year == $current_dues_pmt_year) {
+    if (!$dues_engine && $saved_current_year > 0 && $saved_current_year == $current_dues_pmt_year) { // the engine raises dues_charges instead
 
         $existing_txn_sql = "SELECT id FROM ccmps_financial_transactions
                               WHERE ccmp_id = " . (int) $ccmpid . "
@@ -2138,7 +2171,16 @@ function ccmpsubmit(){ // used by both ccmp & admin when editing/creating
     // same trigger the original function called after every save.
     $this->recalcstatus($ccmpid);
 
-    $flash_msg = ($crud == 'adding') ? 'The member was created successfully.' : 'The member was updated successfully.';
+    if ($dues_record_year) {
+        $dues_opts = array('method' => 'other', 'note' => 'Current Year set on the record');
+        if ($is_new_member) { $dues_opts['new_member'] = true; }
+        list(, $dues_msg) = dues_record_chapter((int) $ccmpid, $dues_record_year, $dues_opts);
+        $dues_note .= ' '.$dues_msg;
+    } elseif ($dues_reverse_year) {
+        list(, $dues_msg) = dues_reverse_chapter((int) $ccmpid, $dues_reverse_year, 'Current Year changed back on the record');
+        $dues_note .= ' '.$dues_msg;
+    }
+    $flash_msg = (($crud == 'adding') ? 'The member was created successfully.' : 'The member was updated successfully.').$dues_note;
     set_flashdata($flash_msg);
 if($_SESSION['actionmode'] == 'ccmpu'){ // if the member is updating their own record
     redirect(BASE_URL . 'welcome-ccmps/mydata/' . $ccmpid . '/1');
@@ -3073,6 +3115,14 @@ print_r($_POST); // array of ids called id
 
         $data = $_POST; // array of record ids called id & the dropdown item id
 
+        // Chapter Dues Paid (11), and the old Current Year (2) once the dues engine is on: a confirmation page
+        // records each ticked member through the dues steps (fin/bulkchapterdues; dues step 3, 2026-10-31)
+        if (in_array((string) ($_POST['selected'] ?? ''), array('2', '11'), true) && dues_engine_on()) {
+            $_SESSION['fin_bulk_ids']    = array_values(array_map('intval', (array) ($_POST['id'] ?? array())));
+            $_SESSION['fin_bulk_return'] = 'welcome-ccmps/manage/'.($_SESSION['ccmpmode'] ?? '');
+            redirect('fin/bulkchapterdues');
+        }
+
         switch ($_POST['selected']){ // the option number chosen from the dropdown
           case '1': // default blank no action
 
@@ -3261,6 +3311,7 @@ print_r($_POST); // array of ids called id
 //print_r($delid );
 //print_r($deldata); die();
                             $this->model->update($delid, $deldata, 'ccmps');
+                            $this->recalcstatus($delid); // deleted members have no status
                             //print_r('deleted all'); die();
                         }else{
                             // echo('Line 141 ccmps - row IS BLANK'); die();
@@ -3277,6 +3328,15 @@ print_r($_POST); // array of ids called id
   // print_r($data); die('Archive');
                 }
 
+        break;
+
+         case '10': // Undelete (2026-10-31): bring back deleted members, then their status
+                foreach((array) ($data['id'] ?? array()) as $row){
+                    if(strlen((string) $row) > 0){
+                        $this->model->update((int) $row, array('soft_deleted' => 0), 'ccmps');
+                        $this->recalcstatus((int) $row);
+                    }
+                }
         break;
 
         }

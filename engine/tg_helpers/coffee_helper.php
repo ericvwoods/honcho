@@ -721,7 +721,7 @@ function coffee_scope_admin_emails(int $subentity_id): array {
     return array_values(array_filter(array_map(function ($r) { return trim((string) $r->email_address); }, (array) $rows)));
 }
 
-function coffee_send_email(array $to, string $subject, string $text): array {
+function coffee_send_email(array $to, string $subject, string $text, string $tag = 'coffee-report'): array { // also used for dues emails (tag 'dues')
     // Brevo transactional email API (BREVO_API_KEY). WHATENV=dev: everything goes to DEVEMAIL only.
     if (BREVO_API_KEY === '') {
         return array('sent' => 0, 'message' => 'Email not sent: BREVO_API_KEY is not set in .env.');
@@ -748,7 +748,7 @@ function coffee_send_email(array $to, string $subject, string $text): array {
             CURLOPT_HTTPHEADER => array('api-key: '.BREVO_API_KEY, 'accept: application/json', 'content-type: application/json'),
             CURLOPT_POSTFIELDS => json_encode(array('sender' => array('email' => $from, 'name' => (string) env('MAIL_FROM_NAME', SITENAME)),
                                                     'to' => array(array('email' => $address)), 'subject' => $subject,
-                                                    'htmlContent' => $html, 'textContent' => $text, 'tags' => array('coffee-report')))));
+                                                    'htmlContent' => $html, 'textContent' => $text, 'tags' => array($tag)))));
         $body = curl_exec($ch);
         $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);

@@ -172,3 +172,235 @@ function dues_roll_year(bool $write = false, ?string $date = null): array {
     }
     return array($old, $new);
 }
+
+/*------------------------------ recording dues (step 3, 2026-10-31) ------------------------------*/
+/*
+ *   dues_open_year()                     the year renewals are recorded for (current_dues_pmt_year)
+ *   dues_chapter($subentity_id)          the chapter row (annual_dues, dues_collected_by)
+ *   dues_prorate_factor($scope, $type, $date)  the scope's factor for a new member of this type joining then
+ *   dues_record_chapter($ccmp_id, $year, $opts)   chapter dues paid (or renewed), National invoice raised and emailed
+ *   dues_reverse_chapter($ccmp_id, $year, $reason, $by)  undoes it: invoice voided, or flagged if already paid
+ *   dues_send_invoice($charge)           the National invoice email
+ *   dues_financial_admin_emails()        the Financial Admins' addresses (alerts)
+ */
+
+function dues_open_year(): int {
+    $y = (int) setting('current_dues_pmt_year', 0);
+    return $y > 0 ? $y : dues_year_for();
+}
+
+function dues_chapter(int $subentity_id) {
+    $model = new Model();
+    return $subentity_id > 0 ? $model->get_where($subentity_id, 'ccmps_subentities') : false;
+}
+
+function dues_prorate_factor(int $scope, int $type_id, string $date): float {
+    $model = new Model();
+    $applies = $model->query_bind('SELECT 1 FROM dues_proration_types WHERE subentity_id = :s AND ccmp_type_id = :t',
+                                  array('s' => $scope, 't' => $type_id), 'object');
+    if (empty($applies)) {
+        return 1.0;
+    }
+    $row = $model->query_bind('SELECT factor FROM dues_proration WHERE subentity_id = :s AND join_month = :m',
+                              array('s' => $scope, 'm' => (int) substr($date, 5, 2)), 'object');
+    return $row ? max(0.0, min(1.0, (float) $row[0]->factor)) : 1.0;
+}
+
+function _dues_is_new_member($m): bool { // never paid dues before: proration is for new members only (owner)
+    if ((int) $m->current_year > 0) {
+        return false;
+    }
+    $model = new Model();
+    $rows  = $model->query_bind("SELECT COUNT(*) AS n FROM dues_charges WHERE ccmp_id = :m AND status IN ('paid', 'waived')", array('m' => (int) $m->id), 'object');
+    return (int) ($rows[0]->n ?? 0) === 0;
+}
+
+function _dues_charge(int $ccmp_id, int $year, string $kind) {
+    $model = new Model();
+    $rows  = $model->query_bind('SELECT * FROM dues_charges WHERE ccmp_id = :m AND membership_year = :y AND kind = :k',
+                                array('m' => $ccmp_id, 'y' => $year, 'k' => $kind), 'object');
+    return $rows ? $rows[0] : false;
+}
+
+function dues_record_chapter(int $ccmp_id, int $year, array $opts = array()): array {
+    // $opts: method (cash | check | other | none), reference, date (Y-m-d), by (tg user id), note, new_member (bool, optional)
+    // Returns [ok, message]. Records the chapter charge as paid (and the payment), raises the National invoice,
+    // sets Current Year, recalculates status and emails the invoice.
+    $model = new Model();
+    $m     = $model->get_where($ccmp_id, 'ccmps');
+    if (!$m || !empty($m->deceased) || !empty($m->soft_deleted)) {
+        return array(false, 'No active member '.$ccmp_id.'.');
+    }
+    if ((int) $m->current_year >= dues_settings()['lifetime']) {
+        return array(false, trim($m->first_name.' '.$m->last_name).' is a lifetime member: no dues.');
+    }
+    $date    = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($opts['date'] ?? '')) ? $opts['date'] : date('Y-m-d');
+    $by      = (int) ($opts['by'] ?? ($_SESSION['tg_user_id'] ?? 0));
+    $method  = in_array($opts['method'] ?? '', array('cash', 'check', 'other', 'none'), true) ? $opts['method'] : 'other';
+    $new     = array_key_exists('new_member', $opts) ? (bool) $opts['new_member'] : _dues_is_new_member($m);
+    $chapter = dues_chapter((int) $m->subentity);
+    $type    = $model->get_where((int) $m->ccmp_type, 'ccmps_types');
+    $name    = trim($m->first_name.' '.$m->last_name);
+
+    $existing = _dues_charge($ccmp_id, $year, 'chapter');
+    if ($existing && in_array($existing->status, array('paid', 'waived'), true)) {
+        return array(false, $name.': chapter dues for '.$year.' are already recorded.');
+    }
+
+    // chapter charge, paid (chapter dues may be 0: a plain renewal)
+    $full   = round((float) ($chapter->annual_dues ?? 0), 2);
+    $factor = $new ? dues_prorate_factor((int) $m->subentity, (int) $m->ccmp_type, $date) : 1.0;
+    $amount = round($full * $factor, 2);
+    $charge = array('subentity_id' => (int) $m->subentity, 'amount' => $amount, 'full_amount' => $full, 'prorate_factor' => $factor,
+                    'balance' => 0, 'status' => 'paid', 'reason' => '', 'paid_at' => time(), 'updated_by' => $by, 'updated_at' => time());
+    if ($existing) {
+        $model->update((int) $existing->id, $charge, 'dues_charges');
+        $chapter_charge_id = (int) $existing->id;
+    } else {
+        $chapter_charge_id = (int) $model->insert($charge + array('ccmp_id' => $ccmp_id, 'membership_year' => $year, 'kind' => 'chapter', 'plan' => 'annual',
+                                                                   'created_by' => $by, 'created_at' => time()), 'dues_charges');
+    }
+    if ($amount > 0 && $method !== 'none') { // the payment record (Payments, PAY-07); the Chapter at Large's dues go to National
+        $pid = (int) $model->insert(array('payer_ccmp_id' => $ccmp_id, 'received_by' => ($chapter && $chapter->dues_collected_by === 'national') ? 0 : (int) $m->subentity,
+            'amount' => $amount, 'method' => $method, 'reference' => substr((string) ($opts['reference'] ?? ''), 0, 100), 'received_on' => $date,
+            'applies_to' => 'dues_charge', 'applies_to_id' => $chapter_charge_id, 'status' => 'completed', 'notes' => substr((string) ($opts['note'] ?? ''), 0, 255),
+            'recorded_by' => $by, 'created_at' => time(), 'updated_at' => time()), 'pay_payments');
+        $model->update($pid, array('receipt_number' => sprintf('R%06d', $pid)), 'pay_payments');
+    }
+
+    // the National invoice: chapter dues paid is what triggers it (owner's concept of operations)
+    $nat = _dues_charge($ccmp_id, $year, 'national');
+    $sent = '';
+    if (!$nat || $nat->status === 'void') {
+        $nfull   = round((float) ($type->national_dues ?? 0), 2);
+        $nfactor = $new ? dues_prorate_factor(0, (int) $m->ccmp_type, $date) : 1.0;
+        $namount = round($nfull * $nfactor, 2);
+        $row = array('subentity_id' => (int) $m->subentity, 'amount' => $namount, 'full_amount' => $nfull, 'prorate_factor' => $nfactor,
+                     'balance' => $namount, 'status' => $namount > 0 ? 'open' : 'paid', 'reason' => '', 'paid_at' => $namount > 0 ? 0 : time(),
+                     'updated_by' => $by, 'updated_at' => time());
+        if ($nat) {
+            $model->update((int) $nat->id, $row, 'dues_charges');
+            $nat_id = (int) $nat->id;
+        } else {
+            $nat_id = (int) $model->insert($row + array('ccmp_id' => $ccmp_id, 'membership_year' => $year, 'kind' => 'national', 'plan' => 'annual',
+                                                         'created_by' => $by, 'created_at' => time()), 'dues_charges');
+        }
+        $model->update($nat_id, array('invoice_number' => sprintf('N%d-%06d', $year, $nat_id)), 'dues_charges');
+        if ($namount > 0) {
+            $sent = dues_send_invoice($model->get_where($nat_id, 'dues_charges')) ? ' National invoice emailed.' : ' National invoice raised (not emailed: no email address).';
+        }
+    }
+
+    if ((int) $m->current_year < $year) { // Current Year = paid through (chapter dues)
+        $model->update($ccmp_id, array('current_year' => $year), 'ccmps');
+    }
+    dues_recalc_member($ccmp_id, true);
+    return array(true, $name.': chapter dues for '.$year.' recorded'.($amount > 0 ? ' ($'.number_format($amount, 2).($factor < 1 ? ', prorated' : '').')' : ' (no chapter dues)').'.'.$sent);
+}
+
+function dues_reverse_chapter(int $ccmp_id, int $year, string $reason, int $by = 0): array {
+    // Backing out chapter dues (unpaid, bounced check, mistake; FIN-32). Returns [ok, message].
+    $model = new Model();
+    $m     = $model->get_where($ccmp_id, 'ccmps');
+    $ch    = _dues_charge($ccmp_id, $year, 'chapter');
+    if (!$m || !$ch || !in_array($ch->status, array('paid', 'waived'), true)) {
+        return array(false, 'There are no chapter dues for '.$year.' to reverse.');
+    }
+    $by     = $by ?: (int) ($_SESSION['tg_user_id'] ?? 0);
+    $reason = trim($reason) !== '' ? substr(trim($reason), 0, 200) : 'reversed';
+    $name   = trim($m->first_name.' '.$m->last_name);
+    $model->query_bind("UPDATE pay_payments SET status = 'reversed', notes = CONCAT(notes, :n), updated_at = :t
+                         WHERE applies_to = 'dues_charge' AND applies_to_id = :c AND status = 'completed'",
+                       array('n' => ' [reversed: '.$reason.']', 't' => time(), 'c' => (int) $ch->id));
+    $model->update((int) $ch->id, array('status' => 'open', 'balance' => $ch->amount, 'paid_at' => 0, 'reason' => 'reversed: '.$reason,
+                                        'updated_by' => $by, 'updated_at' => time()), 'dues_charges');
+    $msg = $name.': chapter dues for '.$year.' reversed.';
+    $nat = _dues_charge($ccmp_id, $year, 'national');
+    if ($nat && $nat->status === 'open') { // National isn't expecting the money any more
+        $model->update((int) $nat->id, array('status' => 'void', 'balance' => 0, 'reason' => 'chapter dues reversed: '.$reason,
+                                             'updated_by' => $by, 'updated_at' => time()), 'dues_charges');
+        $email = trim((string) $m->email_address);
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            coffee_send_email(array($email), SHORTSITENAME.' National dues invoice '.$nat->invoice_number.' withdrawn',
+                "Dear ".trim((string) $m->first_name).",\n\nYour ".SHORTSITENAME." National dues invoice ".$nat->invoice_number." for ".$year
+                ." ($".number_format((float) $nat->amount, 2).") has been withdrawn because your chapter dues payment was reversed. You don't need to pay it.\n\n"
+                ."If you think this is a mistake, please contact your ".SUBENTITY." Administrator.\n", 'dues');
+        }
+        $msg .= ' National invoice '.$nat->invoice_number.' voided and the member told.';
+    } elseif ($nat && in_array($nat->status, array('paid', 'waived'), true)) { // already paid: a person decides (owner)
+        $model->insert(array('ccmp_id' => $ccmp_id, 'charge_id' => (int) $nat->id, 'kind' => 'chapter_reversed_after_national_paid',
+            'message' => $name.' ('.$ccmp_id.'): chapter dues for '.$year.' reversed ('.$reason.') after National invoice '.$nat->invoice_number.' was paid.',
+            'created_by' => $by, 'created_at' => time()), 'dues_attention');
+        $to = dues_financial_admin_emails();
+        if ($to) {
+            coffee_send_email($to, SHORTSITENAME.' dues: needs attention ('.$name.')',
+                $name." (member ".$ccmp_id."): chapter dues for ".$year." were reversed (".$reason.") after National invoice ".$nat->invoice_number
+                ." ($".number_format((float) $nat->amount, 2).") was already paid.\n\nNothing was undone on the National side. Please decide what to do; the case is on the dues Needs attention list.\n", 'dues');
+        }
+        $msg .= ' National invoice '.$nat->invoice_number.' was already paid: the Financial Admin has been alerted.';
+    }
+    if ((int) $m->current_year === $year) {
+        $model->update($ccmp_id, array('current_year' => $year - 1), 'ccmps');
+    }
+    dues_recalc_member($ccmp_id, true);
+    return array(true, $msg);
+}
+
+function dues_send_invoice($charge): bool {
+    $model = new Model();
+    $m     = $charge ? $model->get_where((int) $charge->ccmp_id, 'ccmps') : false;
+    $email = $m ? trim((string) $m->email_address) : '';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    $type  = $model->get_where((int) $m->ccmp_type, 'ccmps_types');
+    $due   = date('F j, Y', strtotime(dues_due_date((int) $charge->membership_year)));
+    $text  = "Dear ".trim((string) $m->first_name).",\n\n"
+           . "Thank you: your ".strtolower(SUBENTITY)." dues for membership year ".$charge->membership_year." have been recorded. Here is your "
+           . SHORTSITENAME." National dues invoice.\n\n"
+           . "Invoice: ".$charge->invoice_number."\n"
+           . "Member: ".trim($m->first_name.' '.$m->last_name)." (".CCMP." No. ".$m->ccmp_number.")\n"
+           . "Membership year: ".$charge->membership_year."\n"
+           . "Member type: ".($type->description ?? '')."\n"
+           . "Amount due: $".number_format((float) $charge->amount, 2)
+           . ((float) $charge->prorate_factor < 1 ? " (new member, prorated from $".number_format((float) $charge->full_amount, 2).")" : '')."\n"
+           . "Due by: ".$due."\n\n"
+           . trim((string) setting('DUES_PAY_INSTRUCTIONS', ''))."\n\n"
+           . "Your membership is Pending until National receives this payment.\n";
+    $sent = coffee_send_email(array($email), SHORTSITENAME.' National dues invoice '.$charge->invoice_number, $text, 'dues');
+    if ($sent['sent'] > 0) {
+        $model->update((int) $charge->id, array('invoiced_at' => time()), 'dues_charges');
+        return true;
+    }
+    return false;
+}
+
+function dues_financial_admin_emails(): array {
+    $model = new Model();
+    $rows  = $model->query("SELECT DISTINCT c.email_address FROM system_group_users gu
+                              JOIN system_groups g ON g.id = gu.group_id AND g.title = 'Financial Admins'
+                              JOIN ccmps c ON c.trongate_user_id = gu.tg_user_id
+                             WHERE c.email_address LIKE '%@%' AND COALESCE(c.deceased,0) != 1 AND COALESCE(c.soft_deleted,0) != 1", 'object');
+    return array_values(array_filter(array_map(function ($r) { return trim((string) $r->email_address); }, (array) $rows)));
+}
+
+function dues_engine_on(): bool {
+    return (int) setting('DUES_STATUS_ENGINE', 0) === 1;
+}
+
+function dues_can_record($m): bool {
+    // may the signed-in person record or reverse this member's chapter dues? Chapter Admins: their own chapter's
+    // members, unless the chapter's dues are collected by National (the Chapter at Large); National's dues people: anyone
+    if (!$m || !dues_engine_on() || !rbac_allowed('fin', 'record_chapter_dues')) {
+        return false;
+    }
+    $national = rbac_allowed('fin', 'settle_national_dues');
+    if ($national) {
+        return true;
+    }
+    $chapter = dues_chapter((int) $m->subentity);
+    if ($chapter && $chapter->dues_collected_by === 'national') {
+        return false;
+    }
+    return !empty($_SESSION['ccmps_subentity_admin']) && (int) ($_SESSION['ccmps_subentity'] ?? -1) === (int) $m->subentity;
+}

@@ -130,6 +130,11 @@
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?><?= $_SESSION['ccmpmode'] == 'ccmp' ? 'welcome-cards/mycard' : 'welcome-cards/card/'.$recid ?>?return=<?= rawurlencode(strtok(substr(current_url(), strlen(BASE_URL)), '?#')) ?>"> <!-- membership card (welcome-cards); Close comes back here -->
                         <i class="fa fa-qrcode"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Card</span>
                     </a>
+                    <?php $dues_member = (new Model())->get_where((int) $recid, 'ccmps'); if(dues_can_record($dues_member)): ?> <!-- record or reverse chapter dues (fin, dues step 3) -->
+                    <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>fin/memberdues/<?= (int) $recid ?>">
+                        <i class="fa fa-usd"></i><span class="btn-label-text" style="color: <?= NB_CLR ?>;"> Dues</span>
+                    </a>
+                    <?php endif; ?>
 
                 <?php if($_SESSION['ccmpmode'] == 'ccmp'): ?> <!-  coming from sidemenu of ccmphome page -->
                     <a class="btn btn-outline btn-primary" style="padding: 8px 12px;" href="<?= BASE_URL ?>welcome-ccmps/ccmphome">

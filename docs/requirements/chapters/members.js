@@ -40,7 +40,7 @@ module.exports = [
   { type: 'h2', text: 'Member Lists, Rosters and Exports' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
     ['MEM-12', 'Admin member lists (All Members, Chapter Members, Student Members) with search, sorting, and per-row View, Update, Delete, Undelete and Permanently Delete. Delete can be undone; Permanently Delete removes the member and all their records.', 'Built (before Oct 2026)'],
-    ['MEM-13', '**Bulk actions** on ticked members: set the Current Year, create login accounts, delete.', 'Built. Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing yet'],
+    ['MEM-13', '**Bulk actions** on ticked members: set the Current Year, create login accounts, delete.', 'Built; Undelete added and Current Year routed through the dues steps 31 Oct 2026. Lock, Unlock, Approve User Acct, Approve CCMPS and Archive are listed but do nothing yet'],
     ['MEM-14', '**My Chapter Roster** (current members of the member\'s chapter) and **National Directory** (current members everywhere, except those who opted out), for members only.', 'Built; fixed 19 Oct 2026'],
     ['MEM-15', "**National Roster** (the treasurer's roster of current members) and **Master Spreadsheet** (all members as Excel) for national admins; **Export Members** (own chapter) for Chapter Admins.", 'Built; fixed 19 Oct 2026'],
     ['MEM-16', 'The admin home shows member counts by status: Current, Past Due, Current Student.', 'Built (before Oct 2026)'],

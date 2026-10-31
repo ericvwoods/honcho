@@ -14,9 +14,11 @@ const memberList = [
   { type: 'h3', text: 'Bulk Actions' },
   { type: 'p', text: 'To change many members at once, tick the box on each row (or **Select** at the top to tick them all), choose an action from the **Bulk Actions** list below the table and click **Submit**.' },
   { type: 'table', headers: ['Action', 'What it does'], rows: [
-    ['**Current Year**', "Marks the ticked members as members for the current year"],
+    ['**Chapter Dues Paid**', "Records chapter dues paid for the ticked members (see Chapter Dues). Shown once the dues engine is on"],
+    ['**Current Year**', "With the dues engine on: the same as Chapter Dues Paid. Before that: marks the ticked members as members for the current year"],
     ['**User Acct**', "Creates a login account for each ticked member who doesn't have one"],
-    ['**Delete**', 'Deletes the ticked members (can be undone one at a time with Undelete Record)'],
+    ['**Delete**', 'Deletes the ticked members'],
+    ['**Undelete**', 'Brings deleted members back, with their status worked out again'],
   ]},
   { type: 'p', text: "**Lock**, **Unlock**, **Approve User Acct**, **Approve CCMPS** and **Archive** also appear in the list but don't do anything yet." },
   { type: 'h3', text: 'Locking a Member' },
@@ -52,6 +54,31 @@ chapterAdmins: [
     { type: 'h2', text: 'Adding a Member' },
     { type: 'p', text: "Click the button to add a member above the list, fill in their details and save. To let them log in, either tick them and use the **User Acct** bulk action, or create the account from their record. They'll be asked to choose a new password the first time they log in." },
   ])},
+  { tab: "Chapter Dues", blocks: [
+    { type: 'p', text: "When a member pays your chapter's dues, record it in Honcho. That is what tells National to invoice the member for National dues, and it moves the member to **Pending** until National is paid, then **Current**. (This works once the dues engine is switched on in System Settings, Financial.)" },
+    { type: 'h2', text: 'One Member' },
+    { type: 'ol', items: [
+      "Open the member and click **Dues** (next to Card).",
+      "Choose how they paid (**Check**, **Cash** or **Other**), the check number or reference, and the date you received it.",
+      "Click **Record chapter dues paid**. If your chapter has no dues, the button is **Renew** instead.",
+    ]},
+    { type: 'p', text: "Honcho records the payment with a receipt number, raises the member's **National dues invoice** and emails it to them, and sets their Current Year. The page shows their dues history, invoices and payments. A **new member's** dues may be prorated, depending on when they join; the page says so." },
+    { type: 'h2', text: 'Many Members at Once' },
+    { type: 'ol', items: [
+      "On your chapter's member list, tick the members who paid.",
+      "Choose **Chapter Dues Paid** from **Bulk Actions** and click **Submit**.",
+      "A page lists them with their amounts (and any that will be skipped, such as lifetime members or anyone already recorded). Untick anyone who shouldn't be included, choose how they paid, the reference and the date, and click **Record the ticked members**.",
+    ]},
+    { type: 'h2', text: 'When It Was a Mistake (or a Check Bounced)' },
+    { type: 'p', text: "Open the member's **Dues** page and use **Reverse chapter dues**: choose why (check bounced, not actually paid, entered by mistake, other) and click **Reverse** twice." },
+    { type: 'ul', items: [
+      "The payment is marked reversed and the member goes back to paid through last year.",
+      "If the member **hasn't paid** National's invoice yet, it is voided and the member is told it's withdrawn, so National doesn't expect the money.",
+      "If they **already paid** National, nothing is undone there: the Financial Admin is alerted and decides what to do.",
+    ]},
+    { type: 'p', text: "Changing **Current Year** on the member's record does the same: raising it to the year being renewed records the chapter dues; lowering it reverses them." },
+    { type: 'alert', variant: 'info', text: "The **Chapter at Large**'s dues are recorded by National's Financial Admins, not by a chapter." },
+  ]},
   { tab: "Chapter Posts", blocks: [
     { type: 'p', text: "Open **Sunshine**, **Bulletin Board** or **Careers** from the Chapter Admin menu. Each list shows the posts for your chapter, the posts you made for all members, and the posts your chapter's members made, with who posted each one. Use **Add** to post; the form works like the Content Admins' one (Chapter 4)." },
     { type: 'ul', items: [

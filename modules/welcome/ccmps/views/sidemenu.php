@@ -187,6 +187,22 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
 <?php if(!is_system_admin() && rbac_allowed('system', 'edit_financial_settings')): ?> <!-- Financial Admins: only the Financial tab of System Settings -->
             <li><a href="<?= BASE_URL ?>system-settings/manage/financial"><i class="fa fa-usd"></i> <span class="nav-label">Financial Settings</span></a></li>
 <?php endif; ?>
+<?php if(dues_engine_on() && (rbac_allowed('fin', 'settle_national_dues') || rbac_allowed('fin', 'manage_dues_settings') || (rbac_allowed('fin', 'record_chapter_dues') && !empty($_SESSION['ccmps_subentity_admin'])))): ?> <!-- Dues (fin, 2026-10-31) -->
+            <li> <a href="#"><i class="fa fa-money"></i><span class="nav-label"> Dues </span><span class="fa fa-chevron-down"></span></a>
+                <ul class="nav nav-second-level collapse">
+                <?php if(rbac_allowed('fin', 'settle_national_dues')): $dues_attn = count(dues_attention_open()); ?>
+                    <li><a href="<?= BASE_URL ?>fin/invoices"><i class="fa fa-file-text-o"></i> National Invoices</a></li>
+                    <li><a href="<?= BASE_URL ?>fin/attention"><i class="fa fa-exclamation-triangle"></i> Needs Attention<?= $dues_attn ? ' ('.$dues_attn.')' : '' ?></a></li>
+                <?php endif; ?>
+                <?php if(rbac_allowed('fin', 'manage_dues_settings')): ?>
+                    <li><a href="<?= BASE_URL ?>fin/settings"><i class="fa fa-sliders"></i> Dues Settings</a></li>
+                <?php endif; ?>
+                <?php if(rbac_allowed('fin', 'record_chapter_dues') && !empty($_SESSION['ccmps_subentity_admin']) && !empty($_SESSION['ccmps_subentity'])): ?>
+                    <li><a href="<?= BASE_URL ?>fin/chapterdues/<?= (int) $_SESSION['ccmps_subentity'] ?>"><i class="fa fa-building"></i> <?= SUBENTITY ?> Dues</a></li>
+                <?php endif; ?>
+                </ul>
+            </li>
+<?php endif; ?>
 <?php if($_SESSION['ccmps_system_admin'] == 1 || $_SESSION['honcho_ccmps_module_all'] == 1 || $_SESSION['honcho_all_modules'] == 1): ?>
 
             <li> <a href="#"><i class="fa fa-gears"></i><span class="nav-label"> System Admin </span><span class="fa fa-chevron-down"></span></a><!-- <span class="fa arrow"></span> -->

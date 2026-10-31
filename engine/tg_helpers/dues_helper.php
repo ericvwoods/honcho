@@ -404,3 +404,73 @@ function dues_can_record($m): bool {
     }
     return !empty($_SESSION['ccmps_subentity_admin']) && (int) ($_SESSION['ccmps_subentity'] ?? -1) === (int) $m->subentity;
 }
+
+/*------------------------- National's side (step 4, 2026-10-31) -------------------------*/
+/*
+ *   dues_mark_national_paid($charge_id, $opts)   the National invoice paid: payment recorded, member recalculated
+ *   dues_reverse_national($charge_id, $reason)   a bounced or mistaken National payment: invoice reopened
+ *   dues_set_charge_status($charge_id, 'void' | 'waived', $reason)   corrections by a Financial Admin
+ *   dues_attention_open()                         the Needs attention cases not yet resolved
+ */
+
+function dues_mark_national_paid(int $charge_id, array $opts = array()): array {
+    $model = new Model();
+    $c     = $model->get_where($charge_id, 'dues_charges');
+    if (!$c || $c->kind !== 'national') {
+        return array(false, 'No such National invoice.');
+    }
+    $m    = $model->get_where((int) $c->ccmp_id, 'ccmps');
+    $name = $m ? trim($m->first_name.' '.$m->last_name) : 'member '.$c->ccmp_id;
+    if ($c->status !== 'open') {
+        return array(false, $name.': invoice '.$c->invoice_number.' is '.$c->status.', not open.');
+    }
+    $by     = (int) ($opts['by'] ?? ($_SESSION['tg_user_id'] ?? 0));
+    $date   = preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) ($opts['date'] ?? '')) ? $opts['date'] : date('Y-m-d');
+    $method = in_array($opts['method'] ?? '', array('cash', 'check', 'other', 'paypal'), true) ? $opts['method'] : 'other';
+    $pid = (int) $model->insert(array('payer_ccmp_id' => (int) $c->ccmp_id, 'received_by' => 0, 'amount' => $c->balance, 'method' => $method,
+        'reference' => substr((string) ($opts['reference'] ?? ''), 0, 100), 'received_on' => $date, 'applies_to' => 'dues_charge', 'applies_to_id' => $charge_id,
+        'status' => 'completed', 'notes' => substr((string) ($opts['note'] ?? ''), 0, 255), 'recorded_by' => $by, 'created_at' => time(), 'updated_at' => time()), 'pay_payments');
+    $model->update($pid, array('receipt_number' => sprintf('R%06d', $pid)), 'pay_payments');
+    $model->update($charge_id, array('status' => 'paid', 'balance' => 0, 'paid_at' => time(), 'updated_by' => $by, 'updated_at' => time()), 'dues_charges');
+    dues_recalc_member((int) $c->ccmp_id, true);
+    return array(true, $name.': National invoice '.$c->invoice_number.' paid ($'.number_format((float) $c->balance, 2).').');
+}
+
+function dues_reverse_national(int $charge_id, string $reason, int $by = 0): array {
+    $model = new Model();
+    $c     = $model->get_where($charge_id, 'dues_charges');
+    if (!$c || $c->kind !== 'national' || $c->status !== 'paid') {
+        return array(false, 'Only a paid National invoice can be reversed.');
+    }
+    $by     = $by ?: (int) ($_SESSION['tg_user_id'] ?? 0);
+    $reason = trim($reason) !== '' ? substr(trim($reason), 0, 200) : 'reversed';
+    $model->query_bind("UPDATE pay_payments SET status = 'reversed', notes = CONCAT(notes, :n), updated_at = :t
+                         WHERE applies_to = 'dues_charge' AND applies_to_id = :c AND status = 'completed'",
+                       array('n' => ' [reversed: '.$reason.']', 't' => time(), 'c' => $charge_id));
+    $model->update($charge_id, array('status' => 'open', 'balance' => $c->amount, 'paid_at' => 0, 'reason' => 'payment reversed: '.$reason,
+                                     'updated_by' => $by, 'updated_at' => time()), 'dues_charges');
+    dues_recalc_member((int) $c->ccmp_id, true);
+    return array(true, 'National invoice '.$c->invoice_number.' payment reversed; the invoice is open again.');
+}
+
+function dues_set_charge_status(int $charge_id, string $status, string $reason, int $by = 0): array {
+    // Void (a mistake: the charge no longer counts) or Waive (forgiven: counts as settled); a reason is required
+    $model = new Model();
+    $c     = $model->get_where($charge_id, 'dues_charges');
+    if (!$c || !in_array($status, array('void', 'waived'), true) || trim($reason) === '') {
+        return array(false, 'Choose the invoice and give a reason.');
+    }
+    if (!in_array($c->status, array('open'), true)) {
+        return array(false, ($c->invoice_number ?: 'That charge').' is '.$c->status.': only an open one can be voided or waived.');
+    }
+    $model->update($charge_id, array('status' => $status, 'balance' => 0, 'reason' => $status.': '.substr(trim($reason), 0, 200),
+                                     'updated_by' => $by ?: (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'dues_charges');
+    dues_recalc_member((int) $c->ccmp_id, true);
+    return array(true, ($c->invoice_number ?: ucfirst($c->kind).' charge').' '.($status === 'void' ? 'voided' : 'waived').'.');
+}
+
+function dues_attention_open(): array {
+    $model = new Model();
+    return (array) $model->query("SELECT a.*, CONCAT(c.first_name, ' ', c.last_name) AS member_name FROM dues_attention a
+                                    LEFT JOIN ccmps c ON c.id = a.ccmp_id WHERE a.resolved_at = 0 ORDER BY a.id", 'object');
+}

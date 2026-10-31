@@ -20,6 +20,17 @@
         dues_can_record()
   bulkchapterduessubmit()  POST: records each ticked member the same way as one at a time; results shown on the page
         _check_token(), dues_can_record(), dues_record_chapter(), _audit()
+  Step 4, National's side (fin/settle_national_dues unless noted):
+  invoices()             National invoices by year, chapter and status; tick and Mark paid (FIN-03, FIN-31); also the
+                         members ticked on a member list with the National Dues Paid bulk action ($_SESSION['fin_inv_ids'])
+  invoicespaid()         POST: dues_mark_national_paid() for each ticked invoice
+  nationalaction()       POST from a member's Dues page: paid, void, waive, resend, reverse (FIN-27, FIN-33)
+  attention()            the Needs attention cases; attentionresolve() POST: resolved with a note
+  settings()             fin/manage_dues_settings: National dues by member type, type options, National's proration
+                         schedule, every chapter's dues amount and who collects them; settingssubmit() POST
+  chapterdues($id)       a chapter's dues and proration schedule: its Chapter Admins (own chapter) or dues settings
+                         people (any chapter, plus who collects them); chapterduessubmit() POST
+        _can_settle(), _can_settings(), _can_chapter_settings($id), _proration($scope), _save_proration($scope)
 
   nightly($key)          for the server's scheduler, once a day (no login): moves the membership year
                          on when its due date passes (dues_roll_year()) and recalculates every member's
@@ -74,6 +85,7 @@ class Fin extends Trongate {
     $data['chapter_charge']  = _dues_charge((int) $m->id, $year, 'chapter');
     $data['national_charge'] = _dues_charge((int) $m->id, $year, 'national');
     $data['status_names'] = array(0 => 'None', 1 => 'Current', 2 => 'Past Due', 3 => 'Pending', 5 => 'Expired');
+    $data['can_settle']   = $this->_can_settle();
     $data['token']       = $this->_token();
     $data['home_url']    = $this->_home_url();
     $data['close_url']   = $this->_return_url('welcome-ccmps/viewccmp/'.(int) $m->id);
@@ -239,8 +251,298 @@ class Fin extends Trongate {
   }
 
 /*----------------------------------------------------------------------------*/
+/*--------------------------- function INVOICES ------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function invoices(){
+
+    if(!$this->_can_settle()){ $this->_deny(); }
+    $year    = (int) ($_GET['year'] ?? dues_open_year());
+    $chapter = (int) ($_GET['chapter'] ?? 0);
+    $status  = in_array($_GET['status'] ?? 'open', array('open', 'paid', 'void', 'waived', 'all'), true) ? ($_GET['status'] ?? 'open') : 'open';
+    $picked  = !empty($_GET['picked']) ? array_map('intval', (array) ($_SESSION['fin_inv_ids'] ?? array())) : array();
+    $where   = array("c.kind = 'national'", 'c.membership_year = :y');
+    $params  = array('y' => $year);
+    if($chapter > 0){ $where[] = 'c.subentity_id = :s'; $params['s'] = $chapter; }
+    if($status !== 'all'){ $where[] = 'c.status = :st'; $params['st'] = $status; }
+    if($picked){ $where[] = 'c.ccmp_id IN ('.implode(',', $picked).')'; }
+    $data['rows'] = $this->model->query_bind("SELECT c.*, m.first_name, m.last_name, m.ccmp_number, m.email_address,
+                                                     COALESCE(NULLIF(s.description, ''), s.chapter_title) AS chapter_name
+                                                FROM dues_charges c JOIN ccmps m ON m.id = c.ccmp_id
+                                                LEFT JOIN ccmps_subentities s ON s.id = c.subentity_id
+                                               WHERE ".implode(' AND ', $where)." ORDER BY m.last_name, m.first_name LIMIT 1000", $params, 'object');
+    if($picked){ // ticked members with no open invoice for the year: say why
+        $have = array_map(function($r){ return (int) $r->ccmp_id; }, (array) $data['rows']);
+        $data['missing'] = array();
+        foreach(array_diff($picked, $have) as $id){
+            $m = $this->model->get_where((int) $id, 'ccmps');
+            if($m){ $data['missing'][] = trim($m->first_name.' '.$m->last_name).': no '.$status.' National invoice for '.$year.' (chapter dues not recorded yet?)'; }
+        }
+    }
+    $data['totals'] = $this->model->query_bind("SELECT status, COUNT(*) AS n, SUM(amount) AS amount FROM dues_charges
+                                                 WHERE kind = 'national' AND membership_year = :y GROUP BY status", array('y' => $year), 'object');
+    $data['year'] = $year; $data['chapter'] = $chapter; $data['status'] = $status; $data['picked'] = (bool) $picked;
+    $data['chapters'] = $this->model->query("SELECT id, COALESCE(NULLIF(description, ''), chapter_title) AS name FROM ccmps_subentities WHERE active = 1 ORDER BY name", 'object');
+    $data['attention'] = count(dues_attention_open());
+    $data['results']   = $_SESSION['fin_inv_results'] ?? null;
+    unset($_SESSION['fin_inv_results']);
+    $data['token']       = $this->_token();
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'National Invoices';
+    $data['header']      = 'National Dues Invoices';
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'invoices';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------- function INVOICESPAID ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function invoicespaid(){
+
+    $back = 'fin/invoices?'.http_build_query(array('year' => (int) post('year'), 'chapter' => (int) post('chapter'), 'status' => 'open', 'picked' => (int) post('picked')));
+    $this->_check_token($back);
+    if(!$this->_can_settle()){ $this->_deny(); }
+    $date = (string) post('received_on', true);
+    if(!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date) || $date > date('Y-m-d')){
+        set_flashdata('Enter the date the payments were received (not in the future).');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($back);
+    }
+    $results = array(); $done = 0;
+    foreach(array_map('intval', (array) ($_POST['charge'] ?? array())) as $cid){
+        list($ok, $msg) = dues_mark_national_paid($cid, array('method' => (string) post('method', true), 'reference' => (string) post('reference', true), 'date' => $date));
+        $results[] = array('ok' => $ok, 'msg' => $msg);
+        if($ok){ $done++; }
+    }
+    if(empty($results)){
+        set_flashdata('Tick the invoices that were paid.');
+        $_SESSION['flashmsgcolor'] = 0;
+    }
+    $this->_audit('NationalDuesPaid', $done.' of '.count($results).' National invoices marked paid ('.(string) post('method', true).' '.(string) post('reference', true).')');
+    $_SESSION['fin_inv_results'] = $results;
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*------------------------ function NATIONALACTION ---------------------------*/
+/*----------------------------------------------------------------------------*/
+  function nationalaction(){ // from a member's Dues page: paid | void | waive | resend | reverse
+
+    $id   = (int) post('ccmp_id');
+    $back = 'fin/memberdues/'.$id.'#national';
+    $this->_check_token($back);
+    if(!$this->_can_settle()){ $this->_deny(); }
+    $charge = $this->model->get_where((int) post('charge_id'), 'dues_charges');
+    if(!$charge || (int) $charge->ccmp_id !== $id || $charge->kind !== 'national'){
+        redirect($back);
+    }
+    $reason = trim((string) post('reason', true));
+    switch((string) post('do')){
+        case 'paid':
+            list($ok, $msg) = dues_mark_national_paid((int) $charge->id, array('method' => (string) post('method', true), 'reference' => (string) post('reference', true),
+                                                                                'date' => (string) post('received_on', true)));
+            break;
+        case 'void':
+        case 'waive':
+            list($ok, $msg) = dues_set_charge_status((int) $charge->id, post('do') === 'void' ? 'void' : 'waived', $reason);
+            break;
+        case 'reverse':
+            list($ok, $msg) = $reason === '' ? array(false, 'Say why the payment is being reversed.') : dues_reverse_national((int) $charge->id, $reason);
+            break;
+        case 'resend':
+            $ok  = $charge->status === 'open' && dues_send_invoice($charge);
+            $msg = $ok ? 'Invoice '.$charge->invoice_number.' emailed again.' : 'Not sent (the invoice isn\'t open, or the member has no email address).';
+            break;
+        default:
+            redirect($back);
+    }
+    if($ok){ $this->_audit('NationalInvoice'.ucfirst((string) post('do')), 'member '.$id.': '.$msg.($reason !== '' ? ' Reason: '.$reason : '')); }
+    set_flashdata($msg);
+    $_SESSION['flashmsgcolor'] = $ok ? 1 : 0;
+    redirect($back);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function ATTENTION ------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function attention(){
+
+    if(!$this->_can_settle()){ $this->_deny(); }
+    $data['open']     = dues_attention_open();
+    $data['resolved'] = $this->model->query("SELECT a.*, CONCAT(c.first_name, ' ', c.last_name) AS member_name FROM dues_attention a
+                                               LEFT JOIN ccmps c ON c.id = a.ccmp_id WHERE a.resolved_at > 0 ORDER BY a.resolved_at DESC LIMIT 25", 'object');
+    $data['token']       = $this->_token();
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'Needs Attention';
+    $data['header']      = 'Dues: Needs Attention';
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'attention';
+    $this->templates->inspinia($data);
+  }
+
+  function attentionresolve(){
+
+    $this->_check_token('fin/attention');
+    if(!$this->_can_settle()){ $this->_deny(); }
+    $case = $this->model->get_where((int) post('id'), 'dues_attention');
+    $note = trim((string) post('resolution', true));
+    if(!$case || $case->resolved_at > 0 || $note === ''){
+        set_flashdata('Say what was done to resolve it.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect('fin/attention');
+    }
+    $this->model->update((int) $case->id, array('resolved_at' => time(), 'resolved_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'resolution' => substr($note, 0, 500)), 'dues_attention');
+    $this->_audit('DuesAttentionResolved', 'case '.(int) $case->id.' (member '.(int) $case->ccmp_id.'): '.$note);
+    set_flashdata('Marked resolved.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('fin/attention');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function SETTINGS ------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function settings(){ // National dues by member type, type options, National proration, chapters' dues
+
+    if(!$this->_can_settings()){ $this->_deny(); }
+    $data['types']     = $this->model->query('SELECT * FROM ccmps_types ORDER BY id', 'object');
+    $data['proration'] = $this->_proration(0);
+    $data['chapters']  = $this->model->query("SELECT id, COALESCE(NULLIF(description, ''), chapter_title) AS name, annual_dues, dues_collected_by
+                                                FROM ccmps_subentities WHERE active = 1 ORDER BY name", 'object');
+    $data['token']       = $this->_token();
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'Dues Settings';
+    $data['header']      = 'Dues Settings';
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'settings';
+    $this->templates->inspinia($data);
+  }
+
+  function settingssubmit(){
+
+    $this->_check_token('fin/settings');
+    if(!$this->_can_settings()){ $this->_deny(); }
+    $changes = array();
+    foreach($this->model->query('SELECT * FROM ccmps_types ORDER BY id', 'object') as $t){
+        $amount = round(max(0, (float) ($_POST['dues'][$t->id] ?? $t->national_dues)), 2);
+        $row = array('national_dues' => $amount, 'always_current' => !empty($_POST['always'][$t->id]) ? 1 : 0, 'at_large' => !empty($_POST['atlarge'][$t->id]) ? 1 : 0);
+        if((float) $t->national_dues != $amount || (int) $t->always_current !== $row['always_current'] || (int) $t->at_large !== $row['at_large']){
+            $this->model->update((int) $t->id, $row + array('updated_by' => (int) ($_SESSION['tg_user_id'] ?? 0), 'updated_at' => time()), 'ccmps_types');
+            $changes[] = $t->ccmp_type.' $'.number_format($amount, 2).($row['always_current'] ? ' always Current' : '').($row['at_large'] ? '' : ' not at large');
+        }
+    }
+    foreach($this->model->query("SELECT id, annual_dues, dues_collected_by FROM ccmps_subentities WHERE active = 1", 'object') as $c){
+        if(!isset($_POST['chapter_dues'][$c->id])){ continue; }
+        $amount = round(max(0, (float) $_POST['chapter_dues'][$c->id]), 2);
+        $by     = ($_POST['collected'][$c->id] ?? '') === 'national' ? 'national' : 'chapter';
+        if((float) $c->annual_dues != $amount || $c->dues_collected_by !== $by){
+            $this->model->update((int) $c->id, array('annual_dues' => $amount, 'dues_collected_by' => $by), 'ccmps_subentities');
+            $changes[] = 'chapter '.$c->id.' $'.number_format($amount, 2).' by '.$by;
+        }
+    }
+    $changes = array_merge($changes, $this->_save_proration(0));
+    $this->_audit('DuesSettings', $changes ? implode('; ', $changes) : 'no changes');
+    set_flashdata($changes ? 'Saved. New amounts apply to invoices raised from now on; invoices already raised keep their amounts.' : 'Nothing changed.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('fin/settings');
+  }
+
+/*----------------------------------------------------------------------------*/
+/*-------------------------- function CHAPTERDUES ----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function chapterdues($subentity_id = NULL){ // a chapter's own dues amount and proration schedule
+
+    $id = (int) ($subentity_id ?? segment(3));
+    if(!$id && !empty($_SESSION['ccmps_subentity'])){ $id = (int) $_SESSION['ccmps_subentity']; }
+    if(!$this->_can_chapter_settings($id)){ $this->_deny(); }
+    $data['chapter']   = dues_chapter($id);
+    $data['types']     = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object');
+    $data['proration'] = $this->_proration($id);
+    $data['national']  = $this->_can_settings();
+    $data['token']       = $this->_token();
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = SUBENTITY.' Admin';
+    $data['bc2']         = SUBENTITY.' Dues';
+    $data['header']      = SUBENTITY.' Dues: '.(string) ($data['chapter']->description ?: $data['chapter']->chapter_title);
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'chapterdues';
+    $this->templates->inspinia($data);
+  }
+
+  function chapterduessubmit(){
+
+    $id = (int) post('subentity_id');
+    $this->_check_token('fin/chapterdues/'.$id);
+    if(!$this->_can_chapter_settings($id)){ $this->_deny(); }
+    $chapter = dues_chapter($id);
+    $amount  = round(max(0, (float) post('annual_dues')), 2);
+    $row     = array('annual_dues' => $amount);
+    if($this->_can_settings()){ $row['dues_collected_by'] = post('dues_collected_by') === 'national' ? 'national' : 'chapter'; }
+    $this->model->update($id, $row, 'ccmps_subentities');
+    $changes = array_merge(array('dues $'.number_format($amount, 2).(isset($row['dues_collected_by']) ? ' by '.$row['dues_collected_by'] : '')), $this->_save_proration($id));
+    $this->_audit('ChapterDuesSettings', 'chapter '.$id.' ('.$chapter->chapter_title.'): '.implode('; ', $changes));
+    set_flashdata('Saved. The new amount applies to dues recorded from now on.');
+    $_SESSION['flashmsgcolor'] = 1;
+    redirect('fin/chapterdues/'.$id);
+  }
+
+/*----------------------------------------------------------------------------*/
 /*------------------------------- helpers ------------------------------------*/
 /*----------------------------------------------------------------------------*/
+    function _can_settle(){ return rbac_allowed('fin', 'settle_national_dues'); }
+
+    function _can_settings(){ return rbac_allowed('fin', 'manage_dues_settings'); }
+
+    function _can_chapter_settings($id){ // dues settings people: any chapter; Chapter Admins: their own
+        if($id <= 0 || !dues_chapter($id)){ return false; }
+        if($this->_can_settings()){ return true; }
+        return rbac_allowed('fin', 'record_chapter_dues') && !empty($_SESSION['ccmps_subentity_admin']) && (int) ($_SESSION['ccmps_subentity'] ?? -1) === $id;
+    }
+
+    function _deny(){
+        set_flashdata('You are not authorized to do that.');
+        $_SESSION['flashmsgcolor'] = 0;
+        redirect($this->_home_url());
+    }
+
+    function _proration($scope){ // [month => factor], and the member type ids it applies to
+        $months = array_fill(1, 12, 1.0);
+        foreach($this->model->query_bind('SELECT join_month, factor FROM dues_proration WHERE subentity_id = :s', array('s' => (int) $scope), 'object') as $r){
+            $months[(int) $r->join_month] = (float) $r->factor;
+        }
+        $types = array_map(function($r){ return (int) $r->ccmp_type_id; }, (array) $this->model->query_bind('SELECT ccmp_type_id FROM dues_proration_types WHERE subentity_id = :s', array('s' => (int) $scope), 'object'));
+        return array('months' => $months, 'types' => $types);
+    }
+
+    function _save_proration($scope){ // from the posted factors (0-1) and ticked types; returns what changed
+        $old = $this->_proration($scope);
+        $changes = array();
+        for($mo = 1; $mo <= 12; $mo++){
+            $f = round(max(0, min(1, (float) ($_POST['factor'][$mo] ?? $old['months'][$mo]))), 4);
+            if(abs($f - $old['months'][$mo]) > 0.00001){
+                $this->model->query_bind('INSERT INTO dues_proration (subentity_id, join_month, factor, updated_by, updated_at) VALUES (:s, :m, :f, :b, :t)
+                                          ON DUPLICATE KEY UPDATE factor = VALUES(factor), updated_by = VALUES(updated_by), updated_at = VALUES(updated_at)',
+                                         array('s' => (int) $scope, 'm' => $mo, 'f' => $f, 'b' => (int) ($_SESSION['tg_user_id'] ?? 0), 't' => time()));
+                $changes[] = 'month '.$mo.' '.$f;
+            }
+        }
+        $types = array_map('intval', array_keys((array) ($_POST['prorate'] ?? array())));
+        if($types != $old['types'] || array_diff($types, $old['types']) || array_diff($old['types'], $types)){
+            $this->model->query_bind('DELETE FROM dues_proration_types WHERE subentity_id = :s', array('s' => (int) $scope));
+            foreach($types as $t){
+                $this->model->query_bind('INSERT IGNORE INTO dues_proration_types (subentity_id, ccmp_type_id) VALUES (:s, :t)', array('s' => (int) $scope, 't' => $t));
+            }
+            $changes[] = 'prorated types '.implode(',', $types);
+        }
+        return $changes;
+    }
+
     function _member($ccmp_id){
         $m = $ccmp_id > 0 ? $this->model->get_where((int) $ccmp_id, 'ccmps') : false;
         return ($m && empty($m->deceased) && empty($m->soft_deleted)) ? $m : false;

@@ -11,7 +11,7 @@ module.exports = [
     ['1', 'Foundations: settings, member-type and chapter flags, proration schedules, dues charges and installments, the payment record, RBAC module `fin`, Family retired', 'Built 2026-10-31 (Mac). Nothing reads the new tables yet'],
     ['2', 'Status engine on the dues charges, run nightly by the scheduler', 'Built 2026-10-31; switched on on the Mac only (`DUES_STATUS_ENGINE`)'],
     ['3', 'Record chapter dues / Renew (raises and emails the National invoice), bulk, Reverse', 'Built 2026-10-31 (Mac)'],
-    ['4', 'Financial Admin: open National invoices, Mark paid (batch), Void, Waive; dues and proration settings screens', 'Planned'],
+    ['4', 'Financial Admin: National invoices, Mark paid (one or many; bulk action 12), Void, Waive, Resend, Reverse National payment, Needs attention; Dues Settings and chapter dues pages; Dues menu', 'Built 2026-10-31 (Mac)'],
     ['5', 'Dues report, receipts, member dues history, reminders', 'Planned'],
   ]},
 ]},
@@ -62,6 +62,21 @@ module.exports = [
     "**Member record:** a Dues button on `viewccmp.php` when `dues_can_record()`. `Ccmps::ccmpsubmit()` with the engine on: raising Current Year to the open year calls `dues_record_chapter()` after the save (a new member's record too, with `new_member`); lowering it calls `dues_reverse_chapter()`; the old `ccmps_financial_transactions` insert is skipped. Without the right to record dues, the Current Year change is refused with a message.",
     "**Bulk actions:** 2 (Current Year) and 11 (Chapter Dues Paid) redirect to `fin/bulkchapterdues` when the engine is on; 10 Undelete now works; 8 Delete recalculates status.",
     "**Emails** go through `coffee_send_email()` (Brevo) with the tag `dues`.",
+  ]},
+]},
+
+{ tab: "National's Side", blocks: [
+  { type: 'p', text: "Dues step 4 (migration `2026-10-31-dues-step4-national.sql`: bulk action 12, National Dues Paid)." },
+  { type: 'table', headers: ['Page / function', 'Does'], rows: [
+    ['`fin/invoices` (+ `invoicespaid`)', 'National charges by year, chapter, status; tick and mark paid. `?picked=1` shows the members ticked with bulk action 12 (`$_SESSION[\'fin_inv_ids\']`)'],
+    ['`fin/nationalaction`', 'From a member\'s Dues page: `paid` (`dues_mark_national_paid()`), `void` / `waive` (`dues_set_charge_status()`, reason required), `resend` (`dues_send_invoice()`), `reverse` (`dues_reverse_national()`: payments `reversed`, charge reopened)'],
+    ['`fin/attention` (+ `attentionresolve`)', '`dues_attention` cases with `dues_attention_open()`; resolved with a note'],
+    ['`fin/settings` (+ `settingssubmit`)', '`manage_dues_settings`: `ccmps_types.national_dues`, `always_current`, `at_large`; National\'s proration (`dues_proration`, `dues_proration_types` scope 0); every chapter\'s `annual_dues` and `dues_collected_by`'],
+    ['`fin/chapterdues/<id>` (+ `chapterduessubmit`)', 'One chapter\'s `annual_dues` and proration schedule: its Chapter Admins (own chapter) or `manage_dues_settings` (any; also `dues_collected_by`)'],
+  ]},
+  { type: 'ul', items: [
+    "**Menus:** a Dues group in the member EMS menu (`sidemenu.php`, after Financial Settings) and the staff menu (`adminsidemenu.php`), shown only with the engine on and the rights; Needs Attention shows the open count.",
+    "**Not yet:** amounts don't change per membership year (FIN-01's 'effective for a chosen year'); a new amount applies to dues recorded from then on and existing charges keep theirs.",
   ]},
 ]},
 

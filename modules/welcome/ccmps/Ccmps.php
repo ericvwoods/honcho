@@ -922,6 +922,7 @@ function manage() { // subentity/system admin management list — view, edit, bu
     }
 
     $data['bulk_actions'] = array_values(array_filter((array) $this->model->get('id', 'ccmps_bulk_actions'), function($a){ // bulk actions on ccmps records
+        if ((int) $a->id === 12) { return dues_engine_on() && rbac_allowed('fin', 'settle_national_dues'); } // National Dues Paid: Financial Admins
         return (int) $a->id !== 11 || (dues_engine_on() && rbac_allowed('fin', 'record_chapter_dues')); // Chapter Dues Paid: only with the dues engine and the right
     }));
     $data['statuses'] = $this->model->get('id', 'ccmps_status');
@@ -3117,6 +3118,10 @@ print_r($_POST); // array of ids called id
 
         // Chapter Dues Paid (11), and the old Current Year (2) once the dues engine is on: a confirmation page
         // records each ticked member through the dues steps (fin/bulkchapterdues; dues step 3, 2026-10-31)
+        if ((string) ($_POST['selected'] ?? '') === '12' && dues_engine_on() && rbac_allowed('fin', 'settle_national_dues')) { // National Dues Paid (FIN-31)
+            $_SESSION['fin_inv_ids'] = array_values(array_map('intval', (array) ($_POST['id'] ?? array())));
+            redirect('fin/invoices?picked=1&return='.rawurlencode('welcome-ccmps/manage/'.($_SESSION['ccmpmode'] ?? '')));
+        }
         if (in_array((string) ($_POST['selected'] ?? ''), array('2', '11'), true) && dues_engine_on()) {
             $_SESSION['fin_bulk_ids']    = array_values(array_map('intval', (array) ($_POST['id'] ?? array())));
             $_SESSION['fin_bulk_return'] = 'welcome-ccmps/manage/'.($_SESSION['ccmpmode'] ?? '');

@@ -93,6 +93,44 @@
                         <?php endif; ?>
                     </div>
                 </div>
+                <?php if($can_settle && $national_charge): $nc = $national_charge; ?>
+                <hr>
+                <div class="row" id="national">
+                    <div class="col-md-3"><h3 style="<?= $label_style ?>">National invoice</h3><small class="text-muted">Financial Admins.</small></div>
+                    <div class="col-md-9">
+                        <p><?= out($nc->invoice_number) ?>: $<?= number_format((float) $nc->amount, 2) ?>, <strong><?= $nat_label[$nc->status] ?></strong><?= $nc->invoiced_at ? ', emailed '.date('M j, Y', (int) $nc->invoiced_at) : '' ?><?= $nc->reason ? '<br><small class="text-muted">'.out($nc->reason).'</small>' : '' ?></p>
+                        <?php if($nc->status === 'open'): ?>
+                        <form method="post" action="<?= BASE_URL ?>fin/nationalaction" style="max-width: 720px;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="ccmp_id" value="<?= (int) $m->id ?>"><input type="hidden" name="charge_id" value="<?= (int) $nc->id ?>"><input type="hidden" name="do" value="paid">
+                            <div style="display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end;">
+                                <div><label for="nmethod" style="font-weight: normal;">Paid by</label>
+                                    <select class="form-control" name="method" id="nmethod" style="width: 140px;"><option value="check">Check</option><option value="cash">Cash</option><option value="paypal">PayPal</option><option value="other">Other</option></select></div>
+                                <div><label for="nreference" style="font-weight: normal;">Reference</label><input type="text" class="form-control" name="reference" id="nreference" maxlength="100" style="width: 200px;"></div>
+                                <div><label for="nreceived" style="font-weight: normal;">Received on</label><input type="date" class="form-control" name="received_on" id="nreceived" value="<?= date('Y-m-d') ?>" max="<?= date('Y-m-d') ?>" style="width: 180px;" required></div>
+                            </div>
+                            <button type="submit" class="btn btn-outline btn-primary" style="font-size: 16px; margin-top: 10px;"><i class="fa fa-check"></i> Mark National paid</button>
+                        </form>
+                        <form method="post" action="<?= BASE_URL ?>fin/nationalaction" style="display: inline-block; margin-top: 10px;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="ccmp_id" value="<?= (int) $m->id ?>"><input type="hidden" name="charge_id" value="<?= (int) $nc->id ?>"><input type="hidden" name="do" value="resend">
+                            <button type="submit" class="btn btn-outline btn-default"><i class="fa fa-envelope"></i> Email the invoice again</button>
+                        </form>
+                        <form method="post" action="<?= BASE_URL ?>fin/nationalaction" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; max-width: 720px;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="ccmp_id" value="<?= (int) $m->id ?>"><input type="hidden" name="charge_id" value="<?= (int) $nc->id ?>">
+                            <input type="text" class="form-control" name="reason" maxlength="200" placeholder="Reason (required)" style="flex: 1 1 260px;" required aria-label="Reason to void or waive">
+                            <button type="submit" name="do" value="void" class="btn btn-outline btn-warning">Void (a mistake)</button>
+                            <button type="submit" name="do" value="waive" class="btn btn-outline btn-warning">Waive</button>
+                        </form>
+                        <?php elseif($nc->status === 'paid'): ?>
+                        <form method="post" action="<?= BASE_URL ?>fin/nationalaction" style="display: flex; flex-wrap: wrap; gap: 8px; max-width: 720px;">
+                            <input type="hidden" name="token" value="<?= $token ?>"><input type="hidden" name="ccmp_id" value="<?= (int) $m->id ?>"><input type="hidden" name="charge_id" value="<?= (int) $nc->id ?>"><input type="hidden" name="do" value="reverse">
+                            <input type="text" class="form-control" name="reason" maxlength="200" placeholder="Why (check bounced, mistake...)" style="flex: 1 1 260px;" required aria-label="Why the payment is reversed">
+                            <button type="submit" class="btn btn-outline btn-danger"><i class="fa fa-undo"></i> Reverse National payment</button>
+                        </form>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+
                 <hr>
 
                 <div class="row">

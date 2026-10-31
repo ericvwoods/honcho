@@ -373,6 +373,14 @@
        "text": "Changing **Current Year** on the member's record does the same: raising it to the year being renewed records the chapter dues; lowering it reverses them."
       },
       {
+       "type": "h2",
+       "text": "Your Chapter's Dues Amount"
+      },
+      {
+       "type": "p",
+       "text": "**Dues > Chapter Dues** in the EMS menu sets your chapter's dues (0 = none) and, if you wish, a proration schedule: which member types get prorated chapter dues when they're **new**, and the share they pay by the month they join."
+      },
+      {
        "type": "alert",
        "variant": "info",
        "text": "The **Chapter at Large**'s dues are recorded by National's Financial Admins, not by a chapter."
@@ -1156,6 +1164,62 @@
       {
        "type": "p",
        "text": "Lifetime members (year 2099) always stay Current. To make someone a Financial Admin, tick **Financial Admin** on their member record, or in Member Permissions."
+      }
+     ]
+    },
+    {
+     "tab": "Dues",
+     "slug": "dues",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "With the dues engine on (System Settings, Financial), Financial Admins and System Admins have a **Dues** group in the EMS menu: **National Invoices**, **Needs Attention** and **Dues Settings**. Chapter dues are recorded by Chapter Admins (Chapter 2, Chapter Dues); recording them raises each member's National invoice and emails it to them."
+      },
+      {
+       "type": "h2",
+       "text": "National Invoices"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "The list shows National invoices by year, chapter and status (open, paid, voided, waived), with totals at the top.",
+        "**Mark paid:** tick the invoices that were paid, choose how (check, cash, PayPal, other), the reference and the date received, and click **Mark the ticked invoices paid**. Each member becomes **Current**.",
+        "**From a member list:** tick members and choose **National Dues Paid** from Bulk Actions. The invoices page opens with just their open invoices ticked; members with no open invoice are listed as skipped.",
+        "**Dues** on a row opens that member's dues page."
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "On a Member's Dues Page"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Mark National paid** for one member, or **Email the invoice again**.",
+        "**Void** (it was a mistake: the invoice no longer counts) or **Waive** (forgiven: counts as paid), with a reason.",
+        "**Reverse National payment** when a payment bounced or was entered by mistake: the invoice is open again and the member goes back to Pending."
+       ]
+      },
+      {
+       "type": "h2",
+       "text": "Needs Attention"
+      },
+      {
+       "type": "p",
+       "text": "Cases Honcho can't settle on its own: for example a chapter reversed a member's chapter dues after the member had already paid National. You're emailed when one arrives and the menu shows how many are open. Decide what to do, then click **Resolved** with a note of what was done."
+      },
+      {
+       "type": "h2",
+       "text": "Dues Settings"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**National dues by member type**, whether a type is **always Current** (BPA: Honorary), whether it's offered in the **Chapter at Large**, and whether **new** members of that type have their National dues prorated.",
+        "**National proration schedule:** the share of National dues a new member pays, by the month they join (1 = full, 0.5 = half). Renewals are never prorated.",
+        "**Each chapter's dues** (0 = none) and **who collects them**: the chapter, or National (the Chapter at Large). A chapter's own proration schedule is under **Proration** on its row; Chapter Admins can set their own chapter's amount and schedule from **Dues > Chapter Dues**.",
+        "New amounts apply to dues recorded from now on; invoices already raised keep their amounts. The due date, grace period and the invoice email's payment instructions are on System Settings, Financial."
+       ]
       }
      ]
     }

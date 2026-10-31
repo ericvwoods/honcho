@@ -77,6 +77,8 @@ chapterAdmins: [
       "If they **already paid** National, nothing is undone there: the Financial Admin is alerted and decides what to do.",
     ]},
     { type: 'p', text: "Changing **Current Year** on the member's record does the same: raising it to the year being renewed records the chapter dues; lowering it reverses them." },
+    { type: 'h2', text: "Your Chapter's Dues Amount" },
+    { type: 'p', text: "**Dues > Chapter Dues** in the EMS menu sets your chapter's dues (0 = none) and, if you wish, a proration schedule: which member types get prorated chapter dues when they're **new**, and the share they pay by the month they join." },
     { type: 'alert', variant: 'info', text: "The **Chapter at Large**'s dues are recorded by National's Financial Admins, not by a chapter." },
   ]},
   { tab: "Chapter Posts", blocks: [

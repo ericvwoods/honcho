@@ -48,8 +48,41 @@ module.exports = [
   { type: 'h2', text: 'Planned' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
     ['LOGIN-15', 'A real second factor: a one-time code by text or email, valid for a few minutes and usable once. Required for anyone with an admin role; optional for other members. Replaces the Member Number step.', 'Planned. Text messages wait on Brevo approving the toll-free number'],
-    ['LOGIN-16', '**View as a member:** a System Admin or Member Admin (a Chapter Admin within their chapter, if wanted) opens the portal as a member, to see exactly what they see and act for them. A "Return to my account" bar on every page; never gains more rights than the admin has; never sees or changes the member\'s password, second factor or card; every start, stop and change logged as "<admin> as <member>".', 'Planned (asked 27 Oct 2026). The legacy system\'s version is to be looked up first'],
+    ['LOGIN-16', '**View as a member** (detailed plan: View as a Member tab, LOGIN-20 to LOGIN-29): a System Admin or Member Admin (a Chapter Admin within their chapter, if wanted) opens the portal as a member, to see exactly what they see and act for them. A "Return to my account" bar on every page; never gains more rights than the admin has; never sees or changes the member\'s password, second factor or card; every start, stop and change logged as "<admin> as <member>".', 'Planned (asked 27 Oct 2026). The legacy system\'s version is to be looked up first'],
     ['LOGIN-17', 'Members create their own account from the login page.', 'Not available: the link is switched off on the login page. Accounts are created by admins (or the legacy data load). Decide whether to offer it'],
+  ]},
+]},
+
+{ tab: "View as a Member (Plan)", blocks: [
+  { type: 'p', text: "**Plan, 31 Oct 2026, awaiting the owner's decisions** (LOGIN-16 in detail). An admin sees Honcho exactly as a member does, and can act for them, without knowing their password." },
+  { type: 'h2', text: 'How the Legacy System Did It' },
+  { type: 'p', text: "A button and a drop-down of members; choosing one ran the login's last step as that member. The admin's own login was **replaced**, so going back to the admin screens meant logging out and in again." },
+  { type: 'h2', text: 'How Honcho Will Do It' },
+  { type: 'ul', items: [
+    "**Two identities in one session.** Starting puts the admin's own session aside inside the same session, then sets the session up as the member, using the **same code the member login uses** (taken out of the login into one shared helper, so the two can never drift apart). **Return to my account** puts the admin's session back exactly as it was. One click each way; no logging out.",
+    "**A bar on every page** while viewing as a member: \"Viewing as <member> (<chapter>). Return to my account\", in a colour that can't be missed, on the member and admin page layouts.",
+    "**Starting:** a **View as** button on the member record, and a **View as a member** page with a search box (name, member number, email). A drop-down of 1,700 members is too long.",
+    "**Logout** while viewing as a member ends the viewing and returns to the admin's account; logging out again logs the admin out.",
+    "**Only one member at a time;** switching to another member returns to the admin first. Looking at two accounts side by side means a second browser (or a private window) signed in separately.",
+  ]},
+  { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
+    ['LOGIN-20', '**View as** a member from their record or a search page; the session becomes theirs, with their menus and data, until **Return to my account**.', 'Planned'],
+    ['LOGIN-21', 'The admin\'s own session is set aside and restored exactly; the member login\'s setup steps live in one shared helper used by both the login and View as.', 'Planned'],
+    ['LOGIN-22', 'A **Viewing as** bar on every page with **Return to my account**; Logout returns to the admin first.', 'Planned'],
+    ['LOGIN-23', '**Who may:** System Admins and Member Admins, any member; Chapter Admins, their own chapter\'s members (if chosen). A new Security Groups function, `system/view_as_member`.', 'Planned (decision)'],
+    ['LOGIN-24', "**Never more than the admin has:** nobody can view as a System Admin; only System Admins can view as a member who holds any admin role.", 'Planned (decision)'],
+    ['LOGIN-25', "**Blocked while viewing as a member:** changing the member's password or second factor, their login name or email address, reissuing their card, and (when they exist) paying or voting for them. The page says why.", 'Planned (decision)'],
+    ['LOGIN-26', "**Everything logged:** start and stop (admin, member, time), and every change made while viewing is written to the Auditlog as \"<admin> as <member>\".", 'Planned'],
+    ['LOGIN-27', "Deceased and deleted members can't be viewed as; locked members can (to see what they'd see), with a warning.", 'Planned'],
+    ['LOGIN-28', "Members can be told: their profile shows when an admin last viewed their account (no email).", 'Planned (decision)'],
+    ['LOGIN-29', 'Works from either login: a staff System Admin signed in at /honcho can view as a member and return to the staff account.', 'Planned'],
+  ]},
+  { type: 'h2', text: 'Build Steps' },
+  { type: 'ol', items: [
+    "Move the member session setup out of the login into a shared helper; the login keeps working unchanged (tested first).",
+    "View as / Return: the session swap, the bar, Logout handling, the search page and the button, permission and safety checks.",
+    "The Auditlog marks changes made while viewing as a member; the blocked actions refuse with a message.",
+    "Guides: Administrator's Guide (how to use it, what's blocked), Developer's Guide (how the swap works).",
   ]},
 ]},
 

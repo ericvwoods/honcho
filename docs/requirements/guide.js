@@ -32,22 +32,18 @@ const guide = [
 
   { part: 'Part III: Add-ons and Coming Modules', chapters: [
     { title: 'Honcho AI and the Coffee Report', sections: require('./chapters/ai.js') },                // 10 AI
-    { title: 'Payments, Financial and Store',    sections: require('./chapters/financial-store.js'),     // 11 (plan form)
+    { title: 'Financial',                        sections: require('./chapters/financial.js') },          // 11 FIN
+    { title: 'Payments',                         sections: require('./chapters/payments.js') },           // 12 PAY
+    { title: 'Store',                            sections: require('./chapters/store.js') },              // 13 STORE
+    { title: 'Scheduler',                        sections: require('./chapters/scheduler.js'),           // 14 (plan form)
       status: [
-        "**Status:** decisions made 2026-10-30 (below). Nothing built yet; F0, the payment base, is next. Money work comes before the Scheduler.",
-        "**Online copy:** https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR",
-        "**Found since the plan (30 Oct):** renewing a member already creates a National dues record (Member Records, MEM-20), but nothing marks it received (MEM-21), so renewed members stay Pending. F1 must include National's way of recording dues received.",
-        "**Also decided:** Point of Sale is the final part of the Financial module; a separate Reporting module starts with gathering requirements (see the to-do list).",
-      ] },
-    { title: 'Scheduler',                        sections: require('./chapters/scheduler.js'),           // 12 (plan form)
-      status: [
-        "**Status:** decisions made 2026-10-30 (below). Nothing built yet; starts after the money work, and its invoicing needs the Financial add-on.",
+        "**Status:** decisions made 2026-10-30 (below). Nothing built yet; starts after Dues, Payments, Project Management and the Store; its invoicing needs the Financial add-on.",
         "**Online copy:** https://claude.ai/artifact/GyZQrdzfn2B197iL6GvRvD",
       ] },
   ]},
 
   { part: 'Part IV: The Business', chapters: [
-    { title: 'Pricing and AI Billing',           sections: require('./chapters/pricing.js'),             // 13 (plan form)
+    { title: 'Pricing and AI Billing',           sections: require('./chapters/pricing.js'),             // 15 (plan form)
       status: [
         "**Status:** options written 2026-10-29; decisions not yet made (see Decisions for you).",
         "**Online copy:** https://claude.ai/artifact/3kynSEzd98AwCh2fJDBmpV",
@@ -56,7 +52,7 @@ const guide = [
   ]},
 
   { part: 'Part V: The Project To-Do List', chapters: [
-    { title: 'Project To-Do List',               todo: true },                                          // 14
+    { title: 'Project To-Do List',               todo: true },                                          // 16
   ]},
 
 ];

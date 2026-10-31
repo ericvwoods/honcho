@@ -46,7 +46,7 @@ module.exports = [
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
     ['WEB-13', "The calendar shows every chapter's events: national in green, the member's own chapter in blue, others in grey; Month, Week and List views; a list on phones and when the month is empty.", 'Built 20 Oct 2026'],
     ['WEB-14', "Event Admins and System Admins add any event; Chapter Admins add their own chapter's. An event has a title, dates and times or All day, location, descriptions, picture, a link with a button label, and a Public tick.", 'Built 20 Oct 2026'],
-    ['WEB-15', '**Event Module:** registration for events with activities and fees, paid into the host\'s account (National, or the host chapter for the rotating General Membership and Board meetings); replaces today\'s hard-coded registration events.', 'Planned (needs its own plan; payments come from the Payments chapter)'],
+    ['WEB-15', '**Event Module:** registration for events with activities and fees, paid into the host\'s account (National, or the host chapter for the rotating General Membership and Board meetings); replaces today\'s hard-coded registration events.', 'Planned (needs its own plan; payments through the Payments module, PAY-06 for chapters\' own accounts)'],
   ]},
 
   { type: 'h2', text: 'Public Website' },

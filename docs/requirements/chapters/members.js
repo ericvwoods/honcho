@@ -52,7 +52,7 @@ module.exports = [
     ['MEM-18', "A member's status is worked out, not typed: **Current** (paid for the current membership year and received by National), **Pending** (renewed, waiting for National to record the money), **Past Due** (behind, while the grace period is on), **Expired** (behind, grace period off), **None** (deceased or deleted).", 'Built (before Oct 2026); lifetime rule 22 Oct 2026'],
     ['MEM-19', 'The membership year, the open dues payment year, the grace period (on or off) and the new-member proration are set on the Financial tab of System Settings. Changing the year or grace period re-checks every member\'s status after a confirmation and reports how many changed.', 'Built 22 Oct 2026'],
     ['MEM-20', "Renewing a member (setting their Current Year to the open dues payment year) creates a National dues record for that year: the member type's National dues, prorated for a brand-new Regular member, owed until National records it.", 'Built (before Oct 2026)'],
-    ['MEM-21', 'National records that a renewal\'s money has been received, which makes the member Current.', '**Not built.** Nothing marks a dues record received yet, so renewed members would stay Pending. Part of Payments F1 (see the Payments chapter)'],
+    ['MEM-21', 'National records that a renewal\'s money has been received, which makes the member Current.', '**Not built.** Nothing marks a dues record received yet, so renewed members would stay Pending. To be built first, with Dues (Financial, FIN-03)'],
     ['MEM-22', 'A lifetime member has Current Year 2099 and is always Current.', 'Built 22 Oct 2026'],
   ]},
 

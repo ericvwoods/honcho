@@ -52,7 +52,7 @@ module.exports = [
 
   { type: 'h2', text: 'Planned' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
-    ['DOC-19', 'Other modules file uploads into the library behind the scenes, under a fixed place (for example Receipts, by asset and year) with access limited to the right people: expense receipts first, maintenance paperwork later.', 'Planned (Financial F3; decided 30 Oct 2026)'],
+    ['DOC-19', 'Other modules file uploads into the library behind the scenes, under a fixed place (for example Receipts, by asset and year) with access limited to the right people: expense receipts first, maintenance paperwork later.', 'Planned (Financial add-on, FIN-16; decided 30 Oct 2026)'],
     ['DOC-20', 'The Coffee Report lists documents waiting for approval.', 'Built 29 Oct 2026 (Coffee Report section)'],
   ]},
 ]},

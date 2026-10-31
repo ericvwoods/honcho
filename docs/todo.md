@@ -133,27 +133,21 @@ Books a customer, an asset and a performer into one time slot (student + aircraf
 - [ ] **Phase 6, rules and reach:** qualifications (asset checkout, current medical or flight review) feeding home-page expiry alerts; iCal feed; phone app screen; Coffee Report "Today's schedule" section; Telegram/SMS reminders.
 - [ ] **Docs:** Developer's Guide chapter (Part II Add-ons) and an Administrator's Guide chapter, built with each phase.
 
-## Payments, Financial and Store (plan approved 2026-10-30; money work comes before the Scheduler)
+## Financial, Payments and Store (decided 2026-10-30/31; requirements chapters FIN, PAY, STORE)
 
-Plan: https://claude.ai/artifact/LYApDeBVM3JrM3szqaSAuR
+**Split (owner, 2026-10-31):** **Financial** = what is owed (dues, invoices, accounts, statements, expenses); **Payments** = how money moves (every gateway, payment records, refunds, webhooks, Point of Sale); **Store** = merchandise. Dues and Payments are **Core**; invoicing/accounts/expenses/POS are the Financial add-on; the Store is an add-on. Earlier decisions stand: PayPal first (through its REST API, design for more providers, build only PayPal), National's account first and chapters' own later, stocked merchandise first, sales tax at entered rates, expense receipts filed in the Document Library.
 
-**Decisions (owner, 2026-10-30):**
-- **PayPal first**, because it does recurring payments: Checkout buttons (PayPal account or card), Subscriptions for automatic renewal, Vault for card on file. Called through PayPal's REST API from one `payment_helper.php`, since PayPal has no official PHP subscriptions SDK; Stripe or Square can be added later as other providers. Client ID and secret in the vault; a verified webhook marks things paid.
-- **Where things go:** dues payments and auto-renewal in **Core** (every member organization needs them). Accounts, invoices, card on file, statements, expenses and POS are the **Financial add-on**. **Store** is an add-on.
-- **National's PayPal account to start**; chapters' own accounts and chapter stores (chapter-logo merchandise) later.
-- Merchandise stocked first, print on demand later. **Sales tax at rates entered in Honcho.**
-- **Expense receipts** (parts, supplies, etc.) are uploaded with the expense entry and filed behind the scenes in the Document Library (Receipts, by asset and year, access limited), through a shared `dms_file_upload()` helper that other modules reuse.
+**Order of work (owner, 2026-10-31):** Dues, then Payments, then finish Project Management (PMS section above), then the Store, then invoicing/accounts with the Scheduler, then chapters' accounts and stores, then Point of Sale.
 
-Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financial`, `ccmps.paypal_txn_id`, Financial settings tab and Financial Admins group, unused `store` layout.
+Existing pieces: `ccmps_financial_transactions` (the National dues record renewals create; status reads it), `ccmps_types.national_dues`, the Financial settings tab and Financial Admins group, `honcho_financial`, `ccmps.paypal_txn_id`, unused `store` layout.
 
-- [ ] **F0 Payment base (Core):** PayPal connection screen (vault, sandbox first), verified webhook + `fin_provider_events`; `fin_items`, `fin_invoices`/`_lines`, `fin_payments`; PDF receipt template.
-- [ ] **F1 Dues online (Core):** pay from the member home, receipts, status update via the existing recalculation; cash/check recording, reminders, dues report. **Must include National recording dues received** (found 2026-10-30, requirement MEM-21): renewing a member already creates a National dues record (`ccmps_financial_transactions`, MEM-20), but nothing ever sets `rec_by_national` / clears the balance, so renewed members stay Pending.
-- [ ] **F2 Automatic renewal (Core):** first check in the sandbox: card-only subscribers without a PayPal account, changing the dues amount on existing subscriptions, fees vs the legacy site. Then subscription plans per dues type, `fin_subscriptions`, reminders, failed-payment emails, grace period.
-- [ ] **S1 Store, National (add-on):** `store_products`/`_variants`, cart, PayPal checkout, entered tax rates, `store_orders`/`_lines`, emails, receipts, Store Admins group.
-- [ ] **F3 Invoicing, accounts and expenses (Financial add-on):** `fin_accounts`, invoices, card on file, prepaid balance, monthly statements, accounting export; `fin_expenses` with receipt upload to the Document Library (`dms_file_upload()`); later the Scheduler's check-in invoices and cost-share invoices.
-- [ ] **F4 Chapters get paid:** chapters connect their own PayPal accounts for events and chapter dues; **chapter stores** for chapter-logo merchandise.
-- [ ] **S2 Store extras:** shipping by weight, event pickup, store reports, print on demand.
-- [ ] **F5 Point of Sale** (the final part): compare PayPal's in-person options with a second provider, then counter sales.
+- [ ] **1. Dues (Financial, Core), FIN-01 to FIN-07:** dues types and amounts (National, optional chapter dues); record cash/check payments (into the Payments payment record, PAY-07); **National records dues received** (one or a chapter batch: clears the dues record, member becomes Current; MEM-21); dues report by chapter and year; reminders; numbered receipts; dues history on the profile.
+- [ ] **2. Payments (Core), PAY-01 to PAY-10:** gateway connection by scope (National first; vault; sandbox then live; Test connection); PayPal Checkout; verified webhooks kept and processed once; payment records for every method; refunds; matching with the gateway; **pay dues online**.
+- [ ] **3. Automatic renewal, PAY-11:** first check in the sandbox (card-only subscribers, changing the dues amount on existing subscriptions, fees vs the legacy site); then PayPal Subscriptions per dues type, reminders, failed-payment emails, grace period.
+- [ ] **4. Finish Project Management** (see PMS above), then **5. Store, National (add-on), STORE-01 to STORE-05**.
+- [ ] **6. Invoicing, accounts and expenses (Financial add-on), FIN-10 to FIN-19:** price list, accounts and Add Funds, invoices, saved cards (PAY-12), statements, overdue rule, expenses with Document Library receipts, PDFs, reports and accounting export; with the Scheduler.
+- [ ] **7. Chapters' own payment accounts (PAY-06) and chapter stores (STORE-06)**; store extras (STORE-07, STORE-08).
+- [ ] **8. Point of Sale (PAY-13)**, the final part: compare options first.
 - [ ] Legacy ETL: dues history (and `paypal_txn_id`) into the new tables.
 
 ## Reporting module (owner, 2026-10-30)
@@ -164,8 +158,9 @@ Existing pieces: `ccmps_financial_transactions` (empty locally), `honcho_financi
 
 - [x] Format approved with the Member Cards chapter; Core chapters written and checked against the code (2026-10-30): Signing In, Permissions, Member Records, Cards, Settings, Document Library, Member Home and Website, Help.
 - [x] Honcho AI converted (AI-01 to AI-27, 2026-10-30).
-- [ ] Convert to requirements form: Payments/Financial/Store (PAY-), Scheduler (SCHED-), Pricing (PRICE-).
-- [ ] Add chapters: Projects (PMS, built), the staff back office (Honcho), the phone app; later Event Module, Participants (Student), Reporting, Emulation as they're planned.
+- [x] Financial (FIN-), Payments (PAY-) and Store (STORE-) written as separate chapters (2026-10-31).
+- [ ] Convert to requirements form: Scheduler (SCHED-), Pricing (PRICE-).
+- [ ] Add chapters: Projects (PMS: teams and projects built; write it when planning the finish, order step 4), the staff back office (Honcho), the phone app; later Event Module, Participants (Student), Reporting, Emulation as they're planned.
 
 ## Developer's Guide
 

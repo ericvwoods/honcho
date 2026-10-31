@@ -17,6 +17,22 @@ module.exports = [
   { type: 'p', text: "**Module:** dues are **Core** (every member organization collects dues); invoicing, accounts, statements, expenses and Point of Sale are the **Financial add-on**, switched on per client. **To-do section:** Payments, Financial and Store." },
 ]},
 
+{ tab: "How Dues Work (Concept of Operations)", blocks: [
+  { type: 'p', text: "As described by the owner on 31 Oct 2026 (BPA's practice, carried over from the legacy system). Other organizations may differ, for example in the due date; the design makes those things settings." },
+  { type: 'ul', items: [
+    "**Two kinds of dues.** Each chapter decides whether to charge **chapter dues** and how much (possibly none). **National dues** depend on the member's class (member type). Chapters and National each collect their own; chapters don't remit to National, because **National invoices members directly**.",
+    "**Annual dues, flexible billing.** Dues are for a year, but members should be able to pay **monthly, quarterly or in one annual payment**.",
+    "**Due date.** Dues are due **September 30** for the upcoming year. Another organization may use a different date.",
+    "**Statuses** (the member record's Status and Current Year fields): **Current** = both chapter and National dues received. **Pending** = chapter dues paid, National's invoice not yet paid. **Past Due** = not paid by the due date while the grace period is on. **Expired** = not paid and the grace period is off (or has ended).",
+    "**Grace period, manual today.** A Financial Admin turns a grace period flag on or off. With it on, an unpaid member goes from Current to **Past Due** on October 1; with it off, straight to **Expired**. The grace period ends when the flag is turned off. A calendar alternative is wanted: due date and grace period end set by dates.",
+    "**Legacy flow.** A Chapter Admin changing the member's Current Year meant \"chapter dues received\". That created a dues transaction meaning \"a National invoice must be raised\"; the Financial Admin tracked the invoice, and marking it paid moved the member from Pending to Current.",
+    "**Proration.** Only **new Regular members'** dues are prorated, by a factor the Financial Admin can change at any time. A calendar-driven factor (by the month someone joins) multiplied by the dues amount is welcome.",
+    "**Who does what.** Chapter dues: the **Chapter Admin** (there is no chapter treasurer role; it may be split out later). National dues: the **Financial Admin**.",
+    "**Exceptions.** **Lifetime** and **Honorary** members are always Current. The **Family** membership is being removed. There is no refund or waiver policy today.",
+    "**Still to define:** which receipts and reports are needed.",
+  ]},
+]},
+
 { tab: "What Exists Today", blocks: [
   { type: 'ul', items: [
     "Renewing a member (Current Year set to the open dues payment year) creates a **National dues record** in `ccmps_financial_transactions`: the member type's National dues, prorated for a brand-new Regular member, owed until National records it (MEM-20).",

@@ -145,9 +145,9 @@ Existing pieces: `ccmps_financial_transactions` (the National dues record renewa
 - [x] **Dues step 2, status engine** (2026-10-31): `dues_helper.php` (membership year from the due date, manual or calendar grace, Current / Pending / Past Due / Expired from the dues records, legacy fallback), switch `DUES_STATUS_ENGINE` (on on the Mac, off on staging until the dry-run data load), nightly `fin/nightly/<CRON_KEY>` (also moves `system_current_year` on), address-bar recalculation closed. Mac: year 2026 -> 2027, 421 statuses changed. Migration `2026-10-31-dues-step2-engine.sql`.
 - [x] **Dues step 3, recording chapter dues** (2026-10-31, Mac): member Dues page (Record / Renew, Reverse), bulk Chapter Dues Paid with a confirmation page, Undelete, Current Year edits routed through the dues steps, National invoice emailed, reversal voids or flags (FIN-02, FIN-30, FIN-32). Migration `2026-10-31-dues-step3-chapter-dues.sql`. Next: step 4, the Financial Admin's side.
 - [x] **Dues step 4, National's side** (2026-10-31, Mac): National Invoices (filter, Mark paid one or many, National Dues Paid bulk action from member lists), member Dues page actions for Financial Admins (Mark paid, Resend, Void, Waive, Reverse National payment), Needs Attention, Dues Settings (National dues by type, type options, National proration, chapters' dues and who collects them), Chapter Dues page for Chapter Admins, Dues menu (member EMS and staff). FIN-01 (except per-year amounts), FIN-03, FIN-24, FIN-25, FIN-27, FIN-28, FIN-31 to FIN-33. Migration `2026-10-31-dues-step4-national.sql`. Next: step 5 (report, receipts, member dues history, reminders).
-- [x] **Dues step 5** (2026-10-31, Mac): Dues Report and Excel export, receipts (printable; receipt email when National is paid), My Dues for members, reminders (coming due, Past Due, open invoice; nightly, at most `DUES_REMIND_MAX` a night, off by default), reminders log. FIN-04 to FIN-07. Migration `2026-10-31-dues-step5-reports-reminders.sql`. **The Dues phase is complete on the Mac.**
+- [x] **Dues step 5** (2026-10-31, Mac): Dues Report and Excel export, receipts (printable; receipt email when National is paid), My Dues for members, reminders (coming due, Past Due, open invoice; nightly, at most `DUES_REMIND_MAX` a night, off by default), reminders log. FIN-04 to FIN-07. Migration `2026-10-31-dues-step5-reports-reminders.sql`. **The Dues phase is complete; deployed to staging 2026-10-31 with the engine and reminders off** (backup `~/backups/bpa_staging-2026-10-31-before-dues.sql.gz`; 35 Family members converted).
 - [ ] Before switching dues reminders on anywhere: check the count (about 370 Past Due on the test data) and the Brevo plan.
-- [ ] Servers: add the daily crontab line for `fin/nightly` when the engine is switched on there (and optionally `CRON_KEY` in `.env`).
+- [x] Staging: daily crontab line for `fin/nightly` added 2026-10-31 (05:05; says "engine off" until `DUES_STATUS_ENGINE` is switched on). Production will need the same.
 - [ ] Dues additions (owner, 2026-10-31): Chapter Admin **bulk actions** (Record chapter dues paid / Renew, Delete, Undelete) on the chapter members list (FIN-30, step 3); Financial Admin **bulk National dues paid** (FIN-31, step 4); **backing out chapter dues** with the National invoice voided or flagged for the Financial Admin (FIN-32, steps 3-4); reversing a National payment (FIN-33).
 - [ ] Data load question: what does the **Grandfathered** certificate mean? Two test members (1443, 1467) have it: Regular, no certificate number. Possibly members made Regular before a pilot certificate was required. Confirm with BPA or the legacy data during the dry-run load.
 - [x] **1. Dues (Financial, Core), FIN-01 to FIN-07** (built on the Mac 2026-10-31, steps 1-5 below): dues types and amounts (National, optional chapter dues); record cash/check payments (into the Payments payment record, PAY-07); **National records dues received** (one or a chapter batch: clears the dues record, member becomes Current; MEM-21); dues report by chapter and year; reminders; numbered receipts; dues history on the profile.
@@ -156,6 +156,7 @@ Existing pieces: `ccmps_financial_transactions` (the National dues record renewa
 - [ ] **4. Finish Project Management** (see PMS above), then **5. Store, National (add-on), STORE-01 to STORE-05**.
 - [ ] **6. Invoicing, accounts and expenses (Financial add-on), FIN-10 to FIN-19:** price list, accounts and Add Funds, invoices, saved cards (PAY-12), statements, overdue rule, expenses with Document Library receipts, PDFs, reports and accounting export; with the Scheduler.
 - [ ] **7. Chapters' own payment accounts (PAY-06) and chapter stores (STORE-06)**; store extras (STORE-07, STORE-08).
+- [ ] **Enhancement: chapter payment gateways (PAY-14; owner, 2026-10-31):** chapters able to take electronic payments connect one of a few common gateways (PayPal, Square, Stripe) for their chapter dues, through the Payments module's gateway connections by scope; a paid chapter dues payment records FIN-02 automatically.
 - [ ] **8. Point of Sale (PAY-13)**, the final part: compare options first.
 - [ ] Legacy ETL: dues history (and `paypal_txn_id`) into the new tables.
 
@@ -170,6 +171,10 @@ Existing pieces: `ccmps_financial_transactions` (the National dues record renewa
 - [x] Financial (FIN-), Payments (PAY-) and Store (STORE-) written as separate chapters (2026-10-31).
 - [ ] Convert to requirements form: Scheduler (SCHED-), Pricing (PRICE-).
 - [ ] Add chapters: Projects (PMS: teams and projects built; write it when planning the finish, order step 4), the staff back office (Honcho), the phone app; later Event Module, Participants (Student), Reporting, Emulation as they're planned.
+
+## Auditlog
+
+- [ ] **Review the Auditlog feature for improvements** (owner, 2026-10-31): what's logged and how consistently (action names, who, which record, old and new values), searching and filtering on the Auditlog screen, export, retention and size, who may see it, and whether money and permission changes need a stricter trail. Recommendations to the owner first.
 
 ## Developer's Guide
 

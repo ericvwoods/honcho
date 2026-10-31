@@ -26,11 +26,12 @@ module.exports = [
     ['PAY-04', "**Payment confirmation by webhook:** the gateway's signed notice is what marks something paid, so a closed browser tab can't lose a payment; every notice is kept and processed once.", 'Planned (phase 2)'],
     ['PAY-05', 'Card numbers never touch Honcho: they stay with the provider (its own payment page or fields).', 'Planned (rule)'],
     ['PAY-06', '**Chapters\' own accounts:** a chapter connects its own PayPal, and money for its events, chapter dues and chapter store goes straight to it.', 'Planned (later phase)'],
+    ['PAY-14', "**Chapter gateways for chapter dues** (enhancement): a chapter able to take payments electronically connects one of a few common gateways (for example PayPal, Square or Stripe) so members can pay their chapter dues online; the payment records the chapter dues automatically, as FIN-02 does by hand.", 'Planned (enhancement; owner, 31 Oct 2026)'],
   ]},
 
   { type: 'h2', text: 'Payment Records' },
   { type: 'table', headers: ['ID', 'Requirement', 'Status'], rows: [
-    ['PAY-07', '**One payment record for every method:** card or PayPal online, saved card, prepaid balance, cash, check, other. Each records amount, method, reference (gateway id or check number), what it was for (a dues year, an invoice, an order), who paid, who recorded it and when.', 'Planned (cash and check in phase 1 with Dues; online methods in phase 2)'],
+    ['PAY-07', '**One payment record for every method:** card or PayPal online, saved card, prepaid balance, cash, check, other. Each records amount, method, reference (gateway id or check number), what it was for (a dues year, an invoice, an order), who paid, who recorded it and when.', 'Built 31 Oct 2026 for cash, check and other (with the dues phase; on staging); online methods with phase 2'],
     ['PAY-08', '**Refunds**, full or partial, through the gateway or recorded for cash and check; the module it was for is told.', 'Planned (phase 2)'],
     ['PAY-09', '**Matching with the gateway:** a list of the gateway\'s payments against Honcho\'s, flagging any that don\'t match.', 'Planned (phase 2)'],
   ]},

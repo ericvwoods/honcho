@@ -197,6 +197,9 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                 <?php if(rbac_allowed('fin', 'manage_dues_settings')): ?>
                     <li><a href="<?= BASE_URL ?>fin/settings"><i class="fa fa-sliders"></i> Dues Settings</a></li>
                 <?php endif; ?>
+                <?php if(rbac_allowed('fin', 'view_dues_reports')): ?>
+                    <li><a href="<?= BASE_URL ?>fin/report"><i class="fa fa-bar-chart"></i> Dues Report</a></li>
+                <?php endif; ?>
                 <?php if(rbac_allowed('fin', 'record_chapter_dues') && !empty($_SESSION['ccmps_subentity_admin']) && !empty($_SESSION['ccmps_subentity'])): ?>
                     <li><a href="<?= BASE_URL ?>fin/chapterdues/<?= (int) $_SESSION['ccmps_subentity'] ?>"><i class="fa fa-building"></i> <?= SUBENTITY ?> Dues</a></li>
                 <?php endif; ?>
@@ -404,6 +407,19 @@ if(!$has_admin_menu && $_SESSION['ccmpssidemenu'] == 'admin'){
                             </div>
                         </div>
                     </div>
+
+                    <?php if(!empty($_SESSION['ccmp_logged_in']) && dues_engine_on()): ?>
+                    <div class="widget style1 gray-bg"> <!-- the member's own dues and receipts (fin/mydues, 2026-10-31) -->
+                        <div class="row vertical-align">
+                            <div class="col-2">
+                            <a href="<?= BASE_URL ?>fin/mydues">     <i class="fa fa-usd fa-2x" style="color: <?= CCMPS_HM_SIDE_ICON_CLR ?>;"></i></a>
+                            </div>
+                            <div class="col-10 text-right">
+                                <a href="<?= BASE_URL ?>fin/mydues" style="font-family: 'Open Sans', helvetica, arial, sans-serif; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: <?= CCMPS_HM_SIDE_MENU_CLR ?>; font-size:11pt"> My Dues</a>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
 
                     <?php if(!empty($_SESSION['ccmp_logged_in']) && rbac_module_enabled('ai') && (int) setting('COFFEE_MEMBER_REPORTS', 0) === 1): ?>
                     <div class="widget style1 gray-bg"> <!-- the member's own Daily Coffee Report (ai/mycoffee, 2026-10-30) -->

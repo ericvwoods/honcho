@@ -91,6 +91,16 @@ module.exports = [
   ]},
 ]},
 
+{ tab: "My Dues", blocks: [
+  { type: 'p', text: "**My Dues** in the side menu shows your dues: each membership year's chapter and National dues, any National invoice still to pay (with how to pay it), and your payments with their receipts." },
+  { type: 'ul', items: [
+    "**How it works:** you pay your chapter dues to your chapter. When your chapter records them, you're emailed your **National dues invoice**, and your membership is **Pending** until National receives that payment. Then you're emailed a receipt and you're **Current**.",
+    "**Receipts:** click a receipt number to open it; **Print** prints it.",
+    "**Reminders:** BPA may email you before your dues are due, while you're Past Due, or while a National invoice is open.",
+    "If something looks wrong (for example you paid but show as Pending), contact your Chapter Administrator.",
+  ]},
+]},
+
 { tab: "Membership Status", blocks: [
   { type: 'p', text: "Your status shows on the **Membership** tab. It's worked out from your dues and records:" },
   { type: 'table', headers: ['Status', 'Meaning'], rows: [

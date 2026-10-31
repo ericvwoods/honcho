@@ -31,6 +31,13 @@
   chapterdues($id)       a chapter's dues and proration schedule: its Chapter Admins (own chapter) or dues settings
                          people (any chapter, plus who collects them); chapterduessubmit() POST
         _can_settle(), _can_settings(), _can_chapter_settings($id), _proration($scope), _save_proration($scope)
+  Step 5, reports and members:
+  report()               fin/view_dues_reports: per chapter, member counts by status and the year's dues dollars
+                         (Chapter Admins: their own chapter); reportexport() the same as Excel, plus a member sheet
+        _report_chapter()
+  reminders()            who was reminded (dues_reminders), for the dues people
+  receipt($payment_id)   a printable receipt: the member themselves or their dues people (dues_can_see_payment())
+  mydues()               a member's own dues: years, invoices, payments, receipts; how to pay an open invoice
 
   nightly($key)          for the server's scheduler, once a day (no login): moves the membership year
                          on when its due date passes (dues_roll_year()) and recalculates every member's
@@ -239,11 +246,13 @@ class Fin extends Trongate {
     set_time_limit(900);
     list($old, $new) = dues_roll_year(true);
     $r = dues_recalc_all(true);
+    $rem = dues_run_reminders(); // only when DUES_REMINDERS is on
     $names = array(0 => 'none', 1 => 'current', 2 => 'past due', 3 => 'pending', 5 => 'expired');
     $counts = array();
     foreach($r['counts'] as $code => $n){ $counts[] = ($names[$code] ?? $code).' '.$n; }
     $summary = 'membership year '.$new.($old !== $new ? ' (was '.$old.')' : '').', grace '.($r['grace'] ? 'on' : 'off').'; '
-             .count($r['changes']).' status change(s); '.implode(', ', $counts);
+             .count($r['changes']).' status change(s); '.implode(', ', $counts)
+             .'; reminders: '.$rem['upcoming'].' upcoming, '.$rem['past_due'].' past due, '.$rem['invoice_open'].' open invoice';
     if($old !== $new || !empty($r['changes'])){
         $this->_audit('DuesNightly', $summary);
     }
@@ -493,6 +502,130 @@ class Fin extends Trongate {
   }
 
 /*----------------------------------------------------------------------------*/
+/*---------------------------- function REPORT -------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function report(){
+
+    $chapter = $this->_report_chapter();
+    $year    = (int) ($_GET['year'] ?? dues_year_for());
+    $data['rows']     = dues_report($year, $chapter);
+    $data['year']     = $year;
+    $data['chapter']  = $chapter;
+    $data['national'] = $this->_can_settle() || $this->_can_settings();
+    $data['chapters'] = $data['national'] ? $this->model->query("SELECT id, COALESCE(NULLIF(description, ''), chapter_title) AS name FROM ccmps_subentities WHERE active = 1 ORDER BY name", 'object') : array();
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'Dues Report';
+    $data['header']      = 'Dues Report '.$year;
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'report';
+    $this->templates->inspinia($data);
+  }
+
+  function reportexport(){ // Excel: Summary sheet + one row per member
+
+    $chapter = $this->_report_chapter();
+    $year    = (int) ($_GET['year'] ?? dues_year_for());
+    require_once APPPATH.'vendor/autoload.php';
+    $book  = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+    $sheet = $book->getActiveSheet();
+    $sheet->setTitle('Summary');
+    $sheet->fromArray(array(SUBENTITY, 'Current', 'Pending', 'Past Due', 'Expired', SUBENTITY.' dues paid', 'National invoiced', 'National paid', 'National outstanding', 'Open invoices'), null, 'A1');
+    $r = 2;
+    foreach(dues_report($year, $chapter) as $row){
+        $sheet->fromArray(array($row->name, (int) $row->current_n, (int) $row->pending_n, (int) $row->past_due_n, (int) $row->expired_n,
+                                (float) $row->chapter_paid, (float) $row->national_invoiced, (float) $row->national_paid, (float) $row->national_open, (int) $row->open_n), null, 'A'.$r++);
+    }
+    $names = array(0 => 'None', 1 => 'Current', 2 => 'Past Due', 3 => 'Pending', 5 => 'Expired');
+    $ms = $book->createSheet();
+    $ms->setTitle(CCMPS);
+    $ms->fromArray(array(SUBENTITY, 'Last name', 'First name', CCMP.' No.', 'Type', 'Status', 'Paid through', SUBENTITY.' dues', SUBENTITY.' dues status', 'National invoice', 'National amount', 'National balance', 'National status', 'Email'), null, 'A1');
+    $r = 2;
+    foreach(dues_report_members($year, $chapter) as $m){
+        $ms->fromArray(array($m->chapter_name, $m->last_name, $m->first_name, $m->ccmp_number, $m->type_name, $names[(int) $m->status] ?? '', (int) $m->current_year,
+                             $m->chapter_amount === null ? '' : (float) $m->chapter_amount, (string) $m->chapter_status, (string) $m->invoice_number,
+                             $m->national_amount === null ? '' : (float) $m->national_amount, $m->national_balance === null ? '' : (float) $m->national_balance,
+                             (string) $m->national_status, (string) $m->email_address), null, 'A'.$r++);
+    }
+    foreach(array($sheet, $ms) as $sh){
+        $sh->getStyle('1:1')->getFont()->setBold(true);
+        foreach(range('A', 'N') as $col){ $sh->getColumnDimension($col)->setAutoSize(true); }
+    }
+    $this->_audit('DuesReportExport', 'year '.$year.($chapter ? ', chapter '.$chapter : ', all chapters'));
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="dues-'.$year.($chapter ? '-chapter-'.$chapter : '').'.xlsx"');
+    header('Cache-Control: max-age=0');
+    (new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($book))->save('php://output');
+    exit;
+  }
+
+/*----------------------------------------------------------------------------*/
+/*--------------------------- function REMINDERS -----------------------------*/
+/*----------------------------------------------------------------------------*/
+  function reminders(){
+
+    if(!$this->_can_settle() && !$this->_can_settings()){ $this->_deny(); }
+    $data['rows'] = $this->model->query("SELECT r.*, CONCAT(m.first_name, ' ', m.last_name) AS member_name FROM dues_reminders r
+                                           LEFT JOIN ccmps m ON m.id = r.ccmp_id ORDER BY r.id DESC LIMIT 200", 'object');
+    $data['on']          = (int) setting('DUES_REMINDERS', 0) === 1;
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'Reminders';
+    $data['header']      = 'Dues Reminders Sent';
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'reminders';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------------- function RECEIPT ------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function receipt($payment_id = NULL){
+
+    $p = $this->model->get_where((int) ($payment_id ?? segment(3)), 'pay_payments');
+    if(!dues_can_see_payment($p)){ $this->_deny(); }
+    $data['p']       = $p;
+    $data['m']       = $this->model->get_where((int) $p->payer_ccmp_id, 'ccmps');
+    $data['charge']  = $p->applies_to === 'dues_charge' ? $this->model->get_where((int) $p->applies_to_id, 'dues_charges') : false;
+    $data['chapter'] = $data['charge'] ? dues_chapter((int) $data['charge']->subentity_id) : false;
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url(!empty($_SESSION['ccmp_logged_in']) && (int) $p->payer_ccmp_id === (int) ($_SESSION['ccmp_rec_id'] ?? 0) ? 'fin/mydues' : $this->_home_url());
+    $data['title_kind']  = !empty($_SESSION['ccmp_logged_in']) && (int) $p->payer_ccmp_id === (int) ($_SESSION['ccmp_rec_id'] ?? 0) ? 'member' : 'admin';
+    $data['bc1']         = 'Dues';
+    $data['bc2']         = 'Receipt';
+    $data['header']      = 'Receipt '.$p->receipt_number;
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'receipt';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
+/*---------------------------- function MYDUES -------------------------------*/
+/*----------------------------------------------------------------------------*/
+  function mydues(){ // a member's own dues
+
+    if(empty($_SESSION['ccmp_logged_in']) || empty($_SESSION['ccmp_rec_id'])){ $this->_deny(); }
+    $id = (int) $_SESSION['ccmp_rec_id'];
+    $data['m']         = $this->model->get_where($id, 'ccmps');
+    $data['charges']   = $this->model->query_bind("SELECT * FROM dues_charges WHERE ccmp_id = :m AND status != 'void' ORDER BY membership_year DESC, kind", array('m' => $id), 'object');
+    $data['payments']  = $this->model->query_bind("SELECT * FROM pay_payments WHERE payer_ccmp_id = :m AND status = 'completed' ORDER BY id DESC", array('m' => $id), 'object');
+    $data['pay_text']  = trim((string) setting('DUES_PAY_INSTRUCTIONS', ''));
+    $data['due_date']  = date('F j, Y', strtotime(dues_due_date(dues_year_for() + 1)));
+    $data['status_names'] = array(0 => 'None', 1 => 'Current', 2 => 'Past Due', 3 => 'Pending', 5 => 'Expired');
+    $data['title_kind']  = 'member';
+    $data['home_url']    = $this->_home_url();
+    $data['close_url']   = $this->_return_url($this->_home_url());
+    $data['bc1']         = 'My '.CCMP;
+    $data['bc2']         = 'My Dues';
+    $data['header']      = 'My Dues';
+    $data['view_module'] = 'fin';
+    $data['view_file']   = 'mydues';
+    $this->templates->inspinia($data);
+  }
+
+/*----------------------------------------------------------------------------*/
 /*------------------------------- helpers ------------------------------------*/
 /*----------------------------------------------------------------------------*/
     function _can_settle(){ return rbac_allowed('fin', 'settle_national_dues'); }
@@ -503,6 +636,17 @@ class Fin extends Trongate {
         if($id <= 0 || !dues_chapter($id)){ return false; }
         if($this->_can_settings()){ return true; }
         return rbac_allowed('fin', 'record_chapter_dues') && !empty($_SESSION['ccmps_subentity_admin']) && (int) ($_SESSION['ccmps_subentity'] ?? -1) === $id;
+    }
+
+    function _report_chapter(){ // national dues people: any chapter (0 = all, ?chapter=); Chapter Admins: their own, always
+        if(!rbac_allowed('fin', 'view_dues_reports')){ $this->_deny(); }
+        if($this->_can_settle() || $this->_can_settings()){
+            return (int) ($_GET['chapter'] ?? 0);
+        }
+        if(!empty($_SESSION['ccmps_subentity_admin']) && !empty($_SESSION['ccmps_subentity'])){
+            return (int) $_SESSION['ccmps_subentity'];
+        }
+        $this->_deny();
     }
 
     function _deny(){

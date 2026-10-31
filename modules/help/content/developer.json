@@ -2566,8 +2566,8 @@
         ],
         [
          "5",
-         "Dues report, receipts, member dues history, reminders",
-         "Planned"
+         "Dues report and Excel export, receipts, My Dues, reminders (nightly, capped)",
+         "Built 2026-10-31 (Mac)"
         ]
        ]
       }
@@ -2763,6 +2763,49 @@
        "items": [
         "**Menus:** a Dues group in the member EMS menu (`sidemenu.php`, after Financial Settings) and the staff menu (`adminsidemenu.php`), shown only with the engine on and the rights; Needs Attention shows the open count.",
         "**Not yet:** amounts don't change per membership year (FIN-01's 'effective for a chosen year'); a new amount applies to dues recorded from then on and existing charges keep theirs."
+       ]
+      }
+     ]
+    },
+    {
+     "tab": "Reports, Receipts, Reminders",
+     "slug": "reports-receipts-reminders",
+     "blocks": [
+      {
+       "type": "p",
+       "text": "Dues step 5 (migration `2026-10-31-dues-step5-reports-reminders.sql`: `dues_reminders` and the `DUES_REMINDERS`, `DUES_REMIND_BEFORE`, `DUES_REMIND_EVERY`, `DUES_REMIND_MAX` settings)."
+      },
+      {
+       "type": "table",
+       "headers": [
+        "Page / function",
+        "Does"
+       ],
+       "rows": [
+        [
+         "`fin/report`, `fin/reportexport`",
+         "`dues_report($year, $chapter)` per chapter (status counts are today's; dollars for the year) and `dues_report_members()`; the export writes Summary and Members sheets with PhpSpreadsheet (`vendor/autoload.php` loaded there). `_report_chapter()`: national dues people any chapter, Chapter Admins only their own"
+        ],
+        [
+         "`fin/receipt/<payment id>`",
+         "Printable receipt; `dues_can_see_payment()`: the payer themselves, or someone who records or settles their dues"
+        ],
+        [
+         "`fin/mydues`",
+         "The signed-in member's charges (not void), payments and receipts, and how to pay an open invoice"
+        ],
+        [
+         "`fin/reminders`",
+         "The last 200 `dues_reminders` rows"
+        ],
+        [
+         "`dues_run_reminders($date, $dry)`",
+         "From `fin/nightly` when `DUES_REMINDERS` is on: `upcoming` (on the listed days before the next due date, members whose Current Year is the year in force), `past_due` (status 2) and `invoice_open` (open National charge), each at most every `DUES_REMIND_EVERY` days and at most `DUES_REMIND_MAX` a night (the rest aren't logged, so they go the next night). `$dry` counts without sending"
+        ],
+        [
+         "`dues_send_paid_email()`",
+         "Receipt email when National dues are marked paid (`quiet` option skips it); the invoice email now carries the chapter dues receipt number"
+        ]
        ]
       }
      ]

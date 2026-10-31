@@ -181,6 +181,9 @@
                     <?php if(rbac_allowed('fin', 'manage_dues_settings')): ?>
                         <li><a href="<?= BASE_URL ?>fin/settings">Dues Settings</a></li>
                     <?php endif; ?>
+                    <?php if(rbac_allowed('fin', 'view_dues_reports')): ?>
+                        <li><a href="<?= BASE_URL ?>fin/report">Dues Report</a></li>
+                    <?php endif; ?>
                     </ul>
                 </li>
             <?php endif; ?>

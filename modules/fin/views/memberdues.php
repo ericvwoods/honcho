@@ -150,7 +150,7 @@
                         <div class="table-responsive"><table class="table table-striped" style="font-size: 15px;">
                             <thead><tr><th>Receipt</th><th>Received</th><th>Amount</th><th>Method</th><th>Reference</th><th>Status</th></tr></thead>
                             <tbody><?php foreach($payments as $p): ?>
-                            <tr><td><?= out($p->receipt_number) ?></td><td><?= $p->received_on ? date('M j, Y', strtotime($p->received_on)) : '' ?></td><td>$<?= number_format((float) $p->amount, 2) ?></td>
+                            <tr><td><a href="<?= BASE_URL ?>fin/receipt/<?= (int) $p->id ?>"><?= out($p->receipt_number) ?></a></td><td><?= $p->received_on ? date('M j, Y', strtotime($p->received_on)) : '' ?></td><td>$<?= number_format((float) $p->amount, 2) ?></td>
                                 <td><?= out(ucfirst($p->method)) ?></td><td><?= out($p->reference) ?></td><td><?= out(ucfirst($p->status)) ?></td></tr>
                             <?php endforeach; ?></tbody></table></div>
                         <?php endif; ?>

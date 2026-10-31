@@ -1220,6 +1220,47 @@
         "**Each chapter's dues** (0 = none) and **who collects them**: the chapter, or National (the Chapter at Large). A chapter's own proration schedule is under **Proration** on its row; Chapter Admins can set their own chapter's amount and schedule from **Dues > Chapter Dues**.",
         "New amounts apply to dues recorded from now on; invoices already raised keep their amounts. The due date, grace period and the invoice email's payment instructions are on System Settings, Financial."
        ]
+      },
+      {
+       "type": "h2",
+       "text": "Dues Report"
+      },
+      {
+       "type": "p",
+       "text": "**Dues > Dues Report** shows, for a membership year, each chapter's members by status (Current, Pending, Past Due, Expired) and the money: chapter dues paid, National invoiced, National paid and outstanding, with totals. **Excel** downloads it with a second sheet listing every member, their status, chapter dues and National invoice. Financial Admins see every chapter; Chapter Admins see their own."
+      },
+      {
+       "type": "h2",
+       "text": "Receipts"
+      },
+      {
+       "type": "p",
+       "text": "Every payment gets a numbered receipt (R000123). Click it on a member's Dues page to open and print it. Members see their own under My Dues, and are emailed a receipt when National receives their dues; their chapter dues receipt number is in their National invoice email."
+      },
+      {
+       "type": "h2",
+       "text": "Reminders"
+      },
+      {
+       "type": "p",
+       "text": "Switch on **Send dues reminder emails** in System Settings, Financial. The nightly job then emails members:"
+      },
+      {
+       "type": "ul",
+       "items": [
+        "**Coming due:** the days before the due date you list (for example 30,7), to members paid for this year who haven't renewed.",
+        "**Past Due:** every so many days (for example 14) while they're Past Due.",
+        "**National invoice open:** every so many days while their National invoice is unpaid."
+       ]
+      },
+      {
+       "type": "p",
+       "text": "**Most reminder emails a night** (default 250) keeps each night within the Brevo plan's daily limit; the rest go the following nights. **Reminders sent** (on the Dues Report) lists who was reminded and when."
+      },
+      {
+       "type": "alert",
+       "variant": "warning",
+       "text": "Check before switching reminders on: everyone who is Past Due gets one. On BPA's test data that's about 370 members."
       }
      ]
     }

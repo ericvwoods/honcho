@@ -366,13 +366,22 @@ function dues_send_invoice($charge): bool {
            . ((float) $charge->prorate_factor < 1 ? " (new member, prorated from $".number_format((float) $charge->full_amount, 2).")" : '')."\n"
            . "Due by: ".$due."\n\n"
            . trim((string) setting('DUES_PAY_INSTRUCTIONS', ''))."\n\n"
-           . "Your membership is Pending until National receives this payment.\n";
+           . "Your membership is Pending until National receives this payment.\n"
+           . _dues_chapter_receipt_line($charge);
     $sent = coffee_send_email(array($email), SHORTSITENAME.' National dues invoice '.$charge->invoice_number, $text, 'dues');
     if ($sent['sent'] > 0) {
         $model->update((int) $charge->id, array('invoiced_at' => time()), 'dues_charges');
         return true;
     }
     return false;
+}
+
+function _dues_chapter_receipt_line($charge): string { // the chapter dues receipt number, for the invoice email
+    $model = new Model();
+    $rows  = $model->query_bind("SELECT p.receipt_number FROM pay_payments p JOIN dues_charges c ON c.id = p.applies_to_id AND p.applies_to = 'dues_charge'
+                                  WHERE c.ccmp_id = :m AND c.membership_year = :y AND c.kind = 'chapter' AND p.status = 'completed' ORDER BY p.id DESC LIMIT 1",
+                                array('m' => (int) $charge->ccmp_id, 'y' => (int) $charge->membership_year), 'object');
+    return $rows ? "\nYour ".strtolower(SUBENTITY)." dues receipt: ".$rows[0]->receipt_number." (see My Dues in the member portal).\n" : '';
 }
 
 function dues_financial_admin_emails(): array {
@@ -433,6 +442,9 @@ function dues_mark_national_paid(int $charge_id, array $opts = array()): array {
     $model->update($pid, array('receipt_number' => sprintf('R%06d', $pid)), 'pay_payments');
     $model->update($charge_id, array('status' => 'paid', 'balance' => 0, 'paid_at' => time(), 'updated_by' => $by, 'updated_at' => time()), 'dues_charges');
     dues_recalc_member((int) $c->ccmp_id, true);
+    if (empty($opts['quiet'])) {
+        dues_send_paid_email($c, $pid); // the member's receipt (FIN-06)
+    }
     return array(true, $name.': National invoice '.$c->invoice_number.' paid ($'.number_format((float) $c->balance, 2).').');
 }
 
@@ -473,4 +485,130 @@ function dues_attention_open(): array {
     $model = new Model();
     return (array) $model->query("SELECT a.*, CONCAT(c.first_name, ' ', c.last_name) AS member_name FROM dues_attention a
                                     LEFT JOIN ccmps c ON c.id = a.ccmp_id WHERE a.resolved_at = 0 ORDER BY a.id", 'object');
+}
+
+/*------------------------- reports, receipts, reminders (step 5, 2026-10-31) -------------------------*/
+/*
+ *   dues_report($year, $chapter)          per chapter: member counts by status and the dues dollars for the year
+ *   dues_report_members($year, $chapter)  member by member: status, chapter dues, National invoice
+ *   dues_send_paid_email($charge, $payment_id)  "National dues received, you're Current" with the receipt number
+ *   dues_can_see_payment($payment)        the member themselves, or someone who records or settles their dues
+ *   dues_run_reminders($date, $dry)       the nightly reminders (only when DUES_REMINDERS is on); returns counts
+ */
+
+function dues_report(int $year, int $chapter = 0): array {
+    $model  = new Model();
+    $params = array('y1' => $year, 'y2' => $year, 'y3' => $year, 'y4' => $year, 'y5' => $year);
+    $where  = 's.active = 1';
+    if ($chapter > 0) { $where .= ' AND s.id = :s'; $params['s'] = $chapter; }
+    return (array) $model->query_bind("SELECT s.id, COALESCE(NULLIF(s.description, ''), s.chapter_title) AS name,
+            SUM(m.status = 1) AS current_n, SUM(m.status = 3) AS pending_n, SUM(m.status = 2) AS past_due_n, SUM(m.status = 5) AS expired_n,
+            (SELECT COALESCE(SUM(c.amount), 0) FROM dues_charges c WHERE c.subentity_id = s.id AND c.membership_year = :y1 AND c.kind = 'chapter' AND c.status = 'paid') AS chapter_paid,
+            (SELECT COALESCE(SUM(c.amount), 0) FROM dues_charges c WHERE c.subentity_id = s.id AND c.membership_year = :y2 AND c.kind = 'national' AND c.status IN ('open', 'paid')) AS national_invoiced,
+            (SELECT COALESCE(SUM(c.amount), 0) FROM dues_charges c WHERE c.subentity_id = s.id AND c.membership_year = :y3 AND c.kind = 'national' AND c.status = 'paid') AS national_paid,
+            (SELECT COALESCE(SUM(c.balance), 0) FROM dues_charges c WHERE c.subentity_id = s.id AND c.membership_year = :y4 AND c.kind = 'national' AND c.status = 'open') AS national_open,
+            (SELECT COUNT(*) FROM dues_charges c WHERE c.subentity_id = s.id AND c.membership_year = :y5 AND c.kind = 'national' AND c.status = 'open') AS open_n
+          FROM ccmps_subentities s
+          LEFT JOIN ccmps m ON m.subentity = s.id AND COALESCE(m.deceased, 0) != 1 AND COALESCE(m.soft_deleted, 0) != 1
+         WHERE $where GROUP BY s.id, name ORDER BY name", $params, 'object');
+}
+
+function dues_report_members(int $year, int $chapter = 0): array {
+    $model  = new Model();
+    $params = array('y1' => $year, 'y2' => $year);
+    $where  = 'COALESCE(m.deceased, 0) != 1 AND COALESCE(m.soft_deleted, 0) != 1';
+    if ($chapter > 0) { $where .= ' AND m.subentity = :s'; $params['s'] = $chapter; }
+    return (array) $model->query_bind("SELECT m.id, m.first_name, m.last_name, m.ccmp_number, m.email_address, m.status, m.current_year,
+            t.description AS type_name, COALESCE(NULLIF(s.description, ''), s.chapter_title) AS chapter_name,
+            ch.amount AS chapter_amount, ch.status AS chapter_status, n.invoice_number, n.amount AS national_amount, n.balance AS national_balance, n.status AS national_status
+          FROM ccmps m
+          LEFT JOIN ccmps_types t ON t.id = m.ccmp_type
+          LEFT JOIN ccmps_subentities s ON s.id = m.subentity
+          LEFT JOIN dues_charges ch ON ch.ccmp_id = m.id AND ch.membership_year = :y1 AND ch.kind = 'chapter'
+          LEFT JOIN dues_charges n ON n.ccmp_id = m.id AND n.membership_year = :y2 AND n.kind = 'national'
+         WHERE $where ORDER BY chapter_name, m.last_name, m.first_name", $params, 'object');
+}
+
+function dues_send_paid_email($charge, int $payment_id): bool {
+    $model = new Model();
+    $m     = $model->get_where((int) $charge->ccmp_id, 'ccmps');
+    $email = $m ? trim((string) $m->email_address) : '';
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+    $text = "Dear ".trim((string) $m->first_name).",\n\n"
+          . "Thank you: we've received your ".SHORTSITENAME." National dues for membership year ".$charge->membership_year.".\n\n"
+          . "Invoice: ".$charge->invoice_number."\nAmount: $".number_format((float) $charge->amount, 2)."\nReceipt: ".sprintf('R%06d', $payment_id)."\n\n"
+          . "With your ".strtolower(SUBENTITY)." dues also recorded, your membership is Current. You can see your dues and receipts under My Dues in the member portal.\n";
+    return coffee_send_email(array($email), SHORTSITENAME.' National dues received - receipt '.sprintf('R%06d', $payment_id), $text, 'dues')['sent'] > 0;
+}
+
+function dues_can_see_payment($p): bool {
+    if (!$p) { return false; }
+    if ((int) $p->payer_ccmp_id === (int) ($_SESSION['ccmp_rec_id'] ?? 0) && !empty($_SESSION['ccmp_logged_in'])) { return true; }
+    if (rbac_allowed('fin', 'settle_national_dues')) { return true; }
+    $model = new Model();
+    return dues_can_record($model->get_where((int) $p->payer_ccmp_id, 'ccmps'));
+}
+
+function _dues_reminded(int $ccmp_id, string $kind, int $year, int $within_days): bool {
+    $model = new Model();
+    $rows  = $model->query_bind('SELECT COUNT(*) AS n FROM dues_reminders WHERE ccmp_id = :m AND kind = :k AND membership_year = :y AND sent_on > :d',
+                                array('m' => $ccmp_id, 'k' => $kind, 'y' => $year, 'd' => date('Y-m-d', strtotime('-'.$within_days.' days'))), 'object');
+    return (int) ($rows[0]->n ?? 0) > 0;
+}
+
+function dues_run_reminders(?string $date = null, bool $dry = false): array {
+    // upcoming: N days before the due date, members paid through the year in force who haven't renewed for the next year
+    // past_due: every DUES_REMIND_EVERY days while Past Due; invoice_open: same while their National invoice is open
+    $date = $date ?: date('Y-m-d');
+    $out  = array('upcoming' => 0, 'past_due' => 0, 'invoice_open' => 0, 'skipped_no_email' => 0, 'held_for_tomorrow' => 0);
+    if ((int) setting('DUES_REMINDERS', 0) !== 1 || !dues_engine_on()) {
+        return $out;
+    }
+    $model  = new Model();
+    $every  = max(1, (int) setting('DUES_REMIND_EVERY', 14));
+    $year   = dues_year_for($date);
+    $next   = $year + 1;
+    $due_next = dues_due_date($next);                                   // e.g. 2027-09-30 for membership year 2028
+    $days_to  = (int) round((strtotime($due_next) - strtotime($date)) / 86400);
+    $before   = array_map('intval', array_filter(array_map('trim', explode(',', (string) setting('DUES_REMIND_BEFORE', '30,7')))));
+    $cap  = max(1, (int) setting('DUES_REMIND_MAX', 250)); // a night's emails stay within the Brevo plan's daily limit
+    $send = function ($m, string $kind, int $for_year, string $subject, string $body) use ($model, $date, $dry, $cap, &$out) {
+        $email = trim((string) $m->email_address);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) { $out['skipped_no_email']++; return; }
+        if ($out['upcoming'] + $out['past_due'] + $out['invoice_open'] >= $cap) { $out['held_for_tomorrow']++; return; } // not logged, so sent another night
+        $out[$kind]++;
+        if ($dry) { return; }
+        $ok = coffee_send_email(array($email), $subject, "Dear ".trim((string) $m->first_name).",\n\n".$body, 'dues')['sent'] > 0;
+        $model->insert(array('ccmp_id' => (int) $m->id, 'kind' => $kind, 'membership_year' => $for_year, 'sent_on' => $date,
+                             'email' => $email, 'ok' => $ok ? 1 : 0, 'created_at' => time()), 'dues_reminders');
+    };
+    $base = "SELECT * FROM ccmps WHERE COALESCE(deceased, 0) != 1 AND COALESCE(soft_deleted, 0) != 1 AND COALESCE(locked, 0) != 1 AND current_year < ".(int) dues_settings()['lifetime'];
+    if (in_array($days_to, $before, true)) {
+        foreach ((array) $model->query($base.' AND current_year = '.$year, 'object') as $m) {
+            if (!_dues_reminded((int) $m->id, 'upcoming', $next, 1)) {
+                $send($m, 'upcoming', $next, SHORTSITENAME.' dues for '.$next.' are due '.date('F j', strtotime($due_next)),
+                    "Your ".SHORTSITENAME." dues for membership year ".$next." are due by ".date('F j, Y', strtotime($due_next)).". Please renew with your "
+                    .strtolower(SUBENTITY)."; once your ".strtolower(SUBENTITY)." records it, you'll receive your National dues invoice.\n");
+            }
+        }
+    }
+    foreach ((array) $model->query($base.' AND status = 2', 'object') as $m) {
+        if (!_dues_reminded((int) $m->id, 'past_due', $year, $every)) {
+            $send($m, 'past_due', $year, SHORTSITENAME.' membership: dues for '.$year.' are past due',
+                "Our records show your ".SHORTSITENAME." dues for membership year ".$year." haven't been received, so your membership is Past Due. "
+                ."Please renew with your ".strtolower(SUBENTITY)." to stay a member in good standing. If you've already paid, please let your ".SUBENTITY." Administrator know.\n");
+        }
+    }
+    foreach ((array) $model->query("SELECT m.*, c.invoice_number, c.balance FROM dues_charges c JOIN ccmps m ON m.id = c.ccmp_id
+                                     WHERE c.kind = 'national' AND c.status = 'open' AND c.membership_year = ".$year."
+                                       AND COALESCE(m.deceased, 0) != 1 AND COALESCE(m.soft_deleted, 0) != 1", 'object') as $m) {
+        if (!_dues_reminded((int) $m->id, 'invoice_open', $year, $every)) {
+            $send($m, 'invoice_open', $year, SHORTSITENAME.' National dues invoice '.$m->invoice_number.' is still open',
+                "Your ".SHORTSITENAME." National dues invoice ".$m->invoice_number." ($".number_format((float) $m->balance, 2).") for membership year ".$year
+                ." is still open, so your membership is Pending.\n\n".trim((string) setting('DUES_PAY_INSTRUCTIONS', ''))."\n");
+        }
+    }
+    return $out;
 }

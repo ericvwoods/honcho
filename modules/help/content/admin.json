@@ -2,7 +2,7 @@
  "key": "admin",
  "title": "Honcho Administrator's Guide",
  "subtitle": "Step-by-step setup and everyday tasks for admins.",
- "generated": "2026-10-30",
+ "generated": "2026-10-31",
  "chapters": [
   {
    "num": 1,
@@ -1042,9 +1042,33 @@
         ],
         [
          "**New member dues proration**",
-         "The share of full dues a new member pays: 1.0 = full dues, 0.75 = 25% off, 0 = free"
+         "The share of full dues a new member pays: 1.0 = full dues, 0.75 = 25% off, 0 = free. Being replaced by proration schedules by join month (coming with the dues screens)"
+        ],
+        [
+         "**Dues due date**",
+         "Month and day dues are due for the coming membership year, as MM-DD (BPA: 09-30, so dues paid by Sep 30, 2026 are for 2027)"
+        ],
+        [
+         "**Grace period mode**",
+         "**Manual**: the grace period runs while the Grace period setting is on (BPA). **Calendar**: it ends on the grace end date"
+        ],
+        [
+         "**Grace period end**",
+         "Calendar mode only: the last day of the grace period, as MM-DD"
+        ],
+        [
+         "**Dues billing plans offered**",
+         "Annual, quarterly and/or monthly (used when the dues screens arrive)"
+        ],
+        [
+         "**Status from the dues records**",
+         "On: the new dues engine sets every member's status from their dues, the due date and the grace period, every night, and moves the membership year on by itself the day after the due date. Off: the old rule. Switch on only once the dues history has been loaded"
         ]
        ]
+      },
+      {
+       "type": "p",
+       "text": "**With the new dues engine on:** a member is **Current** when both their chapter dues and their National dues for the year in force are paid; **Pending** when the chapter dues are paid but National's invoice isn't; **Past Due** when they were paid up last year, missed this year's due date and the grace period is on; **Expired** when the grace period is off or has ended, or they're more than a year behind. Lifetime and Honorary members are always Current. Turning the grace period off (manual mode) moves Past Due members to Expired straight away."
       },
       {
        "type": "p",

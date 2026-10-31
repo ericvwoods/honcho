@@ -8351,7 +8351,23 @@ function _get_financial_setting($title){
 // Also called by recalc_all_member_statuses() for the batch path
 // (Section 6-B), which System Settings runs when the current year or
 // grace period is saved.
+// ***********************  function _INTERNAL_ONLY ************************* //
+// recalcstatus() and recalc_all_member_statuses() are public because other
+// modules call them (System Settings), but they aren't pages: opened from the
+// address bar (welcome-ccmps/<method>) they go back home instead (2026-10-31).
+function _internal_only($method){
+    if(strcasecmp((string) segment(1), 'welcome-ccmps') === 0 && strcasecmp((string) segment(2), $method) === 0){
+        redirect('welcome-ccmps/ccmphome');
+    }
+}
+
 function recalcstatus($recid){
+
+    $this->_internal_only('recalcstatus'); // not a page: refuse it from the address bar (2026-10-31)
+    if((int) setting('DUES_STATUS_ENGINE', 0) === 1){ // the dues status engine (dues_helper.php, dues step 2)
+        dues_recalc_member((int) $recid, true);
+        return;
+    }
 
     $usrobj = $this->model->get_one_where('id', $recid,'ccmps');
 
@@ -8455,6 +8471,13 @@ function recalcstatus($recid){
 // every settings save (e.g. dues_proration or current_dues_pmt_year
 // changing alone doesn't require a full re-scan).
 function recalc_all_member_statuses(){
+
+    $this->_internal_only('recalc_all_member_statuses');
+    if((int) setting('DUES_STATUS_ENGINE', 0) === 1){ // dues step 2: the year in force, then every member
+        dues_roll_year(true);
+        dues_recalc_all(true);
+        return;
+    }
 
     $sql = "SELECT id FROM ccmps WHERE deceased != 1 AND soft_deleted != 1";
     $rows = $this->model->query($sql, 'object');

@@ -9,7 +9,7 @@ module.exports = [
   { type: 'p', text: "**Financial** decides what is owed (dues first; invoices, accounts and expenses later as an add-on). **Payments** moves the money (one payment record for every method; PayPal and other gateways later). Dues and Payments are Core. Financial never talks to a payment provider." },
   { type: 'table', headers: ['Step', 'What', 'State'], rows: [
     ['1', 'Foundations: settings, member-type and chapter flags, proration schedules, dues charges and installments, the payment record, RBAC module `fin`, Family retired', 'Built 2026-10-31 (Mac). Nothing reads the new tables yet'],
-    ['2', 'Status engine on the dues charges, run nightly by the scheduler', 'Next'],
+    ['2', 'Status engine on the dues charges, run nightly by the scheduler', 'Built 2026-10-31; switched on on the Mac only (`DUES_STATUS_ENGINE`)'],
     ['3', 'Record chapter dues / Renew (raises and emails the National invoice)', 'Planned'],
     ['4', 'Financial Admin: open National invoices, Mark paid (batch), Void, Waive; dues and proration settings screens', 'Planned'],
     ['5', 'Dues report, receipts, member dues history, reminders', 'Planned'],
@@ -29,6 +29,24 @@ module.exports = [
   ]},
   { type: 'p', text: "**Carry-over:** existing `ccmps_financial_transactions` rows become `dues_charges` of kind national (paid where National had received them). The old table stays until step 2 switches the status rule over." },
   { type: 'p', text: "**Family retired** (FIN-29): members of type F became Regular when their highest certificate is Sport, Recreational, Private, Commercial, ATP, A&P, Drone Pilot or Military, or the military pilot or ATP tick is set; otherwise Associate. The type picker queries in `Ccmps.php` (4) and `Sysconfig.php` now read `ccmps_types WHERE active = 1`." },
+]},
+
+{ tab: "Status Engine", blocks: [
+  { type: 'p', text: "`engine/tg_helpers/dues_helper.php` (dues step 2). Membership year Y runs from the day after the due date in Y-1 to the due date in Y (`dues_year_for()`; BPA 09-30: Oct 1, 2026 starts 2027)." },
+  { type: 'table', headers: ['Status', 'Rule (for the year in force)'], rows: [
+    ['1 Current', 'Chapter charge and National charge settled; or lifetime (Current Year 2099); or a member type with `always_current` (Honorary); or legacy: no dues records but Current Year reaches the year'],
+    ['3 Pending', 'Chapter charge settled, National not (invoice open or not raised)'],
+    ['2 Past Due', 'Not renewed for Y, but settled for Y-1, and the grace period is on'],
+    ['5 Expired', 'Not renewed, and the grace period is off or ended, or behind by more than a year'],
+    ['0 None', 'Deceased or deleted'],
+  ]},
+  { type: 'ul', items: [
+    "**Settled** = `paid` or `waived`, or for a quarterly / monthly plan every installment due by today is paid (`_dues_charge_settled()`). Void charges don't count.",
+    "**Grace period:** manual mode reads the `grace_period` flag; calendar mode ends on `DUES_GRACE_END` after the due date (`dues_grace_active()`).",
+    "**Switch:** `DUES_STATUS_ENGINE` (Financial tab, default off; migration `2026-10-31-dues-step2-engine.sql`). When on, `Ccmps::recalcstatus()` calls `dues_recalc_member()` and `recalc_all_member_statuses()` calls `dues_roll_year()` + `dues_recalc_all()`; when off, the old rule (with its 2026 cutover guard) runs. Both methods now refuse being opened from the address bar (`_internal_only()`).",
+    "**Nightly:** `fin/nightly/<CRON_KEY>` (`modules/fin/Fin.php`; `CRON_KEY` in `.env`, else `COFFEE_CRON_KEY`) moves `system_current_year` on to the year in force and recalculates everyone; logged as `DuesNightly` when anything changed. Servers need a daily crontab line, e.g. `5 0 * * * docker exec honcho-honcho-staging-1 curl -s http://localhost/fin/nightly/<key>`.",
+    "**Dry run:** `dues_recalc_all(false)` returns the counts and every member whose status would change, without writing; run it before switching the engine on anywhere. On the Mac (31 Oct 2026) it moved the year 2026 to 2027 and changed 421 statuses (377 Current to Past Due: paid through 2026, 2027 dues due Sep 30, 2026; 43 deceased or deleted to None; 1 Honorary to Current).",
+  ]},
 ]},
 
 { tab: "Permissions", blocks: [

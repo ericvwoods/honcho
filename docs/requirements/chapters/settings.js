@@ -65,7 +65,7 @@ module.exports = [
 
 { tab: "Known Problems", blocks: [
   { type: 'ul', items: [
-    "The member status re-check can be started by anyone from the address bar; it must be limited to the settings screen.",
+    
     "New members get the same starting password (`123456`); they should get a random one and a set-password link, with the Forgot password rebuild (Logins, LOGIN-11).",
     "Phone app wording is still typed in (\"BPA Member Portal\", \"Member\", \"My Chapter\"); the app should take the organization's words from the server.",
   ]},

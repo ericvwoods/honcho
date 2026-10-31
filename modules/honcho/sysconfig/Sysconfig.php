@@ -2618,7 +2618,7 @@ json($findata); die();
       $data['usrlvls'] = $this->model->get('id','trongate_user_levels'); // gets passed to the create form to populate dropdown
 
       // Member Types dropdown - (query for all records 'order_by', 'table', limit, offset)
-      $data['membertypes'] = $this->model->get('id','ccmps_types'); // gets passed to the create form to populate dropdown
+      $data['membertypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types aren't offered (2026-10-31) // gets passed to the create form to populate dropdown
 
      // chapters
      $data['chapters'] = $this->model->get('id','chapters_bpa'); 

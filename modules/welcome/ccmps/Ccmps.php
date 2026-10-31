@@ -1148,7 +1148,7 @@ $data= (array)$data;
     }
 
     // membership types
-    $data['ccmptypes'] = $this->model->get('id','ccmps_types');
+    $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
 
     // Font-size element dropdowns (Preferences tab) — each pre-filtered to
     // its own type from the same ccmps_settings table. Was previously
@@ -1456,7 +1456,7 @@ echo(2169);
 /*------------------ Populate Dropdowns  ---------------------*/
 
         // membership types
-        $data['ccmptypes'] = $this->model->get('id','ccmps_types');
+        $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
 
         // salutations — was missing entirely here too (createccmp renders
         // the same form as updateccmp for brand-new records), leaving the
@@ -2718,7 +2718,7 @@ function _create_dropdown_menus(){
     $data['state_codes'] = $this->model->get('id','ref_states');
 
     // membership types
-    $data['ccmptypes'] = $this->model->get('id','ccmps_types');
+    $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
 
 
 
@@ -3575,7 +3575,7 @@ if($reposted > 0){ // if this is a subsequent try at adding after a failed valid
 /*------------------------- Populate Dropdowns  ------------------------------*/
 /*
         // membership types
-        $data['ccmptypes'] = $this->model->get('id','ccmps_types');
+        $data['ccmptypes'] = $this->model->query('SELECT * FROM ccmps_types WHERE active = 1 ORDER BY id', 'object'); // switched-off types (Family, retired 2026-10-31) aren't offered
 
         // certificate types
         $data['cert_titles'] = $this->model->get('id','ccmps_certificate_types');

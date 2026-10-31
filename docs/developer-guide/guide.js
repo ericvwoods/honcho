@@ -16,6 +16,7 @@ const guide = [
     { title: 'DMS (Document Management)',    sections: require('./chapters/dms.js') },
     { title: 'Security (RBAC)',              sections: require('./chapters/security.js') },
     { title: 'Website (CMS)',                sections: require('./chapters/cms.js') },
+    { title: 'Financial and Payments',       sections: require('./chapters/financial.js') },
     // Planned: Welcome — login, logout, second factor, mobile bridge,
     // and the public website (phase 6 of the Website chapter).
   ]},

@@ -1,0 +1,44 @@
+// chapters/financial.js — Financial and Payments chapter of the Honcho Developer's Guide (Core).
+// Started 2026-10-31 with dues step 1 (foundations). Requirements: Financial (FIN-) and Payments (PAY-)
+// chapters of the Honcho Requirements book, which also holds the owner's concept of operations for dues.
+// Same block format and inline markup as chapters/ccmps.js.
+
+module.exports = [
+
+{ tab: "Overview", blocks: [
+  { type: 'p', text: "**Financial** decides what is owed (dues first; invoices, accounts and expenses later as an add-on). **Payments** moves the money (one payment record for every method; PayPal and other gateways later). Dues and Payments are Core. Financial never talks to a payment provider." },
+  { type: 'table', headers: ['Step', 'What', 'State'], rows: [
+    ['1', 'Foundations: settings, member-type and chapter flags, proration schedules, dues charges and installments, the payment record, RBAC module `fin`, Family retired', 'Built 2026-10-31 (Mac). Nothing reads the new tables yet'],
+    ['2', 'Status engine on the dues charges, run nightly by the scheduler', 'Next'],
+    ['3', 'Record chapter dues / Renew (raises and emails the National invoice)', 'Planned'],
+    ['4', 'Financial Admin: open National invoices, Mark paid (batch), Void, Waive; dues and proration settings screens', 'Planned'],
+    ['5', 'Dues report, receipts, member dues history, reminders', 'Planned'],
+  ]},
+]},
+
+{ tab: "Tables", blocks: [
+  { type: 'p', text: "Created by `database/migrations/2026-10-31-dues-step1-foundations.sql` (safe to re-run)." },
+  { type: 'table', headers: ['Table / column', 'Holds'], rows: [
+    ['`system_settings` (Financial tab)', '`DUES_DUE_DATE` (MM-DD, BPA 09-30), `DUES_GRACE_MODE` (manual | calendar), `DUES_GRACE_END` (MM-DD, calendar mode), `DUES_BILLING_PLANS`; alongside the existing `system_current_year`, `grace_period` (the manual flag), `current_dues_pmt_year`, `dues_proration` (legacy single factor, superseded by the schedules)'],
+    ['`ccmps_types.active`, `.always_current`, `.at_large`', 'Switched-off types (Family, retired) are not offered in the type pickers; Honorary is always Current; which types the Chapter at Large offers'],
+    ['`ccmps_subentities.dues_collected_by`', '`chapter` or `national` (the Chapter at Large: National bills and records its chapter dues). Chapter dues amount: the existing `annual_dues`'],
+    ['`dues_proration`, `dues_proration_types`', 'A schedule per scope (`subentity_id` 0 = National): a factor per join month 1-12, and which member types it applies to. **New members only.** National seeded with the legacy factor for every month, Regular only'],
+    ['`dues_charges`', 'Two per member per membership year: `kind` chapter | national (the National invoice). `amount` (after proration), `full_amount`, `prorate_factor`, `balance`, `plan` (annual | quarterly | monthly), `status` (open | paid | void | waived), `reason`, `invoice_number`, `invoiced_at`, `paid_at`, `legacy_txn_id`. Unique per member, year and kind'],
+    ['`dues_installments`', 'Dated parts of a quarterly or monthly charge: `due_date`, `amount`, `paid_amount`, `paid_at`'],
+    ['`pay_payments`', 'The Payments module\'s record of every payment: `receipt_number`, payer, `received_by` (0 = National, else the chapter), amount, `method` (cash | check | other | paypal...), `reference`, `received_on`, what it `applies_to` (`dues_charge`, later invoice, order), `status`'],
+  ]},
+  { type: 'p', text: "**Carry-over:** existing `ccmps_financial_transactions` rows become `dues_charges` of kind national (paid where National had received them). The old table stays until step 2 switches the status rule over." },
+  { type: 'p', text: "**Family retired** (FIN-29): members of type F became Regular when their highest certificate is Sport, Recreational, Private, Commercial, ATP, A&P, Drone Pilot or Military, or the military pilot or ATP tick is set; otherwise Associate. The type picker queries in `Ccmps.php` (4) and `Sysconfig.php` now read `ccmps_types WHERE active = 1`." },
+]},
+
+{ tab: "Permissions", blocks: [
+  { type: 'table', headers: ['Function (module `fin`)', 'Given to'], rows: [
+    ['`record_chapter_dues`', 'Chapter Admins (own chapter), Financial Admins (also the Chapter at Large), System Admins'],
+    ['`settle_national_dues`', 'Financial Admins, System Admins'],
+    ['`manage_dues_settings`', 'Financial Admins, System Admins'],
+    ['`view_dues_reports`', 'Chapter Admins (own chapter), Financial Admins, System Admins'],
+  ]},
+  { type: 'p', text: "A chapter treasurer role later is a new group with `record_chapter_dues` and `view_dues_reports`; no code change." },
+]},
+
+];
